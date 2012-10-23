@@ -1,0 +1,3 @@
+<form class="form-inline">
+  <input type="text" class="input-medium" placeholder="Folder Name">  
+</form>

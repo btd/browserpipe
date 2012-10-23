@@ -1,0 +1,8 @@
+!= messages()
+
+div#folders
+  - if(folders.length)
+    != partial('folder_list', {collection : folders, as : 'folder'})
+  - else
+    #no-results No folders found. Create one
+      a(href="/folders/new") &nbsp;here

@@ -1,0 +1,1 @@
+<a ref="#"><%= folder.get("label") %></a>

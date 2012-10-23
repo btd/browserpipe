@@ -1,0 +1,15 @@
+!= messages()
+
+form.form-horizontal(method="post", action="/folders")
+    fieldset
+        legend= title
+        .control-group
+          label.control-label(for='label') Label
+          .controls
+            input#label.input-xlarge(type='text', name="folder[label]", value=folder.label, placeholder='Enter the label')        
+        input#parentid(type='hidden', name="parentid", value=parentId)
+        .form-actions
+          button.btn.btn-primary(type='submit') Save changes
+          &nbsp;
+          a.btn(href='/folders', title="cancel") Cancel
+

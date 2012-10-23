@@ -1,0 +1,22 @@
+!= messages()
+
+h2= folder.label
+span.date
+  #{dateformat(folder.created_at, "%b %d, %Y at %I:%M %p")}
+
+p
+  br
+  a.btn(href='/folder/'+folder._id+'/edit', title="edit") Edit
+  &nbsp;
+  a.btn(href='/folders/new?parentId='+folder._id, title="add children") Add Children
+  &nbsp;
+  a.btn(href='/folder/'+folder._id+'/bookmark/new', title="add bookmark") Add Bookmark
+  &nbsp;
+  a.btn.destroy(href='/folder/'+folder._id, title="delete") Delete
+  &nbsp;
+
+
+p
+  br
+  h2 Children Folder
+  != partial('index', {folders : childrens})

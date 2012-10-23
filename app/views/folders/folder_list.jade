@@ -1,0 +1,4 @@
+.folder
+  a.title(href='/folder/'+folder._id, title=folder.label) #{folder.label}
+  span.date
+    #{dateformat(folder.created_at, "%b %d, %Y at %I:%M %p")}
