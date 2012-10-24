@@ -4,73 +4,96 @@
  .scrollable{
     overflow: auto;
 } 
-
-
-.bookmark {
-    padding: 0 20px;
+.affix {    
+    top: 0px !important; 
+}
+#top-bar {
+    .navbar-inner {
+        .container-fluid{
+            height:38px;
+        }  
+    }     
+    .divider-vertical{
+        height: 30px;
+    }
 }
 
-.right-menu {
-    divider-vertical {
-    height: 57px;
+#filter-bar {
+    background-color:rgba(255, 255, 255, 0.9);
+    color: #000000;       
+    width: 100%;
+
+    #filter-bar-inner:after{ 
+        clear: both; 
     }
-    .navbar-search {
-        margin-top: 14px;
+    #filter-bar-inner {
+        height: 60px; 
+        margin: auto;    
+
+        .btn, .navbar .btn-group{
+            margin-top: 0px;
+        }
+
+        #img-tag-home {
+            padding: 15px 20px 0;
+        }
+
+        .form-search{
+            padding-top: 10px;
+
+            #search-box{    
+                height: 30px;
+                max-width: 700px;
+                width: 700px;
+                margin-left: 160px;
+                font-size: 20px;
+            }  
+            #search-btn{                    
+                height: 40px;
+            }           
+        }
+
     }
-    .label {
-        margin-top: 14px;
+}
+.bookmark {
+    padding: 15px 20px;
+    text-align: left;
+    background-color: #F2F2F2;
+    background-image: -webkit-linear-gradient(top, #F6F6F6, #EEE);
+    background-repeat: repeat-x;
+    border-bottom-color: #D4D4D4;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    box-shadow: rgba(255, 255, 255, 0.8) 0px 1px 0px 0px inset;
+
+    .bookmark-title {
+        font-size: 20px;
+        font-weight: bold;
     }
-    .nav > li > a {
-        padding: 18px 10px;
-    }
+}
+#main-container {
+    background-image:url('/img/bg.png')
+
+}
+#main-row {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px 0 60px 0;
 }
 .navbar{
+    margin-bottom: 0px !important;
+
     .notifier {
-        margin-top: 10px;
+        height:30px;
+        margin-top: 2px;
         .label {
             position: relative;
             top: -9px;
         }
     }
 }
-
-.tab-container{
+.tag-container{
     .label {
         margin-left: 3px;
-    }
-}
-
-#folder-menu {
-    .nav-header{
-        padding: 3px 0 3px 15px;          
-
-        #btn-add-folder {
-            margin-left: 5px
-        }
-    }
-    .nav-list {
-        .menu-folder{
-            a {
-                border-left: 1px solid #DDD;
-                border-top: 1px solid #DDD;
-                border-right: 1px solid #DDD;
-                padding: 12px 10px;
-                color: #666;
-                font-weight: bold;
-
-                
-            }
-            a:hover {
-                cursor: pointer;
-            }
-        }
-        .menu-folder.active{
-            a{
-                background-color: #468847;
-                border: 1px solid #468847;
-                color: white;
-                text-shadow: none;
-            }
-        }
     }
 }

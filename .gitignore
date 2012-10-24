@@ -1,7 +1,5 @@
 node_modules/
 .monitor
-everbookmark.sublime-project
-everbookmark.sublime-workspace
 .DS_Store
 npm-debug.log
 public/css/*.css

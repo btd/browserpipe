@@ -2,7 +2,7 @@
 module.exports = {
     development: {
       db: {
-        uri: 'mongodb://localhost/everbookmark'
+        uri: 'mongodb://localhost/tagnfileit'
       },
       facebook: {
           appId: "147484312059729"

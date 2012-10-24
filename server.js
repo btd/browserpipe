@@ -1,4 +1,4 @@
-/* Everbookmark main application entry file. */
+/* Tagnfile.it main application entry file. */
 
 var express = require('express')
   , fs = require('fs')
@@ -34,4 +34,4 @@ require('./config/routes')(app, passport, auth)
 // Start the app by listening on <port>
 var port = process.env.PORT || 4000
 app.listen(port)
-console.log("Everbookmark application started on port "+port+" in "+env+" mode");
+console.log("Tagnfile.it application started on port "+port+" in "+env+" mode");

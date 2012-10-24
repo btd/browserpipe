@@ -8,12 +8,14 @@ define([
 ], function($, _, Backbone, Router){
   var initialize = function(){
     
+   
 
     calculateHeights();
     window.onresize = function(event) {
         calculateHeights();
     };
     
+    $(".affix").affix ();
 
     // Pass in our Router module and call it's initialize function
     Router.initialize();

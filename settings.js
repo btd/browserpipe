@@ -26,7 +26,7 @@ exports.boot = function(app, config, passport) {
 
   // dynamic helpers
   app.use(function (req, res, next) {
-    res.locals.appName = 'Everbookmark'
+    res.locals.appName = 'Tagnfile.it'
     res.locals.title = 'Organize your bookmarks'
     res.locals.showStack = app.showStackError
     res.locals.req = req
