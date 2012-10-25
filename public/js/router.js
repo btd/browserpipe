@@ -5,8 +5,10 @@ define([
   'backbone',
   'models/tag',
   'collections/tags',
-  'views/tags/menu'
-], function($, _, Backbone, Tag, TagCollection, TagsListView){
+  'views/tags/menu',
+  'views/search/search-box',
+  'views/bars/filter-bar'
+], function($, _, Backbone, Tag, TagCollection, TagsMenuView, SearchBoxView, FilterBarView){
   var AppRouter = Backbone.Router.extend({
     views: {},
     routes: {
@@ -33,7 +35,7 @@ define([
     createViews: function(){
       //We have no matching route, lets display the home page
       var that = this;
-      var tags = new TagCollection();         
+      /*var tags = new TagCollection();         
       tags.fetch({ 
         success: function (collection) {
           //Sets the first tag as selected
@@ -49,7 +51,14 @@ define([
           that.views.tagsListView.on("onChangeSelectedTag", that.onChangeSelectedTag, that);
           that.views.tagsListView.render();
         }
-      });   
+      });   */
+      that.views.tagsMenuView = new TagsMenuView()
+      that.views.searchBoxView = new SearchBoxView()
+      that.views.filterBarView = new FilterBarView({
+        tagsMenuView: that.views.tagsMenuView, 
+        searchBoxView: that.views.searchBoxView
+      });
+      that.views.filterBarView.render();
     },
     onShowAddTag: function(selectedTag){ 
       this.navigate("/tags/add/" + selectedTag.get("_id"));

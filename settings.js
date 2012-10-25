@@ -7,6 +7,7 @@ var express = require('express')
   , lessMiddleware = require('less-middleware')
   , gzippo = require('gzippo')
   , mongoStore = require('connect-mongodb')
+  , requirejs = require('requirejs')
 
 // App settings and middleware
 exports.boot = function(app, config, passport) {
@@ -70,7 +71,10 @@ exports.boot = function(app, config, passport) {
     //set up colour logger for dev
     app.use(express.logger('dev'))
     app.set('showStackError', true)
-    app.use(express.static(__dirname + '/public'))    
+    app.use(express.static(__dirname + '/public'))   
+    /*requirejs.optimize(config.requirejs, function(){
+      console.log('Requirejs - Successfully optimized javascript')
+    }) */
   })
 
   // gzip only in staging and production envs
