@@ -1,0 +1,22 @@
+!= messages()
+
+h2= tag.label
+span.date
+  #{dateformat(tag.created_at, "%b %d, %Y at %I:%M %p")}
+
+p
+  br
+  a.btn(href='/tag/'+tag._id+'/edit', title="edit") Edit
+  &nbsp;
+  a.btn(href='/tags/new?parentId='+tag._id, title="add children") Add Children
+  &nbsp;
+  a.btn(href='/tag/'+tag._id+'/bookmark/new', title="add bookmark") Add Bookmark
+  &nbsp;
+  a.btn.destroy(href='/tag/'+tag._id, title="delete") Delete
+  &nbsp;
+
+
+p
+  br
+  h2 Children Tag
+  != partial('index', {tags : childrens})

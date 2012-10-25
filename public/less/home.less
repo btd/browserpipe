@@ -1,58 +1,66 @@
-.well {
-    margin-bottom: 0px !important;
+#main-container {
+    margin-top: 55px;
+    background-image:url('/img/bg.png');
 }
- .scrollable{
-    overflow: auto;
-} 
-.affix {    
-    top: 0px !important; 
+#main-row {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px 0 60px 0;
 }
 #top-bar {
+    margin-bottom: 0px;
+
     .navbar-inner {
-        .container-fluid{
-            height:38px;
-        }  
-    }     
-    .divider-vertical{
-        height: 30px;
+        min-height:25px;
+        height:25px;
+
+        .container-fluid {
+            height:25px;
+
+            a {
+                padding: 3px 20px
+            }
+            .divider-vertical {
+                height: 20px;
+            }
+            .notifier {
+                height:20px;
+                margin-top: 4px;
+
+                .label {
+                    position: relative;
+                    top: -9px;
+                }
+            }
+        }          
     }
 }
-
 #filter-bar {
+    margin: 25px 0 0 0;
     background-color:rgba(255, 255, 255, 0.9);
     color: #000000;       
     width: 100%;
 
-    #filter-bar-inner:after{ 
-        clear: both; 
-    }
     #filter-bar-inner {
-        height: 60px; 
         margin: auto;    
 
-        .btn, .navbar .btn-group{
-            margin-top: 0px;
+        .btn, .navbar .btn-group {
+            margin-top: 0px;            
         }
-
         #img-tag-home {
-            padding: 15px 20px 0;
+            padding: 10px 20px;
         }
+        .form-search {
+            margin: 0px;
+            padding: 4px 0;
 
-        .form-search{
-            padding-top: 10px;
-
-            #search-box{    
-                height: 30px;
+            #search-box {   
                 max-width: 700px;
                 width: 700px;
                 margin-left: 160px;
                 font-size: 20px;
-            }  
-            #search-btn{                    
-                height: 40px;
-            }           
+            }      
         }
-
     }
 }
 .bookmark {
@@ -69,31 +77,11 @@
     .bookmark-title {
         font-size: 20px;
         font-weight: bold;
-    }
-}
-#main-container {
-    background-image:url('/img/bg.png')
+    }    
+    .tag-container { 
 
-}
-#main-row {
-    max-width: 900px;
-    margin: auto;
-    padding: 20px 0 60px 0;
-}
-.navbar{
-    margin-bottom: 0px !important;
-
-    .notifier {
-        height:30px;
-        margin-top: 2px;
         .label {
-            position: relative;
-            top: -9px;
+            margin-left: 3px;
         }
-    }
-}
-.tag-container{
-    .label {
-        margin-left: 3px;
     }
 }

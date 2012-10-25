@@ -2,14 +2,14 @@
   'jQuery',
   'underscore',
   'backbone',
-  'text!templates/folders/menu.add.text'
+  'text!templates/tags/menu.add.text'
 ], function($, _, Backbone, template){
-  var FoldersMenuAddView = Backbone.View.extend({
+  var TagsMenuAddView = Backbone.View.extend({
   	tagName: 'div', 
     attributes : function (){
       return {
-        class : 'menu-folder',
-        id : "folder_" + this.model.get('_id')
+        class : 'menu-tag',
+        id : "tag_" + this.model.get('_id')
       }
     },    
     initialize: function(){ 
@@ -17,5 +17,5 @@
       
     }
   });
-  return FoldersMenuAddView;
+  return TagsMenuAddView;
 });*/

@@ -2,7 +2,7 @@ define([
   'underscore',
   'backbone'
 ], function(_, Backbone) {
-  var Folder = Backbone.Model.extend({
+  var Tag = Backbone.Model.extend({
     defaults: {
       selected: false
     },
@@ -16,28 +16,28 @@ define([
     validate: function (attrs) {
         if (attrs.label) {
             if (!_.isString(attrs.label) || attrs.label === 0 ) {
-                return "Folder label must be a string with a length";
+                return "Tag label must be a string with a length";
             }
         }
     }
   });
-  return Folder;
+  return Tag;
 });
 
 
 /*
 
-folder = new Folder();
+tag = new Tag();
 
-folder.set({
+tag.set({
 title: "The Matrix",
 format: "dvd'
 });
 
 
-folder.get('title');
+tag.get('title');
 
-folder = new Folder({
+tag = new Tag({
     title: "The Matrix",
     format: "dvd'
 });

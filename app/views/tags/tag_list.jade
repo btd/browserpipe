@@ -1,0 +1,4 @@
+.tag
+  a.title(href='/tag/'+tag._id, title=tag.label) #{tag.label}
+  span.date
+    #{dateformat(tag.created_at, "%b %d, %Y at %I:%M %p")}

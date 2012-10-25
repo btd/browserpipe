@@ -3,29 +3,29 @@ define([
   'jQuery',
   'underscore',
   'backbone',
-  'models/folder',
-  'collections/folders',
-  'views/folders/menu'
-], function($, _, Backbone, Folder, FolderCollection, FoldersListView){
+  'models/tag',
+  'collections/tags',
+  'views/tags/menu'
+], function($, _, Backbone, Tag, TagCollection, TagsListView){
   var AppRouter = Backbone.Router.extend({
     views: {},
     routes: {
       // Define some URL routes
-      'folders/view/:id': 'showFolder',
-      'folders/add': 'addFolder',
-      'folder/:id/edit': 'editFolder',
-      'folder/:id/delete': 'deleteFolder',
+      'tags/view/:id': 'showTag',
+      'tags/add': 'addTag',
+      'tag/:id/edit': 'editTag',
+      'tag/:id/delete': 'deleteTag',
 
       // Default
       '*actions': 'defaultAction'
     },
-    showFolder: function(id){  
+    showTag: function(id){  
     },
-    addFolder: function(){   
+    addTag: function(){   
     },
-    editFolder: function(id){      
+    editTag: function(id){      
     },
-    deleteFolder: function(id){      
+    deleteTag: function(id){      
     },
     defaultAction: function(actions){
       
@@ -33,32 +33,32 @@ define([
     createViews: function(){
       //We have no matching route, lets display the home page
       var that = this;
-      var folders = new FolderCollection();         
-      folders.fetch({ 
+      var tags = new TagCollection();         
+      tags.fetch({ 
         success: function (collection) {
-          //Sets the first folder as selected
+          //Sets the first tag as selected
           if(collection.length > 0){
-            var selectedFolder = collection.models[0]            
-            selectedFolder.set({selected: true})
-            that.navigateSelectedFolder(selectedFolder)
-            folders.selectedFolder = selectedFolder
+            var selectedTag = collection.models[0]            
+            selectedTag.set({selected: true})
+            that.navigateSelectedTag(selectedTag)
+            tags.selectedTag = selectedTag
           }
           //TODO: is it necessary to have the views as an attribute of AppRouter
-          that.views.foldersListView = new FoldersListView({collection: collection})
-          that.views.foldersListView.on("onShowAddFolder", that.onShowAddFolder, that);
-          that.views.foldersListView.on("onChangeSelectedFolder", that.onChangeSelectedFolder, that);
-          that.views.foldersListView.render();
+          that.views.tagsListView = new TagsListView({collection: collection})
+          that.views.tagsListView.on("onShowAddTag", that.onShowAddTag, that);
+          that.views.tagsListView.on("onChangeSelectedTag", that.onChangeSelectedTag, that);
+          that.views.tagsListView.render();
         }
       });   
     },
-    onShowAddFolder: function(selectedFolder){ 
-      this.navigate("/folders/add/" + selectedFolder.get("_id"));
+    onShowAddTag: function(selectedTag){ 
+      this.navigate("/tags/add/" + selectedTag.get("_id"));
     },    
-    onChangeSelectedFolder: function(selectedFolder){ 
-      this.navigateSelectedFolder(selectedFolder)
+    onChangeSelectedTag: function(selectedTag){ 
+      this.navigateSelectedTag(selectedTag)
     },
-    navigateSelectedFolder: function(selectedFolder){
-      this.navigate("/folders/view/" + selectedFolder.get("_id"));
+    navigateSelectedTag: function(selectedTag){
+      this.navigate("/tags/view/" + selectedTag.get("_id"));
     }
 
   });

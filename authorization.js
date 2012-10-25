@@ -26,13 +26,13 @@ exports.user = {
 
 
 /*
- *  Folder authorizations routing middleware
+ *  Tag authorizations routing middleware
  */
 
-exports.folder = {
+exports.tag = {
     hasAuthorization : function (req, res, next) {
-      if (req.folder.user.id != req.user.id) {
-        return res.redirect('/articles/'+req.folder.id)
+      if (req.tag.user.id != req.user.id) {
+        return res.redirect('/articles/'+req.tag.id)
       }
       next()
     }

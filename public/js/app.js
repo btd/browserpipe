@@ -6,20 +6,10 @@ define([
   'router', // Request router.js
   'bootstrap' //Inclulded it one time, as it is global
 ], function($, _, Backbone, Router){
-  var initialize = function(){
+  var initialize = function(){   
     
-   
-
-    calculateHeights();
-    window.onresize = function(event) {
-        calculateHeights();
-    };
-    
-    $(".affix").affix ();
-
     // Pass in our Router module and call it's initialize function
     Router.initialize();
-
 
   }
   return {
@@ -27,9 +17,3 @@ define([
   };
 });
 
-
-function calculateHeights(){
-  var wheight = $(window).height();
-  var wwidth = $(window).width();
-  $(".scrollable").height(wheight - 105);        
-}

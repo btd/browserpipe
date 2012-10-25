@@ -1,6 +1,6 @@
 
 var mongoose = require('mongoose')
-  , Folder = mongoose.model('Folder')
+  , Tag = mongoose.model('Tag')
   , User = mongoose.model('User')
   , async = require('async')
 
@@ -34,24 +34,24 @@ module.exports = function (app, passport, auth) {
       })
   })
 
-  // folder routes
-  var folders = require('../app/controllers/folders')
-  app.get('/folders', folders.index)
-  app.get('/folders/new', auth.requiresLogin, folders.new)
-  app.post('/folders', auth.requiresLogin, folders.create)
-  app.get('/folders/:id', folders.show)
-  app.get('/folders/:id/edit', auth.requiresLogin, auth.folder.hasAuthorization, folders.edit)
-  app.put('/folders/:id', auth.requiresLogin, auth.folder.hasAuthorization, folders.update)
-  app.del('/folders/:id', auth.requiresLogin, auth.folder.hasAuthorization, folders.destroy)
+  // tag routes
+  var tags = require('../app/controllers/tags')
+  app.get('/tags', tags.index)
+  app.get('/tags/new', auth.requiresLogin, tags.new)
+  app.post('/tags', auth.requiresLogin, tags.create)
+  app.get('/tags/:id', tags.show)
+  app.get('/tags/:id/edit', auth.requiresLogin, auth.tag.hasAuthorization, tags.edit)
+  app.put('/tags/:id', auth.requiresLogin, auth.tag.hasAuthorization, tags.update)
+  app.del('/tags/:id', auth.requiresLogin, auth.tag.hasAuthorization, tags.destroy)
 
   app.param('id', function(req, res, next, id){
-    Folder
+    Tag
       .findOne({ _id : id })
       .populate('user', 'label')
-      .exec(function (err, folder) {
+      .exec(function (err, tag) {
         if (err) return next(err)
-        if (!folder) return next(new Error('Failed to load folder ' + id))
-        req.folder = folder
+        if (!tag) return next(new Error('Failed to load tag ' + id))
+        req.tag = tag
         next()
       })
   })

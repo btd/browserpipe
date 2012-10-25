@@ -2,14 +2,14 @@ define([
   'jQuery',
   'underscore',
   'backbone',
-  'text!templates/folders/menu.item.text'
+  'text!templates/tags/menu.item.text'
 ], function($, _, Backbone, template){
-  var FoldersMenuItemView = Backbone.View.extend({
+  var TagsMenuItemView = Backbone.View.extend({
     tagName: 'li', 
     attributes : function (){
       return {
-        class : 'menu-folder',
-        id : "folder_" + this.model.get('_id')
+        class : 'menu-tag',
+        id : "tag_" + this.model.get('_id')
       }
     }, 
     initialize: function(){ 
@@ -18,13 +18,13 @@ define([
       this.model.bind("destroy", this.close, this);   
     },
     events: {
-      "click":"selectFolder",
+      "click":"selectTag",
     },
-    selectFolder:function (event){
+    selectTag:function (event){
       this.model.set({selected: true})          
     },
     render: function(){ 
-      var compiledTemplate = _.template( template, {folder: this.model} );      
+      var compiledTemplate = _.template( template, {tag: this.model} );      
       $(this.el).html(compiledTemplate);      
       this.setActiveClass();
       return this;
@@ -40,5 +40,5 @@ define([
         $(this.el).removeClass("active");
     }
   });
-  return FoldersMenuItemView;
+  return TagsMenuItemView;
 });
