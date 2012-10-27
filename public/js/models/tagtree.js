@@ -72,7 +72,7 @@ define([
                      "leaf":true
                   },
                   {
-                     "name":"bootstrap jajajaj very long to test something really cool, even more longer than I thought it should be",
+                     "name":"bootstrap jajajaj very long to test something really cool, even more longer than I thought it should be, a bit longer so it goes to the next line",
                      "leaf":false,
                      "children":[
                         {

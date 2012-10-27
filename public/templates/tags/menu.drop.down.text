@@ -1,0 +1,10 @@
+<div style="<%= (opened?'display:block;':'') %>" class="tag-dropdown-menu dropdown-menu" role="menu" aria-labelledby="drop4">
+	<div class="tag-dropdown-menu-cont">
+		<div class="tag-dropdown-menu-opt">
+			<span class="pull-left">add tag</span>
+			<ul class="pull-right"><li>edit</li><li>delete</li></ul>	
+		    <div class="clearfix"/>
+		 </div>   
+		<table class="tag-menu-items"></table>
+	</div>
+<div>

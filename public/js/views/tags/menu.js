@@ -2,13 +2,15 @@ define([
   'jQuery',
   'underscore',
   'backbone',
-  'models/tagtree'
-], function($, _, Backbone, tagTreeModel){
+  'models/tagtree',  
+  'text!templates/tags/menu.drop.down.text'
+], function($, _, Backbone, tagTreeModel, templateDropDownTable){
   var TagsMenuView = Backbone.View.extend({
-    tagName: 'span', 
+    tagName: 'div',     
     initialize: function(){  
       console.log("Initializing TagsMenuView")  
       this.tagTree  = (new tagTreeModel()).getTree();      
+      this.compiledtemplateDropDownTable = _.template(templateDropDownTable)
     },    
     //Main function to load a tag, it can receive the path directly. Lat temporal item of the full path always appears with dropdown dialog opened.
     loadTag: function(fullpath, item, index, temporal) {    
@@ -73,6 +75,9 @@ define([
     },
     //Function to add a new breadcrumb
     addBreadCrumb: function(name, path, index, temporal) {
+        var that = this;        
+        if(name.length > 20) 
+            name = this.shortString(name, 40);
         var $tagDropdown = $('<li class="tag-dropdown dropdown' + (temporal? ' temporal' : '') + '">' + '<a class="tag-menu" role="button" href="#">' + (index == 0 ? '<b>T</b>' : name) + '</a>' + (index == 0 ? '&nbsp;&nbsp;' : '<span class="divider">.</span>') + '</li>');
         $('#tag-breadcrumb').append($tagDropdown);
         var $tagMenu = $('.tag-menu', $tagDropdown);
@@ -81,9 +86,9 @@ define([
         //When a user clicks a breadcrumb it should load
         $tagMenu.click(function() {
             //On click always temporal tags turn permanent
-            this.updateTemporalTags();
+            that.updateTemporalTags();
             var path = jQuery.data($tagDropdown[0], 'path');
-            this.loadTag(path, this.tagTree, 0, false);
+            that.loadTag(path, this.tagTree, 0, false);
         });
         //Shows or hides dropwdown dialog for breadcrumb when the mouse is over or not.
         $tagDropdown.mouseover(function() {
@@ -94,11 +99,15 @@ define([
         });
         return $tagDropdown;
     },
+    shortString: function(str, n){
+      return str.substr(0,n-1)+(str.length>n?'&hellip;':'');
+    },
     //Function to add the dropdown dialog
     addDropDown: function(item, path, $tagDropdown, opened) {
-        if (item.children && item.children.length > 0) {
-            var $table = $('<table style="min-width:335px;' + (opened?'display:block;':'')  + '"  class="tag-dropdown-menu dropdown-menu"  role="menu" aria-labelledby="drop4" >' + '</table>');
-            $tagDropdown.append($table);
+        console.time('addDropDown timer');
+        if (item.children && item.children.length > 0) {            
+            var $divDropdownMenu = $(this.compiledtemplateDropDownTable({opened: opened}));             
+            var $table = $tagDropdown.append($divDropdownMenu).find('.tag-menu-items:first');
             var $tr = null;
             for (index in item.children) {
                 if (index % 3 == 0) {
@@ -108,7 +117,7 @@ define([
                 var childitem = item.children[index];
                 var name = childitem.name;
                 var hasChilds = (childitem.children != null && childitem.children.length > 0);
-                var $td = $('<td class="tag-menu-item">' + name + (hasChilds?' >':'') + '</td>');
+                var $td = $('<td class="tag-menu-item">' + name + (hasChilds?' ..':'') + '</td>');
                 $tr.append($td);
                 //Saves the path on the tag td of the dropwdown dialog
                 jQuery.data($td[0], 'path', path + '.' + name);                      
@@ -116,6 +125,7 @@ define([
                 this.prepareTagEvents($td, hasChilds);
             }
         }
+        console.timeEnd('addDropDown timer')
     },
     prepareTagEvents: function($el, hasChilds) {
         var timeout = null;
@@ -162,6 +172,8 @@ define([
       //Captures clicks outside dropdown to close opened dropdown dialogs
       $('html').on('click.dropdown.data-api', function() {
           $('.tag-dropdown-menu').css('display', 'none');
+          if(!$('.tag-dropdown-menu').is(':visible')) 
+                that.removeTemporalTags();  
       });
       //Capures when user leaves the breadcrumb menu, to remove temporal breadcrumbs
       var that = this;

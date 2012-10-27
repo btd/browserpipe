@@ -6,10 +6,10 @@ define([
 ], function($, _, Backbone, template){
   var SearchBoxView = Backbone.View.extend({
     tagName: 'form', 
-    attributes : function (){
+    attributes: function (){
       return {
         class : 'form-search'
-      }
+      };
     }, 
     initialize: function(){  
       console.log("Initializing SearchBoxView")
