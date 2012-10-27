@@ -78,7 +78,7 @@ define([
         var that = this;        
         if(name.length > 20) 
             name = this.shortString(name, 40);
-        var $tagDropdown = $('<li class="tag-dropdown dropdown' + (temporal? ' temporal' : '') + '">' + '<a class="tag-menu" role="button" href="#">' + (index == 0 ? '<b>T</b>' : name) + '</a>' + (index == 0 ? '&nbsp;&nbsp;' : '<span class="divider">.</span>') + '</li>');
+        var $tagDropdown = $('<li class="tag-dropdown dropdown' + (temporal? ' temporal' : '') + '">' + '<a class="tag-menu" role="button" href="#">' + (index == 0 ? '<img src="/img/tag.png" />' : name) + '</a>' + (index == 0 ? '&nbsp;&nbsp;' : '<span class="divider">.</span>') + '</li>');
         $('#tag-breadcrumb').append($tagDropdown);
         var $tagMenu = $('.tag-menu', $tagDropdown);
         //Saves the path in the breadcrumb li for future use
@@ -117,7 +117,7 @@ define([
                 var childitem = item.children[index];
                 var name = childitem.name;
                 var hasChilds = (childitem.children != null && childitem.children.length > 0);
-                var $td = $('<td class="tag-menu-item">' + name + (hasChilds?' ..':'') + '</td>');
+                var $td = $('<td class="tag-menu-item"><span class="name">' + name + '</span>' + (hasChilds?'<span class="arrow">...</span>':'') + '</td>');
                 $tr.append($td);
                 //Saves the path on the tag td of the dropwdown dialog
                 jQuery.data($td[0], 'path', path + '.' + name);                      
@@ -130,16 +130,16 @@ define([
     prepareTagEvents: function($el, hasChilds) {
         var timeout = null;
         var that = this;
-        $el.click(function() {        
+        $('.name', $el).click(function() {        
             clearTimeout(timeout);
             //on click temporal tags turn permanent
             that.updateTemporalTags();
-            that.showTag($(this), false);
+            that.showTag($el, false);
             //here it should load the bookmarks
         })
         //for tags with children, if the user stay a certain time it navigates in
         if(hasChilds)
-            $el.mouseover(function() {
+            $('.arrow', $el).mouseover(function() {
                 timeout = setTimeout(function() {            
                     that.showTag($el, true);
                 }, 650);

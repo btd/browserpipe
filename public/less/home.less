@@ -189,21 +189,27 @@
                 margin: 4px;
             }
             .tag-menu-item{
-                color: #FFFFFF;
-                line-height: 20px;
-                padding: 3px 10px;    
-                text-align:left;
-                -webkit-border-radius: 3px;
-                -moz-border-radius: 3px;
-                border-radius: 3px;
-                text-shadow: none;
-                font-weight:bold;
+                min-width: 86px;
+                padding: 3px 6px;
 
-                &:hover{
-                    cursor:pointer;
-                }
-            }
-            .tag-menu-item:hover, .tag-menu-item:focus {
+                span {
+                    color: #FFFFFF;
+                    line-height: 20px;
+                    padding: 3px;
+                    text-align:left;
+                    -webkit-border-radius: 3px;
+                    -moz-border-radius: 3px;
+                    border-radius: 3px;
+                    text-shadow: none;
+                    font-weight:bold;
+                    vertical-align: top;
+
+                    &:hover{
+                        cursor:pointer;
+                    }
+                } 
+            }     
+            .tag-menu-item span:hover, .tag-menu-item span:focus {
                 color: #049CDB;
                 text-decoration: none;
                 background-color: #EFEFEF;
