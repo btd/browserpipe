@@ -2,9 +2,10 @@ define([
   'jQuery',
   'underscore',
   'backbone',
+  'views/view',
   'text!templates/tags/menu.item.text'
-], function($, _, Backbone, template){
-  var TagsMenuItemView = Backbone.View.extend({
+], function($, _, Backbone, App_View, template){
+  var TagsMenuItemView = App_View({
     tagName: 'li', 
     attributes : function (){
       return {
@@ -23,7 +24,7 @@ define([
     selectTag:function (event){
       this.model.set({selected: true})          
     },
-    render: function(){ 
+    renderview: function(){ 
       var compiledTemplate = _.template( template, {tag: this.model} );      
       $(this.el).html(compiledTemplate);      
       this.setActiveClass();

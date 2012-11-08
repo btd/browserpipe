@@ -59,8 +59,8 @@ module.exports = function (app, passport, auth) {
   // home route
   app.get('/', function(req, res){
     if(req.isAuthenticated())    
-      res.render('index/home')
+      res.render('main/home')
     else
-      res.render('index/index')
+      res.render('main/index')
   })
 }

@@ -2,23 +2,30 @@ define([
   'jQuery',
   'underscore',
   'backbone',
-  'text!templates/search/search.box.text'
-], function($, _, Backbone, template){
-  var SearchBoxView = Backbone.View.extend({
-    tagName: 'form', 
-    attributes : function (){
-      return {
-        class : 'form-search'
-      }
-    }, 
-    initialize: function(){  
-      console.log("Initializing SearchBoxView")
+  'views/view'
+], function($, _, Backbone, AppView){
+  var SearchBoxView = AppView.extend({
+    name: 'SearchBoxView',
+    el: $("#search-form"), 
+    active: false,
+    initializeView: function(){ 
     },     
-    render: function(){
-      console.log("rendering SearchBoxView")
-      var compiledTemplate = _.template( template, {} );      
-      $(this.el).html(compiledTemplate);   
+    renderView: function(){
       return this;    
+    },
+    searchBtnClicked: function(){           
+      this.executeSearch($('#search-box', this.el).val())
+      //Triggers the event that a search btn is clicked
+      this.trigger('SearchBtnClicked');
+    },
+    executeSearch: function(query){
+      console.time('Searching for "' + query + '"');
+      this.active = true;      
+      console.timeEnd('Searching for "' + query + '"'); 
+    },
+    postRender: function(){
+      var _this = this;
+      $('#search-btn', this.el).click(function(){_this.searchBtnClicked()});     
     }
   });
   return SearchBoxView;

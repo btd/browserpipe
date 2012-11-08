@@ -1,9 +1,0 @@
-!= messages()
-
-h2= title
-
-div#bookmarks
-  - if(bookmarks.length)
-    != partial('bookmarks_list', {collection : bookmarks, as : 'bookmark'})
-  - else
-    #no-results No bookmarks found.

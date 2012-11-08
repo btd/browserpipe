@@ -20,16 +20,33 @@ module.exports = {
         , callbackURL: "http://localhost:4000/auth/google/callback"
       }      
     , requirejs: {
-          appDir: "public/"
-        , baseUrl: "js" 
+          baseUrl: 'public/js'
           //Uncomment this line if uglify minification is not wanted.
-        //,  optimize: 'none',
-        , dir: "public/js"
-        , modules: [
-            {
-              name: "main"
-            }
-          ]
+          //,  optimize: 'none'
+        , include: ['main']
+          //Uncomment this if you want to debug three.js by itself
+          //,  excludeShallow: ['three']
+        , out: 'public/js/tagnfile.it.js'
+        , paths: {
+            jQuery: 'libs/jquery/jquery-1.8.0.min',
+            underscore: 'libs/underscore/underscore-min',
+            backbone: 'libs/backbone/backbone-min',
+            text: 'libs/require/text',
+            templates: '../templates',
+            bootstrap: 'libs/bootstrap/bootstrap.min'
+          }
+        , shim: {
+                'backbone': {
+                  deps: ['underscore', 'jQuery'],
+                  exports: 'Backbone'
+                }
+              , 'underscore': {
+                  exports: "_"
+                }
+              ,  'jQuery': {
+                    exports: "jQuery"
+                }
+          }
       }
     }
   , test: {

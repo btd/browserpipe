@@ -72,9 +72,9 @@ exports.boot = function(app, config, passport) {
     app.use(express.logger('dev'))
     app.set('showStackError', true)
     app.use(express.static(__dirname + '/public'))   
-    /*requirejs.optimize(config.requirejs, function(){
+    requirejs.optimize(config.requirejs, function(){
       console.log('Requirejs - Successfully optimized javascript')
-    }) */
+    })
   })
 
   // gzip only in staging and production envs

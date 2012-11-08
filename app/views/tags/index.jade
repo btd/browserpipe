@@ -1,8 +1,0 @@
-!= messages()
-
-div#tags
-  - if(tags.length)
-    != partial('tag_list', {collection : tags, as : 'tag'})
-  - else
-    #no-results No tags found. Create one
-      a(href="/tags/new") &nbsp;here
