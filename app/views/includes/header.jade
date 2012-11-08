@@ -4,29 +4,20 @@ header#header
 div#top-bar(class="navbar navbar-fixed-top")
   div(class="navbar-inner")
     div(class="container-fluid")
-      a(data-target=".nav-collapse", data-toggle="collapse", class="btn btn-navbar", data-original-title="")
-        span(class="icon-bar")
-        span(class="icon-bar")
-        span(class="icon-bar")
-      a(href="index.html", class="brand", data-original-title="")
-        //img(alt="Tagnfile.it", src="/img/logo-small.png")
-        span TAGNFILE.IT
-      ul(class="nav pull-left notifier")
+      a(href="index.html", class="brand", data-original-title="")      
+        span TAGNFILE.IT   
+      ul#tag-breadcrumb(class="breadcrumb pull-left")
+      ul#account-nav(class="nav pull-right")
         li(class="divider-vertical")
+        li(class="dropdown")
+          a(href="#", data-toggle="dropdown", data-original-title="") 
+            span #{req.user.name}
         li
-          a(href="#", data-original-title="")
-            i(class="icon-comment icon-white")
-            span(class="label label-important") 15
-      div(class="right-menu nav-collapse")
-        ul(class="nav pull-right")
-          li(class="divider-vertical")
-          li(class="dropdown")
-            a(href="#", data-toggle="dropdown", data-original-title="") 
-              span #{req.user.name}
-          li
-            a(href='/logout') Logout     
-div#filter-bar(class="navbar navbar-fixed-top")  
-  div#filter-bar-inner
-    span#filter-bar-left.pull-left
-    span#filter-bar-right
-    .clearfix
+          a(href='/logout') Logout        
+      form#search-form(class="form-search pull-right")
+        span.input-append
+          input#search-box(type="text", class="uncompressed")
+          button#search-btn(type="submit", class="btn") Search
+
+       
+     

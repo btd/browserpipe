@@ -36,16 +36,16 @@ module.exports = {
             bootstrap: 'libs/bootstrap/bootstrap.min'
           }
         , shim: {
-              'backbone': {
+                'backbone': {
                   deps: ['underscore', 'jQuery'],
                   exports: 'Backbone'
-              },
-              'underscore': {
+                }
+              , 'underscore': {
                   exports: "_"
-              },
-              'jQuery': {
-                  exports: "jQuery"
-              }
+                }
+              ,  'jQuery': {
+                    exports: "jQuery"
+                }
           }
       }
     }

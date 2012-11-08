@@ -5,10 +5,11 @@ define([
   'backbone',
   'models/tag',
   'collections/tags',
-  'views/tags/menu',
+  'views/containers/list',
+  'views/tags/breadcrumb',
   'views/search/search-box',
-  'views/bars/filter-bar'
-], function($, _, Backbone, Tag, TagCollection, TagsMenuView, SearchBoxView, FilterBarView){
+  'views/bars/top-bar'
+], function($, _, Backbone, Tag, TagCollection, ContainersListView, TagsBreadCrumbView, SearchBoxView, TopBarView){
   var AppRouter = Backbone.Router.extend({
     views: {},
     routes: {
@@ -38,27 +39,17 @@ define([
       /*var tags = new TagCollection();         
       tags.fetch({ 
         success: function (collection) {
-          //Sets the first tag as selected
-          if(collection.length > 0){
-            var selectedTag = collection.models[0]            
-            selectedTag.set({selected: true})
-            that.navigateSelectedTag(selectedTag)
-            tags.selectedTag = selectedTag
           }
-          //TODO: is it necessary to have the views as an attribute of AppRouter
-          that.views.tagsListView = new TagsListView({collection: collection})
-          that.views.tagsListView.on("onShowAddTag", that.onShowAddTag, that);
-          that.views.tagsListView.on("onChangeSelectedTag", that.onChangeSelectedTag, that);
-          that.views.tagsListView.render();
-        }
       });   */
-      that.views.tagsMenuView = new TagsMenuView()
+      that.views.containersListView = new ContainersListView()
+      that.views.tagsBreadCrumbView = new TagsBreadCrumbView()
       that.views.searchBoxView = new SearchBoxView()
-      that.views.filterBarView = new FilterBarView({
-        tagsMenuView: that.views.tagsMenuView, 
+      that.views.topBarView = new TopBarView({
+        tagsBreadCrumbView: that.views.tagsBreadCrumbView, 
         searchBoxView: that.views.searchBoxView
       });
-      that.views.filterBarView.render();
+      that.views.containersListView.render();
+      that.views.topBarView.render();
     },
     onShowAddTag: function(selectedTag){ 
       this.navigate("/tags/add/" + selectedTag.get("_id"));

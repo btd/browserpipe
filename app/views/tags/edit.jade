@@ -1,16 +1,17 @@
-
-!= messages()
-
-form.form-horizontal(method="post", action="/tags/"+tag._id)
-    input(name='_method', value='PUT', type='hidden')
-    fieldset
-        legend Edit #{tag.label}
-        .control-group
-          label.control-label(for='label') Label
-          .controls
-            input#label.input-xlarge(type='text', name="tag[label]", value=tag.label, placeholder='Enter the label')        
-        .form-actions
-          button.btn.btn-primary(type='submit') Save changes
-          &nbsp;
-          a.btn(href='/tags', title="cancel") Cancel
+#page-tag-edit.row-fluid.ps-page.hidden
+  //form.form-horizontal(method="post", action="/tags/"+tag._id)
+  form.form-horizontal(method="post")
+      input(name='_method', value='PUT', type='hidden')
+      fieldset
+          //legend Edit #{tag.label}
+          legend Edit
+          .control-group
+            label.control-label(for='label') Label
+            .controls
+              //input#label.input-xlarge(type='text', name="tag[label]", value=tag.label, placeholder='Enter the label')  
+              input#label.input-xlarge(type='text', placeholder='Enter the label')        
+          .form-actions
+            button.btn.btn-primary(type='submit') Save changes
+            &nbsp;
+            a.btn(href='/tags', title="cancel") Cancel
 

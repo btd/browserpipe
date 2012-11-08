@@ -1,10 +1,12 @@
-/*define([
+define([
   'jQuery',
   'underscore',
   'backbone',
-  'text!templates/tags/menu.add.text'
-], function($, _, Backbone, template){
-  var TagsMenuAddView = Backbone.View.extend({
+  'views/view',
+  'text!templates/tags/add.edit.text'
+], function($, _, Backbone, AppView, template){
+  var TagsAddEditView = AppView.extend({
+    name: 'TagsAddEditView',
   	tagName: 'div', 
     attributes : function (){
       return {
@@ -12,10 +14,10 @@
         id : "tag_" + this.model.get('_id')
       }
     },    
-    initialize: function(){ 
+    initializeView: function(){ 
       this.model.view = this;
       
     }
   });
-  return TagsMenuAddView;
-});*/
+  return TagsAddEditView;
+});
