@@ -1,4 +1,0 @@
-<form class="form-inline">
-  <input type="text" class="input-medium" placeholder="Name">  
-  <input type="text" class="input-medium" placeholder="Notes">    
-</form>

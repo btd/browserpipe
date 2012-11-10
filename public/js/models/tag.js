@@ -1,3 +1,7 @@
+/*
+!!Need to remove data/tags and create this model
+
+
 define([
   'underscore',
   'backbone'
@@ -9,9 +13,6 @@ define([
     initialize: function(spec){
       //spect contains the arguments passed in the constructor
 
-      /*this.set({
-        htmlId: 'movie_' + this.cid
-      })*/
     },
     validate: function (attrs) {
         if (attrs.label) {

@@ -33,7 +33,8 @@ module.exports = {
             backbone: 'libs/backbone/backbone-min',
             text: 'libs/require/text',
             templates: '../templates',
-            bootstrap: 'libs/bootstrap/bootstrap.min'
+            bootstrap: 'libs/bootstrap/bootstrap.min',
+            jquery_ui: 'libs/jquery.ui/jquery-ui-1.9.1.custom.min'
           }
         , shim: {
                 'backbone': {
@@ -43,9 +44,10 @@ module.exports = {
               , 'underscore': {
                   exports: "_"
                 }
-              ,  'jQuery': {
+              , 'jQuery': {
                     exports: "jQuery"
                 }
+              , 'jquery_ui': ['jQuery']
           }
       }
     }

@@ -1,3 +1,8 @@
+/*
+!!Need to remove data/tags and create this collection
+
+
+
 define([
   'underscore',
   'backbone',
@@ -16,7 +21,7 @@ define([
 });
 
 
-/*
+
 
 var tree = new TagTree();
 
