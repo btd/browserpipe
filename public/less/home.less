@@ -1,5 +1,6 @@
-// Bootstrap variables
-@import "/public/less/bootstrap/variables.less"; 
+// Core variables and mixins
+@import "/public/less/bootstrap/variables.less";
+@import "/public/less/bootstrap/mixins.less";
 
 // Tags BreadCrumb 
 @import "/public/less/tag-breadcrumb.less";
@@ -57,9 +58,47 @@ body {
         }          
     }
 }
-#main-container {    
-    margin: 40px 8px 5px;    
-    background-image:url('/img/bg.png');
+#main-container {   
+    margin: 40px 8px 5px; 
 }
+.dashboard {   
+    background: #EFEFEF;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+.container {
+    background: #CCCCCC;
+    margin: 6px 3px;
+    padding: 6px 6px 24px;
+    float:left;
+    width: 250px;
+    overflow-y: hidden;         
+    .box-sizing(border-box);
+    .border-radius(3px);
 
+    .title {
+        margin-left: 6px;
+        font-weight: bold;
+    }
+
+    .favicon {
+        height: 16px;
+        width: 16px;
+    }
+    .bookmarks {
+        text-align: left;
+        overflow-y: auto; 
+        margin: 0;
+
+        .bookmark {                    
+            background: #FFFFFF;
+            border: 1px solid #EFEFEF;
+            margin: 6px 0;
+            padding: 3px 6px;     
+            font-size: 12px;       
+            .box-sizing(border-box);
+            .border-radius(3px);
+        }   
+    }
+}
 

@@ -3,13 +3,11 @@ define([
   'jQuery',
   'underscore',
   'backbone',
-  'models/tag',
-  'collections/tags',
-  'views/containers/list',
+  'views/dashboards/view',
   'views/tags/breadcrumb',
   'views/search/search-box',
   'views/bars/top-bar'
-], function($, _, Backbone, Tag, TagCollection, ContainersListView, TagsBreadCrumbView, SearchBoxView, TopBarView){
+], function($, _, Backbone, DashboardView, TagsBreadCrumbView, SearchBoxView, TopBarView){
   var AppRouter = Backbone.Router.extend({
     views: {},
     routes: {
@@ -35,30 +33,38 @@ define([
     },
     createViews: function(){
       //We have no matching route, lets display the home page
-      var that = this;
-      /*var tags = new TagCollection();         
-      tags.fetch({ 
-        success: function (collection) {
-          }
-      });   */
-      that.views.containersListView = new ContainersListView()
-      that.views.tagsBreadCrumbView = new TagsBreadCrumbView()
-      that.views.searchBoxView = new SearchBoxView()
+      var that = this;      
+      //TODO: Here it should draw the last loaded dashboard
+      that.views.dashboardView = new DashboardView();
+      //Creates the tags breadCrumb from the top bar
+      that.views.tagsBreadCrumbView = new TagsBreadCrumbView();
+      //Creates the search box from the top bar
+      that.views.searchBoxView = new SearchBoxView();
+      //Creates the top bar      
       that.views.topBarView = new TopBarView({
         tagsBreadCrumbView: that.views.tagsBreadCrumbView, 
         searchBoxView: that.views.searchBoxView
       });
-      that.views.containersListView.render();
-      that.views.topBarView.render();
+      //Render views
+      that.views.topBarView.render()
+      $("#main-container").append(that.views.dashboardView.render().el);
+      //TODO: Event to add temporal tag containers
+      that.views.tagsBreadCrumbView.on('TagSelected', 
+        function(path){
+          that.views.dashboardView.addNewRandomContainer(path)
+        }
+      );
+
+
     },
     onShowAddTag: function(selectedTag){ 
-      this.navigate("/tags/add/" + selectedTag.get("_id"));
+      //this.navigate("/tags/add/" + selectedTag.get("_id"));
     },    
     onChangeSelectedTag: function(selectedTag){ 
-      this.navigateSelectedTag(selectedTag)
+      //this.navigateSelectedTag(selectedTag)
     },
     navigateSelectedTag: function(selectedTag){
-      this.navigate("/tags/view/" + selectedTag.get("_id"));
+      //this.navigate("/tags/view/" + selectedTag.get("_id"));
     }
 
   });

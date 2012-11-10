@@ -3,14 +3,14 @@ define([
   'underscore',
   'backbone',
   'views/view',
-  'models/tagtree',  
+  'data/tags',  
   'text!templates/tags/menu.drop.down.text'
-], function($, _, Backbone, AppView, tagTreeModel, templateDropDownTable){
+], function($, _, Backbone, AppView, tagsData, templateDropDownTable){
   var TagsBreadCrumbView = AppView.extend({
     name: 'TagsBreadCrumbView',
     el: $("#tag-breadcrumb"),
     initializeView: function(){  
-      this.tagTree  = (new tagTreeModel()).getTree();      
+      this.tagTree  = (new tagsData()).getTags();      
       this.compiledtemplateDropDownTable = _.template(templateDropDownTable)
     },    
     //Main function to load a tag, it can receive the path directly. Lat temporal item of the full path always appears with dropdown dialog opened.
