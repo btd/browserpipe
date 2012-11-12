@@ -18,4 +18,4 @@ TagSchema.path('path').validate(function (path) {
   return path.length > 0
 }, 'Tag path cannot be blank')
 
-mongoose.model('Tag', TagSchema)
+exports.Tag = mongoose.model('Tag', TagSchema);
