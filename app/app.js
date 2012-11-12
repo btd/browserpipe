@@ -1,5 +1,4 @@
-var Tag = require('./models/tag'),
-		User = require('./models/user');
 
-exports.Tag = Tag;
-exports.User = User;
+exports.Tag = require('./models/tag').Tag;
+
+exports.User = require('./models/user').User;
