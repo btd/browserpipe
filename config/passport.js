@@ -1,8 +1,8 @@
 var mongoose = require('mongoose')
   , LocalStrategy = require('passport-local').Strategy
-  , TwitterStrategy = require('passport-twitter').Strategy
-  , FacebookStrategy = require('passport-facebook').Strategy
-  , GoogleStrategy = require('passport-google-oauth').Strategy
+  //, TwitterStrategy = require('passport-twitter').Strategy
+  //, FacebookStrategy = require('passport-facebook').Strategy
+  //, GoogleStrategy = require('passport-google-oauth').Strategy
   , User = mongoose.model('User')
 
 
@@ -38,7 +38,7 @@ exports.boot = function (passport, config) {
       })
     }
   ))
-
+/*
   // use twitter strategy
   passport.use(new TwitterStrategy({
         consumerKey: config.twitter.consumerKey
@@ -117,5 +117,5 @@ exports.boot = function (passport, config) {
         return done(err, user)
       })
     }
-  ));
+  ));*/
 }
