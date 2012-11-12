@@ -1,21 +1,15 @@
+var app = require("../"),
+		mongoose = require("mongoose"),
+		Tag = mongoose.model('Tag'),
+		assert = require("assert")
 
-// Run $ expresso
-
-/**
- * Module dependencies.
- */
-
-var app = require('../app')
-  , assert = require('assert');
-
-
-module.exports = {
-  'GET /': function(){
-    assert.response(app,
-      { url: '/' },
-      { status: 200, headers: { 'Content-Type': 'text/html; charset=utf-8' }},
-      function(res){
-        assert.includes(res.body, '<title>Express</title>');
-      });
-  }
-};
+describe('app', function(){
+  describe('tags mongoose scheme', function(){
+    it('should not allow create tags with empty label', function() {
+    	var tag = new Tag({ label: ''});
+    	tag.save(function(err) {
+    		assert(typeof err !== 'undefined');
+    	});
+    })
+  })
+})
