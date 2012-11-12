@@ -3,11 +3,11 @@ define([
   'underscore',
   'backbone',
   'views/view',
-  'views/bookmarks/container-view',
-  'text!templates/containers/view.text'
-], function($, _, Backbone, AppView, BookmarkContainerView, template){
-  var ContainerView = AppView.extend({
-    name: 'ContainerView',
+  'views/bookmarks/container.item',
+  'text!templates/containers/item.text'
+], function($, _, Backbone, AppView, BookmarkContainerItem, template){
+  var ContainerItem = AppView.extend({
+    name: 'ContainerItem',
     tagName: 'div', 
     attributes : function (){
       return {
@@ -24,22 +24,19 @@ define([
       $(this.el).html(compiledTemplate);  
       $bk = $(".bookmarks", this.el);
       for (index in this.container.bookmarks) {
-          var bcv = new BookmarkContainerView({bookmark: this.container.bookmarks[index]});
+          var bcv = new BookmarkContainerItem({bookmark: this.container.bookmarks[index]});
           $bk.append(bcv.render().el);
        };
       return this;   
     },
     calculateHeight: function(){
       var wheight = $(window).height();
-      $bk = $(".bookmarks", this.el);
-      $bk.height("auto");
       var value = wheight - 110;
-      if($bk.height() > value)
-        $bk.height(value);
+      $(".bookmarks", this.el).css("max-height", value);
     },
     postRender: function(){
       this.calculateHeight();
     }
   });
-  return ContainerView;
+  return ContainerItem;
 });

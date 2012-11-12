@@ -3,13 +3,13 @@ define([
   'underscore',
   'backbone',
   'views/view',
-  'views/containers/view',
+  'views/containers/item',
   'data/containers'
-], function($, _, Backbone, AppView, ContainerView, ContainersData){
-  var DashboardView = AppView.extend({
-    name: 'DashboardView',
+], function($, _, Backbone, AppView, ContainerItem, ContainersData){
+  var DashboardItem = AppView.extend({
+    name: 'DashboardItem',
     tagName: 'div', 
-    containersViews: [],
+    containersItems: [],
     attributes : function (){
       return {
         class : 'dashboard',
@@ -24,8 +24,8 @@ define([
     },     
     renderView: function(){
       for (index in this.containers) {
-          var cv = new ContainerView({container: this.containers[index]});
-          this.containersViews.push(cv);
+          var cv = new ContainerItem({container: this.containers[index]});
+          this.containersItems.push(cv);
           $(this.el).append(cv.render().el);
        };
       return this;    
@@ -37,28 +37,31 @@ define([
     calculateWidth: function(){
       var $el = $(this.el);
       $el.width("auto");
-      var width = this.containersViews.length * 256;
-      if($el.width() < width) 
+      var width = this.containersItems.length * 256;
+      if($el.width() < width){ 
         $el.width(width);
+        //Height has to be recalculated in case the x scrollbar appears
+        this.calculateHeight();
+      }
     },
     postRender: function(){
-      var _this = this;
+      var self = this;
       this.calculateHeight();
       this.calculateWidth();
-      window.onresize = function(event) {        
-        for (index in _this.containersViews) {
-          _this.containersViews[index].calculateHeight();
+      $(window).resize(function() {
+        for (index in self.containersItems) {
+          self.containersItems[index].calculateHeight();
          };
-        _this.calculateHeight();
-      };
+        self.calculateHeight();
+      });
     },
-    addNewRandomContainer: function(name){ //TODO: remove this after adding crud for containers and bookmarks
-      var container = this.fakeData.generateFakeContainer(name);
-      var cv = new ContainerView({container: container});
-      this.containersViews.push(cv);            
+    addNewRandomContainer: function(type, name){ //TODO: remove this after adding crud for containers and bookmarks
+      var container = this.fakeData.generateFakeContainer(type, name);
+      var cv = new ContainerItem({container: container});
+      this.containersItems.push(cv);            
       this.calculateWidth();
       $(this.el).append(cv.render().el);
     }
   });
-  return DashboardView;
+  return DashboardItem;
 });

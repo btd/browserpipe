@@ -1,0 +1,2 @@
+<span class="name"><%= tag.name %></span>
+<% if(tag.children){ %><span class="children">...</span><% } %>	

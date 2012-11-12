@@ -3,11 +3,9 @@ define([
   'jQuery',
   'underscore',
   'backbone',
-  'views/dashboards/view',
-  'views/tags/breadcrumb',
-  'views/search/search-box',
-  'views/bars/top-bar'
-], function($, _, Backbone, DashboardView, TagsBreadCrumbView, SearchBoxView, TopBarView){
+  'views/dashboards/item',
+  'views/top-bar/bar'
+], function($, _, Backbone, DashboardItem, TopBar){
   var AppRouter = Backbone.Router.extend({
     views: {},
     routes: {
@@ -33,29 +31,14 @@ define([
     },
     createViews: function(){
       //We have no matching route, lets display the home page
-      var that = this;      
+      var self = this;      
       //TODO: Here it should draw the last loaded dashboard
-      that.views.dashboardView = new DashboardView();
-      //Creates the tags breadCrumb from the top bar
-      that.views.tagsBreadCrumbView = new TagsBreadCrumbView();
-      //Creates the search box from the top bar
-      that.views.searchBoxView = new SearchBoxView();
+      this.views.dashboardItem = new DashboardItem();
       //Creates the top bar      
-      that.views.topBarView = new TopBarView({
-        tagsBreadCrumbView: that.views.tagsBreadCrumbView, 
-        searchBoxView: that.views.searchBoxView
-      });
+      this.views.topBar = new TopBar({currentDashBoard: this.views.dashboardItem});
       //Render views
-      that.views.topBarView.render()
-      $("#main-container").append(that.views.dashboardView.render().el);
-      //TODO: Event to add temporal tag containers
-      that.views.tagsBreadCrumbView.on('TagSelected', 
-        function(path){
-          that.views.dashboardView.addNewRandomContainer(path)
-        }
-      );
-
-
+      this.views.topBar.render()
+      $("#main-container").append(this.views.dashboardItem.render().el);
     },
     onShowAddTag: function(selectedTag){ 
       //this.navigate("/tags/add/" + selectedTag.get("_id"));
