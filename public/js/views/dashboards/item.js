@@ -91,10 +91,7 @@ define([
     },
     scrollToContainer: function(container){
       var $el = $(this.el);
-      /*console.log("1: " + $(container.el).offset().left);
-      console.log("2: " + $el.offset().left);
-      console.log("3: " + $el.scrollLeft());
-      $el.animate({scrollLeft: $(container.el).offset().left- $el.offset().left+ $el.scrollLeft()}, 150);*/
+      $('html, body').animate({scrollLeft: $(container.el).offset().left}, 150);
     }    
   });
   return DashboardItem;
