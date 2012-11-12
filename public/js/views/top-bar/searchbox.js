@@ -41,7 +41,7 @@ define([
           $searchBox.animate({
               opacity: 1,
               width: '600px'
-            }, 200, function() {
+            }, 100, function() {
               // Animation complete.
             }); 
         }  

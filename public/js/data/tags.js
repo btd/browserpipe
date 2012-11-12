@@ -19,7 +19,13 @@ define([
                   "name":"deployment"                 
                },
                {
+                  "name":"Read Later"                 
+               },
+               {
                   "name":"design"                     
+               },
+               {
+                  "name":"Quick Launch"                 
                },
                {
                   "name":"development"                 
@@ -29,6 +35,9 @@ define([
                },
                {
                   "name":"managment"                 
+               },
+               {
+                  "name":"Favourites"                 
                },
                {
                   "name":"personal"                     
@@ -100,6 +109,7 @@ define([
          "deployment.debian.ssh": {},
          "deployment.nginx": {},
          "deployment.osx": {},
+         "Read Later": {},
          "design": {              
             "children":[
                {
@@ -165,7 +175,9 @@ define([
          "entertainment": {},                         
          "managment": {},                         
          "personal": {},                              
-         "projects": {},                               
+         "projects": {}, 
+         "Quick Launch": {},                              
+         "Favourites": {},                              
          "startup": {},                               
          "tools": {},                                  
          "useful_pages": {},

@@ -29,10 +29,10 @@ body {
                 }
                 #search-box {                                           
                     font-size: 20px;
-                    -webkit-transition: all 0.2s ease-in-out;
-                    -moz-transition: all 0.2s ease-in-out;
-                    -o-transition: all 0.2s ease-in-out;
-                    transition: all 0.2s ease-in-out;
+                    -webkit-transition: all 0.1s ease-in-out;
+                    -moz-transition: all 0.1s ease-in-out;
+                    -o-transition: all 0.1s ease-in-out;
+                    transition: all 0.1s ease-in-out;
 
                     &.compressed {
                         width: 7px;
@@ -76,7 +76,14 @@ body {
     overflow-y: hidden;         
     .box-sizing(border-box);
     .border-radius(3px);
+    border: 2px solid #CCCCCC;
 
+    &:hover {
+        cursor: pointer;
+    }
+    &.selected{
+        border-color: @blue;
+    }
     .title {
         margin-left: 6px;
         font-weight: bold;
