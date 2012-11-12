@@ -61,6 +61,19 @@ define([
     },
     prepareEvents: function(){
       var self = this;
+      this.currentDashBoard.on('containerSelected', 
+        function(container){
+          var type = '';
+          switch(container.type){
+            case 'search': type = 'searchBox'; break;
+            case 'tag': type = 'breadCrumb'; break;
+          }
+          self.setActiveFilter({
+            type: type,
+            data: container.name
+          });  
+        }
+      );
       this.breadCrumb.on('selectTag', 
         function(path){
           self.setActiveFilter({

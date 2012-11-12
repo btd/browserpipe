@@ -9,6 +9,9 @@ define([
   var ContainerItem = AppView.extend({
     name: 'ContainerItem',
     tagName: 'div', 
+    events: {
+      "click" : "select"
+    },
     attributes : function (){
       return {
         class : 'container',
@@ -28,14 +31,27 @@ define([
           $bk.append(bcv.render().el);
        };
       return this;   
+    },    
+    postRender: function(){
+      this.calculateHeight();
     },
     calculateHeight: function(){
       var wheight = $(window).height();
       var value = wheight - 110;
       $(".bookmarks", this.el).css("max-height", value);
     },
-    postRender: function(){
-      this.calculateHeight();
+    getContainerName: function(){
+      return this.container.name;
+    },
+    getContainerType: function(){
+      return this.container.type;
+    },
+    select: function(){
+      $(this.el).addClass("selected");
+      this.trigger("selected", this.container);
+    },
+    unSelect: function(){
+      $(this.el).removeClass("selected");
     }
   });
   return ContainerItem;

@@ -27,6 +27,7 @@ define([
           var cv = new ContainerItem({container: this.containers[index]});
           this.containersItems.push(cv);
           $(this.el).append(cv.render().el);
+          this.prepareContainerEvents(cv);
        };
       return this;    
     },
@@ -55,13 +56,46 @@ define([
         self.calculateHeight();
       });
     },
+    prepareContainerEvents: function(container){
+      var self = this;
+      container.on('selected', 
+        function(container){
+          for (index in self.containersItems) {
+            if(self.containersItems[index].getContainerName() != container.name)
+              self.containersItems[index].unSelect();
+          };
+          self.trigger('containerSelected', container);
+        }
+      );
+    },
+    getContainer: function(type, name){
+      for (index in this.containersItems) {
+        var cv = this.containersItems[index];
+        if(cv.getContainerName() == name && cv.getContainerType() == type)
+          return cv;
+      };
+      return null;
+    },
     addNewRandomContainer: function(type, name){ //TODO: remove this after adding crud for containers and bookmarks
-      var container = this.fakeData.generateFakeContainer(type, name);
-      var cv = new ContainerItem({container: container});
-      this.containersItems.push(cv);            
-      this.calculateWidth();
-      $(this.el).append(cv.render().el);
-    }
+      var cv = this.getContainer(type, name);
+      if(!cv){
+        var container = this.fakeData.generateFakeContainer(type, name);
+        cv = new ContainerItem({container: container});
+        this.containersItems.push(cv);            
+        this.calculateWidth();
+        $(this.el).append(cv.render().el);
+        this.prepareContainerEvents(cv);
+      }
+      this.scrollToContainer(cv)
+      cv.select();
+    },
+    scrollToContainer: function(container){
+      var $el = $(this.el);
+      /*console.log("1: " + $(container.el).offset().left);
+      console.log("2: " + $el.offset().left);
+      console.log("3: " + $el.scrollLeft());
+      $el.animate({scrollLeft: $(container.el).offset().left- $el.offset().left+ $el.scrollLeft()}, 150);*/
+    }    
   });
   return DashboardItem;
 });
