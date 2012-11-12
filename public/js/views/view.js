@@ -26,6 +26,12 @@ define([
         }, 0);
       }
       return this;
+    },    
+    close: function() {
+        // Unregister for event to stop memory leak
+        this.remove();
+        this.off();
+        Backbone.View.prototype.remove.call(this);
     }
   });
   return AppView;

@@ -1,0 +1,2 @@
+<img class="favicon" src="<%= bookmark.favicon %>" alt="Favicon" />
+<a target="_blank" href="<%= bookmark.url %>"><%= bookmark.title %></a>
