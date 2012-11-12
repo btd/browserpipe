@@ -68,6 +68,7 @@ UserSchema.method('authenticate', function(plainText) {
   return this.encryptPassword(plainText) === this.hashed_password
 })
 
+//TODO user blowfish?
 UserSchema.method('makeSalt', function() {
   return Math.round((new Date().valueOf() * Math.random())) + ''
 })
