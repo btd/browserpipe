@@ -1,6 +1,6 @@
 
 MOCHA_OPTS=
-REPORTER = nyan
+REPORTER = spec
 
 start:
 	@NODE_ENV=development ./node_modules/.bin/nodemon ./server.js
