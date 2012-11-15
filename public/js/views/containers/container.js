@@ -3,11 +3,11 @@ define([
   'underscore',
   'backbone',
   'views/view',
-  'views/bookmarks/container.item',
-  'text!templates/containers/item.text'
-], function($, _, Backbone, AppView, BookmarkContainerItem, template){
-  var ContainerItem = AppView.extend({
-    name: 'ContainerItem',
+  'views/items/container.item',
+  'text!templates/containers/container.text'
+], function($, _, Backbone, AppView, ContainerItem, template){
+  var Container = AppView.extend({
+    name: 'Container',
     tagName: 'div', 
     events: {
       "click" : "select"
@@ -21,16 +21,28 @@ define([
     },    
     initializeView: function(){     
       this.container = this.options.container;
+    },
+    clean: function(){
+      $(this.el).empty();
     },     
     renderView: function(){
-      var compiledTemplate = _.template( template, {container: this.container} );    
-      $(this.el).html(compiledTemplate);  
-      $bk = $(".bookmarks", this.el);
-      for (index in this.container.bookmarks) {
-          var bcv = new BookmarkContainerItem({bookmark: this.container.bookmarks[index]});
-          $bk.append(bcv.render().el);
-       };
+      this.renderHeader();
+      this.renderItems();
       return this;   
+    },   
+    renderHeader: function(){
+      var compiledTemplate = _.template( template, {container: this.container, icon: this.icon} );    
+      $(this.el).html(compiledTemplate); 
+      return this;
+    },
+    renderItems: function(){
+      var $items = $('<ul class="items"></ul>');
+      $('.box', this.el).append($items);  
+      for (index in this.container.items) {
+          var bcv = new ContainerItem({item: this.container.items[index]});
+          $items.append(bcv.render().el);
+       };
+      return this;
     },    
     postRender: function(){
       this.calculateHeight();
@@ -38,7 +50,7 @@ define([
     calculateHeight: function(){
       var wheight = $(window).height();
       var value = wheight - 110;
-      $(".bookmarks", this.el).css("max-height", value);
+      $(".box", this.el).css("max-height", value);
     },
     getContainerName: function(){
       return this.container.name;
@@ -54,5 +66,5 @@ define([
       $(this.el).removeClass("selected");
     }
   });
-  return ContainerItem;
+  return Container;
 });

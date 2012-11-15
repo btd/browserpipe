@@ -1,9 +1,9 @@
 {
   "name": "tagnfile.it",
-  "description": "A bookmark site",
+  "description": "Visualize what your information",
   "version": "0.0.1",
   "private": true,
-  "author": "Jorge Olmos & Daniel Fernandez (http://dmfernandez.com.ar)",
+  "author": "Denis Bardadym & Daniel Fernandez (http://dmfernandez.com.ar)",
   "engines": {
       "node": ">=0.6.18",
       "npm": ">=1.1.9"

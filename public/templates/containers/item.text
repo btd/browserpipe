@@ -1,9 +1,0 @@
-<div>
-	<% switch(container.type){
-		case 'search': %> <img src="img/search.png" alt="Search Container"> <% break;
-		case 'tag': %> <img src="img/tag.png" alt="Tag Container"> <% break;
-	}%>
-	<span class="title"><%= container.name %></span>
-</div>
-<ul class="bookmarks">	
-</ul>

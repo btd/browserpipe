@@ -3,16 +3,16 @@ define([
   'underscore',
   'backbone',
   'views/view',
-  'text!templates/tags/breadcrumb.dropdown.item.text'  
+  'text!templates/tags/breadcrumb.dropdown.tag.text'  
 ], function($, _, Backbone, AppView, template){
-  var TagBreadCrumbDropdownItem = AppView.extend({
-    name: 'TagBreadCrumbDropdownItem',
+  var BreadCrumbDropdownTag = AppView.extend({
+    name: 'BreadCrumbDropdownTag',
     tagName: 'td', 
     attributes : function (){
       return {
-        class : 'tag-dropdown-item',
+        class : 'tag-dropdown-child',
         //TODO: This should have a real id 
-        id : "tag-dropdown-item" + Math.random()
+        id : "tag-dropdown-child" + Math.random()
       }
     },    
     initializeView: function(){    
@@ -28,5 +28,5 @@ define([
       jQuery.data(this.el, 'path', (this.tag.path!=""?this.tag.path + ".":"") + this.tag.name);  
     }   
   });
-  return TagBreadCrumbDropdownItem;
+  return BreadCrumbDropdownTag;
 });

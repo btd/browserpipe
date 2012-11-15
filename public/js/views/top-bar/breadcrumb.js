@@ -3,10 +3,9 @@ define([
   'underscore',
   'backbone',
   'views/view',
-  'views/tags/breadcrumb.item',
-  'data/tags',  
-  'text!templates/tags/menu.drop.down.text'
-], function($, _, Backbone, AppView, TagBreadCrumbItem, tagsData, dropDownTableTemplate){
+  'views/tags/breadcrumb.tag',
+  'data/tags'
+], function($, _, Backbone, AppView, BreadCrumbTag, tagsData){
   var BreadCrumbView = AppView.extend({
     name: 'BreadCrumbView',    
     el: $("#breadcrumb"),
@@ -15,8 +14,7 @@ define([
     activeViews: [],
     initializeView: function(){  
       //TODO: Remove fake initial containers to test html/css design
-      this.fakeData  = new tagsData();    
-      this.compiledtemplateDropDownTable = _.template(dropDownTableTemplate)
+      this.fakeData  = new tagsData(); 
     },    
     setCurrentPath: function(path, opened){ //Eg. path = development.tools.new
       this.currentPath = path;
@@ -50,7 +48,7 @@ define([
     },
     addTag: function(tag, opened){
       var self = this;
-      var view = new TagBreadCrumbItem({tag: tag, opened: opened});
+      var view = new BreadCrumbTag({tag: tag, opened: opened});
       $(this.el).append(view.render().el);
       view.on('showDropDown', 
         function(path){

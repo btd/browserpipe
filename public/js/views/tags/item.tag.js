@@ -3,10 +3,10 @@ define([
   'underscore',
   'backbone',
   'views/view',
-  'text!templates/tags/bookmark.item.text'
+  'text!templates/tags/item.tag.text'
 ], function($, _, Backbone, AppView, template){
-  var TagBookmarkItem = AppView.extend({
-    name: 'TagBookmarkItem',
+  var ItemTag = AppView.extend({
+    name: 'ItemTag',
     tagName: 'li', 
     events: {
       "click" : "tagClicked"
@@ -15,7 +15,7 @@ define([
       return {
         class : 'tag',
         //TODO: This should have a real id 
-        id : "tag-bookmark" + Math.random()
+        id : "tag-item" + Math.random()
       }
     },    
     initializeView: function(){     
@@ -33,5 +33,5 @@ define([
     tagClicked: function(){
     }
   });
-  return TagBookmarkItem;
+  return ItemTag;
 });

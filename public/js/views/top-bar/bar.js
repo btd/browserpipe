@@ -108,65 +108,6 @@ define([
         }
       );      
     }
-
-
-   /* prepareEvents: function(){
-      var _this = this;     
-      window.onresize = function(event) {
-        _this.calculateHeight();
-      };
-      $searchBox = $('#search-box', this.el);
-      if(this.activeFilter == 'breadcrumb')
-        this.prepareBreadCrumbActiveEvents(_this, $searchBox);
-      else
-        this.prepareSearchBoxActiveEvents(_this, $searchBox);
-      this.breadCrumbView.on('TagSelected', 
-        function($tagDropDown){
-          if(_this.activeFilter != 'breadcrumb'){
-            _this.prepareBreadCrumbActiveEvents(_this, $searchBox);
-          }
-        }
-      );
-      this.searchBox.on('SearchBtnClicked', 
-        function(){
-          if(_this.activeFilter != 'searchBox'){
-            _this.prepareSearchBoxActiveEvents(_this, $searchBox);
-          }
-        }
-      );
-      /*this.breadCrumbView.on('ShowTemporalTag', 
-        function(){
-          $searchBox.blur(); 
-          _this.hideSearchBox($searchBox)
-        }
-      );     
-    },
-    prepareBreadCrumbActiveEvents: function(_this, $searchBox){      
-      _this.activeFilter = 'breadcrumb';
-      _this.hideSearchBox($searchBox)
-      console.time('Executing prepareBreadCrumbActiveEvents');
-      _this.breadCrumbView.unbind('HideDropDownMenu');   
-      $searchBox.focus(function() {
-         _this.showSearchBox($(this));         
-      }).focusout(function() {
-         _this.hideSearchBox($(this));  
-      });
-      console.timeEnd('Executing prepareBreadCrumbActiveEvents');
-    },
-    prepareSearchBoxActiveEvents: function(_this, $searchBox){          
-      _this.activeFilter = 'searchbox';
-      _this.showSearchBox($searchBox)
-      console.time('Executing prepareSearchBoxActiveEvents');
-      $searchBox.unbind('focus focusout');        
-     /* this.breadCrumbView.on('HideDropDownMenu', 
-        function($tagDropDown){
-          if(!$('.tag-dropdown-menu').is(':visible')) 
-            _this.showSearchBox($searchBox)
-        }
-      );    
-      //this.breadCrumbView.collapse();
-      console.timeEnd('Executing prepareSearchBoxActiveEvents');  
-    }*/
   });
   return TopBar;
 });

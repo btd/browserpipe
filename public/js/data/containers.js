@@ -1,9 +1,10 @@
 define([
   'underscore',
-  'backbone'
-], function(_, Backbone) {
+  'backbone',
+  'data/tags'
+], function(_, Backbone, tagsData) {
    var Containers = Backbone.Model.extend({  
-      bookmarks: [
+      items: [
          {
             "title": "Daniel Fernandez (fernandezdaniel) | Trello",
             "url": "https://trello.com",
@@ -68,19 +69,24 @@ define([
             "created": "25 Oct 2012"
          }
       ],
-      getRandomBookmark: function(){
-         var randomIndex = Math.floor(Math.random() * this.bookmarks.length);
-         return _.clone(this.bookmarks[randomIndex]);
+      initialize: function(){
+         this.fakeTagsData  = new tagsData();    
+      },
+      getRandomItem: function(){
+         var randomIndex = Math.floor(Math.random() * this.items.length);
+         return _.clone(this.items[randomIndex]);
       },
       generateFakeContainer: function(type, key){
-         var numberOfBookmarks = Math.floor(Math.random() * 50);
+         var numberOfItems = Math.floor(Math.random() * 50);
          var container = {
             name: key,
             type: type,
-            bookmarks: []
+            items: []
          };
-         for (var i = 0; i < numberOfBookmarks; i++) {
-            container.bookmarks.push(this.getRandomBookmark());
+         if(type == "tag")
+            container.tag = this.fakeTagsData.getTag(key);
+         for (var i = 0; i < numberOfItems; i++) {
+            container.items.push(this.getRandomItem());
          };
          return container;
       },

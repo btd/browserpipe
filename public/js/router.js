@@ -3,9 +3,9 @@ define([
   'jQuery',
   'underscore',
   'backbone',
-  'views/dashboards/item',
+  'views/dashboards/dashboard',
   'views/top-bar/bar'
-], function($, _, Backbone, DashboardItem, TopBar){
+], function($, _, Backbone, Dashboard, TopBar){
   var AppRouter = Backbone.Router.extend({
     views: {},
     routes: {
@@ -33,12 +33,12 @@ define([
       //We have no matching route, lets display the home page
       var self = this;      
       //TODO: Here it should draw the last loaded dashboard
-      this.views.dashboardItem = new DashboardItem();
+      this.views.dashboard = new Dashboard();
       //Creates the top bar      
-      this.views.topBar = new TopBar({currentDashBoard: this.views.dashboardItem});
+      this.views.topBar = new TopBar({currentDashBoard: this.views.dashboard});
       //Render views
       this.views.topBar.render()
-      $("#main-container").append(this.views.dashboardItem.render().el);
+      $("#main-container").append(this.views.dashboard.render().el);
     },
     onShowAddTag: function(selectedTag){ 
       //this.navigate("/tags/add/" + selectedTag.get("_id"));
