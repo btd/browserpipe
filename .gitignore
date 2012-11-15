@@ -5,3 +5,4 @@ npm-debug.log
 public/css/*.css
 app-cov
 coverage.html
+public/js/tagnfile.it.js
