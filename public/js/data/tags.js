@@ -206,13 +206,10 @@ define([
         var tag = this.tags[path];
         var names = path.split('.');
         //Calculate the tag path
-        tag.path = '';    
-        var  i = 0;
-        for (;i < names.length - 1; i++) {
-            tag.path = (tag.path!=""?tag.path + ".":"") + names[i];
-        }
+        var initialNames = _.initial(names);        
+        tag.path = (initialNames.length > 0? initialNames.join('.'):'');        
         //Gets the tag name
-        tag.name = names[i];
+        tag.name = _.last(names);
         tag.isRoot = false;
          return tag;
       },

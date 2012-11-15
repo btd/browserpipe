@@ -1,0 +1,5 @@
+<div class="details">
+	<div class="description"><%= item.description %></div>
+	<ul class="tags clearfix"></ul>
+	<img class="screenshot" src="<%= item.screenshot %>" alt="ScreenShot" />	
+</div>

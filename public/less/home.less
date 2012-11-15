@@ -2,8 +2,9 @@
 @import "/public/less/bootstrap/variables.less";
 @import "/public/less/bootstrap/mixins.less";
 
-// Tags BreadCrumb 
+// Rules import
 @import "/public/less/tag-breadcrumb.less";
+@import "/public/less/container.less";
 
 body {
     background-color: @blueDark;
@@ -66,90 +67,5 @@ body {
     overflow-x: auto;
     overflow-y: hidden;
     .border-radius(3px);
-}
-.container {
-    background: #CCCCCC;
-    margin: 6px 3px;
-    padding: 6px 6px 24px;
-    float:left;
-    width: 250px;
-    overflow-y: hidden;         
-    .box-sizing(border-box);
-    .border-radius(3px);
-    border: 2px solid #CCCCCC;
-
-    &:hover {
-        cursor: pointer;
-    }
-    &.selected{
-        border-color: @blue;
-    }
-    .title {
-        margin-left: 6px;
-        font-weight: bold;
-    }
-
-    .favicon {
-        height: 16px;
-        width: 16px;
-    }
-    .bookmarks {
-        text-align: left;
-        overflow-y: auto; 
-        margin: 0;
-        font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
-
-        .bookmark {                    
-            background: #FFFFFF;
-            border: 1px solid #EFEFEF;
-            margin: 6px 0;
-            padding: 3px 6px;     
-            font-size: 14x;       
-            .box-sizing(border-box);
-            .border-radius(3px);
-
-            &:hover {
-                cursor: pointer;
-                border: 1px solid @blue;
-            }
-            .details {
-                margin-top: 2px;
-                border-top: 2px solid #EFEFEF;
-
-                &.collapsed {
-                    display:none;
-                }
-                .screenshot {
-                    margin-top: 4px;
-                    max-height: 200px;
-                    max-width: 200px;
-                }
-                .description {
-                   font-size: 12px; 
-                }
-                .tags {
-                    margin: 0; 
-                    padding: 0;}
-                    font-size: 11px;
-
-                    li {
-                        list-style:none; 
-                        color: white;
-                        font-weight: bold;
-                        background-color: @blue;
-                        margin: 0 2px 2px 0;        
-                        padding: 1px 2px;
-                        .border-radius(2px);
-                        float: left;
-                        line-height: 12px;
-
-                        &:hover {
-                            background-color: @blueDark;
-                        }
-                    }
-                }
-            }
-        }   
-    }
 }
 
