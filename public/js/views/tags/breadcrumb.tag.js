@@ -3,12 +3,12 @@ define([
   'underscore',
   'backbone',
   'views/view',
-  'views/tags/breadcrumb.dropdown.item',
+  'views/tags/breadcrumb.dropdown.tag',
   'data/tags',  
-  'text!templates/tags/breadcrumb.item.text'  
-], function($, _, Backbone, AppView, TagBreadCrumbDropdownItem, tagsData, template){
-  var TagBreadCrumbItem = AppView.extend({
-    name: 'TagBreadCrumbItem',
+  'text!templates/tags/breadcrumb.tag.text'  
+], function($, _, Backbone, AppView, BreadCrumbDropdownTag, tagsData, template){
+  var BreadCrumbTag = AppView.extend({
+    name: 'BreadCrumbTag',
     tagName: 'li',     
     events: {
       "mouseenter" : "showDropDown",
@@ -57,9 +57,9 @@ define([
     },
     showDropDown: function(){
       if(this.tag.children){        
-        if(!this.tagBreadCrumbDropdownItems){
-          this.tagBreadCrumbDropdownItems = [];
-          var $table = $(".tag-dropdown-items" , this.el);
+        if(!this.breadCrumbDropdownTags){
+          this.breadCrumbDropdownTags = [];
+          var $table = $(".tag-dropdown-childs" , this.el);
           for (index in this.tag.children) {
             var childTagPath = this.tag.children[index].name;
             
@@ -74,9 +74,9 @@ define([
                 $tr = $('<tr></tr>');
                 $table.append($tr);
             }*/       
-            var tagBreadCrumbDropdownItem = new TagBreadCrumbDropdownItem({tag: childTag});
-            this.tagBreadCrumbDropdownItems.push(tagBreadCrumbDropdownItem);
-            $tr.append(tagBreadCrumbDropdownItem.render().el);            
+            var breadCrumbDropdownTag = new BreadCrumbDropdownTag({tag: childTag});
+            this.breadCrumbDropdownTags.push(breadCrumbDropdownTag);
+            $tr.append(breadCrumbDropdownTag.render().el);            
           }
         }
         //Calculates the height of the dropdown
@@ -86,7 +86,7 @@ define([
       }
     },
     hideDropDown: function(){
-      if(this.tagBreadCrumbDropdownItems){        
+      if(this.breadCrumbDropdownTags){        
         $(".tag-dropdown-cont" , this.el).hide(); 
       }
     },
@@ -108,9 +108,11 @@ define([
     stopNavigateToChilds: function(){
       clearTimeout(this.timeout);  
     },
-    selectTag: function(e){  
-      var path = jQuery.data($(e.target).parents('.tag-breadcrumb').get(0), 'path');
-      this.trigger('selectChild', path);
+    selectTag: function(e){ 
+      if(!this.tag.isRoot){
+        var path = jQuery.data($(e.target).parents('.tag-breadcrumb').get(0), 'path');
+        this.trigger('selectChild', path);
+      }
     },
     selectChildTag: function(e){  
       e.preventDefault();
@@ -119,5 +121,5 @@ define([
     }
 
   });
-  return TagBreadCrumbItem;
+  return BreadCrumbTag;
 });

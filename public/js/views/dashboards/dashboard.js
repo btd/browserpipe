@@ -3,11 +3,13 @@ define([
   'underscore',
   'backbone',
   'views/view',
-  'views/containers/item',
+  'views/containers/container',
+  'views/containers/search.container',
+  'views/containers/tag.container',
   'data/containers'
-], function($, _, Backbone, AppView, ContainerItem, ContainersData){
-  var DashboardItem = AppView.extend({
-    name: 'DashboardItem',
+], function($, _, Backbone, AppView, Container, SearchContainer, TagContainer, ContainersData){
+  var Dashboard = AppView.extend({
+    name: 'Dashboard',
     tagName: 'div', 
     containersItems: [],
     attributes : function (){
@@ -23,13 +25,22 @@ define([
       this.containers  = this.fakeData.getInitialFakeContainers();  
     },     
     renderView: function(){
-      for (index in this.containers) {
-          var cv = new ContainerItem({container: this.containers[index]});
-          this.containersItems.push(cv);
-          $(this.el).append(cv.render().el);
-          this.prepareContainerEvents(cv);
-       };
+      for (index in this.containers)
+        this.addContainer(this.containers[index]);
       return this;    
+    },
+    addContainer: function(container){
+      var cv;
+      switch(container.type){
+        case 'search': cv = new SearchContainer({container: container}); break;
+        case 'tag': cv = new TagContainer({container: container}); break;
+      }         
+      this.containersItems.push(cv);            
+      this.calculateWidth();
+      $(this.el).append(cv.render().el);
+      this.prepareContainerEvents(cv);
+
+      return cv;
     },
     calculateHeight: function(){
       var wheight = $(window).height();
@@ -76,16 +87,9 @@ define([
       };
       return null;
     },
-    addNewRandomContainer: function(type, name){ //TODO: remove this after adding crud for containers and bookmarks
-      var cv = this.getContainer(type, name);
-      if(!cv){
-        var container = this.fakeData.generateFakeContainer(type, name);
-        cv = new ContainerItem({container: container});
-        this.containersItems.push(cv);            
-        this.calculateWidth();
-        $(this.el).append(cv.render().el);
-        this.prepareContainerEvents(cv);
-      }
+    addNewRandomContainer: function(type, name){ //TODO: remove this after adding crud for containers and items
+      var container = this.fakeData.generateFakeContainer(type, name);
+      var cv = this.addContainer(container);
       this.scrollToContainer(cv)
       cv.select();
     },
@@ -94,5 +98,5 @@ define([
       $('html, body').animate({scrollLeft: $(container.el).offset().left}, 150);
     }    
   });
-  return DashboardItem;
+  return Dashboard;
 });

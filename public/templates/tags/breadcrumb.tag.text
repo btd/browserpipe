@@ -5,6 +5,6 @@
 <div style="display:none;" class="tag-dropdown-cont dropdown-menu">
 	<div class="tag-dropdown">
 		<div class="tag-dropdown-arrow"></div>
-		<table class="tag-dropdown-items"></table>
+		<table class="tag-dropdown-childs"></table>
 	</div>
 </div>

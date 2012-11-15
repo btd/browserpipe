@@ -1,5 +1,0 @@
-<div class="details">
-	<div class="description"><%= bookmark.description %></div>
-	<ul class="tags clearfix"></ul>
-	<img class="screenshot" src="<%= bookmark.screenshot %>" alt="ScreenShot" />	
-</div>

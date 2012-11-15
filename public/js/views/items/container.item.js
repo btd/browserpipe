@@ -3,12 +3,12 @@ define([
   'underscore',
   'backbone',
   'views/view',
-  'views/tags/bookmark.item',
-  'text!templates/bookmarks/container.item.text',
-  'text!templates/bookmarks/container.item.details.text'
-], function($, _, Backbone, AppView, TagBookmarkItem, mainTemplate, detailsTemplate){
-  var BookmarkContainerItem = AppView.extend({
-    name: 'BookmarkContainerItem',
+  'views/tags/item.tag',
+  'text!templates/items/container.item.text',
+  'text!templates/items/container.item.details.text'
+], function($, _, Backbone, AppView, ItemTag, mainTemplate, detailsTemplate){
+  var ContainerItem = AppView.extend({
+    name: 'ContainerItem',
     tagName: 'li', 
     events: {
       "click" : "toggle",
@@ -16,16 +16,16 @@ define([
     },
     attributes : function (){
       return {
-        class : 'bookmark',
+        class : 'item',
         //TODO: This should have a real id 
-        id : "bookmark" + Math.random()
+        id : "item" + Math.random()
       }
     },    
     initializeView: function(){     
-      this.bookmark = this.options.bookmark;
+      this.item = this.options.item;
     },     
     renderView: function(){
-      var compiledTemplate = _.template( mainTemplate, {bookmark: this.bookmark} );    
+      var compiledTemplate = _.template( mainTemplate, {item: this.item} );    
       $(this.el).html(compiledTemplate);       
       return this;   
     },
@@ -50,10 +50,10 @@ define([
         this.loadDetails();
     },
     loadDetails: function(){      
-      var compiledTemplate = $(_.template( detailsTemplate, {bookmark: this.bookmark} ));
+      var compiledTemplate = $(_.template( detailsTemplate, {item: this.item} ));
       var $tags = $(".tags", compiledTemplate);
-      for (index in this.bookmark.tags) {
-          var tbv = new TagBookmarkItem({tag: this.bookmark.tags[index]});
+      for (index in this.item.tags) {
+          var tbv = new ItemTag({tag: this.item.tags[index]});
           $tags.append(tbv.render().el);
        };
        $(this.el).append(compiledTemplate)  
@@ -62,5 +62,5 @@ define([
       e.stopPropagation();
     }
   });
-  return BookmarkContainerItem;
+  return ContainerItem;
 });
