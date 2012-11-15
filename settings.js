@@ -28,7 +28,7 @@ exports.boot = function(app, config, passport) {
   // dynamic helpers
   app.use(function (req, res, next) {
     res.locals.appName = 'Tagnfile.it'
-    res.locals.title = 'Visualize what your information'
+    res.locals.title = 'Visualize your information'
     res.locals.showStack = app.showStackError
     res.locals.req = req
     res.locals.formatDate = function (date) {
