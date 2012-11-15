@@ -45,6 +45,8 @@ define([
     calculateHeight: function(){
       var wheight = $(window).height();
       $(this.el).height(wheight - 50);
+      for (index in this.containersItems)
+        this.containersItems[index].calculateHeight();
     },    
     calculateWidth: function(){
       var $el = $(this.el);
@@ -61,9 +63,6 @@ define([
       this.calculateHeight();
       this.calculateWidth();
       $(window).resize(function() {
-        for (index in self.containersItems) {
-          self.containersItems[index].calculateHeight();
-         };
         self.calculateHeight();
       });
     },

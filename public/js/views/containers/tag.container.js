@@ -55,6 +55,7 @@ define([
      		};
      		self.clean();
      		self.renderView();
+        self.calculateHeight();
 	      }
 	    );
     }

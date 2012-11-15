@@ -49,7 +49,7 @@ define([
     },
     calculateHeight: function(){
       var wheight = $(window).height();
-      var value = wheight - 110;
+      var value = wheight - 115;
       $(".box", this.el).css("max-height", value);
     },
     getContainerName: function(){
