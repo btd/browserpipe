@@ -12,7 +12,7 @@ var nonEmpty = function(value) {
 
 var UserSchema = new Schema({
     name: { type: String, match: /(\w| )+/, trim: true, validate: [nonEmpty, 'nonEmpty']}
-  , email: { type: String, required: true, match: /^\w+@\w+$/, trim: true, lowercase: true, validate: [nonEmpty, 'nonEmpty'] }
+  , email: { type: String, required: true, match: /\S+@\S+\.\S/, errMsg: 'Email is not valid', trim: true, lowercase: true, validate: [nonEmpty, 'nonEmpty'] }
   , username: { type: String, match: /\w+/, validate: [nonEmpty, 'nonEmpty'] }
   , password: {type: String, set: function(password) {
     //do not allow user to set empty password

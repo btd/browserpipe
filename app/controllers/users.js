@@ -38,6 +38,7 @@ exports.create = function (req, res) {
   var user = new User(req.body)
   user.provider = 'local'
   user.save(function (err) {
+    console.log(err);
     if (err) return res.render('users/signup', { errors: err.errors })
     req.logIn(user, function(err) {
       if (err) return next(err)
