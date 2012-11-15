@@ -77,6 +77,8 @@ exports.boot = function(app, config, passport) {
     })
   })
 
+  //TODO gzippo should be replaced with nginx reverse proxy
+  //app.use('trusted proxy');
   // gzip only in staging and production envs
   app.configure('staging', function(){
     app.use(express.logger(':date :method :url :status'))

@@ -1,5 +1,10 @@
 
 module.exports = {
+    test: {
+      db: {
+        uri: 'mongodb://localhost/tagnfileit-test'
+      }
+    },
     development: {
       db: {
         uri: 'mongodb://localhost/tagnfileit'
