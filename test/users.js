@@ -28,49 +28,45 @@ describe('user model', function() {
 		expect(user.get('password')).not.to.be.empty();
 	});
 
-	it('should not require set name, email, username, password if user came from ["twitter", "facebook", "google"]', function() {
-		var user1 = new User({'provider': 'twitter'});
+	it('should require set only password and email', function() {
+		var user1 = new User({ password: 'password', email: 'a@a'});
 
 		user1.save(function(err) {
-			expect(err).to.be.empty();
+			expect(err).to.be(undefined);
 		});
 
-		var user2 = new User({'provider': 'facebook'});
+		var user2 = new User({ email: 'a@a'});
 
 		user2.save(function(err) {
-			expect(err).to.be.empty();
+			expect(Object.keys(err.errors).length).to.be(1);
 		});
-
-		var user3 = new User({'provider': 'google'});
-
-		user3.save(function(err) {
-			expect(err).to.be.empty();
-		});
-		
 	});
 
-	it('should require set name, email, username, password if user came traditional way', function() {
-		var user = new User();
+	it('should require that user name, username is not empty alphanumberic sequence', function() {
+		var user = new User({password: 'password', email: 'a@a', name: '', username: ''});
 
 		user.save(function(err) {
-			expect(err).not.to.be(undefined);
-			expect(err).to.be.an(Error);
+			expect(Object.keys(err.errors).length).to.be(2);
+			expect(err.errors.name.type).to.be('nonEmpty');
+			expect(err.errors.username.type).to.be('nonEmpty');
 		});
 
-		
-	});
-
-	it('should require set not empty name, email, username, password if user came traditional way', function() {
-		var user = new User({name: '', email: '', username: '', password: ''});
+		user.name = 'normal name';
+		user.username = 'username'
 
 		user.save(function(err) {
-			expect(err).not.to.be(undefined);
-			expect(err).to.be.an(Error);
-			expect(Object.keys(err.errors).length).to.be(3);
+			expect(err).to.not.be.ok();
 		});
-
-		
 	});
+
+	it('should require that email contain @', function() {
+		var user = new User({password: 'password', email: 'aa'});
+
+		user.save(function(err) {
+			expect(Object.keys(err.errors).length).to.be(1);
+		});
+	});
+
 
 	it('should check that password match', function() {
 		var user = new User({password: 'password'});
