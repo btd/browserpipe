@@ -1,18 +1,33 @@
-/*
-!!Need to remove data/tags and create this model
-
-
 define([
   'underscore',
-  'backbone'
-], function(_, Backbone) {
+  'backbone',
+  'collections/tags',
+  'exports' //This is for circular dependency between Tag and TagCollection
+], function(_, Backbone, TagCollection) {
   var Tag = Backbone.Model.extend({
+    urlRoot: "/tags",
     defaults: {
-      selected: false
+      isRoot: false      
     },
-    initialize: function(spec){
-      //spect contains the arguments passed in the constructor
-
+    initialize: function(spec){      
+      this.set('children', new TagCollection());
+    },
+    fetch : function(options) { 
+      var self = this;
+      var success = options.success;
+      var error = options.error;
+      options.success = function(resp, status, xhr) {
+        var tag = resp[0];        
+        if(tag){
+          if (!self.set(tag, options)) return false;
+          if (success) success(self, resp, options);
+        }
+        else{
+          if (error) error("invalid path");
+          else return false;
+        }
+      };
+      return Backbone.sync('read', this, options);
     },
     validate: function (attrs) {
         if (attrs.label) {
@@ -20,6 +35,9 @@ define([
                 return "Tag label must be a string with a length";
             }
         }
+    },
+    addChildren: function(children){
+      this.get('children').add(children);
     }
   });
   return Tag;

@@ -26,8 +26,9 @@ define([
       $(this.el).empty();
     },     
     renderView: function(){
-      this.renderHeader();
-      this.renderItems();
+      this
+        .renderHeader()
+        .renderItems();
       return this;   
     },   
     renderHeader: function(){
@@ -36,20 +37,21 @@ define([
       return this;
     },
     renderItems: function(){
-      var $items = $('<ul class="items"></ul>');
-      $('.box', this.el).append($items);  
+      var $items = $('<ul class="items"></ul>');      
       for (index in this.container.items) {
           var bcv = new ContainerItem({item: this.container.items[index]});
           $items.append(bcv.render().el);
        };
+      $('.box', this.el).append($items);  
       return this;
     },    
     postRender: function(){
       this.calculateHeight();
     },
     calculateHeight: function(){
+      var headerHeight = $('.header', this.el).height();
       var wheight = $(window).height();
-      var value = wheight - 115;
+      var value = wheight - headerHeight - 95;
       $(".box", this.el).css("max-height", value);
     },
     getContainerName: function(){

@@ -25,7 +25,7 @@ define([
     },
     postRender: function(){   
       //As not all browsers support HTML5, we set data attribute by Jquery            
-      jQuery.data(this.el, 'path', (this.tag.path!=""?this.tag.path + ".":"") + this.tag.name);  
+      jQuery.data(this.el, 'path', this.tag.get('path') + "." + this.tag.get('label'));  
     }   
   });
   return BreadCrumbDropdownTag;
