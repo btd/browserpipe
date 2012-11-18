@@ -16,7 +16,8 @@
         border-color: @blue;
     }
     .header {        
-        .clearfix();      
+        .clearfix();   
+        min-height: 20px;   
 
         img {
             float:left;
@@ -38,6 +39,23 @@
         overflow-y: auto; 
         .tags {
             margin: 4px 5px 0 0 !important;
+
+            .collapser {
+                .border-radius(3px);
+                background-color: @blue;
+                height: 6px;
+                margin-bottom: 6px;
+            }
+
+            &.collapsed {
+
+                .collapser {
+                    margin-bottom: 6px;   
+                }
+                .tag {
+                    display: none;
+                }
+            }
 
             .tag {
                 color: white;

@@ -18,8 +18,7 @@ define([
         id : "tag-item" + Math.random()
       }
     },    
-    initializeView: function(){     
-      console.log(this.options.tag);
+    initializeView: function(){    
       this.tag = this.options.tag;
       this.tag = this.options.temporal;
     },     

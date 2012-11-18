@@ -10,6 +10,14 @@ define([
   var TagContainer = Container.extend({
     name: 'TagContainer',
   	icon: 'img/tag.png', 
+    events: {
+      "click" : "select", //TODO: maybe there is a better way to avoid repeating parent event
+      "click .collapser" : "toggle"
+    },
+    initializeView: function(){           
+      this.container = this.options.container; //TODO: call parent container intializeView method
+      this.collapsed = !this.container.tag.get('isRoot');
+    },
   	renderView: function(){
   	  this
         .renderHeader()
@@ -19,7 +27,7 @@ define([
     },
     renderChildsTags: function(){      
       var tag = this.container.tag;      
-	  	var $tags = $('<ul class="tags"></ul>');
+	  	var $tags = $('<ul class="tags ' + (this.collapsed?' collapsed':'') + '">'+ (this.container.tag.get('isRoot')?'':'<li class="collapser"></li>') + '</ul>');
 	  	$('.box', this.el).append($tags);
       //Render navigate to parent (...) except for root tag
       if(!tag.get('isRoot'))    	  	
@@ -63,6 +71,19 @@ define([
 	        
 	      }
 	    );
+    },
+    toggle: function(){
+      if(!this.container.tag.get('isRoot')){
+        var $tags = $('.tags', this.el);
+        if($tags.hasClass('collapsed')){
+          this.collapsed = false;
+          $tags.removeClass('collapsed')
+        }
+        else{
+          this.collapsed = true;
+          $tags.addClass('collapsed')
+        }
+      }
     }
   });
   return TagContainer;

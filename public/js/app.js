@@ -8,10 +8,11 @@ define([
 ], function($, _, Backbone, Router){
   var initialize = function(){  
 
-    if(Modernizr.csstransitions)
+    //Way to check if it support csstransitinos
+    /*if(Modernizr.csstransitions)
       console.log('Supports css3 transitions');
     else 
-      console.log('Does not tupports css3 transitions'); 
+      console.log('Does not tupports css3 transitions'); */
     
     // Pass in our Router module and call it's initialize function
     Router.initialize();
