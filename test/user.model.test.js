@@ -1,11 +1,6 @@
-var app = require("../"),
-		_ = require('lodash'),
+var coverage = require('./coverage'),
 		expect = require('expect.js'),
-		User = app.User;
-
-//var mongoose = require('mongoose')
-//  , db = mongoose.connect('mongodb://localhost/test');
-
+		User = coverage.require('../app/models/user');
 
 describe('user model', function() {
 	it('should not allow set empty password', function() {
@@ -29,13 +24,13 @@ describe('user model', function() {
 	});
 
 	it('should require set only password and email', function() {
-		var user1 = new User({ password: 'password', email: 'a@a'});
+		var user1 = new User({ password: 'password', email: 'a@a.com'});
 
 		user1.save(function(err) {
 			expect(err).to.be(undefined);
 		});
 
-		var user2 = new User({ email: 'a@a'});
+		var user2 = new User({ email: 'a@a.com'});
 
 		user2.save(function(err) {
 			expect(Object.keys(err.errors).length).to.be(1);
@@ -43,7 +38,7 @@ describe('user model', function() {
 	});
 
 	it('should require that user name, username is not empty alphanumberic sequence', function() {
-		var user = new User({password: 'password', email: 'a@a', name: '', username: ''});
+		var user = new User({password: 'password', email: 'a@a.com', name: '', username: ''});
 
 		user.save(function(err) {
 			expect(Object.keys(err.errors).length).to.be(2);
@@ -59,21 +54,33 @@ describe('user model', function() {
 		});
 	});
 
-	it('should require that email contain @', function() {
+	it('should require that email contain @', function(done) {
 		var user = new User({password: 'password', email: 'aa'});
 
 		user.save(function(err) {
 			expect(Object.keys(err.errors).length).to.be(1);
+			done();
 		});
 	});
 
 
-	it('should check that password match', function() {
+	it('should check that password match', function(done) {
 		var user = new User({password: 'password'});
 
-		user.save(function(err) {
-			expect(user.authenticate('password')).to.be.ok();
-			expect(user.authenticate('password1')).to.not.be.ok();
+		user.verifyPassword('password', function(err, passwordCorrect) {
+			expect(passwordCorrect).to.be.ok();
+			done();
+		});
+
+		
+	});
+
+	it('should check that password could not match', function(done) {
+		var user = new User({password: 'password1'});
+
+		user.verifyPassword('password', function(err, passwordCorrect) {
+			expect(passwordCorrect).to.not.be.ok();
+			done();
 		});
 
 		

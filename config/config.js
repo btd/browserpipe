@@ -1,11 +1,18 @@
 
-module.exports = {
+
+var environment = process.env.NODE_ENV || 'development';
+
+console.log('Application env ' + environment);
+
+var config = {
     test: {
+      env: 'test',
       db: {
         uri: 'mongodb://localhost/tagnfileit-test'
       }
     },
     development: {
+      env: 'development',
       db: {
         uri: 'mongodb://localhost/tagnfileit'
       }
@@ -62,4 +69,6 @@ module.exports = {
   , production: {
 
     }
-}
+};
+
+module.exports = config[environment];

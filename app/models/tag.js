@@ -2,20 +2,13 @@
 
 var mongoose = require('mongoose')
   , Schema = mongoose.Schema
+  , validation = require('./validation')
 
 var TagSchema = new Schema({
-    label: {type : String, trim : true}
-  , path: {type : String, index : true, trim : true}
+    label: {type : String, trim : true, validate: validation.nonEmpty}
+  , path: {type : String, index : true, trim : true, validate: validation.nonEmpty}
   , user: {type : Schema.ObjectId, ref : 'User'}
   , createdAt  : {type : Date, default : Date.now}
-})
+});
 
-TagSchema.path('label').validate(function (label) {
-  return label.length > 0
-}, 'Tag label cannot be blank')
-
-TagSchema.path('path').validate(function (path) {
-  return path.length > 0
-}, 'Tag path cannot be blank')
-
-exports.Tag = mongoose.model('Tag', TagSchema);
+module.exports = mongoose.model('Tag', TagSchema);

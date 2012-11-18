@@ -5,12 +5,12 @@
 
 var express = require('express')
   , lessMiddleware = require('less-middleware')
-  , gzippo = require('gzippo')
   , mongoStore = require('connect-mongodb')
+  , config = require('../config/config')
   , requirejs = require('requirejs')
 
 // App settings and middleware
-exports.boot = function(app, config, passport) {
+module.exports = function(app, passport) {
 
   // set views path, template engine and default layout
   app.set('views', __dirname + '/app/views')
@@ -29,15 +29,7 @@ exports.boot = function(app, config, passport) {
   app.use(function (req, res, next) {
     res.locals.appName = 'Tagnfile.it'
     res.locals.title = 'Visualize your information'
-    res.locals.showStack = app.showStackError
-    res.locals.req = req
-    res.locals.formatDate = function (date) {
-      var monthNames = [ "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec" ]
-      return monthNames[date.getMonth()]+' '+date.getDate()+', '+date.getFullYear()
-    }
-    res.locals.stripScript = function (str) {
-      return str.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-    }
+    
     next()
   })
 
@@ -62,19 +54,14 @@ exports.boot = function(app, config, passport) {
 
   app.use(express.favicon())
 
-   // show error on screen. False for all envs except development
-  // settmgs for custom error handlers
-  app.set('showStackError', false)
+  app.use(express.static(__dirname + '/public'))
 
   // configure environments
   app.configure('development', function(){
+    app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+
     //set up colour logger for dev
-    app.use(express.logger('dev'))
-    app.set('showStackError', true)
-    app.use(express.static(__dirname + '/public'))   
-    requirejs.optimize(config.requirejs, function(){
-      console.log('Requirejs - Successfully optimized javascript')
-    })
+    app.use(express.logger('dev'));
   })
 
   //TODO gzippo should be replaced with nginx reverse proxy
@@ -82,13 +69,14 @@ exports.boot = function(app, config, passport) {
   // gzip only in staging and production envs
   app.configure('staging', function(){
     app.use(express.logger(':date :method :url :status'))
-    app.use(gzippo.staticGzip(__dirname + '/public'))
+    //app.use(gzippo.staticGzip(__dirname + '/public'))
     app.enable('view cache')        
   })
 
   app.configure('production', function(){
+    app.use(express.errorHandler()); 
     app.use(express.logger(':date :method :url :status'))
-    app.use(gzippo.staticGzip(__dirname + '/public'))    
+    //app.use(gzippo.staticGzip(__dirname + '/public'))    
     // view cache is enabled by default in production mode
   }) 
 
