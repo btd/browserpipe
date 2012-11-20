@@ -1,5 +1,4 @@
-var coverage = require('./coverage'),
-		Tag = coverage.require("../app/models/tag"),
+var Tag = require("../app/models/tag"),
 		assert = require("assert");
 
 

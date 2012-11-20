@@ -1,6 +1,5 @@
-var coverage = require('./coverage'),
-		expect = require('expect.js'),
-		User = coverage.require('../app/models/user');
+var expect = require('expect.js'),
+		User = require('../app/models/user');
 
 describe('user model', function() {
 	it('should not allow set empty password', function() {
