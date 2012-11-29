@@ -63,9 +63,6 @@ var config = {
           }
       }
     }
-  , test: {
-
-    }
   , production: {
 
     }

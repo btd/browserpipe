@@ -7,7 +7,7 @@ module.exports = function (passport) {
   
 
   console.log("Initializing database");
-  require('mongoose').connect(config.db.uri)
+  var db = require('mongoose').connect(config.db.uri)
 
   // serialize sessions
   passport.serializeUser(function(user, done) {
@@ -30,4 +30,6 @@ module.exports = function (passport) {
       });
     }
   ))
+
+  return db;
 }

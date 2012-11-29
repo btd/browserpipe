@@ -49,7 +49,7 @@ module.exports = function(app, passport) {
     })
   }))
 
-  app.use(passport.initialize())
+  app.use(passport.initialize({ userProperty: 'currentUser'}));
   app.use(passport.session())
 
   app.use(express.favicon())

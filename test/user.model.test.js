@@ -2,6 +2,12 @@ var expect = require('expect.js'),
 		User = require('../app/models/user');
 
 describe('user model', function() {
+	beforeEach(function(done) {
+		User.remove({}, function(err) {
+			done();
+		});
+	});
+
 	it('should not allow set empty password', function() {
 		var user = new User();
 
@@ -26,10 +32,10 @@ describe('user model', function() {
 		var user1 = new User({ password: 'password', email: 'a@a.com'});
 
 		user1.save(function(err) {
-			expect(err).to.be(undefined);
+			expect(err).to.not.be.ok();
 		});
 
-		var user2 = new User({ email: 'a@a.com'});
+		var user2 = new User({ email: 'a@a1.com'});
 
 		user2.save(function(err) {
 			expect(Object.keys(err.errors).length).to.be(1);
@@ -43,14 +49,15 @@ describe('user model', function() {
 			expect(Object.keys(err.errors).length).to.be(2);
 			expect(err.errors.name.type).to.be('nonEmpty');
 			expect(err.errors.username.type).to.be('nonEmpty');
-		});
 
-		user.name = 'normal name';
-		user.username = 'username'
+			user.name = 'normal name';
+			user.username = 'username';
 
-		user.save(function(err) {
-			expect(err).to.not.be.ok();
+			user.save(function(err) {
+				expect(err).to.not.be.ok();
+			});
 		});
+		
 	});
 
 	it('should require that email contain @', function(done) {
@@ -81,7 +88,22 @@ describe('user model', function() {
 			expect(passwordCorrect).to.not.be.ok();
 			done();
 		});
+		
+	});
 
+	it('should check that emails are unique in db', function(done) {
+		var user1 = new User({ password: 'password', email: 'a@a.com'});
+
+		user1.save(function(err) {
+			expect(err).to.not.be.ok();
+
+			var user2 = new User({ password: 'password', email: 'a@a.com'});
+
+			user2.save(function(err) {
+				expect(err.name).to.be('MongoError');
+				done();
+			});
+		});
 		
 	});
 });
