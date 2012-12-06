@@ -78,6 +78,12 @@ define([
           self.trigger('containerSelected', container);
         }
       );
+      container.on('containerClosed', 
+        function(containerView){
+          self.containersItems = _.without(self.containersItems, containerView);
+          self.calculateWidth();
+        }
+      );
     },
     getContainer: function(type, name){
       for (index in this.containersItems) {

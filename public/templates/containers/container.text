@@ -1,7 +1,0 @@
-<div>
-	<div class="header">
-		<img src="<%= icon %>" alt="Container Icon">
-		<span class="title"><%= (container.tag.get('isRoot')?"":container.name.substring(5)) %></span>
-	</div>
-	<div class="box"></div>
-</div>

@@ -7,7 +7,7 @@ define([
   var State = Backbone.Model.extend({
     tags: {},
     defaults: {},
-    loadInitalTags: function(){   
+    loadInitalTags: function(){        
       //Tag root is added here
       var tag = new Tag({        
         label: 'root',
@@ -48,7 +48,7 @@ define([
         }));        
       }
       else if(success) success(tag)
-    }/*
+    }
     ,
     createFakeData: function(){
       //TODO: remove!!!
@@ -67,7 +67,7 @@ define([
           tag1.save(); 
           this.createFakeChildData(fullpath, tag, fakeTagData);
         }      
-    }*/
+    }
   });
   var _state = new State();
   return _state;

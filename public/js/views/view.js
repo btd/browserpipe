@@ -26,7 +26,11 @@ define([
         }, 0);
       }
       return this;
-    },    
+    },
+    //Use to extend events  
+    addEvents: function(events) {
+      this.delegateEvents( _.extend(_.clone(this.events ||  {}), events) );
+    },  
     close: function() {
         // Unregister for event to stop memory leak
         this.remove();

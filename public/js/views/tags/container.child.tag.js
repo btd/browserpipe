@@ -3,7 +3,7 @@ define([
   'underscore',
   'backbone',
   'views/view'
-], function($, _, Backbone, AppView, template){
+], function($, _, Backbone, AppView){
   var ContainerChildTag = AppView.extend({
     name: 'ContainerChildTag',
     tagName: 'li', 
@@ -20,6 +20,8 @@ define([
     initializeView: function(){  
       this.path = this.options.path;
       this.title = this.options.title;
+      if(this.options.isBackOption)
+        $(this.el).addClass('back')
     },     
     renderView: function(){      
       $(this.el).html(this.title);       
