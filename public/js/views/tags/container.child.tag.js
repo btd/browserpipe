@@ -18,20 +18,17 @@ define([
       }
     },    
     initializeView: function(){  
-      this.path = this.options.path;
-      this.title = this.options.title;
-      if(this.options.isBackOption)
-        $(this.el).addClass('back')
+      this.tag = this.options.tag;
     },     
     renderView: function(){      
-      $(this.el).html(this.title);       
+      $(this.el).html(this.tag.get('label'));       
       return this;   
     },
     postRender: function(){      
     },
     navigateToTag: function(e){
       e.stopPropagation();      
-      this.trigger("navigateToTag", this.path);
+      this.trigger("navigateToTag", this.tag);
     }
   });
   return ContainerChildTag;

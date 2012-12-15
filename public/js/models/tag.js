@@ -38,6 +38,9 @@ define([
     },
     addChildren: function(children){
       this.get('children').add(children);
+    },
+    getFullPath: function(){
+      return (this.get('isRoot')?"":this.get('path') + ".") + this.get('label')
     }
   });
   return Tag;

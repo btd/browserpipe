@@ -42,8 +42,12 @@ define([
     },   
     renderHeader: function(){        
       this.containerHeader = new ContainerHeader({container: this.container, icon: this.icon, menuOptions: this.menuOptions});               
+      this.renderMenuOptions();
+      return this;
+    },
+    renderMenuOptions: function(){        
       //Load the menu options events
-      var menuEvents = {}
+      var menuEvents = this.containerHeader.events || {}
       for (var i = 0, l = this.menuOptions.length; i < l; i++) {         
         var menuOption = this.menuOptions[i];
         menuEvents['click .' + menuOption.name] = menuOption.method;

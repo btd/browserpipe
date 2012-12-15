@@ -4,7 +4,7 @@
     margin: 6px 3px;
     padding: 6px 6px 24px;
     float:left;
-    width: 250px;
+    width: 314px;
     overflow-y: hidden;         
     .box-sizing(border-box);
     .border-radius(3px);
@@ -28,7 +28,7 @@
             font-weight: bold;
             word-wrap: break-word;
             float: left;
-            max-width: 190px;  
+            max-width: 240px;  
         }
         .options{
             float: right;
@@ -41,6 +41,29 @@
                 right: 20px !important;
             }
         }
+
+
+        .tags {
+            margin: 0!important;
+
+            .tag{
+                min-height: 20px;
+                margin: 0 3px 3px 0;
+                float: left;
+                list-style:none;                 
+                color: white;
+                font-weight: bold;
+                background-color: @blue;
+                padding: 6px 12px;   
+                .border-radius(3px);
+                text-shadow: none;
+
+                &:hover{
+                    cursor: pointer;
+                }
+            }   
+        }   
+
     }
 
     .favicon {
@@ -50,7 +73,7 @@
     .box {        
         overflow-y: auto; 
         .tags {
-            margin: 4px 5px 0 0 !important;
+            margin: 4px 5px 6px 0 !important;
 
             &.collapsed {
 
@@ -65,15 +88,12 @@
             .tag {
                 color: white;
                 font-weight: bold;
-                background-color: @blue;
+                background-color: @blueLight;
                 margin-bottom: 3px;
-                padding: 8px 20px;   
+                padding: 6px 12px;   
                 .border-radius(3px);
                 text-shadow: none;
 
-                &.back {
-                    padding: 0px 20px !important;
-                }
                 &:hover{
                     cursor: pointer;
                 }
@@ -87,7 +107,7 @@
             .item {                    
                 background: #FFFFFF;
                 border: 1px solid #EFEFEF;
-                margin: 6px 0;
+                margin: 0 0 6px 0;
                 padding: 3px 6px;     
                 font-size: 14x;       
                 .box-sizing(border-box);

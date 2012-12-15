@@ -52,7 +52,7 @@ define([
     calculateWidth: function(){
       var $el = $(this.el);
       $el.width("auto");
-      var width = this.containersItems.length * 256;
+      var width = this.containersItems.length * 320;
       if($el.width() < width){ 
         $el.width(width);
         //Height has to be recalculated in case the x scrollbar appears
@@ -77,8 +77,11 @@ define([
           };
           self.trigger('containerSelected', container);
         }
-      );
-      container.on('containerClosed', 
+      ).on('navigatedToTag',
+        function(tag){
+          self.trigger('navigatedToTag', tag);
+        }
+      ).on('containerClosed', 
         function(containerView){
           self.containersItems = _.without(self.containersItems, containerView);
           self.calculateWidth();

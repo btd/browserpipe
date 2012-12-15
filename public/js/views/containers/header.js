@@ -24,7 +24,6 @@ define([
       return this;
     },
     triggerEvent: function(eventName){
-      console.log(eventName)
       this.trigger(eventName)
     },
     showOptionsToggle: function(){

@@ -28,7 +28,7 @@ define([
         }
       }
     },
-    getTag: function(path, options){
+    getTag: function(path, options){      
       var options = options || {};
       var self = this;
       var tag = this.tags[path];      

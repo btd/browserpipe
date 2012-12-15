@@ -1,4 +1,4 @@
-<img src="<%= icon %>" alt="Container Icon">
+<% if(icon){ %><img class="container-icon" src="<%= icon %>" alt="Container Icon"><% } %>
 <span class="title"><%= (container.tag.get('isRoot')?"":container.name.substring(5)) %></span>
 <span class="options">
     <i class="dropdown-toggle icon-chevron-down"  data-toggle="dropdown"></i>

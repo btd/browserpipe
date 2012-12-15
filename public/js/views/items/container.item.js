@@ -3,10 +3,10 @@ define([
   'underscore',
   'backbone',
   'views/view',
-  'views/tags/item.tag',
+  'views/tags/tag',
   'text!templates/items/container.item.text',
   'text!templates/items/container.item.details.text'
-], function($, _, Backbone, AppView, ItemTag, mainTemplate, detailsTemplate){
+], function($, _, Backbone, AppView, Tag, mainTemplate, detailsTemplate){
   var ContainerItem = AppView.extend({
     name: 'ContainerItem',
     tagName: 'li', 
@@ -51,11 +51,13 @@ define([
     },
     loadDetails: function(){      
       var compiledTemplate = $(_.template( detailsTemplate, {item: this.item} ));
-      var $tags = $(".tags", compiledTemplate);
+      //TODO: load tags here or in dialog? use Tag.js view?
+      /*var $tags = $(".tags", compiledTemplate);
       for (index in this.item.tags) {
-          var tbv = new ItemTag({tag: this.item.tags[index]});
+        console.log(this.item.tags[index])
+          var tbv = new Tag({tag: this.item.tags[index]});
           $tags.append(tbv.render().el);
-       };
+       };*/
        $(this.el).append(compiledTemplate)  
     },
     stopPropagation: function(e){
