@@ -1,8 +1,8 @@
 define([
   'underscore',
   'backbone',
-  'data/tags'
-], function(_, Backbone, tagsData) {
+  'models/state'
+], function(_, Backbone, _state) {
    var Containers = Backbone.Model.extend({  
       items: [
          {
@@ -69,34 +69,45 @@ define([
             "created": "25 Oct 2012"
          }
       ],
-      initialize: function(){
-         this.fakeTagsData  = new tagsData();    
+      initialize: function(){         
       },
       getRandomItem: function(){
          var randomIndex = Math.floor(Math.random() * this.items.length);
          return _.clone(this.items[randomIndex]);
       },
-      generateFakeContainer: function(type, key){
-         var numberOfItems = Math.floor(Math.random() * 50);
+      generateFakeContainer: function(type, key, success){
+         var self = this;         
          var container = {
             name: key,
             type: type,
             items: []
          };
          if(type == "tag")
-            container.tag = this.fakeTagsData.getTag(key);
+            _state.getTag(key, {
+              success: function(tag){                
+                container.tag = tag;
+                self.addFakeItemsToContainer(container)
+                success(container)
+              }, 
+              error: function(err){        
+                //TODO: manage the error
+                console.log(err)
+              }
+           });
+         else
+            this.addFakeItemsToContainer(container)
+      },
+      getInitialFakeContainers: function(success) {         
+         this.generateFakeContainer("tag", "root.Read Later", success);
+         this.generateFakeContainer("tag", "root.Quick Launch", success);
+         this.generateFakeContainer("tag", "root.Favourites", success);
+      },
+      addFakeItemsToContainer: function(container){
+         var numberOfItems = Math.floor(Math.random() * 50);
          for (var i = 0; i < numberOfItems; i++) {
             container.items.push(this.getRandomItem());
          };
-         return container;
-      },
-      getInitialFakeContainers: function() {
-         var containers = [];
-         containers.push(this.generateFakeContainer("tag", "Read Later"));
-         containers.push(this.generateFakeContainer("tag", "Quick Launch"));
-         containers.push(this.generateFakeContainer("tag", "Favourites"));
-         return containers;
-      }      
+      }    
   });
   return Containers;
 });

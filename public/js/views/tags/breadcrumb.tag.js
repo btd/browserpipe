@@ -4,9 +4,8 @@ define([
   'backbone',
   'views/view',
   'views/tags/breadcrumb.dropdown.tag',
-  'data/tags',  
   'text!templates/tags/breadcrumb.tag.text'  
-], function($, _, Backbone, AppView, BreadCrumbDropdownTag, tagsData, template){
+], function($, _, Backbone, AppView, BreadCrumbDropdownTag, template){
   var BreadCrumbTag = AppView.extend({
     name: 'BreadCrumbTag',
     tagName: 'li',     
@@ -28,8 +27,6 @@ define([
     initializeView: function(){ 
       this.tag = this.options.tag;
       this.opened = this.options.opened;
-      //TODO: Remove fake initial containers to test html/css design
-      this.fakeData  = new tagsData();    
     },     
     renderView: function(){
       var compiledTemplate = _.template(template, {tag: this.tag});    
@@ -39,7 +36,7 @@ define([
     postRender: function(){ 
       var self = this;
       //As not all browsers support HTML5, we set data attribute by Jquery
-      jQuery.data(this.el, 'path', this.getTagPath());
+      jQuery.data(this.el, 'path', this.getTagFullPath());
       this.centerArrow();      
       if(this.opened)            
         this.showDropDown();
@@ -48,32 +45,26 @@ define([
       });
     },
     getTagPath: function(){      
-      return (this.tag.path != ""?this.tag.path + ".":"") + this.tag.name
+      return this.tag.get('path');
+    },
+    getTagFullPath: function(){
+      return (this.tag.get('isRoot')?"":this.tag.get('path') + ".") + this.tag.get('label');
     },
     calculateDropDownHeight: function(){
       var wheight = $(window).height();
       var value = wheight - 70;            
       $(".tag-dropdown", this.el).css("max-height", value);
     },
-    showDropDown: function(){
-      if(this.tag.children){        
+    showDropDown: function(){      
+      if(this.tag.get('children').length > 0){        
         if(!this.breadCrumbDropdownTags){
           this.breadCrumbDropdownTags = [];
           var $table = $(".tag-dropdown-childs" , this.el);
-          for (index in this.tag.children) {
-            var childTagPath = this.tag.children[index].name;
-            
-            //If tag is not root then we attach the rest of the path
-            if(!this.tag.isRoot){
-              childTagPath = this.getTagPath() + "."  + childTagPath;  
-            }
-            var childTag = this.fakeData.getTag(childTagPath);
+          //Best collection interation: http://jsperf.com/backbone-js-collection-iteration/5
+          for (var i = 0, l = this.tag.get('children').length; i < l; i++) {
+            var childTag = this.tag.get('children').models[i];            
             var $tr = $('<tr></tr>');
             $table.append($tr); 
-            /*if (index % 3 == 0) {
-                $tr = $('<tr></tr>');
-                $table.append($tr);
-            }*/       
             var breadCrumbDropdownTag = new BreadCrumbDropdownTag({tag: childTag});
             this.breadCrumbDropdownTags.push(breadCrumbDropdownTag);
             $tr.append(breadCrumbDropdownTag.render().el);            
@@ -109,10 +100,8 @@ define([
       clearTimeout(this.timeout);  
     },
     selectTag: function(e){ 
-      if(!this.tag.isRoot){
-        var path = jQuery.data($(e.target).parents('.tag-breadcrumb').get(0), 'path');
-        this.trigger('selectChild', path);
-      }
+      var path = jQuery.data($(e.target).parents('.tag-breadcrumb').get(0), 'path');
+      this.trigger('selectChild', path); 
     },
     selectChildTag: function(e){  
       e.preventDefault();
