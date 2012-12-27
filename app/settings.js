@@ -1,16 +1,9 @@
-
-/**
- * Module dependencies.
- */
-
-var express = require('express')
-  , lessMiddleware = require('less-middleware')
-  , mongoStore = require('connect-mongodb')
-  , config = require('../config/config')
-  , requirejs = require('requirejs')
+var express = require('express'),
+    config = require('../config/config'),
+    sessionConfig = require('./session-config');
 
 // App settings and middleware
-module.exports = function(app, passport) {
+module.exports = function(app) {
 
   // set views path, template engine and default layout
   app.set('views', __dirname + '/app/views')
@@ -18,43 +11,42 @@ module.exports = function(app, passport) {
   app.set('view options', {'layout': false})
 
   //Compile less files
+  /* TODO replace with connect-assets
   app.use(lessMiddleware({
       dest: __dirname + '/public/css',
       src: __dirname + '/public/less',
       prefix: '/css',
       compress: true
-  }));
+  }));*/
 
   // dynamic helpers
   app.use(function (req, res, next) {
-    res.locals.appName = 'Tagnfile.it'
-    res.locals.title = 'Visualize your information'
+    res.locals.appName = 'Tagnfile.it';
+    res.locals.title = 'Visualize your information';
     
-    next()
+    next();
   })
 
   // bodyParser should be above methodOverride
-  app.use(express.bodyParser())
-  app.use(express.methodOverride())
+  app.use(express.bodyParser());
+  app.use(express.methodOverride());
 
   // cookieParser should be above session
-  app.use(express.cookieParser())
+  app.use(express.cookieParser());
 
-  // save session in mongodb collection sessions
-  app.use(express.session({
-    secret: 'd5bSD5N0dl3Vs1SwXw6pMkxS',
-    store: new mongoStore({
-      url: config.db.uri,
-      collection : 'sessions'
-    })
-  }))
+  // this will load session if session information is presented
+  app.use(sessionConfig.sessionLoad);
 
-  app.use(passport.initialize({ userProperty: 'currentUser'}));
-  app.use(passport.session())
+  app.use(function(req, res, next) {
+     if(req.session && req.session.currentUser) {
+         req.currentUser = req.session.currentUser;
+     }
+     next();
+  });
 
-  app.use(express.favicon())
+  app.use(express.favicon());
 
-  app.use(express.static(__dirname + '/public'))
+  app.use(express.static(__dirname + '/public'));
 
   // configure environments
   app.configure('development', function(){
@@ -64,6 +56,7 @@ module.exports = function(app, passport) {
     app.use(express.logger('dev'));
   })
 
+    /* Return to this later when we will have something working
   //TODO gzippo should be replaced with nginx reverse proxy
   //app.use('trusted proxy');
   // gzip only in staging and production envs
@@ -78,7 +71,7 @@ module.exports = function(app, passport) {
     app.use(express.logger(':date :method :url :status'))
     //app.use(gzippo.staticGzip(__dirname + '/public'))    
     // view cache is enabled by default in production mode
-  }) 
+  }) */
 
   // routes should be at the last
   app.use(app.router)

@@ -8,3 +8,4 @@ coverage.html
 public/js/tagnfile.it.js
 _src-with-coverage
 _test-with-coverage
+.idea

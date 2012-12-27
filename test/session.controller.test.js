@@ -1,5 +1,6 @@
 
-var request = require('supertest')
+var request = require('supertest'),
+    should = require('should');
 
 var app = require('../app/server')
 
@@ -9,17 +10,26 @@ var user = {email: 'a@a.com', password: 'password'}
 
 describe('sessions controller', function(){
 
-	beforeEach(function(done) {
-		User.remove({email: user.email}, function(err) {
-			(new User(user)).save(done);
-		});
-	});
+    before(function(done) {
+        //User.remove({}, done);
+        User.remove().exec();
+        (new User(user)).save(done);
+    });
 
 	it('POST /sessions should return 200 if user info provided', function(done) {
+        var sid = false;
+
 		request(app)
 		  .post('/sessions')
 		  .send(user)
-		  .expect(200, done);
+		  .expect(200, function(err, res) {
+            if(err) done(err);
+
+            sid = res.body.sid;
+            sid.should.not.be.empty; //expect session id to be not empty
+
+            done();
+          });
 	});
 
 	it('POST /sessions should return 404 if user info provided wrong', function(done) {

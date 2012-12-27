@@ -1,10 +1,22 @@
 
 //var passport = require('passport')
 
-var User = require('../models/user')
+var User = require('../models/user');
+
+var sessionConfig = require('../session-config');
 
 module.exports = function(app) {
-	app.resource('sessions', new SessionController());
+    var sessionController = new SessionController();
+    //patch a bit create action
+    var oldCreateSession = sessionController.create;
+
+    sessionController.create = function(req, res) {
+        sessionConfig.sessionCreate(req, res, function() {
+            oldCreateSession(req, res);
+        })
+    };
+
+	app.resource('sessions', sessionController);
 }
 
 var SessionController = function() {
@@ -23,11 +35,14 @@ var SessionController = function() {
 				if(!user)
 					return res.json(404, { error: "user not found"}); //TODO take errors with codes and messages in one module
 
-				req.login(user, function(err) {
-					if(err) return res.json(500, { error: err });
+				// so now i know that it is my user save it in session
+                if(req.session) {
+                    req.session.currentUser = user;
+                    req.currentUser = user;
+                }
 
-					return res.json({ result: 'ok'});
-				});
+                // send back assossiated session id
+                res.json({ sid: req.sessionID });
 			});
 		}/*,
 		show: function(req, res){

@@ -3,9 +3,7 @@ var expect = require('expect.js'),
 
 describe('user model', function() {
 	beforeEach(function(done) {
-		User.remove({}, function(err) {
-			done();
-		});
+		User.remove({}, done);
 	});
 
 	it('should not allow set empty password', function() {
