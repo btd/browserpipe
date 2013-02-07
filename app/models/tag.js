@@ -2,13 +2,14 @@
 
 var mongoose = require('mongoose')
   , Schema = mongoose.Schema
+  , validation = require('./validation')
 
 var TagSchema = new Schema({
-    label: {type : String, trim : true}
-  , path: {type : String, index : true, trim : true}
+    label: {type : String, trim : true, validate: validation.nonEmpty}
+  , path: {type : String, index : true, trim : true, validate: validation.nonEmpty}
   , user: {type : Schema.ObjectId, ref : 'User'}
   , createdAt  : {type : Date, default : Date.now}
-})
+});
 
 TagSchema.path('label').validate(function (label) {
   return label.length > 0
@@ -76,4 +77,4 @@ Tag.getAllDescendantByPath = function(user, path, success, error){
 	})   
 }
 
-exports.Tag = Tag 
+module.exports = mongoose.model('Tag', TagSchema);
