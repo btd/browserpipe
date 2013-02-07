@@ -25,7 +25,10 @@ head()
 
   //Application scripts
   script
-      var initialTags = !{JSON.stringify(tags)}
+      var initialOptions = {
+        welComeDialog: #{user.firstLogin},
+        tags: !{JSON.stringify(tags)}
+      }
   script(data-main="/js/main", src="/js/libs/require/require.js")
   //script(src='/js/almond.js')
   //script(src='/js/tagnfile.it.js')

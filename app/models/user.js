@@ -18,6 +18,8 @@ var UserSchema = new Schema({
     //do not allow user to set empty password
     return _.isEmpty(password)? undefined : bcrypt.hashSync(password, bcryptRounds);
   }}
+  , firstLogin: {type : Boolean, default : true}
+  , currentDashboard: {type : Schema.ObjectId, ref : 'Dashboard'}
 });
 
 // methods
