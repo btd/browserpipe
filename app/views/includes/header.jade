@@ -10,10 +10,16 @@ div#top-bar(class="navbar navbar-fixed-top")
       ul#account-nav(class="nav pull-right")
         li(class="divider-vertical")
         li(class="dropdown")
-          a(href="#", data-toggle="dropdown", data-original-title="") 
-            span #{req.user.name}
-        li
-          a(href='/logout') Logout        
+          a(href="#", class="dropdown-toggle", data-toggle="dropdown") #{req.user.name}      
+            b(class="caret")    
+          ul(class="dropdown-menu")
+            li
+              a(tabindex="-1", href="#") Import bookmarks
+            li
+              a(tabindex="-1", href="#") Settings
+            li(class="divider")
+            li                
+              a(tabindex="-1", href="/logout") Logout                      
       form#search-form(class="form-search pull-right")
         span.input-append
           input#search-box(type="text", class="uncompressed")

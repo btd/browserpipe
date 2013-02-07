@@ -3,9 +3,10 @@ define([
   'jQuery',
   'underscore',
   'backbone',
+  'models/state',
   'views/dashboards/dashboard',
   'views/top-bar/bar'
-], function($, _, Backbone, Dashboard, TopBar){
+], function($, _, Backbone, _state, Dashboard, TopBar){
   var AppRouter = Backbone.Router.extend({
     views: {},
     routes: {
@@ -39,28 +40,16 @@ define([
       //Render views
       this.views.topBar.render()
       $("#main-container").append(this.views.dashboard.render().el);
-    },
-    onShowAddTag: function(selectedTag){ 
-      //this.navigate("/tags/add/" + selectedTag.get("_id"));
-    },    
-    onChangeSelectedTag: function(selectedTag){ 
-      //this.navigateSelectedTag(selectedTag)
-    },
-    navigateSelectedTag: function(selectedTag){
-      //this.navigate("/tags/view/" + selectedTag.get("_id"));
     }
-
   });
   var initialize = function(){
     var app_router = new AppRouter;
-
     //Start monitoring all hashchange events for history
     Backbone.history.start();
-
+    //Load inital data
+    _state.loadInitalTags();
     //Init all the views
-    app_router.createViews();
-    
-
+    app_router.createViews();    
   };
   return {
     initialize: initialize

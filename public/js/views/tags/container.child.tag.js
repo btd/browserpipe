@@ -3,7 +3,7 @@ define([
   'underscore',
   'backbone',
   'views/view'
-], function($, _, Backbone, AppView, template){
+], function($, _, Backbone, AppView){
   var ContainerChildTag = AppView.extend({
     name: 'ContainerChildTag',
     tagName: 'li', 
@@ -18,18 +18,17 @@ define([
       }
     },    
     initializeView: function(){  
-      this.path = this.options.path;
-      this.title = this.options.title;
+      this.tag = this.options.tag;
     },     
     renderView: function(){      
-      $(this.el).html(this.title);       
+      $(this.el).html(this.tag.get('label'));       
       return this;   
     },
     postRender: function(){      
     },
     navigateToTag: function(e){
       e.stopPropagation();      
-      this.trigger("navigateToTag", this.path);
+      this.trigger("navigateToTag", this.tag);
     }
   });
   return ContainerChildTag;

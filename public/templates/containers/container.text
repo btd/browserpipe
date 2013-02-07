@@ -1,5 +1,0 @@
-<div>
-	<img src="<%= icon %>" alt="Container Icon">
-	<span class="title"><%= container.name %></span>
-	<div class="box"></div>
-</div>

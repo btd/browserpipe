@@ -21,12 +21,13 @@ define([
     },    
     initializeView: function(){ 
       //TODO: Remove fake initial containers to test html/css design
-      this.fakeData = new ContainersData();
-      this.containers  = this.fakeData.getInitialFakeContainers();  
+      this.fakeData = new ContainersData();       
     },     
     renderView: function(){
-      for (index in this.containers)
-        this.addContainer(this.containers[index]);
+      var self = this;
+      this.fakeData.getInitialFakeContainers(function(container){
+        self.addContainer(container);
+      }); 
       return this;    
     },
     addContainer: function(container){
@@ -51,7 +52,7 @@ define([
     calculateWidth: function(){
       var $el = $(this.el);
       $el.width("auto");
-      var width = this.containersItems.length * 256;
+      var width = this.containersItems.length * 320;
       if($el.width() < width){ 
         $el.width(width);
         //Height has to be recalculated in case the x scrollbar appears
@@ -76,6 +77,15 @@ define([
           };
           self.trigger('containerSelected', container);
         }
+      ).on('navigatedToTag',
+        function(tag){
+          self.trigger('navigatedToTag', tag);
+        }
+      ).on('containerClosed', 
+        function(containerView){
+          self.containersItems = _.without(self.containersItems, containerView);
+          self.calculateWidth();
+        }
       );
     },
     getContainer: function(type, name){
@@ -87,10 +97,12 @@ define([
       return null;
     },
     addNewRandomContainer: function(type, name){ //TODO: remove this after adding crud for containers and items
-      var container = this.fakeData.generateFakeContainer(type, name);
-      var cv = this.addContainer(container);
-      this.scrollToContainer(cv)
-      cv.select();
+      var self = this;
+      this.fakeData.generateFakeContainer(type, name, function(container){
+        var cv = self.addContainer(container);
+        self.scrollToContainer(cv)
+        cv.select();
+      });      
     },
     scrollToContainer: function(container){
       var $el = $(this.el);

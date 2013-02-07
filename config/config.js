@@ -64,7 +64,6 @@ var config = {
       }
     }
   , production: {
-
     }
 };
 

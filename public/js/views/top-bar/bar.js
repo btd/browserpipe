@@ -39,7 +39,7 @@ define([
           break;
         }
         case "breadCrumb":{
-          this.breadCrumb.setCurrentPath(this.activeFilter.data, false, false);
+          this.breadCrumb.setCurrentPath(this.activeFilter.data, false);
           this.disableFilters(true, false, true, true);
           break;
         }
@@ -64,14 +64,22 @@ define([
       this.currentDashBoard.on('containerSelected', 
         function(container){
           var type = '';
+          var data = '';
           switch(container.type){
-            case 'search': type = 'searchBox'; break;
-            case 'tag': type = 'breadCrumb'; break;
+            case 'search': type = 'searchBox'; data = container.name; break;
+            case 'tag': type = 'breadCrumb'; data = container.tag.getFullPath(); break;
           }
           self.setActiveFilter({
             type: type,
-            data: container.name
+            data: data
           });  
+        }
+      ).on('navigatedToTag', 
+        function(tag){
+          self.setActiveFilter({
+            type: 'breadCrumb',
+            data: tag.getFullPath()
+          });
         }
       );
       this.breadCrumb.on('selectTag', 
@@ -82,13 +90,11 @@ define([
           });
           self.currentDashBoard.addNewRandomContainer("tag", path);
         }
-      );
-      this.breadCrumb.on('startTagNavigation', 
+      ).on('startTagNavigation', 
         function(){          
           self.disableFilters(true, false, true, true);
         }
-      );
-      this.breadCrumb.on('stopTagNavigation', 
+      ).on('stopTagNavigation', 
         function(){          
           self.setActiveFilter(self.activeFilter);
         }
@@ -101,8 +107,7 @@ define([
           });
           self.currentDashBoard.addNewRandomContainer("search", query);
         }
-      );
-      this.searchBox.on('searchBoxFocus',
+      ).on('searchBoxFocus',
         function(){          
           self.disableFilters(false, true, true, true);
         }

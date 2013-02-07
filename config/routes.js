@@ -8,6 +8,7 @@ module.exports = function (app, passport, auth) {
 
   // user routes
   var users = require('../app/controllers/users')
+  app.get('/', users.init)
   app.get('/login', users.login)
   app.get('/signup', users.signup)
   app.get('/logout', users.logout)
@@ -27,15 +28,15 @@ module.exports = function (app, passport, auth) {
 
   // tag routes
   var tags = require('../app/controllers/tags')
-  app.get('/tags', tags.index)
-  app.get('/tags/new', auth.requiresLogin, tags.new)
+  //So far we do not allow to get all the tags
+  //app.get('/tags', tags.index)  
   app.post('/tags', auth.requiresLogin, tags.create)
-  app.get('/tags/:id', tags.show)
-  app.get('/tags/:id/edit', auth.requiresLogin, auth.tag.hasAuthorization, tags.edit)
-  app.put('/tags/:id', auth.requiresLogin, auth.tag.hasAuthorization, tags.update)
-  app.del('/tags/:id', auth.requiresLogin, auth.tag.hasAuthorization, tags.destroy)
-
-  app.param('id', function(req, res, next, id){
+  app.get('/tags/:path', tags.get)
+  app.get('/tags/:path/children', tags.children)
+  //app.get('/tags/:id/edit', auth.requiresLogin, auth.tag.hasAuthorization, tags.edit)
+  //app.put('/tags/:id', auth.requiresLogin, auth.tag.hasAuthorization, tags.update)
+  //app.del('/tags/:id', auth.requiresLogin, auth.tag.hasAuthorization, tags.destroy)
+  /*app.param('id', function(req, res, next, id){
     Tag
       .findOne({ _id : id })
       .populate('user', 'label')
@@ -45,13 +46,11 @@ module.exports = function (app, passport, auth) {
         req.tag = tag
         next()
       })
+  })*/
+  app.param('path', function(req, res, next, path){
+    req.tagPath = path;
+    next();
   })
 
-  // home route
-  app.get('/', function(req, res){
-    if(req.isAuthenticated())    
-      res.render('main/home')
-    else
-      res.render('main/index')
-  })
+  
 }

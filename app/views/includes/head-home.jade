@@ -22,9 +22,13 @@ head()
   link(rel='stylesheet', href='/css/bootstrap-responsive.css')
   link(rel='stylesheet', href='/css/base.css')
   link(rel='stylesheet', href='/css/home.css')
-  link(rel='stylesheet', href='/css/jquery.pageslider.css')
 
   //Application scripts
+  script
+      var initialOptions = {
+        welComeDialog: #{user.firstLogin},
+        tags: !{JSON.stringify(tags)}
+      }
   script(data-main="/js/main", src="/js/libs/require/require.js")
   //script(src='/js/almond.js')
   //script(src='/js/tagnfile.it.js')
