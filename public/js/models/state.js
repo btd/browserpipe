@@ -17,6 +17,7 @@ define([
       });        
       this.tags["root"] = tag;
       //Load inline tags
+      var initialTags = initialOptions.tags || [];
       for(index in initialTags){
         var tagItem = initialTags[index];
         var tag = new Tag(tagItem);        

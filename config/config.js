@@ -56,10 +56,6 @@ module.exports = {
           }
       }
     }
-  , test: {
-
-    }
   , production: {
-
     }
 }

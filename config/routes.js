@@ -8,6 +8,7 @@ module.exports = function (app, passport, auth) {
 
   // user routes
   var users = require('../app/controllers/users')
+  app.get('/', users.init)
   app.get('/login', users.login)
   app.get('/signup', users.signup)
   app.get('/logout', users.logout)
@@ -51,18 +52,5 @@ module.exports = function (app, passport, auth) {
     next();
   })
 
-  // home route
-  app.get('/', function(req, res){
-    if(req.isAuthenticated()){
-        //Load inline the root tag
-        //TODO: add intelligent loading logic. Such as the whole tree but where order < 50 (50 childs per tag)
-        Tag.getAll(req.user, function(tags){
-          res.render('main/home', {tags: tags})
-        }, function(){
-          res.render('500')
-        })        
-      }      
-    else
-      res.render('main/index')
-  })
+  
 }

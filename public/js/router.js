@@ -41,22 +41,15 @@ define([
       this.views.topBar.render()
       $("#main-container").append(this.views.dashboard.render().el);
     }
-
   });
   var initialize = function(){
     var app_router = new AppRouter;
-
     //Start monitoring all hashchange events for history
     Backbone.history.start();
-
     //Load inital data
     _state.loadInitalTags();
-
     //Init all the views
     app_router.createViews();    
-
-
-
   };
   return {
     initialize: initialize

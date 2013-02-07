@@ -6,7 +6,7 @@
 var express = require('express')
   , lessMiddleware = require('less-middleware')
   , gzippo = require('gzippo')
-  , mongoStore = require('connect-mongodb')
+  , mongoStore = require('connect-mongo')(express)
   , requirejs = require('requirejs')
 
 // App settings and middleware
