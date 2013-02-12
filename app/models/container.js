@@ -10,12 +10,7 @@ var ContainerSchema = new Schema({
   , dashboard: {type : Schema.ObjectId, ref : 'Dashboard'}
   , user: {type : Schema.ObjectId, ref : 'User'}
   , createdAt  : {type : Date, default : Date.now}
-  //tag-container
-  , tag: {type : Schema.ObjectId, ref : 'Tag'}
-  //import-container
-  , title: {source : String, trim : true}
-  //searh-container
-  , queryString: {source : String, trim : true}
+  , filter: {source : String, trim : true}
 })
 
 ItemSchema.path('title').validate(function (title) {

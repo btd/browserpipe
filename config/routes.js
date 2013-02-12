@@ -1,4 +1,4 @@
-
+/*
 var mongoose = require('mongoose')
   , Tag = mongoose.model('Tag')
   , User = mongoose.model('User')
@@ -46,7 +46,7 @@ module.exports = function (app, passport, auth) {
         req.tag = tag
         next()
       })
-  })*/
+  })
   app.param('path', function(req, res, next, path){
     req.tagPath = path;
     next();
@@ -54,3 +54,4 @@ module.exports = function (app, passport, auth) {
 
   
 }
+*/

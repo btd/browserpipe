@@ -3,33 +3,33 @@ define([
   'underscore',
   'backbone',
   'views/view',  
-  'views/top-bar/searchbox'
-], function($, _, Backbone, AppView, SearchBox){
-  var TopBar = AppView.extend({
-    name: 'TopBar',
-    el: $("#top-bar"),    
+  'views/bottom-bar/breadcrumb'
+], function($, _, Backbone, AppView, BreadCrumb){
+  var BottomBar = AppView.extend({
+    name: 'BottomBar',
+    el: $("#bottom-bar"),    
     activeFilter: {},
     initializeView: function(){  
       this.currentDashBoard = this.options.currentDashBoard;
-      //Creates the search box from the top bar
-      this.searchBox = new SearchBox();
+      //Creates the tags breadCrumb from the top bar
+      this.breadCrumb = new BreadCrumb();
       //Manage events
       this.prepareEvents();
     },    
     renderView: function(){
-      this.searchBox.render();     
+      this.breadCrumb.render();
       return this;
     },
     postRender: function(){
-      //this.searchBox.enable(this.activeFilter.data);
+      this.breadCrumb.setCurrentPath('', false);
       //or
-      //this.searchBox.disable();
+      //this.breadCrumb.disable()      
     },
     prepareEvents: function(){
       var self = this;
       this.currentDashBoard.on('containerSelected', 
         function(container){
-        /*  var type = '';
+          /*var type = '';
           var data = '';
           switch(container.type){
             case 'search': type = 'searchBox'; data = container.name; break;
@@ -42,26 +42,30 @@ define([
         }
       ).on('navigatedToTag', 
         function(tag){
-         /* self.setActiveFilter({
+        /*  self.setActiveFilter({
             type: 'breadCrumb',
             data: tag.getFullPath()
           });*/
         }
       );
-      this.searchBox.on('searchExecuted',
-        function(query){
+      this.breadCrumb.on('selectTag', 
+        function(path){
          /* self.setActiveFilter({
-            type: 'searchBox',
-            data: query
+            type: 'breadCrumb',
+            data: path
           });
-          self.currentDashBoard.addNewRandomContainer("search", query);*/
+          self.currentDashBoard.addNewRandomContainer("tag", path);*/
         }
-      ).on('searchBoxFocus',
+      ).on('startTagNavigation', 
         function(){          
-          //self.disableFilters(false, true, true, true);
+          //self.disableFilters(true, false, true, true);
         }
-      );      
+      ).on('stopTagNavigation', 
+        function(){          
+          //self.setActiveFilter(self.activeFilter);
+        }
+      );     
     }
   });
-  return TopBar;
+  return BottomBar;
 });

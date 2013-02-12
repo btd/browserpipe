@@ -19,13 +19,36 @@ body {
         box-shadow: none;
 
         .container-fluid {
+            padding: 5px 0;
+
+            .brand {
+                margin: 0;
+                padding: 0 20px;
+                text-align: center;
+                line-height: 18px;      
+
+                i {
+                    font-size: 14px;
+                }
+            }
+
+            #account-nav{
+
+                li{
+                    background-color: @blue;
+                    margin-left: 3px;
+
+                    &:hover{
+                        background-color: @blueOver;
+                    }
+                }
+            }
 
             #search-form {
-                margin: 5px;
-                position: absolute;
-                right: 260px;
+                margin: 0;
 
                 #search-btn { 
+                    height: 36px;                    
                     margin: 0; 
                     border: none;
                     box-shadow: none;
@@ -36,40 +59,30 @@ body {
                     padding: 5px 8px;   
                     text-shadow: none;
                     background-image: none;
+
+                    &:hover{
+                        background-color: @blueOver;
+                    }
                 }
-                #search-box {                                           
+                #search-box {         
+                    height: 26px;
+                    width: 850px;                                             
                     font-size: 20px;
                     -webkit-transition: all 0.1s ease-in-out;
                     -moz-transition: all 0.1s ease-in-out;
                     -o-transition: all 0.1s ease-in-out;
                     transition: all 0.1s ease-in-out;
-
-                    &.compressed {
-                        width: 7px;
-                    }
-                    &.uncompressed {
-                        width: 700px;
-                    }  
+                    .border-radius(0);
                 }      
-            }
-
-            a {
-                //padding: 8px 20px
-            }
-            .notifier {
-                height:20px;
-                margin-top: 4px;
-
-                .label {
-                    position: relative;
-                    top: -9px;
-                }
             }
         }          
     }
 }
+#bottom-bar {
+    padding: 4px 0;
+}       
 #main-container {   
-    margin: 40px 8px 5px; 
+    margin: 40px 8px 40px; 
 }
 .dashboard {   
     background: #EFEFEF;

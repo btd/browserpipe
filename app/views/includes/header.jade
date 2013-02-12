@@ -5,13 +5,38 @@ div#top-bar(class="navbar navbar-fixed-top")
   div(class="navbar-inner")
     div(class="container-fluid")
       a(href="index.html", class="brand", data-original-title="")      
-        span TAGNFILE.IT   
-      ul#breadcrumb(class="breadcrumb pull-left")
+          div TAGNFILE.IT         
+          i beta
+      form#search-form(class="form-search pull-left")
+        span.input-append
+          input#search-box(type="text", class="uncompressed")
+          button#search-btn(type="submit", class="btn") Search
       ul#account-nav(class="nav pull-right")
-        li(class="divider-vertical")
+        li(tabindex="-1",href="#",class="dropdown") 
+          a(href="#", class="dropdown-toggle", data-toggle="dropdown") 
+            img(src="/img/windows.png", alt="#{user.name}")
+          ul(class="dropdown-menu")
+            li
+              a(tabindex="-1", href="#") Import bookmarks
+            li
+              a(tabindex="-1", href="#") Settings
+            li(class="divider")
+            li                
+              a(tabindex="-1", href="/logout") Logout   
+        li(tabindex="-1",href="#",class="dropdown") 
+          a(href="#", class="dropdown-toggle", data-toggle="dropdown") 
+            img(src="/img/inbox.png", alt="#{user.name}")
+          ul(class="dropdown-menu")
+            li
+              a(tabindex="-1", href="#") Import bookmarks
+            li
+              a(tabindex="-1", href="#") Settings
+            li(class="divider")
+            li                
+              a(tabindex="-1", href="/logout") Logout   
         li(class="dropdown")
-          a(href="#", class="dropdown-toggle", data-toggle="dropdown") #{req.user.name}      
-            b(class="caret")    
+          a(href="#", class="dropdown-toggle", data-toggle="dropdown") 
+            img(src="/img/user.png", alt="#{user.name}")
           ul(class="dropdown-menu")
             li
               a(tabindex="-1", href="#") Import bookmarks
@@ -20,10 +45,6 @@ div#top-bar(class="navbar navbar-fixed-top")
             li(class="divider")
             li                
               a(tabindex="-1", href="/logout") Logout                      
-      form#search-form(class="form-search pull-right")
-        span.input-append
-          input#search-box(type="text", class="uncompressed")
-          button#search-btn(type="submit", class="btn") Search
 
        
      

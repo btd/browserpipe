@@ -26,7 +26,6 @@ head()
   //Application scripts
   script
       var initialOptions = {
-        welComeDialog: #{user.firstLogin},
         tags: !{JSON.stringify(tags)}
       }
   script(data-main="/js/main", src="/js/libs/require/require.js")

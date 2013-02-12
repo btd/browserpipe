@@ -5,8 +5,9 @@ define([
   'backbone',
   'models/state',
   'views/dashboards/dashboard',
-  'views/top-bar/bar'
-], function($, _, Backbone, _state, Dashboard, TopBar){
+  'views/top-bar/bar',
+  'views/bottom-bar/bar'
+], function($, _, Backbone, _state, Dashboard, TopBar, BottomBar){
   var AppRouter = Backbone.Router.extend({
     views: {},
     routes: {
@@ -37,8 +38,11 @@ define([
       this.views.dashboard = new Dashboard();
       //Creates the top bar      
       this.views.topBar = new TopBar({currentDashBoard: this.views.dashboard});
+      //Creates the bottom bar      
+      this.views.bottomBar = new BottomBar({currentDashBoard: this.views.dashboard});
       //Render views
       this.views.topBar.render()
+      this.views.bottomBar.render()
       $("#main-container").append(this.views.dashboard.render().el);
     }
   });

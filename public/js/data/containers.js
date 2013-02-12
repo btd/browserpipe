@@ -98,9 +98,9 @@ define([
             this.addFakeItemsToContainer(container)
       },
       getInitialFakeContainers: function(success) {         
-         this.generateFakeContainer("tag", "root.Read Later", success);
-         this.generateFakeContainer("tag", "root.Quick Launch", success);
-         this.generateFakeContainer("tag", "root.Favourites", success);
+     //    this.generateFakeContainer("tag", "root.Read Later", success);
+     //    this.generateFakeContainer("tag", "root.Quick Launch", success);
+     //    this.generateFakeContainer("tag", "root.Favourites", success);
       },
       addFakeItemsToContainer: function(container){
          var numberOfItems = Math.floor(Math.random() * 50);

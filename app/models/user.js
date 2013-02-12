@@ -18,11 +18,15 @@ var UserSchema = new Schema({
 });
 
 // methods
-UserSchema.method('verifyPassword', function(password, callback) {
+/*UserSchema.method('verifyPassword', function(password, callback) {
   bcrypt.compare(password, this.password, callback);
-});
+});*/
 
-UserSchema.static('authenticate', function(email, password, callback) {
+UserSchema.method('authenticate', function(password) {
+  return bcrypt.compareSync(password, this.password);
+})
+
+/*UserSchema.static('authenticate', function(email, password, callback) {
   this.findOne({ email: email }, function(err, user) {
       if (err) { return callback(err); }
       if (!user) { return callback(null, false); }
@@ -33,5 +37,5 @@ UserSchema.static('authenticate', function(email, password, callback) {
       });
     });
 });
-
+*/
 module.exports = mongoose.model('User', UserSchema);
