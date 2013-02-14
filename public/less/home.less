@@ -22,24 +22,41 @@ body {
             padding: 5px 0;
 
             .brand {
-                margin: 0;
+                margin: 2px 0 0;
                 padding: 0 20px;
                 text-align: center;
-                line-height: 18px;      
+                line-height: 16px;      
 
                 i {
                     font-size: 14px;
+                    line-height: 0px;      
+                }
+            }
+            #opt-dashboards{
+                .name {
+                    margin-left: 6px;
                 }
             }
 
             #account-nav{
+                margin: 0 8px 0 0;
 
-                li{
+                .nav-option{
                     background-color: @blue;
                     margin-left: 3px;
 
                     &:hover{
                         background-color: @blueOver;
+                    }
+                }
+
+                #opt-import {
+                    li {
+                        a {
+                            img {
+                                margin-right: 6px;
+                            }
+                        }
                     }
                 }
             }
@@ -66,7 +83,7 @@ body {
                 }
                 #search-box {         
                     height: 26px;
-                    width: 850px;                                             
+                    width: 700px;                                             
                     font-size: 20px;
                     -webkit-transition: all 0.1s ease-in-out;
                     -moz-transition: all 0.1s ease-in-out;
@@ -79,10 +96,27 @@ body {
     }
 }
 #bottom-bar {
-    padding: 4px 0;
-}       
+    padding: 5px 0;
+
+    #trash {
+        margin-right: 8px;         
+    }
+}
+#opt-dashboards, #trash {   
+
+    .dropdown-toggle {
+      padding: 8px 15px;
+      background-color: @blue;
+      text-shadow: none;
+
+      &:hover{
+        color: @white;
+        background-color: @blueOver;
+      }
+    }    
+}
 #main-container {   
-    margin: 40px 8px 40px; 
+    margin: 46px 8px; 
 }
 .dashboard {   
     background: #EFEFEF;

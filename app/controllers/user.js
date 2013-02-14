@@ -1,8 +1,11 @@
 var _ = require('lodash'),
-        passport = require('passport')
-        mongoose = require('mongoose'),
-        User = mongoose.model('User'),
-        Tag = mongoose.model('Tag');
+    q = require('q'),
+    passport = require('passport')
+    mongoose = require('mongoose'),
+    User = mongoose.model('User'),
+    Tag = mongoose.model('Tag'),
+    Dashboard = mongoose.model('Dashboard'),
+    Container = mongoose.model('Container')
 
 module.exports = function(app) {
   var controller = new UsersController;
@@ -35,13 +38,20 @@ var UsersController = function() {
       action: {
         get: function (req, res) {
           if(req.isAuthenticated()){
-             //Load inline the root tag
-             //TODO: add intelligent loading logic. Such as the whole tree but where order < 50 (50 childs per tag)
-             Tag.getAll(req.user, function(tags){
-               res.render('main/home', {user: req.user, tags: tags})
-             }, function(){
-               res.render('500')
-             })        
+              //TODO: add intelligent loading logic. Such as the whole tree but where order < 50 (50 childs per tag)
+              q.all([
+                  Dashboard.getAll(req.user),
+                  Container.getAll(req.user),
+                  Tag.getAll(req.user)                  
+              ]).spread(function(dashboards, containers, tags){                
+                 res.render('main/home', {
+                  user: req.user, 
+                  dashboards: dashboards, 
+                  containers: containers, 
+                  tags: tags})
+               }, function(){
+                 res.render('500')
+               }).done()                   
            }      
          else
            res.render('main/index')     
@@ -55,20 +65,30 @@ var UsersController = function() {
           var user = new User(req.body)
           user.provider = 'local' //for passport
 
-          //create initial data
-          //var dashboard = new Dashboard({label: 'My initial dashboard', user: user})      
-          //dashboard.save()
-          //sets initial dashboard as current
-          //user.currentDashboard = dashboard
+          //Creates initial data
+          //Create tags
+          var readLaterTag = new Tag({label: "Read Later", path: "tag", user: user})
+          var coolSitesTag = new Tag({label: "Cool sites", path: "tag", user: user})
+          var dashboard = new Dashboard({label: 'My initial dashboard', user: user})      
+          var readLaterContainer = new Container({title: "Read Later", filter: "#\"Read Later\"", dashboard: dashboard, user: user})
+          var coolSitesContainer = new Container({title: "Cool sites", filter: "#\"Cool Sites\"", dashboard: dashboard, user: user})
+          user.currentDashboard = dashboard
 
-          user.save(function (err) {//TODO more correctly (from sass, soa, rest and other clever abbriviations point of view) do redirect here instead of rendering templates 
-            if (err) return res.render('users/signup', { errors: err.errors })
-            
+          //TODO: manage rollback
+          q.all([readLaterTag.saveWithPromise(),
+            coolSitesTag.saveWithPromise(),
+            dashboard.saveWithPromise(),
+            readLaterContainer.saveWithPromise(),
+            coolSitesContainer.saveWithPromise(),
+            user.saveWithPromise()])
+          .spread(function(){
             req.login(user, function(err) {
-              if (err) return next(err)
-              return res.redirect('/')
+              if (err) return res.render('500')
+              return res.redirect('/dashboard/' + )
             })
-          })
+          }, function(err){
+            res.render('users/signup', { errors: err.errors })
+          }).done()                   
         }
       }
     },

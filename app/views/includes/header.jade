@@ -7,41 +7,70 @@ div#top-bar(class="navbar navbar-fixed-top")
       a(href="index.html", class="brand", data-original-title="")      
           div TAGNFILE.IT         
           i beta
+      ul#opt-dashboards(class="nav pull-left")
+        li(class="dropdown nav-option") 
+          a(href="#", class="dropdown-toggle", data-toggle="dropdown") 
+            img(src="/img/dashboards.png", alt="Dashboards")
+            for dashboard in dashboards
+              if user.currentDashboard == dashboard.id
+                span.name #{dashboard.label}
+              else
+                li: i No dashboards!                          
+            else
+              li: i No dashboards!            
+          ul(class="dropdown-menu")
+            for dashboard in dashboards
+              li: a(tabindex="-1", href="#") #{dashboard.label}
+            else
+              li: i No dashboards!
+            li(class="divider")
+              li                
+                a(tabindex="-1", href="#") Create New
       form#search-form(class="form-search pull-left")
         span.input-append
           input#search-box(type="text", class="uncompressed")
           button#search-btn(type="submit", class="btn") Search
       ul#account-nav(class="nav pull-right")
-        li(tabindex="-1",href="#",class="dropdown") 
+        li(class="dropdown nav-option") 
           a(href="#", class="dropdown-toggle", data-toggle="dropdown") 
-            img(src="/img/windows.png", alt="#{user.name}")
+            img(src="/img/windows.png", alt="Sync devices")
+          ul(class="dropdown-menu")
+            li(class="disabled")
+              a(tabindex="-1", href="#") No device synced
+            li                
+              a(tabindex="-1", href="#") Sync new device   
+        li#opt-import(class="dropdown nav-option") 
+          a(href="#", class="dropdown-toggle", data-toggle="dropdown") 
+            img(src="/img/inbox.png", alt="Import")
           ul(class="dropdown-menu")
             li
-              a(tabindex="-1", href="#") Import bookmarks
+              a(tabindex="-1", href="#") 
+                img(src="/img/file.png")
+                span Import from a file
             li
-              a(tabindex="-1", href="#") Settings
-            li(class="divider")
-            li                
-              a(tabindex="-1", href="/logout") Logout   
-        li(tabindex="-1",href="#",class="dropdown") 
-          a(href="#", class="dropdown-toggle", data-toggle="dropdown") 
-            img(src="/img/inbox.png", alt="#{user.name}")
-          ul(class="dropdown-menu")
+              a(tabindex="-1", href="#") 
+                img(src="/img/twitter.ico")
+                span Import from Twitter
             li
-              a(tabindex="-1", href="#") Import bookmarks
+              a(tabindex="-1", href="#") 
+                img(src="/img/facebook.ico")
+                span Import from Facebook
             li
-              a(tabindex="-1", href="#") Settings
-            li(class="divider")
-            li                
-              a(tabindex="-1", href="/logout") Logout   
-        li(class="dropdown")
+              a(tabindex="-1", href="#") 
+                img(src="/img/delicious.ico")
+                span Import from Delicious
+            li
+              a(tabindex="-1", href="#") 
+                img(src="/img/pinboard.ico")
+                span Import from Pinboard
+        li(class="dropdown nav-option")
           a(href="#", class="dropdown-toggle", data-toggle="dropdown") 
             img(src="/img/user.png", alt="#{user.name}")
           ul(class="dropdown-menu")
             li
-              a(tabindex="-1", href="#") Import bookmarks
-            li
               a(tabindex="-1", href="#") Settings
+            li
+              a(tabindex="-1", href="#") Help
             li(class="divider")
             li                
               a(tabindex="-1", href="/logout") Logout                      

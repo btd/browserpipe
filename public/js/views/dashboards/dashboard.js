@@ -45,7 +45,7 @@ define([
     },
     calculateHeight: function(){
       var wheight = $(window).height();
-      $(this.el).height(wheight - 80);
+      $(this.el).height(wheight - 92);
       for (index in this.containersItems)
         this.containersItems[index].calculateHeight();
     },    

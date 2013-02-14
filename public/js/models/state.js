@@ -1,13 +1,27 @@
 define([
   'underscore',
   'backbone',
+  'models/dashboard',
   'models/tag',
   'data/tags'
-], function(_, Backbone, Tag, TagsData) {
+], function(_, Backbone, Dashboard, Tag, TagsData) {
   var State = Backbone.Model.extend({
+    dashboards: {},
     tags: {},
     defaults: {},
-    loadInitalTags: function(){        
+    loadInitialData: function(){
+      this.loadInitialDashboards();
+      this.loadInitialTags();
+    },
+    loadInitialDashboards: function(){
+      for(index in initialOptions.dashboards){
+        var dashboard = new Dashboard(initialOptions.dashboards[index]);
+        this.dashboards[dashboard.get('label')] = dashboard;
+        if(initialOptions.currentDashboardId == dashboard.get('id'))
+          this.currentDashboard = dashboard;
+      }
+    },
+    loadInitialTags: function(){        
       //Tag root is added here
       var tag = new Tag({        
         label: 'root',
@@ -17,7 +31,7 @@ define([
       });        
       this.tags["root"] = tag;
       //Load inline tags
-      var initialTags = initialOptions.tags || [];
+      /*var initialTags = initialOptions.tags || [];
       for(index in initialTags){
         var tagItem = initialTags[index];
         var tag = new Tag(tagItem);        
@@ -27,7 +41,7 @@ define([
           var parentTag = this.tags[tagItem.path];
           parentTag.addChildren(tag);
         }
-      }
+      }*/
     },
     getTag: function(path, options){      
       var options = options || {};

@@ -11,11 +11,13 @@ define([
   var AppRouter = Backbone.Router.extend({
     views: {},
     routes: {
+      'dashboard/:id': 'showDashboard',
+
       // Define some URL routes
-      'tags/view/:id': 'showTag',
-      'tags/add': 'addTag',
-      'tag/:id/edit': 'editTag',
-      'tag/:id/delete': 'deleteTag',
+      //'tags/view/:id': 'showTag',
+      //'tags/add': 'addTag',
+      //'tag/:id/edit': 'editTag',
+      //'tag/:id/delete': 'deleteTag',
 
       // Default
       '*actions': 'defaultAction'
@@ -30,6 +32,8 @@ define([
     },
     defaultAction: function(actions){
       
+    },
+    showDashboard: function(id){
     },
     createViews: function(){
       //We have no matching route, lets display the home page
@@ -51,7 +55,7 @@ define([
     //Start monitoring all hashchange events for history
     Backbone.history.start();
     //Load inital data
-    _state.loadInitalTags();
+    _state.loadInitialData();
     //Init all the views
     app_router.createViews();    
   };

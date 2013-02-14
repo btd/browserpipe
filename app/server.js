@@ -13,6 +13,8 @@ var app = express()
 //load modells
 require('./models/user');
 require('./models/tag');
+require('./models/dashboard');
+require('./models/container');
 
 // Bootstrap application settings
 require('./settings')(app);

@@ -3,6 +3,7 @@
 var mongoose = require('mongoose')
   , Schema = mongoose.Schema
   , validation = require('./validation')
+  , q = require('q')
 
 var TagSchema = new Schema({
     label: {type : String, trim : true, validate: validation.nonEmpty}
@@ -20,10 +21,24 @@ TagSchema.path('path').validate(function (path) {
   return path.length > 0
 }, 'Tag path cannot be blank')
 
+TagSchema.method('saveWithPromise', function() {
+  var deferred = q.defer();	
+  this.save(function (err) {
+    if (err) deferred.reject(err)
+	else deferred.resolve()    
+  })
+  return deferred.promise;
+})
 
 var Tag = mongoose.model('Tag', TagSchema);
 
-Tag.getAll = function(user, success, error){
+//exports.user.find = Q.nfbind(user.find.bind(user));
+//exports.user.findOne = Q.nfbind(user.findOne.bind(user));
+
+
+
+Tag.getAll = function(user){
+  var deferred = q.defer();
   this
 	.find({user: user})
 	//.populate('user', 'label', 'path')
@@ -33,8 +48,9 @@ Tag.getAll = function(user, success, error){
 	.exec(function(err, tags) {
 	  // TODO manage errors propertly
 	  if (err) error(err)
-	  else success(tags)
+	  else deferred.resolve(tags)
 	})   
+  return deferred.promise;
 }
 
 Tag.getChildrenByPath = function(user, path, success, error){

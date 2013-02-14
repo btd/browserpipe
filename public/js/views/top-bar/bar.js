@@ -3,20 +3,22 @@ define([
   'underscore',
   'backbone',
   'views/view',  
+  'views/top-bar/dashboard',
   'views/top-bar/searchbox'
-], function($, _, Backbone, AppView, SearchBox){
+], function($, _, Backbone, AppView, TopBarSearchBox, TopBarDashboard){
   var TopBar = AppView.extend({
     name: 'TopBar',
     el: $("#top-bar"),    
     activeFilter: {},
     initializeView: function(){  
       this.currentDashBoard = this.options.currentDashBoard;
-      //Creates the search box from the top bar
-      this.searchBox = new SearchBox();
+      this.dashboard  = new TopBarDashboard();
+      this.searchBox = new TopBarSearchBox();
       //Manage events
       this.prepareEvents();
     },    
     renderView: function(){
+      this.dashboard.render();     
       this.searchBox.render();     
       return this;
     },
