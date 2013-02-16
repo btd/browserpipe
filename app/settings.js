@@ -1,23 +1,24 @@
 var express = require('express'),
     config = require('../config/config'),
-    sessionConfig = require('./session-config');
+    mongoStore = require('connect-mongo')(express),
+    lessMiddleware = require('less-middleware')
 
 // App settings and middleware
 module.exports = function(app) {
 
   // set views path, template engine and default layout
-  app.set('views', __dirname + '/app/views')
+  app.set('views', __dirname + '/views')
   app.set('view engine', 'jade')
   app.set('view options', {'layout': false})
 
   //Compile less files
-  /* TODO replace with connect-assets
+  /* TODO replace with connect-assets*/
   app.use(lessMiddleware({
-      dest: __dirname + '/public/css',
-      src: __dirname + '/public/less',
+      dest: __dirname + '/../public/css',
+      src: __dirname + '/../public/less',
       prefix: '/css',
       compress: true
-  }));*/
+  }));
 
   // dynamic helpers
   app.use(function (req, res, next) {
@@ -33,10 +34,22 @@ module.exports = function(app) {
 
   // cookieParser should be above session
   app.use(express.cookieParser());
+  
+  // save session in mongodb collection sessions
+  app.use(express.session({
+    secret: 'd5bSD5N0dl3Vs1SwXw6pMkxS',
+    store: new mongoStore({
+      url: config.db.uri,
+      collection : 'sessions'
+    })
+  }))
 
-  // this will load session if session information is presented
-  app.use(sessionConfig.sessionLoad);
-
+  // bootstrap passport config
+  var passport = require('passport')
+  require('../config/passport').boot(passport, config)
+  app.use(passport.initialize())
+  app.use(passport.session())
+  
   app.use(function(req, res, next) {
      if(req.session && req.session.currentUser) {
          req.currentUser = req.session.currentUser;
@@ -46,7 +59,7 @@ module.exports = function(app) {
 
   app.use(express.favicon());
 
-  app.use(express.static(__dirname + '/public'));
+  app.use(express.static(__dirname + '/../public'));
 
   // configure environments
   app.configure('development', function(){

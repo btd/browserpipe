@@ -1,7 +1,7 @@
-<span class="item" href="">
+<a class="item" href="">
 	<% if(tag.get('icon')){ %><img width="16px" src="<%= tag.get('icon') %>"/><% } %>
 	<% if(!tag.get('isRoot')){ %><span><%= tag.get('label') %></span><% } %>
-</span>
+</a>
 <div style="display:none;" class="tag-dropdown-cont dropdown-menu">
 	<div class="tag-dropdown">
 		<div class="tag-dropdown-arrow"></div>

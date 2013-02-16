@@ -8,14 +8,19 @@ var express = require('express')
 // loading db connection
 require('./db')();
 
-var app = express()                                       
+var app = express()      
+
+//load modells
+require('./models/user');
+require('./models/tag');
+require('./models/dashboard');
+require('./models/container');
 
 // Bootstrap application settings
 require('./settings')(app);
 
 //load other
-['session'].forEach(function(controllerName) {
-	require('./controllers/' + controllerName)(app);
-});
+require('./controllers/user')(app);
+require('./controllers/dashboard')(app);
 
 module.exports = app;
