@@ -26,7 +26,7 @@ head()
   //Application scripts
   script
       var initialOptions = {
-        currentDashboard: '#{user.currentDashboard.id}',
+        currentDashboardId: '#{currentDashboard.id}',
         dashboards: !{JSON.stringify(dashboards)},
         containers: !{JSON.stringify(containers)},
         tags: !{JSON.stringify(tags)}

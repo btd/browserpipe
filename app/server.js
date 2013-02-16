@@ -21,5 +21,6 @@ require('./settings')(app);
 
 //load other
 require('./controllers/user')(app);
+require('./controllers/dashboard')(app);
 
 module.exports = app;

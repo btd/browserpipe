@@ -38,20 +38,10 @@ var UsersController = function() {
       action: {
         get: function (req, res) {
           if(req.isAuthenticated()){
-              //TODO: add intelligent loading logic. Such as the whole tree but where order < 50 (50 childs per tag)
-              q.all([
-                  Dashboard.getAll(req.user),
-                  Container.getAll(req.user),
-                  Tag.getAll(req.user)                  
-              ]).spread(function(dashboards, containers, tags){                
-                 res.render('main/home', {
-                  user: req.user, 
-                  dashboards: dashboards, 
-                  containers: containers, 
-                  tags: tags})
-               }, function(){
-                 res.render('500')
-               }).done()                   
+            if(req.user.currentDashboard)              
+              res.redirect('/dashboard/' + req.user.currentDashboard)
+            else 
+              res.redirect('/dashboard') //No dashboard        
            }      
          else
            res.render('main/index')     
@@ -84,7 +74,7 @@ var UsersController = function() {
           .spread(function(){
             req.login(user, function(err) {
               if (err) return res.render('500')
-              return res.redirect('/dashboard/' + )
+              return res.redirect('/dashboard/' + dashboard.id)
             })
           }, function(err){
             res.render('users/signup', { errors: err.errors })

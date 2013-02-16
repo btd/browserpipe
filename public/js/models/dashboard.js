@@ -1,12 +1,13 @@
 define([
   'underscore',
-  'backbone'
-], function(_, Backbone) {
-  var Dashboard = Backbone.Model.extend({
+  'backbone',
+  'models/model'
+], function(_, Backbone, AppModel) {
+  var Dashboard = AppModel.extend({
     urlRoot: "/dashboards",
     defaults: {   
     },
-    initialize: function(spec){    
+    initialize: function(spec){  
     }
   });
   return Dashboard;

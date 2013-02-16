@@ -11,13 +11,10 @@ div#top-bar(class="navbar navbar-fixed-top")
         li(class="dropdown nav-option") 
           a(href="#", class="dropdown-toggle", data-toggle="dropdown") 
             img(src="/img/dashboards.png", alt="Dashboards")
-            for dashboard in dashboards
-              if user.currentDashboard == dashboard.id
-                span.name #{dashboard.label}
-              else
-                li: i No dashboards!                          
+            if currentDashboard
+              span.name #{currentDashboard.label}
             else
-              li: i No dashboards!            
+              li: i No dashboards!           
           ul(class="dropdown-menu")
             for dashboard in dashboards
               li: a(tabindex="-1", href="#") #{dashboard.label}

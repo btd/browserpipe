@@ -3,61 +3,45 @@ define([
   'jQuery',
   'underscore',
   'backbone',
-  'models/state',
-  'views/dashboards/dashboard',
-  'views/top-bar/bar',
-  'views/bottom-bar/bar'
-], function($, _, Backbone, _state, Dashboard, TopBar, BottomBar){
+  'models/state',  
+  'views/top-bar/dashboard'
+], function($, _, Backbone, _state, TopBarDashboard){
   var AppRouter = Backbone.Router.extend({
     views: {},
     routes: {
       'dashboard/:id': 'showDashboard',
-
-      // Define some URL routes
-      //'tags/view/:id': 'showTag',
-      //'tags/add': 'addTag',
-      //'tag/:id/edit': 'editTag',
-      //'tag/:id/delete': 'deleteTag',
-
+      'dashboard/add': 'addDashboard',
+      'dashboard/:id/edit': 'editDashboard',
+      'dashboard/:id/delete': 'deleteDashboard',
       // Default
       '*actions': 'defaultAction'
     },
-    showTag: function(id){  
+    showDashboard: function(id){  
     },
-    addTag: function(){   
+    addDashboard: function(){   
     },
-    editTag: function(id){      
+    editDashboard: function(id){      
     },
-    deleteTag: function(id){      
+    deleteDashboard: function(id){      
     },
     defaultAction: function(actions){
       
     },
-    showDashboard: function(id){
-    },
-    createViews: function(){
+    init: function(){
       //We have no matching route, lets display the home page
       var self = this;      
-      //TODO: Here it should draw the last loaded dashboard
-      this.views.dashboard = new Dashboard();
-      //Creates the top bar      
-      this.views.topBar = new TopBar({currentDashBoard: this.views.dashboard});
-      //Creates the bottom bar      
-      this.views.bottomBar = new BottomBar({currentDashBoard: this.views.dashboard});
-      //Render views
-      this.views.topBar.render()
-      this.views.bottomBar.render()
-      $("#main-container").append(this.views.dashboard.render().el);
+      //Creates the top bar dashboard options     
+      this.views.topBarDashboard = new TopBarDashboard({collection: _state.dashboards});
     }
   });
   var initialize = function(){
     var app_router = new AppRouter;
     //Start monitoring all hashchange events for history
     Backbone.history.start();
-    //Load inital data
+    //Load inital data to memory
     _state.loadInitialData();
     //Init all the views
-    app_router.createViews();    
+    app_router.init();    
   };
   return {
     initialize: initialize
