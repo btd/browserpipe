@@ -1,2 +1,0 @@
-<span class="name"><%= tag.get('label') %></span>
-<% if(tag.get('children').length > 0){ %><span class="children">...</span><% } %>	

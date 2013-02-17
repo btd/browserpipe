@@ -6,15 +6,25 @@ define([
   var DashboardCollection = Backbone.Collection.extend({
     model: Dashboard,    
     url: "/dashboards",
-    initialize: function(){
+    initialize: function(models, options){
+      this.currentDashboardId = options.currentDashboardId;
+      this.on('add', this.dashboardAdded, this);
+      this.on('remove', this.dashboardRemoved, this);
     },
     getCurrentDashboard: function(){
-      return this.currentDashboard;
+      return this.currentDashboardId && this.get(this.currentDashboardId);
     },
-    setCurrentDashboard: function(id){  
-      //Not working this.get yet, not sure why
-      //this.currentDashboard = this.get(id)
-      //console.log(this.get)
+    setCurrentDashboard: function(dashboard){
+      this.currentDashboardId = dashboard && dashboard.get("_id");
+      this.trigger('currentDashboardChange', dashboard);  
+    },
+    dashboardAdded: function(dashboard){
+      if(!this.currentDashboardId)
+        this.setCurrentDashboard(dashboard)
+    },
+    dashboardRemoved: function(dashboard){
+      if(this.currentDashboardId &&  this.currentDashboardId === dashboard.get('_id'))
+        this.setCurrentDashboard(this.first())              
     }
   });
   return DashboardCollection;

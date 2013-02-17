@@ -39,9 +39,9 @@ var UsersController = function() {
         get: function (req, res) {
           if(req.isAuthenticated()){
             if(req.user.currentDashboard)              
-              res.redirect('/dashboard/' + req.user.currentDashboard)
+              res.redirect('/dashboards/' + req.user.currentDashboard)
             else 
-              res.redirect('/dashboard') //No dashboard        
+              res.redirect('/dashboards') //No dashboard        
            }      
          else
            res.render('main/index')     

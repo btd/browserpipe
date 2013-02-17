@@ -10,18 +10,14 @@ div#top-bar(class="navbar navbar-fixed-top")
       ul#opt-dashboards(class="nav pull-left")
         li(class="dropdown nav-option") 
           a(href="#", class="dropdown-toggle", data-toggle="dropdown") 
-            img(src="/img/dashboards.png", alt="Dashboards")
-            if currentDashboard
-              span.name #{currentDashboard.label}
-            else
-              li: i No dashboards!           
+            img(src="/img/dashboards.png", alt="Dashboards")            
+            span.name
           ul(class="dropdown-menu")
-            for dashboard in dashboards
-              li: a(tabindex="-1", href="#") #{dashboard.label}
-            else
-              li: i No dashboards!
+            li(id="opt-edit-dash")
+              a(tabindex="-1", href="#") Edit
+            li(class="divider")            
             li(class="divider")
-              li                
+              li(id="opt-add-dash")                
                 a(tabindex="-1", href="#") Create New
       form#search-form(class="form-search pull-left")
         span.input-append

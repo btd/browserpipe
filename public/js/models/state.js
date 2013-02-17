@@ -8,8 +8,7 @@ define([
       this.loadDashboards();
     },
     loadDashboards: function(){
-      this.dashboards = new Dashboards({collection: initialOptions.dashboards, currentDashboardId: initialOptions.currentDashboardId})
-      this.dashboards.setCurrentDashboard(initialOptions.currentDashboardId);
+      this.dashboards = new Dashboards(initialOptions.dashboards, {currentDashboardId: initialOptions.currentDashboardId})
            
       /*
       for(index in initialOptions.dashboards){

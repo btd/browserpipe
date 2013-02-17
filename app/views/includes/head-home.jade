@@ -25,12 +25,12 @@ head()
 
   //Application scripts
   script
-      var initialOptions = {
-        currentDashboardId: '#{currentDashboard.id}',
-        dashboards: !{JSON.stringify(dashboards)},
-        containers: !{JSON.stringify(containers)},
-        tags: !{JSON.stringify(tags)}
-      }
+    var initialOptions = {           
+      currentDashboardId: '#{currentDashboardId}',
+      dashboards: !{JSON.stringify(dashboards)},
+      containers: !{JSON.stringify(containers)},
+      tags: !{JSON.stringify(tags)}
+    }
   script(data-main="/js/main", src="/js/libs/require/require.js")
   //script(src='/js/almond.js')
   //script(src='/js/tagnfile.it.js')

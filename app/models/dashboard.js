@@ -6,7 +6,7 @@ var mongoose = require('mongoose')
   , q = require('q')
 
 var DashboardSchema = new Schema({
-	label: {type : String, trim : true, validate: validation.nonEmpty}
+	label: {type : String, trim : true, validate: validation.nonEmpty, unique: true}
   , user: {type : Schema.ObjectId, ref : 'User'}
   , createdAt: {type : Date, default : Date.now}
 })
@@ -39,7 +39,7 @@ Dashboard.create = function(label, path, user){
 Dashboard.getAll = function(user){
   var deferred = q.defer();
   this
-	.find({user: user})
+	.find({user: user}, '_id label')
 	.exec(function(err, dashboards) {
 	  // TODO manage errors propertly
 	  if (err) error(err)

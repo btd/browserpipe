@@ -21,8 +21,7 @@ module.exports = function(app) {
     Dashboard
       .findOne({ _id : id })
       .exec(function (err, dashboard) {
-        if (err) return next(err)
-        if (!dashboard) return next(new Error('Failed to load Dashboard ' + id))
+        if (err) return next(err)        
         req.currentDashboard = dashboard
         next()
       })
@@ -30,34 +29,81 @@ module.exports = function(app) {
 }
 
 var DashboardsController = function() {
-  var path = '/dashboard/'; 
+
+  function showDashboard(req, res) {
+    if(req.isAuthenticated()){                       
+      q.all([
+          Dashboard.getAll(req.user),
+          Container.getAll(req.user),
+          Tag.getAll(req.user)                  
+      ]).spread(function(dashboards, containers, tags){                
+         res.render('main/home', {
+          currentDashboardId: ((req.currentDashboard && req.currentDashboard.id) || req.user.currentDashboard), 
+          user: req.user, 
+          dashboards: dashboards, 
+          containers: containers, 
+          tags: tags})
+       }, function(){
+         res.render('500')
+       }).done()                   
+    }      
+    else
+     res.render('main/index')     
+  }
 
   return {
-    show: {
-      path: path + ":dashboardId",
+    showEmpty: {
+      path: "/dashboards",
       action: {
-        get: function (req, res) {
+        get: showDashboard
+      }
+    },
+    show: {
+      path: "/dashboards/:dashboardId",
+      action: {
+        get: showDashboard
+      }
+    },
+    create: {
+      path: "/dashboards",
+      action: {
+        post: function (req, res) {
           if(req.isAuthenticated()){
-              //TODO: add intelligent loading logic. Such as the whole tree but where order < 50 (50 childs per tag)
-              q.all([
-                  Dashboard.getAll(req.user),
-                  Container.getAll(req.user),
-                  Tag.getAll(req.user)                  
-              ]).spread(function(dashboards, containers, tags){                
-                 res.render('main/home', {
-                  currentDashboard: req.currentDashboard, 
-                  user: req.user, 
-                  dashboards: dashboards, 
-                  containers: containers, 
-                  tags: tags})
-               }, function(){
-                 res.render('500')
-               }).done()                   
+              var dashboard = new Dashboard(req.body)
+              dashboard.user = req.user   
+              req.user.currentDashboard = dashboard
+              q.all([dashboard.saveWithPromise(),
+                req.user.saveWithPromise()])
+              .spread(function(){
+                res.json('{"_id":"' + dashboard._id + '"}')
+              }, function(err){
+                //TODO: send corresponding number error
+                res.json(err.errors) 
+              }).done()
            }      
          else
-           res.render('main/index')     
+           res.send(err.errors)
         }
       }
-    }      
+    },
+    update: {
+      path: "/dashboards/:dashboardId",
+      action: {
+        put: function (req, res) {
+          if(req.isAuthenticated() && req.currentDashboard){
+            var dashboard = req.currentDashboard;
+            dashboard.label = req.body.label
+            dashboard.saveWithPromise().then(function(){
+              res.json('{"_id":"' + dashboard._id + '"}')
+            }, function(err){
+              //TODO: send corresponding number error
+              res.json(err.errors) 
+            }).done()
+          }      
+          else 
+            res.send(err.errors)
+        }
+      }
+    }                
   }
 };

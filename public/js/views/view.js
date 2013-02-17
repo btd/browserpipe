@@ -6,9 +6,9 @@ define([
   var AppView = Backbone.View.extend({
     name: 'No name',
     postRender: null,
-    initialize: function(){ 
+    initialize: function(options){ 
       //console.time('Initializing View "' + this.name + '"');
-      this.initializeView();
+      this.initializeView(options);
       //console.timeEnd('Initializing View "' + this.name + '"');      
     },
     renderView: function(){},
@@ -32,16 +32,14 @@ define([
       this.delegateEvents( _.extend(_.clone(this.events ||  {}), events) );
     },  
     dispose: function() {
-      Backbone.View.prototype.dispose.apply(this, arguments);
+       // Unregister for event to stop memory leak
+      
+      //Backbone.View.prototype.dispose.apply(this, arguments);
       //TODO: check if views can be disposed like this
-      _.invoke(this.views, 'dispose');
-    },
-    close: function() {
-        // Unregister for event to stop memory leak
-        this.remove();
-        this.dispose();
-        this.off();
-        Backbone.View.prototype.remove.call(this);
+      _.invoke(this.views, 'dispose');      
+      this.remove();
+      this.off();
+      Backbone.View.prototype.remove.call(this);
     }
   });
   return AppView;
