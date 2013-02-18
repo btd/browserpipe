@@ -62,16 +62,23 @@ define([
     addDashboardOption: function(){
       var editDashboard = new EditDashboard({collection: this.collection});
       editDashboard.render();      
+      this.toggle();
     },
     editDashboardOption: function(){  
       var editDashboard = new EditDashboard({collection: this.collection, dashboard: this.collection.getCurrentDashboard()});
-      editDashboard.render();                   
+      editDashboard.render();  
+      this.toggle();                 
     },
     changeDashboardOption: function(event){
       var id = event.currentTarget.id.substring(9); //removes "opt-dash-" from the id
       var dashboard = this.collection.get(id);
-      if(dashboard)
+      if(dashboard){
         this.collection.setCurrentDashboard(dashboard);
+        this.toggle();
+      }
+    },
+    toggle: function(){
+      this.$(".open").removeClass("open");
     }
   });
   return Dashboard;

@@ -1,12 +1,27 @@
 <div class="modal-header">
   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-  <h3>Create dashboard</h3>
+  <h4><%= title %></h4>
 </div>
 <div class="modal-body">
-  <label>Label</label>
-  <input type="text" name="dash-label" value="<%if(dashboard){ %><%= dashboard.get('label') %><% } %>"/>
+  <form class="form-horizontal">
+    <div class="control-group">
+      <label class="control-label" for="dash-label">Label</label>
+      <div class="controls">
+        <input type="text" id="dash-label" name="dash-label" placeholder="Label" value="<%if(dashboard){ %><%= dashboard.get('label') %><% } %>"/>
+      </div>
+    </div>
+  </form>
+  <%if(showTrash){ %>
+    <div>    
+  	  <a class="opt-button opt-move-to-trash pull-left" href="#"><img src="/img/bin.png" alt="Move to trash"></a>	
+        <div class="move-to-trash-alert alert alert-block pull-left" style="display:none;">  
+          <p>Are you sure that you want to move the dashboard to trash?</p>
+      	<a class="opt-move-to-trash-yes" href="#">Yes, move it!</a><a class="opt-move-to-trash-no opt-margin-left" href="#">No, abort!</a>
+    	  </div>
+    </div>
+  <% } %>
 </div>
 <div class="modal-footer">
-  <a href="#" class="btn btn-primary opt-save">Create</a>
-  <a href="#" class="opt-cancel">Cancel</a>
+  <a href="#" class="opt-button opt-save">Create</a>
+  <a href="#" class="opt-cancel opt-margin-left">Cancel</a>
 </div>

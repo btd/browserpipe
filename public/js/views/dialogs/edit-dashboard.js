@@ -16,14 +16,27 @@ define([
     events: {
       "shown": "shown",
       "hidden": "hidden",
-      "click .opt-save" : "save",
-      "click .opt-cancel" : "close"
+      "click .opt-save": "save",
+      "click .opt-cancel": "close",
+      "click .opt-move-to-trash": "moveToTrash",
+      "click .opt-move-to-trash-no": "moveToTrashCanceled",
+      "click .opt-move-to-trash-yes": "moveToTrashConfirmed"
     }, 
     initializeView: function(options){ 
       this.dashboard = options.dashboard;
     },     
-    renderView: function(){                    
-      var compiledTemplate = _.template(template, {dashboard: this.dashboard});    
+    renderView: function(){       
+      var title = "Create dashboard";
+      var showTrash = false;
+      if(this.dashboard){
+        title = "Edit dashboard";
+        showTrash = true;
+      }
+      var compiledTemplate = _.template(template, {
+        dashboard: this.dashboard,
+        title: title,
+        showTrash: showTrash
+      });    
       this.$el.html(compiledTemplate).appendTo('#dialogs').modal('show');
       return this;    
     },
@@ -47,9 +60,19 @@ define([
      this.$el.modal('hide');
     },
     shown: function(){
+      this.$('[name=dash-label]').focus();
     },
     hidden: function(){
       this.dispose();
+    },
+    moveToTrash: function(){
+      this.$('.move-to-trash-alert').slideDown();
+    },
+    moveToTrashCanceled: function(){
+      this.$('.move-to-trash-alert').hide();
+    },
+    moveToTrashConfirmed: function(){
+      console.log("move-to-trash")
     }
   });
   return EditDashboard;

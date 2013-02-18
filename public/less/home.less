@@ -6,13 +6,66 @@
 @import "/public/less/tag-breadcrumb.less";
 @import "/public/less/container.less";
 
+//Flatten styles
+.flatten() {
+  border: none;
+  box-shadow: none;
+  .border-radius(0);      
+}
+.tobutton() {    
+    color: @white;
+    padding: 6px 12px;
+    background-color: @blue;
+    text-shadow: none;    
+    background-image: none;
+
+    &:hover{
+        background-color: @blueOver;
+        text-decoration: none;
+    }
+}
+
 body {
     background-color: @blueDark;
+}
+h4 {
+    font-size: 16px;
+}
+.dropdown-menu, .modal, .btn {    
+    .flatten();
 }
 .dropdown-menu {
     max-height: 300px;
     max-height: 300px;
     overflow: auto;
+}
+.dropdown-menu li > a:hover, .dropdown-menu li > a:focus {
+    background-color: @blue;
+    text-decoration: none;    
+    text-shadow: none;    
+    background-image: none;
+    outline: none;
+}
+.nav-option{
+    background-color: @blue;
+    margin-left: 3px;
+
+    &:hover{
+        background-color: @blueOver;
+    }
+}
+.modal {
+    .modal-header {
+        background-color: #3360af;
+        color: #fff;
+    }
+    .opt-margin-left {
+        margin-left: 12px;
+        vertical-align: bottom;
+    }
+    .opt-button {
+        .tobutton();
+    }
 }
 #top-bar {
     margin-bottom: 0px;
@@ -44,16 +97,7 @@ body {
             }
 
             #account-nav{
-                margin: 0 8px 0 0;
-
-                .nav-option{
-                    background-color: @blue;
-                    margin-left: 3px;
-
-                    &:hover{
-                        background-color: @blueOver;
-                    }
-                }
+                margin: 0 8px 0 0;                
 
                 #opt-import {
                     li {
@@ -72,19 +116,10 @@ body {
                 #search-btn { 
                     height: 36px;                    
                     margin: 0; 
-                    border: none;
-                    box-shadow: none;
-                    .border-radius(0);
-                    color: white;
+                    .flatten();
                     font-weight: bold;
-                    background-color: @blue;
-                    padding: 5px 8px;   
-                    text-shadow: none;
-                    background-image: none;
-
-                    &:hover{
-                        background-color: @blueOver;
-                    }
+                    padding: 5px 8px; 
+                    .tobutton()
                 }
                 #search-box {         
                     height: 26px;
@@ -106,19 +141,6 @@ body {
     #trash {
         margin-right: 8px;         
     }
-}
-#opt-dashboards, #trash {   
-
-    .dropdown-toggle {
-      padding: 8px 15px;
-      background-color: @blue;
-      text-shadow: none;
-
-      &:hover{
-        color: @white;
-        background-color: @blueOver;
-      }
-    }    
 }
 #main-container {   
     margin: 46px 8px; 
