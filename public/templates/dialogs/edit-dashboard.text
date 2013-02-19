@@ -22,6 +22,6 @@
   <% } %>
 </div>
 <div class="modal-footer">
-  <a href="#" class="opt-button opt-save">Create</a>
+  <a href="#" class="opt-button opt-save"><%= optSaveLabel %></a>
   <a href="#" class="opt-cancel opt-margin-left">Cancel</a>
 </div>

@@ -28,14 +28,17 @@ define([
     renderView: function(){       
       var title = "Create dashboard";
       var showTrash = false;
+      var optSaveLabel = "Create";
       if(this.dashboard){
         title = "Edit dashboard";
         showTrash = true;
+        optSaveLabel = "Save changes";
       }
       var compiledTemplate = _.template(template, {
         dashboard: this.dashboard,
         title: title,
-        showTrash: showTrash
+        showTrash: showTrash,
+        optSaveLabel: optSaveLabel
       });    
       this.$el.html(compiledTemplate).appendTo('#dialogs').modal('show');
       return this;    
