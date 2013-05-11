@@ -4,7 +4,7 @@ header#header
 div#top-bar(class="navbar navbar-fixed-top")
   div(class="navbar-inner")
     div(class="container-fluid")
-      a(href="index.html", class="brand", data-original-title="")      
+      a(href="/", class="brand", data-original-title="")      
           div TAGNFILE.IT         
           i beta
       ul#opt-dashboards(class="nav pull-left")
@@ -36,26 +36,16 @@ div#top-bar(class="navbar navbar-fixed-top")
           a(href="#", class="dropdown-toggle", data-toggle="dropdown") 
             img(src="/img/inbox.png", alt="Import")
           ul(class="dropdown-menu")
+            li  
+              a(tabindex="-1", href="#") Import from a file                 
             li
-              a(tabindex="-1", href="#") 
-                img(src="/img/file.png")
-                span Import from a file
+              a(tabindex="-1", href="#") Import from Twitter
             li
-              a(tabindex="-1", href="#") 
-                img(src="/img/twitter.ico")
-                span Import from Twitter
+              a(tabindex="-1", href="#") Import from Facebook
             li
-              a(tabindex="-1", href="#") 
-                img(src="/img/facebook.ico")
-                span Import from Facebook
+              a(tabindex="-1", href="#") Import from Delicious
             li
-              a(tabindex="-1", href="#") 
-                img(src="/img/delicious.ico")
-                span Import from Delicious
-            li
-              a(tabindex="-1", href="#") 
-                img(src="/img/pinboard.ico")
-                span Import from Pinboard
+              a(tabindex="-1", href="#") Import from Pinboard
         li(class="dropdown nav-option")
           a(href="#", class="dropdown-toggle", data-toggle="dropdown") 
             img(src="/img/user.png", alt="#{user.name}")

@@ -1,17 +1,18 @@
 // Container schema
 
-var mongoose = require('mongoose')
-  , Schema = mongoose.Schema
-  , validation = require('./validation')
-  , q = require('q')
+var mongoose = require('mongoose'),
+  Schema = mongoose.Schema,
+  validation = require('./validation'),
+  q = require('q')
 
-//Three types of containers: tag-container, import-container and seach-container
 var ContainerSchema = new Schema({
-    title: {type : String, trim : true}  
-  , dashboard: {type : Schema.ObjectId, ref : 'Dashboard'}
-  , user: {type : Schema.ObjectId, ref : 'User'}
-  , createdAt  : {type : Date, default : Date.now}
-  , filter: {type : String, trim : true}
+  type: {type : Number, trim : true}, //0: blank, 1: tag, 2: search, 3: import, 4: device, 5: trash
+  title: {type : String, trim : true},
+  dashboard: {type : Schema.ObjectId, ref : 'Dashboard'},
+  user: {type : Schema.ObjectId, ref : 'User'},
+  createdAt  : {type : Date, default : Date.now},
+  filter: {type : String, trim : true},
+  order: {type : Number, trim : true }  
 })
 
 ContainerSchema.path('title').validate(function (title) {

@@ -9,13 +9,13 @@ var mongoose = require('mongoose'),
   q = require('q')
 
 var UserSchema = new Schema({
-    name: { type: String, match: /(\w| )+/, trim: true, validate: validation.nonEmpty}
-  , email: { type: String, required: true, validate: [ /\S+@\S+\.\S/, 'Email is not valid' ], trim: true, lowercase: true, unique: true, validate: validation.nonEmpty}  
-  , password: {type: String, set: function(password) {
+  name: { type: String, match: /(\w| )+/, trim: true, validate: validation.nonEmpty},
+  email: { type: String, required: true, validate: [ /\S+@\S+\.\S/, 'Email is not valid' ], trim: true, lowercase: true, unique: true, validate: validation.nonEmpty},
+  password: {type: String, set: function(password) {
     //do not allow user to set empty password
     return _.isEmpty(password)? undefined : bcrypt.hashSync(password, bcryptRounds);
-  }, required: true}
-  , currentDashboard: {type : Schema.ObjectId, ref : 'Dashboard'}
+  }, required: true},
+  currentDashboard: {type : Schema.ObjectId, ref : 'Dashboard'}
 });
 
 

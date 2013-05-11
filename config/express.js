@@ -1,13 +1,12 @@
 var express = require('express'),
-    config = require('../config/config'),
     mongoStore = require('connect-mongo')(express),
     lessMiddleware = require('less-middleware')
 
 // App settings and middleware
-module.exports = function(app) {
+module.exports = function(app, config, passport) {
 
   // set views path, template engine and default layout
-  app.set('views', __dirname + '/views')
+  app.set('views', __dirname + '/../app/views')
   app.set('view engine', 'jade')
   app.set('view options', {'layout': false})
 
@@ -43,10 +42,8 @@ module.exports = function(app) {
       collection : 'sessions'
     })
   }))
-
-  // bootstrap passport config
-  var passport = require('passport')
-  require('../config/passport').boot(passport, config)
+  
+  // use passport session
   app.use(passport.initialize())
   app.use(passport.session())
   
@@ -99,7 +96,7 @@ module.exports = function(app) {
 
     // log it
     console.error(err.stack)
-
+    
     // error page
     res.status(500).render('500')
   })

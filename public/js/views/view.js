@@ -4,9 +4,8 @@ define([
   'backbone'
 ], function($, _, Backbone, template){
   var AppView = Backbone.View.extend({
-    name: 'No name',
     postRender: null,
-    initialize: function(options){ 
+    initialize: function(options){       
       //console.time('Initializing View "' + this.name + '"');
       this.initializeView(options);
       //console.timeEnd('Initializing View "' + this.name + '"');      

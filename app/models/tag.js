@@ -1,25 +1,25 @@
 // Tag schema
 
-var mongoose = require('mongoose')
-  , Schema = mongoose.Schema
-  , validation = require('./validation')
-  , q = require('q')
+var mongoose = require('mongoose'),
+  Schema = mongoose.Schema,
+  validation = require('./validation'),
+  q = require('q')
 
 var TagSchema = new Schema({
-    label: {type : String, trim : true, validate: validation.nonEmpty}
-  , path: {type : String, index : true, trim : true, validate: validation.nonEmpty}
-  , user: {type : Schema.ObjectId, ref : 'User'}
-  , createdAt  : {type : Date, default : Date.now}
+  label: {type : String, trim : true, validate: validation.nonEmpty},
+  path: {type : String, index : true, trim : true},
+  user: {type : Schema.ObjectId, ref : 'User'},
+  createdAt  : {type : Date, default : Date.now}
 });
 
 TagSchema.path('label').validate(function (label) {
   return label.length > 0
 }, 'Tag label cannot be blank')
-
+/*
 //Root tag has blank path, but it is not saved in db
 TagSchema.path('path').validate(function (path) {	
   return path.length > 0
-}, 'Tag path cannot be blank')
+}, 'Tag path cannot be blank')*/
 
 TagSchema.method('saveWithPromise', function() {
   var deferred = q.defer();	
@@ -31,11 +31,6 @@ TagSchema.method('saveWithPromise', function() {
 })
 
 var Tag = mongoose.model('Tag', TagSchema);
-
-//exports.user.find = Q.nfbind(user.find.bind(user));
-//exports.user.findOne = Q.nfbind(user.findOne.bind(user));
-
-
 
 Tag.getAll = function(user){
   var deferred = q.defer();
@@ -52,6 +47,9 @@ Tag.getAll = function(user){
 	})   
   return deferred.promise;
 }
+
+
+//POSIBLE NEEDED FILTER TAG FUNCTIONS FOR THE FUTURE WHEN THEY ARE NOT ALL HOLD IN MEMORY IN THE CLIENT
 
 Tag.getChildrenByPath = function(user, path, success, error){
   this

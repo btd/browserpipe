@@ -3,10 +3,10 @@ define([
   'underscore',
   'backbone',
   'views/view',
-  'views/dialogs/edit-dashboard'
-], function($, _, Backbone, AppView, EditDashboard){
+  'views/dialogs/edit-dashboard',
+  'views/center/dashboard',
+], function($, _, Backbone, AppView, EditDashboard, DashboardContainer){
   var Dashboard = AppView.extend({
-    name: 'Dashboard',
     el: "#opt-dashboards",     
     dashboardTemplate: _.template('<li class="opt-add" id="opt-dash-<%= dashboard.get("_id") %>"><a tabindex="-1" href="#"><%= dashboard.get("label") %></a></li>'),  
     events: {
@@ -15,14 +15,13 @@ define([
       "click .opt-add" : "changeDashboardOption"
     }, 
     initializeView: function(){ 
-      this.collection.on("change", this.dashboardUpdated, this);
+      this.collection.on('change', this.dashboardUpdated, this);
       this.collection.on('add', this.addDashboard, this);
       this.collection.on('remove', this.removeDashboard, this);
       this.collection.on('currentDashboardChange', this.renderCurrentDashboard, this);
     },     
     renderView: function(){   
       var self = this;
-      this.renderCurrentDashboard(this.collection.getCurrentDashboard());
       this.collection.map(function(dashboard){        
         self.addDashboard(dashboard);
       })
@@ -30,13 +29,18 @@ define([
       return this;    
     },
     postRender: function(){
-      var _this = this;   
     },    
     renderCurrentDashboard: function(currentDashboard){      
-      if(currentDashboard)
-        this.$('.name').html(currentDashboard.get('label'))
-      else
+      if(currentDashboard){
+        if(this.dashboardContainerView)
+          this.dashboardContainerView.dispose();
+        this.$('.name').html(currentDashboard.get('label'))        
+        this.dashboardContainerView = new DashboardContainer({model: currentDashboard})
+        $("#main-container").html(this.dashboardContainerView.render().el);            
+      }
+      else{
         this.$('.name').html('<i>No dashboard</i>');
+      }
     },
     dashboardUpdated: function(dashboard){
       this.$("#opt-dash-" + dashboard.get("_id") + " > a").html(dashboard.get('label'))
@@ -73,7 +77,7 @@ define([
       var id = event.currentTarget.id.substring(9); //removes "opt-dash-" from the id
       var dashboard = this.collection.get(id);
       if(dashboard){
-        this.collection.setCurrentDashboard(dashboard);
+        this.collection.setCurrentDashboard(dashboard.get('_id'));
         this.toggle();
       }
     },

@@ -1,0 +1,6 @@
+<a class="item" href="">
+	<% if(tag.get('icon')){ %><img width="16px" src="<%= tag.get('icon') %>"/><% } %>
+	<span><%= tag.get('label') %></span>
+</a>
+<ul class="dropdown-menu" style="display:none;">	
+</ul>

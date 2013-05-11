@@ -4,8 +4,9 @@ define([
   'underscore',
   'backbone',
   'models/state',  
-  'views/top-bar/dashboard'
-], function($, _, Backbone, _state, TopBarDashboard, EditDashboard){
+  'views/top-bar/dashboard',
+  'views/bottom-bar/breadcrumb'
+], function($, _, Backbone, _state, TopBarDashboard, BreadCrumb){
   var AppRouter = Backbone.Router.extend({
     views: {},
     routes: {      
@@ -26,26 +27,26 @@ define([
     defaultAction: function(actions){
     },
     initialize: function(){
-      //We have no matching route, lets display the home page
-      var self = this;      
-      //Creates the top bar dashboard options           
-      this.views.topBarDashboard = new TopBarDashboard({collection: _state.dashboards});     
-      this.views.topBarDashboard.render();
+      //Load initial data
+      _state.loadInitialData();
 
       _state.dashboards.on('currentDashboardChange', function(dashboard){
         Backbone.history.navigate("/dashboards/" + dashboard.get('_id'), {trigger: true});
       }, this);
 
-     // _state.dashboards.create({ label: "dani dani" }, {wait: true});      
-     /* _state.dashboards.remove(_state.dashboards.first())
-      _state.dashboards.remove(_state.dashboards.first())
-      _state.dashboards.add({ _id: "34324342", label: "test1" });      
-      _state.dashboards.add({ _id: "5435y56", label: "test2" });      
-      _state.dashboards.add({ _id: "8678788", label: "test3" });     */ 
+      //Creates the top bar dashboard options           
+      this.views.topBarDashboard = new TopBarDashboard({collection: _state.dashboards});     
+      this.views.topBarDashboard.render();
+
+      //Creates the top bar dashboard options           
+      this.views.breadCrumb = new BreadCrumb();     
+      this.views.breadCrumb.render();
+
+      //Sets the current dashboard      
+      _state.dashboards.setCurrentDashboard(initialOptions.currentDashboardId);      
     }
   });
-  var initialize = function(){
-    _state.loadInitialData();
+  var initialize = function(){    
     var app_router = new AppRouter;
     //Start monitoring all hashchange events for history
     Backbone.history.start({pushState: true});  

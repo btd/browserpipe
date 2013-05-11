@@ -1,8 +1,8 @@
 .container {
     position: relative;
     background: #CCCCCC;
-    margin: 6px 3px;
-    padding: 6px 6px 24px;
+    margin: 6px 2px 6px 2px;
+    padding: 6px;
     float:left;
     width: 314px;
     overflow-y: hidden;         
@@ -15,32 +15,33 @@
     &.selected{
         border-color: @blue;
     }
+    .options{
+        position: absolute;
+        margin-left: 280px;
+
+        .dropdown-toggle{
+            display: none;            
+        }
+        .dropdown-menu {
+            left: -150px !important;
+        }
+    }
     .header {        
         .clearfix();   
-        min-height: 20px;   
+        min-height: 20px; 
 
-        img {
+        .container-tag-icon {
             float:left;
+            position: absolute;
         }
         .title {
-            margin-left: 6px;
+            margin-left: 20px;
             font-weight: bold;
+            font-size: 16px;
             word-wrap: break-word;
             float: left;
             max-width: 240px;  
         }
-        .options{
-            float: right;
-
-            .dropdown-toggle{
-                display: none;            
-            }
-            .dropdown-menu {
-                top: 0 !important;
-                right: 20px !important;
-            }
-        }
-
 
         .tags {
             margin: 0!important;
@@ -68,8 +69,9 @@
         height: 16px;
         width: 16px;
     }
-    .box {        
+    .box {                
         overflow-y: auto; 
+        min-height: 200px;
         .tags {
             margin: 4px 5px 6px 0 !important;
 
@@ -85,14 +87,15 @@
 
             .tag {
                 color: white;
-                font-weight: bold;
-                background-color: @blueLight;
+                text-shadow: 0 1px 0 @blue;
+                background-color: @blue;
                 margin-bottom: 3px;
                 padding: 6px 12px;                   
                 text-shadow: none;
 
                 &:hover{
                     cursor: pointer;
+                    background-color: darken(@blue, 6%);
                 }
             }
         }

@@ -6,25 +6,33 @@ define([
   var DashboardCollection = Backbone.Collection.extend({
     model: Dashboard,    
     url: "/dashboards",
-    initialize: function(models, options){
-      this.currentDashboardId = options.currentDashboardId;
-      this.on('add', this.dashboardAdded, this);
-      this.on('remove', this.dashboardRemoved, this);
+    initialize: function(models){      
     },
     getCurrentDashboard: function(){
       return this.currentDashboardId && this.get(this.currentDashboardId);
     },
-    setCurrentDashboard: function(dashboard){
-      this.currentDashboardId = dashboard && dashboard.get("_id");
+    getCurrentContainer: function(){
+      var currentDashboard = this.getCurrentDashboard()
+      return currentDashboard && currentDashboard.get('containers').get(this.currentContainerId);
+    },
+    setCurrentDashboard: function(dashboardId){  
+      this.currentDashboardId = dashboardId;
+      var dashboard = this.get(dashboardId);
+      //Triggers event
       this.trigger('currentDashboardChange', dashboard);  
+      //Sets the first container as current one
+      if(dashboard && dashboard.get('containers').length > 0)
+        this.setCurrentContainer(dashboard.get('containers').at(0));
+      else
+        this.setCurrentContainer(null);
     },
-    dashboardAdded: function(dashboard){
-      if(!this.currentDashboardId)
-        this.setCurrentDashboard(dashboard)
-    },
-    dashboardRemoved: function(dashboard){
-      if(this.currentDashboardId &&  this.currentDashboardId === dashboard.get('_id'))
-        this.setCurrentDashboard(this.first())              
+    setCurrentContainer: function(containerId){
+      this.currentContainerId = containerId;
+      var currentDashboard = this.getCurrentDashboard();
+      var container = null;
+      if(currentDashboard)
+        container = currentDashboard.get('containers').get(containerId)
+      this.trigger('currentContainerChange', container);  
     }
   });
   return DashboardCollection;

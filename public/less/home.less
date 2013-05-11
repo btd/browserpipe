@@ -3,7 +3,7 @@
 @import "/public/less/bootstrap/mixins.less";
 
 // Rules import
-@import "/public/less/tag-breadcrumb.less";
+@import "/public/less/breadcrumb.less";
 @import "/public/less/container.less";
 
 //Flatten styles
@@ -20,7 +20,7 @@
     background-image: none;
 
     &:hover{
-        background-color: @blueOver;
+        background-color: darken(@blue, 6%);
         text-decoration: none;
     }
 }
@@ -34,11 +34,6 @@ h4 {
 .dropdown-menu, .modal, .btn {    
     .flatten();
 }
-.dropdown-menu {
-    max-height: 300px;
-    max-height: 300px;
-    overflow: auto;
-}
 .dropdown-menu li > a:hover, .dropdown-menu li > a:focus {
     background-color: @blue;
     text-decoration: none;    
@@ -51,7 +46,7 @@ h4 {
     margin-left: 3px;
 
     &:hover{
-        background-color: @blueOver;
+        background-color: darken(@blue, 6%);
     }
     span {                        
         color: @white;
@@ -71,6 +66,7 @@ h4 {
     }
 }
 #top-bar {
+    height: 46px;
     margin-bottom: 0px;
     border: none;
 
@@ -139,6 +135,7 @@ h4 {
     }
 }
 #bottom-bar {
+    height: 36px;
     padding: 5px 0;
 
     #trash {
@@ -146,11 +143,13 @@ h4 {
     }
 }
 #main-container {   
-    margin: 46px 8px; 
+    margin: 46px 0px; 
 }
 .dashboard {   
     background: #EFEFEF;
     overflow-x: auto;
     overflow-y: hidden;
+    padding: 0 3px;
+    margin: 0 8px;
 }
 

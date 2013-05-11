@@ -1,14 +1,14 @@
 // Dashboard schema
 
-var mongoose = require('mongoose')
-  , Schema = mongoose.Schema
-  , validation = require('./validation')
-  , q = require('q')
+var mongoose = require('mongoose'),
+  Schema = mongoose.Schema,
+  validation = require('./validation'),
+  q = require('q')
 
 var DashboardSchema = new Schema({
-	label: {type : String, trim : true, validate: validation.nonEmpty, unique: true}
-  , user: {type : Schema.ObjectId, ref : 'User'}
-  , createdAt: {type : Date, default : Date.now}
+	label: {type : String, trim : true, validate: validation.nonEmpty, unique: true},
+  user: {type : Schema.ObjectId, ref : 'User'},
+  createdAt: {type : Date, default : Date.now}
 })
 
 DashboardSchema.method('saveWithPromise', function() {

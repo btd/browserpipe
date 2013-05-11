@@ -4,13 +4,13 @@ define([
   'backbone',
   'models/state',
   'views/view',  
-  'text!templates/dialogs/edit-dashboard.text'  
+  'text!templates/dialogs/edit-tag.text'  
 ], function($, _, Backbone, _state, AppView, template){
-  var EditDashboard = AppView.extend({
+  var EditTag = AppView.extend({
     attributes : function (){
       return {
         class : 'modal hide fade',
-        id : 'modal-edit-dash'
+        id : 'modal-edit-tag'
       }
     },  
     events: {
@@ -25,19 +25,21 @@ define([
       "keyup": "keypressed"
     }, 
     initializeView: function(options){ 
-      this.dashboard = options.dashboard;
+      this.editMode = options.editMode 
     },     
     renderView: function(){       
-      var title = "Create dashboard";
+      var title = "Create tag";
       var showTrash = false;
       var optSaveLabel = "Create";
-      if(this.dashboard){
-        title = "Edit dashboard";
+      var tag;
+      if(this.editMode){
+        title = "Edit tag";
         showTrash = true;
         optSaveLabel = "Save changes";
+        tag = this.model;
       }
       var compiledTemplate = _.template(template, {
-        dashboard: this.dashboard,
+        tag: tag,
         title: title,
         showTrash: showTrash,
         optSaveLabel: optSaveLabel
@@ -50,23 +52,27 @@ define([
     },
     save: function(){
       var self = this;
-      var label = this.$('[name=dash-label]').val();
-      if(this.dashboard)
-        this.dashboard.save({label: label}, {wait: true, success: function() {
+      var label = this.$('[name=tag-label]').val();
+      if(this.editMode)
+        this.model.save({
+          label: label
+        }, {wait: true, success: function() {
           self.close();
         }});
       else 
-        this.collection.create({label: label}, {wait: true, success: function(dashboard) {          
-          self.collection.setCurrentDashboard(dashboard.get('_id'));
+        this.model.get('children').createTag({
+          label: label,
+          path: this.model.getFilter()
+        }, {wait: true, success: function(tag) {  
+          self.trigger("tagAdded", tag);
           self.close();
-          _state.dashboards.setCurrentDashboard(dashboard);
-        }})            
+        }})      
     },
     close: function(){
      this.$el.modal('hide');
     },
     shown: function(){
-      this.$('[name=dash-label]').focus();
+      this.$('[name=tag-label]').focus();
     },
     hidden: function(){
       this.dispose();
@@ -85,10 +91,9 @@ define([
     },
     keypressed: function(event){
       if(event.keyCode === 13){
-        event.preventDefault();
         $(".opt-save").click();
       }        
     }    
   });
-  return EditDashboard;
+  return EditTag;
 });

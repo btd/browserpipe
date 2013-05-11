@@ -1,7 +1,56 @@
+var _ = require('lodash'),
+    q = require('q'),
+    mongoose = require('mongoose'),
+    Tag = mongoose.model('Tag')
 
-var mongoose = require('mongoose')
-  , Tag = mongoose.model('Tag')
-  , _ = require('underscore')
+
+//Create tag
+exports.create = function (req, res) {  
+  if(req.isAuthenticated()){
+    var tag = new Tag(req.body)
+    tag.user = req.user   
+    q.all([tag.saveWithPromise()])
+    .spread(function(){
+      res.json('{"_id":"' + tag._id + '"}')
+    }, function(err){
+      //TODO: send corresponding number error
+      res.json(err.errors) 
+    }).done()
+  }      
+  else
+   res.send("invalid request")
+}
+
+//Update tag
+exports.update = function (req, res) {  
+  if(req.isAuthenticated() && req.currentTag){
+    var tag = req.currentTag;
+    if(req.body.label)
+      tag.label = req.body.label
+    if(req.body.path)
+      tag.path = req.body.path
+    tag.saveWithPromise().then(function(){
+      res.json('{"_id":"' + tag._id + '"}')
+    }, function(err){
+      //TODO: send corresponding number error
+      res.json(err.errors) 
+    }).done()
+  }      
+  else 
+    res.send("invalid request")
+}
+
+//Find tag by id
+exports.tag = function (req, res, next, id) {
+  Tag
+    .findOne({ _id : id })
+    .exec(function (err, tag) {
+      if (err) return next(err)        
+      req.currentTag = tag
+      next()
+    })
+}
+
 
 
 // Listing of Tags
@@ -19,7 +68,7 @@ var mongoose = require('mongoose')
     })
 }*/
 
-// Get a tag and its children
+/*// Get a tag and its children
 exports.getTagAndChildren = function(req, res){
   var parentPath = _.initial(req.tagPath.path.substring(0, req.tagPath.path.length - 1).split(".")).join(".");
   Tag.getTagAndChildrenByPath(req.user, parentPath, req.tagPath, function(tags){
@@ -27,49 +76,7 @@ exports.getTagAndChildren = function(req, res){
   }, function(err) {
     throw err
   })
-}
-
-
-// Create a tag
-exports.create = function (req, res) {
-  var tag = new Tag(req.body)
-  tag.user = req.user
-  tag.save(function(err){
-    if (err)
-      res.send(err.errors)  //TODO: send corresponding number error
-    else
-      res.send(tag._id)
-  })
-}
-
-/*// Edit an tag
-exports.edit = function (req, res) {
-  res.render('tags/edit', {
-    title: 'Edit '+req.tag.title,
-    tag: req.tag
-  })
 }*/
-
-/*// Update tag
-exports.update = function(req, res){
-  var tag = req.tag
-
-  tag = _.extend(tag, req.body)
-
-  tag.save(function(err, doc) {
-    if (err) {
-      res.render('tags/edit', {
-          title: 'Edit Tag'
-        , tag: tag
-        , errors: err.errors
-      })
-    }
-    else {
-      res.redirect('/tags/'+tag._id)
-    }
-  })
-}*/
-
 
 /*// Delete an tag
 exports.destroy = function(req, res){

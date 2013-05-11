@@ -1,13 +1,3 @@
-extends layouts/index
+block body
+  h2(style='text-align:center;') Oops something wen't wrong :(
 
-block main
-  h1 Oops something wen't wrong
-  br
-  span 500
-
-block content
-  #error-message-box
-    #error-stack-trace
-      - if(showStack)
-        pre
-          code!= error.stack
