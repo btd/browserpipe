@@ -8,7 +8,8 @@ define([
     urlRoot: "/dashboards",
     defaults: {  
     },
-    initialize: function(){      
+    initialize: function(){    
+      this.containers = new Containers();  
     },
     parse: function(resp, xhr){      
       return JSON.parse(resp);

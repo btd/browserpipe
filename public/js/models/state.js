@@ -70,12 +70,12 @@ define([
     loadContainersToDashBoards: function(){
       for(index in this.dashboards.models){
         var dashboard = this.dashboards.at(index);
-        dashboard.containers = this.getContainersByDashboard(dashboard.get('_id'))
+        var containers = this.getContainersByDashboard(dashboard.get('_id'))
+        dashboard.containers.add(containers);
       }
     },
     getContainersByDashboard: function(dashboardId){      
-      var containers = _.filter(initialOptions.containers, function(container){ return container.dashboard === dashboardId; })      
-      return new Containers(containers);
+      return _.filter(initialOptions.containers, function(container){ return container.dashboard === dashboardId; })      
     },
     loadItems: function(){
       var self = this;
