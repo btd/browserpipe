@@ -24,28 +24,30 @@ div#top-bar(class="navbar navbar-fixed-top")
           input#search-box(type="text", class="uncompressed")
           button#search-btn(type="submit", class="btn") Search
       ul#account-nav(class="nav pull-right")
-        li(class="dropdown nav-option") 
+        li#opt-device(class="dropdown nav-option") 
           a(href="#", class="dropdown-toggle", data-toggle="dropdown") 
             img(src="/img/windows.png", alt="Sync devices")
           ul(class="dropdown-menu")
-            li(class="disabled")
-              a(tabindex="-1", href="#") No device synced
-            li                
+            li(class="device-open")
+              a(tabindex="-1", href="#") Open devices            
+            li(class="device-new")                
               a(tabindex="-1", href="#") Sync new device   
         li#opt-import(class="dropdown nav-option") 
           a(href="#", class="dropdown-toggle", data-toggle="dropdown") 
             img(src="/img/inbox.png", alt="Import")
           ul(class="dropdown-menu")
-            li  
-              a(tabindex="-1", href="#") Import from a file                 
-            li
-              a(tabindex="-1", href="#") Import from Twitter
-            li
-              a(tabindex="-1", href="#") Import from Facebook
-            li
-              a(tabindex="-1", href="#") Import from Delicious
-            li
-              a(tabindex="-1", href="#") Import from Pinboard
+            li(class="import-open")
+              a(tabindex="-1", href="#") Open imports
+            li(class="import-new-file")
+              a(tabindex="-1", href="#") New file import
+            li(class="import-new-twitter")
+              a(tabindex="-1", href="#") New Twitter import
+            li(class="import-new-facebook")
+              a(tabindex="-1", href="#") New Facebook import
+            li(class="import-new-delicious")
+              a(tabindex="-1", href="#") New Delicious import
+            li(class="import-new-pinboard")
+              a(tabindex="-1", href="#") New Pinboard import
         li(class="dropdown nav-option")
           a(href="#", class="dropdown-toggle", data-toggle="dropdown") 
             img(src="/img/user.png", alt="#{user.name}")

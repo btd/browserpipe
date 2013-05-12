@@ -71,7 +71,8 @@
     }
     .box {                
         overflow-y: auto; 
-        min-height: 200px;
+        min-height: 80px;
+        margin-bottom: 6px;
         .tags {
             margin: 4px 5px 6px 0 !important;
 
@@ -116,6 +117,10 @@
                     cursor: pointer;
                     border: 1px solid @blue;
                 }
+                .description {
+                    font-size: 12px; 
+                    font-style: italic;
+                }
                 .details {
                     margin-top: 2px;
                     border-top: 2px solid #EFEFEF;
@@ -128,31 +133,16 @@
                         max-height: 200px;
                         max-width: 200px;
                     }
-                    .description {
-                       font-size: 12px; 
-                    }
-                    .tags {
-                        margin: 0; 
-                        padding: 0;
-                        font-size: 11px;
-
-                        li {
-                            list-style:none; 
-                            color: white;
-                            font-weight: bold;
-                            background-color: @blue;
-                            margin: 0 2px 2px 0;        
-                            padding: 1px 2px;
-                            float: left;
-                            line-height: 12px;
-
-                            &:hover {
-                                background-color: @blueDark;
-                            }
-                        }
-                    }
                 }
             }   
         }
-    }   
+    }     
+    .opt-add-bkmrk {
+        color: #777;
+        font-size: 12px;
+
+        &:hover {
+            color: #333;
+        }
+    }  
 }

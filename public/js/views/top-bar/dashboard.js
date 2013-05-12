@@ -3,7 +3,7 @@ define([
   'underscore',
   'backbone',
   'views/view',
-  'views/dialogs/edit-dashboard',
+  'views/dialogs/edit.dashboard',
   'views/center/dashboard',
 ], function($, _, Backbone, AppView, EditDashboard, DashboardContainer){
   var Dashboard = AppView.extend({

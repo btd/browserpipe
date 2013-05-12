@@ -5,10 +5,10 @@ define([
   'models/state',   
   'views/center/container/tag.container'
 ], function($, _, Backbone, _state, TagContainer){
-  var TrashContainer = TagContainer.extend({
+  var ImportContainer = TagContainer.extend({
     initializeView: function(options){        
       TagContainer.prototype.initializeView.call(this);      
     }
   });
-  return TrashContainer;
+  return ImportContainer;
 });

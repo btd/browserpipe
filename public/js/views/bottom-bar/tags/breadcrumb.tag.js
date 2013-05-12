@@ -5,7 +5,7 @@ define([
   'config',
   'models/state',
   'views/view',
-  'views/dialogs/edit-tag',
+  'views/dialogs/edit.tag',
   'views/bottom-bar/tags/breadcrumb.dropdown.tag',
   'text!templates/tags/breadcrumb.tag.text',
   'text!templates/tags/breadcrumb.dropdown.options.text'  
@@ -32,7 +32,7 @@ define([
     initializeView: function(){ 
       this.opened = this.options.opened;
       this.model.on('filterChanged', this.tagFilterChanged, this);
-      this.model.get('children').on('change reset add remove', this.renderDropDown, this);
+      this.model.children.on('change reset add remove', this.renderDropDown, this);
     },     
     renderView: function(){
       var compiledTemplate = _.template(tagTemplate, {tag: this.model});    
@@ -60,7 +60,7 @@ define([
       this.dropDownTagViews = [];          
       //Best collection interation: http://jsperf.com/backbone-js-collection-iteration/5          
       var columnsCount = 0;
-      for (var i = 0, l = this.model.get('children').length; i < l; i++) {
+      for (var i = 0, l = this.model.children.length; i < l; i++) {
         var $ul;
         //Add new column every time it reaches the max per column   
         if(i % config.DROPDOWN_TAGS_PER_COLUMN === 0){
@@ -70,7 +70,7 @@ define([
           $oneColumn.append($ul);
           $dropdownMenu.append($oneColumn);
         }
-        var childTag = this.model.get('children').models[i];            
+        var childTag = this.model.children.models[i];            
         var $li = $('<li></li>');
         $ul.append($li); 
         var dropDownTagView = new BreadCrumbDropdownTag({model: childTag});
@@ -129,9 +129,7 @@ define([
     addTagOption: function(){
       var self = this;
       var editTag = new EditTag({model: this.model, editMode: false});
-      editTag.on('tagAdded', function(tag){
-        //We have to call it to make sure it is set before creating the container
-        _state.addTag(tag);
+      editTag.on('tagAdded', function(tag){        
         //Create container
         self.createContainerFromTag(tag);
       });

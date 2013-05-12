@@ -10,6 +10,14 @@
         <input type="text" id="tag-label" name="tag-label" placeholder="Label" value="<%if(tag){ %><%= tag.get('label') %><% } %>"/>
       </div>
     </div>
+    <div class="control-group">
+      <label class="checkbox" for="tag-open">
+      <div class="controls">
+        <input type="checkbox" id="tag-open" name="tag-open" placeholder="Open in new container"/>
+        Open in new container
+        </label>      
+      </div>
+    </div>
   </form>
   <%if(showTrash){ %>
     <div>    

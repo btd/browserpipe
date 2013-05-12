@@ -2,15 +2,16 @@ define([
   'underscore',
   'backbone',
   'models/model',
-  'collections/tags'
-], function(_, Backbone, AppModel, TagCollection) {
+  'collections/tags',
+  'collections/items'
+], function(_, Backbone, AppModel, TagCollection, ItemCollection) {
   var Tag = AppModel.extend({
     urlRoot: "/tags",
     defaults: {  
     },
     initialize: function(spec){  
-      //TODO: on save do not send the children attribute
-      this.set('children', new TagCollection());
+      //We set them as direct attributes so we do send the children attribute when saving a tag
+      this.children = new TagCollection();
       //If filter changes, it updates children and triggers filterChanged event
       this.on('change', function(){
         if(this.hasChanged('label') || this.hasChanged('path')){
@@ -18,7 +19,7 @@ define([
           var oldFilter = (this.previous('path')===""?"":this.previous('path') + "/") + this.previous('label');
           //Updates children       
           //TODO: we should not send so many updates to the server, mongodb must do a bunch update
-          var children = this.get('children').models;
+          var children = this.children.models;
           for(index in children)
             children[index].save({'path': newFilter});
           //Triggers filter changed          
@@ -34,7 +35,20 @@ define([
       return (this.get('path')===""?"":this.get('path') + "/") + this.get('label')
     },
     addChildren: function(children){
-      this.get('children').add(children);
+      this.children.add(children);
+    },
+    getItems: function(){
+      //Check if children are not loaded at init
+      if(!this.items){
+        var _state = require('models/state');
+        var items = _state.getItemsByFilter(this.getFilter());
+        this.items = new ItemCollection(items); 
+      }
+      return this.items;
+    },
+    addItem: function(item){
+      var items = this.getItems();
+      items.add(item);
     }
   });
   return Tag;

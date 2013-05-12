@@ -39,18 +39,18 @@ UserSchema.pre("save",function(next) {
   bcrypt.compare(password, this.password, callback);
 });*/
 
-UserSchema.method('authenticate', function(password) {
+UserSchema.methods.authenticate = function(password) {
   return bcrypt.compareSync(password, this.password);
-})
+}
 
-UserSchema.method('saveWithPromise', function() {
+UserSchema.methods.saveWithPromise = function() {
   var deferred = q.defer(); 
   this.save(function (err) {
     if (err) deferred.reject(err)
     else deferred.resolve()    
   })
   return deferred.promise;
-})
+}
 
 /*UserSchema.static('authenticate', function(email, password, callback) {
   this.findOne({ email: email }, function(err, user) {
@@ -64,4 +64,4 @@ UserSchema.method('saveWithPromise', function() {
     });
 });
 */
-module.exports = mongoose.model('User', UserSchema);
+mongoose.model('User', UserSchema)

@@ -11,18 +11,17 @@ var DashboardSchema = new Schema({
   createdAt: {type : Date, default : Date.now}
 })
 
-DashboardSchema.method('saveWithPromise', function() {
+DashboardSchema.methods.saveWithPromise = function() {
   var deferred = q.defer();	
   this.save(function (err) {
     if (err) deferred.reject(err)
 	else deferred.resolve()    
   })
   return deferred.promise;
-})
+}
 
-var Dashboard = mongoose.model('Dashboard', DashboardSchema);
 
-Dashboard.create = function(label, path, user){	
+/*Dashboard.create = function(label, path, user){	
   var deferred = q.defer();	
   var dashboard = new Dashboard({
     label: label,
@@ -34,9 +33,9 @@ Dashboard.create = function(label, path, user){
 	else deferred.resolve(dashboard)    
   })
   return deferred.promise;
-}
+}*/
 
-Dashboard.getAll = function(user){
+DashboardSchema.statics.getAll = function(user) {
   var deferred = q.defer();
   this
 	.find({user: user}, '_id label')
@@ -48,4 +47,4 @@ Dashboard.getAll = function(user){
   return deferred.promise;
 }
 
-mongoose.model('Dashboard', DashboardSchema)
+mongoose.model('Dashboard', DashboardSchema);

@@ -4,22 +4,17 @@ define([
   'backbone',
   'models/state',  
   'views/center/container/container',  
-  'views/center/container/header/tag.header',
-  'views/center/container/tag/child.tag'
-], function($, _, Backbone, _state, Container, TagContainerHeader, ContainerChildTag, ContainersData){
+  'views/center/container/tag/child.tag',
+  'views/center/container/item/item'
+], function($, _, Backbone, _state, Container, ContainerChildTag, ContainerItem){
   var TagContainer = Container.extend({
     collapsed:  false,
-    initializeView: function(options){        
-      Container.prototype.initializeView.call(this);
+    initializeView: function(options){    
+      Container.prototype.initializeView.call(this, options);
       //Add new events to existing ones      
-      this.events["click .container-tag-icon"] = "navigateToParentTag";
-      //Add options for the menu
-      this.addMenuOptions([
-        {name: "menu_option_showNavigation", label: "Show Navigation", method: "showNavigation"},
-        {name: "menu_option_changeName", label: "Edit", method: "editTag"}
-      ]);  
+      this.events["click .container-tag-icon"] = "navigateToParentTag";       
     },
-  	renderView: function(){
+  	renderView: function(){      
   	  this
         .renderMenuOptions()
         .renderHeader()
@@ -27,18 +22,13 @@ define([
   	    .renderChildsTags()
         .renderItems();
       return this; 
-    },  
-    renderHeader: function(){        
-      this.header = new TagContainerHeader({model: this.model, icon: this.icon});                                               
-      $(this.el).append(this.header.render().el); 
-      return this;
     },
     renderChildsTags: function(){      
 	  	var $tags = $('<ul class="tags ' + (this.collapsed?' collapsed':'') + '"></ul>');
 	  	$('.box', this.el).append($tags);
-	  	//Render childs tags
-      for (var i = 0, l = this.model.tag.get('children').length; i < l; i++) {       	
-        var childTag = this.model.tag.get('children').models[i];   
+	  	//Render childs tags      
+      for (var i = 0, l = this.model.tag.children.length; i < l; i++) {       	
+        var childTag = this.model.tag.children.models[i];   
       	this.renderChildTag($tags, childTag);  
       };
 	    return this;
@@ -48,6 +38,19 @@ define([
     	var cct = new ContainerChildTag({tag: childTag});
       $tags.append(cct.render().el);
       cct.on('navigateToTag', this.navigateToTag, this);
+    },
+    renderItems: function(){
+      var $items = $('<ul class="items"></ul>');      
+      var items = this.model.tag.getItems();      
+      for(index in items.models) {
+          var containerItem = new ContainerItem({model: items.at(index)});
+          $items.append(containerItem.render().el);
+       };
+      $('.box', this.el).append($items);
+      return this;
+    }, 
+    postRender: function(){           
+      Container.prototype.postRender.call(this);
     },
     navigateToTag: function(tag){        
       //Sets the new tag
@@ -66,24 +69,6 @@ define([
       var parent = _state.getTagByFilter(this.model.tag.get('path'));
       if(parent)
         this.navigateToTag(parent);
-    },
-    toggle: function(){
-      /*var $tags = $('.tags', this.el);
-      if($tags.hasClass('collapsed')){
-        this.collapsed = false;
-        $tags.removeClass('collapsed')
-      }
-      else{
-        this.collapsed = true;
-        $tags.addClass('collapsed')
-      }*/
-    },
-    showNavigation: function(options){      
-      /*options.self.toggle();
-      options.e.stopPropagation();*/
-    },
-    editTag: function(){
-      
     }
   });
   return TagContainer;

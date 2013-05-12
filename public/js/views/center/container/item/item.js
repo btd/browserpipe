@@ -4,61 +4,42 @@ define([
   'backbone',
   'views/view',
   'views/center/container/tag/header.tag',
-  'text!templates/items/container.item.text',
-  'text!templates/items/container.item.details.text'
-], function($, _, Backbone, AppView, Tag, mainTemplate, detailsTemplate){
+  'views/dialogs/view.bookmark',
+  'text!templates/items/container.item.simple.text'
+], function($, _, Backbone, AppView, Tag, ViewBookmark, mainTemplate){
   var ContainerItem = AppView.extend({
     name: 'ContainerItem',
     tagName: 'li', 
     events: {
-      "click" : "toggle",
+      "click" : "open",
       "click a" : "stopPropagation"
     },
     attributes : function (){
       return {
         class : 'item',
-        //TODO: This should have a real id 
-        id : "item" + Math.random()
+        id : "item_" + this.model.get('_id')
       }
     },    
-    initializeView: function(){     
-      this.item = this.options.item;
+    initializeView: function(){  
     },     
     renderView: function(){
-      var compiledTemplate = _.template( mainTemplate, {item: this.item} );    
+      var compiledTemplate = _.template( mainTemplate, {item: this.model} );    
       $(this.el).html(compiledTemplate);       
       return this;   
     },
     postRender: function(){
-      $(this.el).draggable({ 
+     /* $(this.el).draggable({ 
         scroll: false,
         helper: 'clone',
         start : function() {
         },
         stop: function() {
         }
-      });
+      });*/
     },
-    toggle: function(){
-      $details = $(".details", this.el);
-      if($details.length)
-        if($details.hasClass("collapsed"))
-          $details.removeClass("collapsed")
-        else
-          $details.addClass("collapsed")
-      else 
-        this.loadDetails();
-    },
-    loadDetails: function(){      
-      var compiledTemplate = $(_.template( detailsTemplate, {item: this.item} ));
-      //TODO: load tags here or in dialog? use Tag.js view?
-      /*var $tags = $(".tags", compiledTemplate);
-      for (index in this.item.tags) {
-        console.log(this.item.tags[index])
-          var tbv = new Tag({tag: this.item.tags[index]});
-          $tags.append(tbv.render().el);
-       };*/
-       $(this.el).append(compiledTemplate)  
+    open: function(){
+      var viewBookmark = new ViewBookmark({model: this.model});
+      viewBookmark.render();   
     },
     stopPropagation: function(e){
       e.stopPropagation();

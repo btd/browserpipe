@@ -3,19 +3,23 @@ define([
   'backbone',
   'collections/dashboards',
   'collections/containers',
+  'collections/items',
   'models/tag'
-], function(_, Backbone, Dashboards, Containers, Tag) {
+], function(_, Backbone, Dashboards, Containers, ItemCollection, Tag) {
   var State = Backbone.Model.extend({
     tags: {},
     loadInitialData: function(){
       //Loads Tags
       this.loadTags();
 
-      //Prepares containers and dashboards
-      this.assignContainersToDashBoards();
-
       //Loads Dashboards
       this.loadDashboards();
+
+      //Prepares containers and dashboards
+      this.loadContainersToDashBoards();
+
+      //Load items
+      this.loadItems();
     },
     loadTags: function(){
       //Create root tags
@@ -23,6 +27,7 @@ define([
       this.createRootTag("root_imports", "Imports");
       this.createRootTag("root_devices", "Devices");
       this.createRootTag("root_trash", "Trash");
+      this.createRootTag("root_search", "Search");
 
       //Load children tags
       var initialTags = initialOptions.tags || [];
@@ -62,20 +67,47 @@ define([
     loadDashboards: function(){
       this.dashboards = new Dashboards(initialOptions.dashboards)      
     },
-    assignContainersToDashBoards: function(){
-      for(index in initialOptions.dashboards){
-        var dashboard = initialOptions.dashboards[index];
-        dashboard.containers = this.getContainersByDashboard(dashboard._id)
+    loadContainersToDashBoards: function(){
+      for(index in this.dashboards.models){
+        var dashboard = this.dashboards.at(index);
+        dashboard.containers = this.getContainersByDashboard(dashboard.get('_id'))
       }
     },
     getContainersByDashboard: function(dashboardId){      
-      return _.filter(initialOptions.containers, function(container){ return container.dashboard === dashboardId; });
+      var containers = _.filter(initialOptions.containers, function(container){ return container.dashboard === dashboardId; })      
+      return new Containers(containers);
+    },
+    loadItems: function(){
+      var self = this;
+      for(index in initialOptions.items){
+        var item = initialOptions.items[index];
+        _.map(item.tags, function(filter){           
+          var tag = self.getTagByFilter(filter);
+          if(tag){
+            if(!tag.items)
+              tag.items = new ItemCollection();
+            tag.addItem(item);
+          }
+        });
+      }
     },
     //TODO: Now all tags are loaded in memory.
     //      It should loads tags from server in an optmized way
     //      And this method shoud return a promise
     getTagByFilter: function(filter){
       return this.tags[filter];
+    },
+    getItemsByFilter: function(filter){
+      //TODO: load items
+      return [];
+    },
+    addItemToTags: function(item){      
+      var self = this;
+      _.map(item.get('tags'), function(filter){
+        var tag = self.getTagByFilter(filter);
+        if(tag)
+          tag.addItem(item);
+      });
     }
   });
   var _state = new State();

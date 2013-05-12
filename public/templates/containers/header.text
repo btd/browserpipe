@@ -1,2 +1,2 @@
 <% if(container.tag){ %><img class="container-tag-icon" src="/img/up.arrow.png" alt="Container Icon"><% } %>
-<span class="title"><%= container.get('title') %></span>
+<span class="title"><% if(container.get('type') == 2) { %>Search:&nbsp;<% } %><%=container.get('title') %></span>

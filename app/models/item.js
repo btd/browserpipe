@@ -1,13 +1,14 @@
 // Item schema
 
 var mongoose = require('mongoose'),
-  Schema = mongoose.Schema
+  Schema = mongoose.Schema,
+  q = require('q')
 
 //There are to types of items: tag-item and note-item
 var ItemSchema = new Schema({
 	type: {type : Number, trim : true},
   tags: [{type : String, trim : true}],
-  user: {type : Schema.ObjectId, ref : 'User'},
+  user: {type : Schema.ObjectId, ref : 'User'}, //0: bookmark, 1: note
   createdAt  : {type : Date, default : Date.now},
   //tag-item
   title: {type : String, trim : true},
@@ -16,8 +17,25 @@ var ItemSchema = new Schema({
   note: {type : String, trim : true}
 })
 
-ItemSchema.path('type').validate(function (type) {
-  return type.length > 0
-}, 'Item type cannot be blank')
+ItemSchema.methods.saveWithPromise = function() {
+  var deferred = q.defer(); 
+  this.save(function (err) {
+    if (err) deferred.reject(err)
+  else deferred.resolve()    
+  })
+  return deferred.promise;
+}
+
+ItemSchema.statics.getAllByFilters = function(user, filters){
+  var deferred = q.defer();
+  this
+  .find({user: user, tags: {$in: filters}}, '_id type tags title url note')
+  .exec(function(err, items) {
+    // TODO manage errors propertly
+    if (err) error(err)
+    else deferred.resolve(items)
+  })   
+  return deferred.promise;
+}
 
 mongoose.model('Item', ItemSchema)

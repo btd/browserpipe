@@ -36,6 +36,13 @@ module.exports = function (app, passport, auth) {
     
   app.param('containerId', container.container)
 
+  //Items routes
+  var item = require('../app/controllers/item')
+  app.post('/items', item.create)
+  app.put('/items/:itemId', item.update)  
+  app.delete('/items/:itemId', item.destroy)  
+    
+  app.param('itemId', item.item)
 
 /*
 

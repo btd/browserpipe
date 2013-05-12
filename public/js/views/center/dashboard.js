@@ -3,12 +3,19 @@ define([
   'underscore',
   'backbone',
   'config',
+  'models/state',
   'views/view',
   'views/center/container/search.container',
-  'views/center/container/tag.container'
-], function($, _, Backbone, config, AppView, SearchContainer, TagContainer){
+  'views/center/container/user.tag.container',
+  'views/center/container/import.tag.container',
+  'views/center/container/device.tag.container',
+  'views/center/container/trash.tag.container'
+], function($, _, Backbone, config, _state, AppView, SearchContainer, UserTagContainer, ImportContainer, DeviceContainer, TrashContainer){
   var Dashboard = AppView.extend({
-    tagName: 'div',    
+    tagName: 'div',   
+    events: {      
+      "click" : "dashboardClicked"
+    },
     attributes : function (){
       return {
         class : 'dashboard',
@@ -19,26 +26,37 @@ define([
       var self = this;
       this.containersViews = new Array();
       //A new container is added
-      this.model.get('containers').on('add', function(container){
+      this.model.containers.on('add', function(container){
         self.addContainer(container)
       });
       //An existing container is removed
-      this.model.get('containers').on('remove', function(container){
+      this.model.containers.on('remove', function(container){
         self.removeContainer(container)
       });
     },     
     renderView: function(){      
       //Renders each container in the dashboard
       var self = this;
-      _.map(this.model.get('containers').models, function(container){ self.addContainer(container); });
+      _.map(this.model.containers.models, function(container){ self.addContainer(container); });
       return this;    
+    },
+    dashboardClicked: function(e){
+      //When clicking empty areas in the dashboard, it unselects the current container
+      var $sender = $(e.target);
+      //Check if sender is not inside the container element, but an empty area   
+      //We also check that is not the container itself or the container-tag-icon that forces rerender   
+      if(!$sender.parents('.container').length > 0 && !$sender.hasClass("container-tag-icon") && !$sender.hasClass("container"))        
+        _state.dashboards.setCurrentContainer(null);
     },
     addContainer: function(container){
       //Creates a view for the container depending on the type
       var cv;
       switch(container.get('type')){        
-        case 1: cv = new TagContainer({model: container}); break;
+        case 1: cv = new UserTagContainer({model: container}); break;
         case 2: cv = new SearchContainer({model: container}); break;
+        case 3: cv = new ImportContainer({model: container}); break;
+        case 4: cv = new DeviceContainer({model: container}); break;
+        case 5: cv = new TrashContainer({model: container}); break;
       }         
       this.containersViews.push(cv);            
       //Calculates the dashboard width and height

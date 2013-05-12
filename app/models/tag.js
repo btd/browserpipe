@@ -15,27 +15,25 @@ var TagSchema = new Schema({
 TagSchema.path('label').validate(function (label) {
   return label.length > 0
 }, 'Tag label cannot be blank')
-/*
+
 //Root tag has blank path, but it is not saved in db
 TagSchema.path('path').validate(function (path) {	
   return path.length > 0
-}, 'Tag path cannot be blank')*/
+}, 'Tag path cannot be blank')
 
-TagSchema.method('saveWithPromise', function() {
+TagSchema.methods.saveWithPromise = function() {
   var deferred = q.defer();	
   this.save(function (err) {
     if (err) deferred.reject(err)
 	else deferred.resolve()    
   })
   return deferred.promise;
-})
+}
 
-var Tag = mongoose.model('Tag', TagSchema);
-
-Tag.getAll = function(user){
+TagSchema.statics.getAll = function(user){
   var deferred = q.defer();
   this
-	.find({user: user})
+	.find({user: user}, '_id label path')
 	//.populate('user', 'label', 'path')
 	.sort({'path': 1}) // sort by date
 	// .limit(perPage)
@@ -51,7 +49,7 @@ Tag.getAll = function(user){
 
 //POSIBLE NEEDED FILTER TAG FUNCTIONS FOR THE FUTURE WHEN THEY ARE NOT ALL HOLD IN MEMORY IN THE CLIENT
 
-Tag.getChildrenByPath = function(user, path, success, error){
+TagSchema.statics.getChildrenByPath = function(user, path, success, error){
   this
 	.find({user: user, path : path })
 	//.populate('user', 'label', 'path')
@@ -64,7 +62,7 @@ Tag.getChildrenByPath = function(user, path, success, error){
 	  else success(tags)
 	})   
 }
-Tag.getTagAndChildrenByPath = function(user, parentPath, path, success, error){
+TagSchema.statics.getTagAndChildrenByPath = function(user, parentPath, path, success, error){
   this
 	.find({user: user, path : { $in : [path, parentPath] } })
 	//.populate('user', 'label', 'path')
@@ -77,7 +75,7 @@ Tag.getTagAndChildrenByPath = function(user, parentPath, path, success, error){
 	  else success(tags)
 	})   
 }
-Tag.getAllDescendantByPath = function(user, path, success, error){
+TagSchema.statics.getAllDescendantByPath = function(user, path, success, error){
   this
 	.find({user: user, path : new RegExp("^" + path) })
 	//.populate('user', 'label', 'path')
@@ -91,4 +89,4 @@ Tag.getAllDescendantByPath = function(user, path, success, error){
 	})   
 }
 
-module.exports = mongoose.model('Tag', TagSchema);
+mongoose.model('Tag', TagSchema);

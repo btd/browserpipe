@@ -54,9 +54,10 @@ exports.create = function (req, res) {
   //Create tags  
   var readLaterTag = new Tag({label: "Read Later", path: "Tags", user: user})
   var coolSitesTag = new Tag({label: "Cool Sites", path: "Tags", user: user})
-  //Create imports tags
-  var twitterImports = new Tag({label: "Twitter", path: "Imports", user: user})
+  //Create imports tags  
   var fileImports = new Tag({label: "File", path: "Imports", user: user})
+  var twitterImports = new Tag({label: "Twitter", path: "Imports", user: user})
+  var facebookImports = new Tag({label: "Facebook", path: "Imports", user: user})
   var deliciousImports = new Tag({label: "Delicious", path: "Imports", user: user})
   var pinboardImports = new Tag({label: "Pinboard", path: "Imports", user: user})
   //Create dashboard
@@ -71,8 +72,9 @@ exports.create = function (req, res) {
   q.all([
     readLaterTag.saveWithPromise(),
     coolSitesTag.saveWithPromise(),
-    twitterImports.saveWithPromise(),
     fileImports.saveWithPromise(),
+    twitterImports.saveWithPromise(),
+    facebookImports.saveWithPromise(),
     deliciousImports.saveWithPromise(), 
     pinboardImports.saveWithPromise(),
     dashboard.saveWithPromise(),

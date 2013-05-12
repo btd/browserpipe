@@ -13,16 +13,16 @@ define([
     },
     getCurrentContainer: function(){
       var currentDashboard = this.getCurrentDashboard()
-      return currentDashboard && currentDashboard.get('containers').get(this.currentContainerId);
+      return currentDashboard && currentDashboard.containers.get(this.currentContainerId);
     },
     setCurrentDashboard: function(dashboardId){  
       this.currentDashboardId = dashboardId;
       var dashboard = this.get(dashboardId);
       //Triggers event
       this.trigger('currentDashboardChange', dashboard);  
-      //Sets the first container as current one
-      if(dashboard && dashboard.get('containers').length > 0)
-        this.setCurrentContainer(dashboard.get('containers').at(0));
+      //Sets the first container as current one      
+      if(dashboard && dashboard.containers.length > 0)
+        this.setCurrentContainer(dashboard.containers.at(0));
       else
         this.setCurrentContainer(null);
     },
@@ -31,7 +31,7 @@ define([
       var currentDashboard = this.getCurrentDashboard();
       var container = null;
       if(currentDashboard)
-        container = currentDashboard.get('containers').get(containerId)
+        container = currentDashboard.containers.get(containerId)
       this.trigger('currentContainerChange', container);  
     }
   });

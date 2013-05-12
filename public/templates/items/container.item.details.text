@@ -1,5 +1,7 @@
+<img class="favicon" src="" alt="Favicon" />
+<a target="_blank" href="<%= item.get('url') %>"><%= item.get('title') %></a>
 <div class="details">
-	<div class="description"><%= item.description %></div>
+	<div class="description"><%= item.get('note') %></div>
 	<ul class="tags clearfix"></ul>
-	<img class="screenshot" src="<%= item.screenshot %>" alt="ScreenShot" />	
+	<img class="screenshot" src="" alt="ScreenShot" />	
 </div>

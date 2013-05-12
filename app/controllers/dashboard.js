@@ -3,7 +3,8 @@ var _ = require('lodash'),
     mongoose = require('mongoose'),
     Tag = mongoose.model('Tag'),
     Dashboard = mongoose.model('Dashboard'),
-    Container = mongoose.model('Container')
+    Container = mongoose.model('Container'),
+    Item = mongoose.model('Item')
 
 //No dashboard
 exports.showEmpty = function (req, res) {  
@@ -66,14 +67,24 @@ function showDashboard(req, res) {
     q.all([
         Dashboard.getAll(req.user),
         Container.getAll(req.user),
-        Tag.getAll(req.user)                  
+        Tag.getAll(req.user)
     ]).spread(function(dashboards, containers, tags){                
-       res.render('main/home', {
-        currentDashboardId: ((req.currentDashboard && req.currentDashboard.id) || req.user.currentDashboard), 
-        user: req.user, 
-        dashboards: dashboards, 
-        containers: containers, 
-        tags: tags})
+        //We only load the ones from opened containers
+        Item.getAllByFilters(
+          req.user, 
+          _.map(containers, function(container){ return container.get('filter');})
+        ).then(function (items) {
+          res.render('main/home', {
+            currentDashboardId: ((req.currentDashboard && req.currentDashboard.id) || req.user.currentDashboard), 
+            user: req.user, 
+            dashboards: dashboards, 
+            containers: containers, 
+            items: items,
+            tags: tags}
+          );
+        }, function (error) {
+          res.render('500')
+        });
      }, function(){
        res.render('500')
      }).done()                   

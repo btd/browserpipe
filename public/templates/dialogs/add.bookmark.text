@@ -1,0 +1,37 @@
+<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+  <h4>Add bookmark</h4>
+</div>
+<div class="modal-body">
+  <form class="form-horizontal">
+    <div class="control-group">
+      <label class="control-label" for="bkmrk-url">Url</label>
+      <div class="controls">
+        <input type="text" id="bkmrk-url" name="bkmrk-url" placeholder="Url" value="<%if(bookmark){ %><%= bookmark.get('url') %><% } %>"/>
+      </div>
+    </div>
+    <div class="control-group">
+      <label class="control-label" for="bkmrk-title">Title</label>
+      <div class="controls">
+        <input type="text" id="bkmrk-title" name="bkmrk-title" placeholder="Title" value="<%if(bookmark){ %><%= bookmark.get('title') %><% } %>"/>
+      </div>
+    </div>
+    <div class="control-group">
+      <label class="control-label" for="bkmrk-note">Notes</label>
+      <div class="controls">
+        <textarea id="bkmrk-note" name="bkmrk-note" placeholder="Notes"><%if(bookmark){ %><%= bookmark.get('note') %><% } %></textarea>
+      </div>
+    </div>
+    <div class="control-group">      
+      <label class="control-label" for="bkmrk-tags">Tags/Read Later,</label>
+      <div class="controls">
+        <input type="text" id="bkmrk-tags" name="bkmrk-tags" placeholder="Tags" value="<%if(bookmark){ %><%= bookmark.get('tags') %><% } %>"/>
+      </div>
+      <small>Separate tags by comma Eg: Tags/Read Later, Tags/Cool Sites</small>
+    </div>
+  </form>
+</div>
+<div class="modal-footer">
+  <a href="#" class="opt-button opt-save">Create</a>
+  <a href="#" class="opt-cancel opt-margin-left">Cancel</a>
+</div>

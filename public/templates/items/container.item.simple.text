@@ -1,0 +1,3 @@
+<img class="favicon" src="" alt="Favicon" />
+<a target="_blank" href="<%= item.get('url') %>"><%= item.get('title') %></a>
+<div class="description"><%= item.get('note') %></div>

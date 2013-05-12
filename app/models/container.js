@@ -42,21 +42,19 @@ ContainerSchema.pre("save", function(next) {
     next();
 });
 
-ContainerSchema.method('saveWithPromise', function() {
+ContainerSchema.methods.saveWithPromise = function() {
   var deferred = q.defer();	
   this.save(function (err) {
     if (err) deferred.reject(err)
 	else deferred.resolve()    
   })
   return deferred.promise;
-})
+}
 
-var Container = mongoose.model('Container', ContainerSchema);
-
-Container.getAll = function(user){
+ContainerSchema.statics.getAll = function(user) {
   var deferred = q.defer();
   this
-	.find({user: user})
+	.find({user: user}, '_id type title dashboard filter order')
 	.exec(function(err, containers) {
 	  // TODO manage errors propertly
 	  if (err) error(err)
@@ -65,4 +63,4 @@ Container.getAll = function(user){
   return deferred.promise;
 }
 
-mongoose.model('Container', ContainerSchema)
+mongoose.model('Container', ContainerSchema);

@@ -4,13 +4,13 @@ define([
   'backbone',
   'models/state',
   'views/view',  
-  'text!templates/dialogs/edit-dashboard.text'  
+  'text!templates/dialogs/view.bookmark.text'  
 ], function($, _, Backbone, _state, AppView, template){
-  var EditDashboard = AppView.extend({
+  var ViewBookmark = AppView.extend({
     attributes : function (){
       return {
         class : 'modal hide fade',
-        id : 'modal-edit-dash'
+        id : 'modal-view-bkmkr'
       }
     },  
     events: {
@@ -24,23 +24,11 @@ define([
       "submit .form-horizontal": "preventDefault",
       "keyup": "keypressed"
     }, 
-    initializeView: function(options){ 
-      this.dashboard = options.dashboard;
+    initializeView: function(){ 
     },     
-    renderView: function(){       
-      var title = "Create dashboard";
-      var showTrash = false;
-      var optSaveLabel = "Create";
-      if(this.dashboard){
-        title = "Edit dashboard";
-        showTrash = true;
-        optSaveLabel = "Save changes";
-      }
+    renderView: function(){   
       var compiledTemplate = _.template(template, {
-        dashboard: this.dashboard,
-        title: title,
-        showTrash: showTrash,
-        optSaveLabel: optSaveLabel
+        bookmark: this.model
       });    
       this.$el.html(compiledTemplate).appendTo('#dialogs').modal('show');
       return this;    
@@ -50,23 +38,26 @@ define([
     },
     save: function(){
       var self = this;
-      var label = this.$('[name=dash-label]').val();
-      if(this.dashboard)
-        this.dashboard.save({label: label}, {wait: true, success: function() {
-          self.close();
-        }});
-      else 
-        this.collection.create({label: label}, {wait: true, success: function(dashboard) {          
-          self.collection.setCurrentDashboard(dashboard.get('_id'));
-          self.close();
-          _state.dashboards.setCurrentDashboard(dashboard);
-        }})            
+      var title = this.$('[name=bkmrk-title]').val();
+      var url = this.$('[name=bkmrk-url]').val();
+      var note = this.$('[name=bkmrk-note]').val();
+      var tags = _.map(this.$('[name=bkmrk-tags]').val().split(','), function(tag){ 
+        return $.trim(tag)
+      });      
+      this.model.save({
+        title: title,
+        url: url,
+        note: note,
+        tags: _.compact(_.uniq(tags))
+      }, {wait: true, success: function() {
+        self.close();
+      }});         
     },
     close: function(){
      this.$el.modal('hide');
     },
     shown: function(){
-      this.$('[name=dash-label]').focus();
+      this.$('[name=bkmrk-url]').focus();
     },
     hidden: function(){
       this.dispose();
@@ -90,5 +81,5 @@ define([
       }        
     }    
   });
-  return EditDashboard;
+  return ViewBookmark;
 });

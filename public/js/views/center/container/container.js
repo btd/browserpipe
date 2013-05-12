@@ -6,9 +6,8 @@ define([
   'models/state',
   'views/view',
   'views/center/container/header/header',
-  'views/center/container/item/item',
   'text!templates/containers/menu.text'
-], function($, _, Backbone, config, _state, AppView, ContainerHeader, ContainerItem, menuTemplate){
+], function($, _, Backbone, config, _state, AppView, ContainerHeader, menuTemplate){
   var Container = AppView.extend({
     tagName: 'div', 
     events: {
@@ -25,7 +24,7 @@ define([
         id : "cont_" + this.model.get('_id')
       }
     },    
-    initializeView: function(){        
+    initializeView: function(options){        
       _state.dashboards.on('currentContainerChange', this.currentContainerChanged, this);
     },
     addMenuOptions: function(menuOptions) {
@@ -38,8 +37,7 @@ define([
       this
         .renderMenuOptions()
         .renderHeader()        
-        .renderBox()
-        .renderItems();
+        .renderBox();
       return this;   
     },   
     renderHeader: function(){        
@@ -63,16 +61,7 @@ define([
     renderBox: function(){
       $(this.el).append('<div class="box"></div>'); 
       return this;
-    },
-    renderItems: function(){
-      /*var $items = $('<ul class="items"></ul>');      
-      for (index in this.model.items) {
-          var bcv = new ContainerItem({item: this.model.items[index]});
-          $items.append(bcv.render().el);
-       };
-      $('.box', this.el).append($items);  */
-      return this;
-    },    
+    },   
     postRender: function(){
       this.addEvents(this.events);            
       this.calculateHeight();
@@ -86,7 +75,8 @@ define([
       var value = wheight - config.HEADER_HEIGHT - config.BOTTOM_HEIGHT - headerHeight - (config.CONTAINER_VERTICAL_MARGIN * 2);
       $(".box", this.el).css("max-height", value);
     },
-    selectContainer: function(){
+    selectContainer: function(e){      
+      //Sets the container as current
       _state.dashboards.setCurrentContainer(this.model.get('_id'));
     },
     markAsSelected: function(){      
@@ -119,6 +109,8 @@ define([
     closeContainer: function(e){
       e.stopPropagation();      
       _state.dashboards.getCurrentDashboard().removeContainer(this.model);
+      //As this was the current container, we set the current to null
+      _state.dashboards.setCurrentContainer(null);
     }
   });
   return Container;

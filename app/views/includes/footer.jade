@@ -1,15 +1,15 @@
 #bottom-bar(class="navbar navbar-fixed-bottom")
   ul#breadcrumb(class="nav pull-left")  
-  ul#trash(class="nav pull-right")
+  ul#trash-option(class="nav pull-right")
     li(class="dropdown nav-option") 
       a(href="#", class="dropdown-toggle", data-toggle="dropdown") 
         img(src="/img/bin.png", alt="Trash")
       ul(class="dropdown-menu")
-        li
+        li(class="trash-open")
           a(tabindex="-1", href="#") Open
         li(class="divider")
-          li                
-            a(tabindex="-1", href="#") Empty Trash
+        li(class="trash-empty")                
+          a(tabindex="-1", href="#") Empty Trash
             
 
 //Application scripts
@@ -18,7 +18,8 @@ script
     currentDashboardId: '#{currentDashboardId}',
     dashboards: !{JSON.stringify(dashboards)},
     containers: !{JSON.stringify(containers)},
-    tags: !{JSON.stringify(tags)}
+    tags: !{JSON.stringify(tags)},
+    items: !{JSON.stringify(items)}
   }
 script(data-main="/js/main", src="/js/libs/require/require.js")
 //script(src='/js/almond.js')
