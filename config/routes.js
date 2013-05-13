@@ -43,34 +43,5 @@ module.exports = function (app, passport, auth) {
   app.delete('/items/:itemId', item.destroy)  
     
   app.param('itemId', item.item)
-
-/*
-
-  //Tag routes
-  var tags = require('../app/controllers/tags')
-  //So far we do not allow to get all the tags
-  //app.get('/tags', tags.index)  
-  app.post('/tags', auth.requiresLogin, tags.create)
-  app.get('/tags/:path', tags.get)
-  app.get('/tags/:path/children', tags.children)
-  //app.get('/tags/:id/edit', auth.requiresLogin, auth.tag.hasAuthorization, tags.edit)
-  //app.put('/tags/:id', auth.requiresLogin, auth.tag.hasAuthorization, tags.update)
-  //app.del('/tags/:id', auth.requiresLogin, auth.tag.hasAuthorization, tags.destroy)
-  app.param('id', function(req, res, next, id){
-    Tag
-      .findOne({ _id : id })
-      .populate('user', 'label')
-      .exec(function (err, tag) {
-        if (err) return next(err)
-        if (!tag) return next(new Error('Failed to load tag ' + id))
-        req.tag = tag
-        next()
-      })
-  })
-  app.param('path', function(req, res, next, path){
-    req.tagPath = path;
-    next();
-  })*/
-
   
 }

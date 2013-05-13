@@ -20,21 +20,6 @@ DashboardSchema.methods.saveWithPromise = function() {
   return deferred.promise;
 }
 
-
-/*Dashboard.create = function(label, path, user){	
-  var deferred = q.defer();	
-  var dashboard = new Dashboard({
-    label: label,
-    path: path,
-    user: user
-  })
-  dashboard.save(function (err) {
-    if (err) error(err)
-	else deferred.resolve(dashboard)    
-  })
-  return deferred.promise;
-}*/
-
 DashboardSchema.statics.getAll = function(user) {
   var deferred = q.defer();
   this

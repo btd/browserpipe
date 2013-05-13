@@ -6,22 +6,22 @@ define([
   var AppView = Backbone.View.extend({
     postRender: null,
     initialize: function(options){       
-      //console.time('Initializing View "' + this.name + '"');
+      //console.time('Initializing View');
       this.initializeView(options);
-      //console.timeEnd('Initializing View "' + this.name + '"');      
+      //console.timeEnd('Initializing View');      
     },
     renderView: function(){},
     render: function(){
       var _this = this;
-      //console.time('Rendering View "' + this.name + '"');
+      //console.time('Rendering View');
       this.renderView();
-      //console.timeEnd('Rendering View "' + this.name + '"');
+      //console.timeEnd('Rendering View');
       //Executes the postRender method once the browser gets control again and the element is attached
       if(this.postRender){
         setTimeout(function(){
-          //console.time('Post Rendering View "' + _this.name + '"');
+          //console.time('Post Rendering View');
           _this.postRender();
-          //console.timeEnd('Post Rendering View "' + _this.name + '"');
+          //console.timeEnd('Post Rendering View');
         }, 0);
       }
       return this;

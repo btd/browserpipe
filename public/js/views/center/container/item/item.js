@@ -3,10 +3,9 @@ define([
   'underscore',
   'backbone',
   'views/view',
-  'views/center/container/tag/header.tag',
   'views/dialogs/view.bookmark',
   'text!templates/items/container.item.simple.text'
-], function($, _, Backbone, AppView, Tag, ViewBookmark, mainTemplate){
+], function($, _, Backbone, AppView, ViewBookmark, mainTemplate){
   var ContainerItem = AppView.extend({
     name: 'ContainerItem',
     tagName: 'li', 
@@ -28,14 +27,6 @@ define([
       return this;   
     },
     postRender: function(){
-     /* $(this.el).draggable({ 
-        scroll: false,
-        helper: 'clone',
-        start : function() {
-        },
-        stop: function() {
-        }
-      });*/
     },
     open: function(){
       var viewBookmark = new ViewBookmark({model: this.model});
