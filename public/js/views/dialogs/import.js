@@ -5,7 +5,7 @@ define([
   'models/state',
   'views/view'
 ], function($, _, Backbone, _state, AppView){
-  var ImportFile = AppView.extend({
+  var Import = AppView.extend({
     events: {
       "shown": "shown",
       "hidden": "hidden",
@@ -66,10 +66,14 @@ define([
       event.preventDefault();
     },
     keypressed: function(event){
-      if(event.keyCode === 13){
-        $(".opt-save").click();
-      }        
+      if(event.keyCode === 13){        
+        event.preventDefault();
+        //If enter inside form, we submit it
+        if($(event.target).parents('.form-horizontal').length > 0){
+          $(".opt-save").click();
+        }
+      }       
     }    
   });
-  return ImportFile;
+  return Import;
 });

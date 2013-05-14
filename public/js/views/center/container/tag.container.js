@@ -10,9 +10,18 @@ define([
   var TagContainer = Container.extend({
     collapsed:  false,
     initializeView: function(options){    
+      var self = this;
       Container.prototype.initializeView.call(this, options);
       //Add new events to existing ones      
       this.events["click .container-tag-icon"] = "navigateToParentTag";       
+      //If an item is added, we render it
+      this.model.tag.children.on('add', function(children){
+        self.renderChildTag(self.$('.tags'), children);
+      })
+      //If an item is added, we render it
+      this.model.tag.getItems().on('add', function(item){
+        self.renderItem(self.$('.items'), item);
+      })
     },
   	renderView: function(){      
   	  this
@@ -34,7 +43,6 @@ define([
 	    return this;
     },
     renderChildTag: function($tags, childTag){
-    	var self = this;    	
     	var cct = new ContainerChildTag({tag: childTag});
       $tags.append(cct.render().el);
       cct.on('navigateToTag', this.navigateToTag, this);
@@ -43,12 +51,15 @@ define([
       var $items = $('<ul class="items"></ul>');      
       var items = this.model.tag.getItems();      
       for(index in items.models) {
-          var containerItem = new ContainerItem({model: items.at(index)});
-          $items.append(containerItem.render().el);
+          this.renderItem($items, items.at(index));
        };
       $('.box', this.el).append($items);
       return this;
     }, 
+    renderItem: function($items, item){
+      var containerItem = new ContainerItem({model: item});
+      $items.append(containerItem.render().el);
+    },  
     postRender: function(){           
       Container.prototype.postRender.call(this);
     },

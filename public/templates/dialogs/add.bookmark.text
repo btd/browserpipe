@@ -23,7 +23,7 @@
       </div>
     </div>
     <div class="control-group">      
-      <label class="control-label" for="bkmrk-tags">Tags/Read Later,</label>
+      <label class="control-label" for="bkmrk-tags"><%= tag.getFilter() %>,</label>
       <div class="controls">
         <input type="text" id="bkmrk-tags" name="bkmrk-tags" placeholder="Tags" value="<%if(bookmark){ %><%= bookmark.get('tags') %><% } %>"/>
       </div>
