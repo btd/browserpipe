@@ -66,7 +66,7 @@ h4 {
     }
 }
 #top-bar {
-    height: 46px;
+    min-height: 46px;
     margin-bottom: 0px;
     border: none;
 
@@ -90,6 +90,9 @@ h4 {
                 }
             }
             #opt-dashboards{
+                text-overflow: ellipsis;
+                max-width: 250px;
+
                 .name {
                     margin-left: 6px;
                 }
@@ -120,9 +123,10 @@ h4 {
                     padding: 5px 8px; 
                     .tobutton()
                 }
-                #search-box {         
+                #search-box {       
+                    display: none;
                     height: 26px;
-                    width: 700px;                                             
+                    width: 0;                                             
                     font-size: 20px;
                     -webkit-transition: all 0.1s ease-in-out;
                     -moz-transition: all 0.1s ease-in-out;
@@ -135,11 +139,14 @@ h4 {
     }
 }
 #bottom-bar {
-    height: 36px;
-    padding: 5px 0;
+    min-height: 46px;
+    padding-top: 5px;
+    bottom: -5px;
 
     #trash-option {
-        margin-right: 8px;         
+        position: absolute;        
+        right: 0;        
+        left: auto; 
     }
 }
 #main-container {   

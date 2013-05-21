@@ -52,7 +52,7 @@ define([
     },
     save: function(){
       var self = this;
-      var label = this.$('[name=tag-label]').val();
+      var label = $.trim(this.$('[name=tag-label]').val());
       if(this.editMode)
         this.model.save({
           label: label
