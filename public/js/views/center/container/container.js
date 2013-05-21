@@ -70,9 +70,11 @@ define([
       //Gets the page height
       var wheight = $(window).height();
       //Gets the container header height
+      var topBarHeight = $('#top-bar').height();
+      var bottomBarHeight = $('#bottom-bar').height();
       var headerHeight = $('.header', this.el).height();
       //Sets the max-height of the container content (not the header)
-      var value = wheight - config.HEADER_HEIGHT - config.BOTTOM_HEIGHT - headerHeight - (config.CONTAINER_VERTICAL_MARGIN * 2);
+      var value = wheight - topBarHeight - bottomBarHeight - headerHeight - (config.CONTAINER_VERTICAL_MARGIN * 2);
       $(".box", this.el).css("max-height", value);
     },
     selectContainer: function(e){      

@@ -1,5 +1,5 @@
 #breadcrumb {
-    margin: 0 0 0 8px;
+    margin: 0 60px 0 8px;
     background-color: @blueDark;
     padding: 0;
 }
@@ -27,7 +27,7 @@
     }
     .item {
         background-color: @blue;
-        margin-right: 3px;
+        margin: 0 3px 3px 0;
 
         &:hover{
             background-color: darken(@blue, 6%) !important;
@@ -50,10 +50,13 @@
                     width: 110px;
                     white-space: normal;
                     margin-top: 10px;
+                    word-break: break-all;
 
                     .children{
-                        float: right;
                         display: none;
+                        position: absolute;
+                        right: 12px;
+                        left: auto;
                     }                    
                     &:hover{
                         cursor: pointer;

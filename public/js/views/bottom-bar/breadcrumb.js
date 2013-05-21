@@ -32,6 +32,7 @@ define([
           filter = (i==0?"":filter + "/") + names[i];
           this.createBreadCrumbTagView(filter, names, i, opened)
         }  
+        $("#bottom-bar").trigger("heightChanged");
       }    
       else if(opened && this.activeViews.length > 0)
         this.activeViews[this.activeViews.length - 1].showDropDown();
@@ -75,17 +76,15 @@ define([
       $(this.el).append(view.render().el);
       //If a tag dropdown is opened, all other are closed
       view.on('showDropDown', function(filter){
-          self.hideAllDropDowns(filter);      
+        self.hideAllDropDowns(filter);      
       });
       view.on('startNavigateToChildTag', function(filter){
-          self.hideAllDropDowns();
-          self.setCurrentFilter(filter, true);    
-          //No current container when navigating
-        _state.dashboards.setCurrentContainer(null);    
-      });
-      view.on('selectTag', function(filter){
-          self.hideAllDropDowns();
-          self.setCurrentFilter(filter, false);
+        self.hideAllDropDowns();
+        self.setCurrentFilter(filter, true);    
+        //No current container when navigating
+        _state.dashboards.setCurrentContainer(null);   
+        //TODO: optimize if height of the bottom bar really changes
+        $("#bottom-bar").trigger("heightChanged");
       });
       return view;
     },

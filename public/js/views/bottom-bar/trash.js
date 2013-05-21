@@ -8,7 +8,7 @@ define([
   var Trash = AppView.extend({
     el: $("#trash-option"),
     events: {
-      "click .trash-open" : "openTrahContainer"
+      "click" : "openTrahContainer"
     },
     initializeView: function(){ 
       this.tag = _state.getTagByFilter("Trash");
@@ -23,8 +23,6 @@ define([
       },{wait: true, success: function(container) { 
         _state.dashboards.setCurrentContainer(container.get('_id'));
       }});  
-      //Hides the dropdown
-      this.$('[data-toggle="dropdown"]').parent().removeClass('open');
     }
   });
   return Trash;

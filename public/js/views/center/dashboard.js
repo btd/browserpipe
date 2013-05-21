@@ -79,9 +79,15 @@ define([
       this.calculateWidthAndHeight();
     },
     calculateHeight: function(){
-      var wheight = $(window).height();
       //Calculates the height of the dashboard
-      this.$el.height(wheight - config.HEADER_HEIGHT - config.BOTTOM_HEIGHT);
+      var wheight = $(window).height();
+      var topBarHeight = $('#top-bar').height();
+      var bottomBarHeight = $('#bottom-bar').height();
+      $('#main-container').css({
+        'margin-top': topBarHeight,
+        'margin-bottom': bottomBarHeight
+      });
+      this.$el.height(wheight - topBarHeight - bottomBarHeight);
       //Calculates the height of each container view
       for (index in this.containersViews)
         this.containersViews[index].calculateHeight();
@@ -106,6 +112,9 @@ define([
       this.calculateWidthAndHeight();
       //If window size changes, height is recalculated
       $(window).resize(function() {
+        self.calculateWidthAndHeight();
+      });
+      $("#bottom-bar").on("heightChanged",function() {
         self.calculateHeight();
       });
     },
