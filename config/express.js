@@ -1,6 +1,5 @@
 var express = require('express'),
-    mongoStore = require('connect-mongo')(express),
-    lessMiddleware = require('less-middleware')
+    mongoStore = require('connect-mongo')(express)
 
 // App settings and middleware
 module.exports = function(app, config, passport) {
@@ -12,12 +11,14 @@ module.exports = function(app, config, passport) {
 
   //Compile less files
   /* TODO replace with connect-assets*/
-  app.use(lessMiddleware({
+  /*app.use(lessMiddleware({
       dest: __dirname + '/../public/css',
       src: __dirname + '/../public/less',
       prefix: '/css',
       compress: true
-  }));
+  }));*/
+
+  app.use(require('connect-assets')({ src: 'public' }));
 
   // dynamic helpers
   app.use(function (req, res, next) {

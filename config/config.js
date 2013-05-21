@@ -64,6 +64,9 @@ var config = {
       }
     }
   , production: {
+      db: {
+        uri: 'mongodb://localhost/tagnfileit'
+      }
     }
 };
 

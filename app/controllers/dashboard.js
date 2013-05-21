@@ -7,14 +7,10 @@ var _ = require('lodash'),
     Item = mongoose.model('Item')
 
 //No dashboard
-exports.showEmpty = function (req, res) {  
-  showDashboard(req, res)
-}
+exports.showEmpty = showDashboard;
 
 //Show dashboard
-exports.show = function (req, res) {  
-  showDashboard(req, res)
-}
+exports.show = showDashboard;
 
 //Create dashboard
 exports.create = function (req, res) {  
