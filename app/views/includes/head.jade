@@ -18,15 +18,9 @@ head()
   meta(property='og:site_name', content='Tagnfile.it: visualize your information')
 
   //Application styles
-  link(rel='stylesheet', href='/css/bootstrap.css')
-  link(rel='stylesheet', href='/css/base.css')
-  link(rel='stylesheet', href='/css/index.css')
-
-  //Application scripts
-  script(src='/js/libs/jquery/jquery-1.8.0.min.js')  
-  script(src='/js/libs/bootstrap/bootstrap.min.js')  
-   
+  != css('app')
+  
   //HTML5 shim, for IE6-8 support of HTML5 elements
   //if lt IE 9
-    script(src='http://html5shim.googlecode.com/svn/trunk/html5.js')  
-  script(src='/js/libs/modernizr/modernizr-2.6.1-respond-1.1.0.min.js')
+    script(src='http://html5shim.googlecode.com/svn/trunk/html5.js')
+  != js('libs/modernizr/modernizr-2.6.1-respond-1.1.0.min')
