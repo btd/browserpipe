@@ -13,15 +13,9 @@ define([
       var self = this;
       Container.prototype.initializeView.call(this, options);
       //Add new events to existing ones      
-      this.events["click .container-tag-icon"] = "navigateToParentTag";       
-      //If an item is added, we render it
-      this.model.tag.children.on('add', function(children){
-        self.renderChildTag(self.$('.tags'), children);
-      })
-      //If an item is added, we render it
-      this.model.tag.getItems().on('add', function(item){
-        self.renderItem(self.$('.items'), item);
-      })
+      this.events["click .container-tag-icon"] = "navigateToParentTag";                   
+      //Listen to tag events
+      this.listenTagEvents();
     },
   	renderView: function(){      
   	  this
@@ -38,11 +32,12 @@ define([
 	  	//Render childs tags      
       for (var i = 0, l = this.model.tag.children.length; i < l; i++) {       	
         var childTag = this.model.tag.children.models[i];   
-      	this.renderChildTag($tags, childTag);  
+      	this.renderChildTag(childTag);  
       };
 	    return this;
     },
-    renderChildTag: function($tags, childTag){
+    renderChildTag: function(childTag){
+      var $tags = this.$('.tags');
     	var cct = new ContainerChildTag({tag: childTag});
       $tags.append(cct.render().el);
       cct.on('navigateToTag', this.navigateToTag, this);
@@ -51,24 +46,37 @@ define([
       var $items = $('<ul class="items"></ul>');      
       var items = this.model.tag.getItems();      
       for(index in items.models) {
-          this.renderItem($items, items.at(index));
+          this.renderItem(items.at(index));
        };
       $('.box', this.el).append($items);
       return this;
     }, 
-    renderItem: function($items, item){
+    renderItem: function(item){
+      var $items = this.$('.items');
       var containerItem = new ContainerItem({model: item});
       $items.append(containerItem.render().el);
     },  
     postRender: function(){           
       Container.prototype.postRender.call(this);
     },
-    navigateToTag: function(tag){        
+    listenTagEvents: function(){  
+      var self = this;
+      //If an item is added, we render it
+      this.model.tag.children.on('add', this.renderChildTag, this);
+      //If an item is added, we render it
+      this.model.tag.getItems().on('add', this.renderItem, this);
+    },
+    navigateToTag: function(tag){           
+      //Unbind old tag events
+      this.model.tag.children.off('add', this.renderChildTag, this);
+      this.model.tag.getItems().off('add', this.renderItem, this)
       //Sets the new tag
       this.model.set('title', tag.get('label'));
       this.model.set('filter', tag.getFilter());
       this.model.save();
       this.model.tag = tag;
+      //Listen to new tag events
+      this.listenTagEvents();
       //Clears content
       this.clean();
       //Render the view again
