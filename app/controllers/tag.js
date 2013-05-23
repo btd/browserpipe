@@ -11,7 +11,7 @@ exports.create = function (req, res) {
     tag.user = req.user   
     q.all([tag.saveWithPromise()])
     .spread(function(){
-      res.json('{"_id":"' + tag._id + '"}')
+      res.json({ _id: tag._id })
     }, function(err){
       //TODO: send corresponding number error
       res.json(err.errors) 
@@ -30,7 +30,7 @@ exports.update = function (req, res) {
     if(req.body.path)
       tag.path = req.body.path
     tag.saveWithPromise().then(function(){
-      res.json('{"_id":"' + tag._id + '"}')
+      res.json({ _id: tag._id })
     }, function(err){
       //TODO: send corresponding number error
       res.json(err.errors) 

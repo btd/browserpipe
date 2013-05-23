@@ -21,7 +21,7 @@ exports.create = function (req, res) {
     q.all([dashboard.saveWithPromise(),
       req.user.saveWithPromise()])
     .spread(function(){
-      res.json('{"_id":"' + dashboard._id + '"}')
+      res.json({ _id: dashboard._id })
     }, function(err){
       //TODO: send corresponding number error
       res.json(err.errors) 
@@ -37,7 +37,7 @@ exports.update = function (req, res) {
     var dashboard = req.currentDashboard;
     dashboard.label = req.body.label
     dashboard.saveWithPromise().then(function(){
-      res.json('{"_id":"' + dashboard._id + '"}')
+      res.json({ _id: dashboard._id })
     }, function(err){
       //TODO: send corresponding number error
       res.json(err.errors) 

@@ -11,7 +11,7 @@ exports.create = function (req, res) {
     container.user = req.user   
     q.all([container.saveWithPromise()])
     .spread(function(){
-      res.json('{"_id":"' + container._id + '"}')
+      res.json({ _id: container._id })
     }, function(err){
       //TODO: send corresponding number error
       res.json(err.errors) 
@@ -34,7 +34,7 @@ exports.update = function (req, res) {
     if(req.body.order)
       container.path = req.body.order
     container.saveWithPromise().then(function(){
-      res.json('{"_id":"' + container._id + '"}')
+      res.json({ _id:  container._id })
     }, function(err){
       //TODO: send corresponding number error
       res.json(err.errors) 
@@ -60,7 +60,7 @@ exports.destroy = function(req, res){
   if(req.isAuthenticated() && req.currentContainer){
     var container = req.currentContainer
     container.remove(function(err){
-      res.json('{"_id":"' + container._id + '"}')
+      res.json({ _id:  container._id })
     })
   }      
   else 
