@@ -12,7 +12,7 @@ exports.create = function (req, res) {
     q.all([item.saveWithPromise(),
       req.user.saveWithPromise()])
     .spread(function(){
-      res.json('{"_id":"' + item._id + '"}')
+      res.json({ _id: item._id })
     }, function(err){
       //TODO: send corresponding number error
       res.json(err.errors) 
@@ -31,7 +31,7 @@ exports.update = function (req, res) {
     item.url = req.body.url
     item.note = req.body.note
     item.saveWithPromise().then(function(){
-      res.json('{"_id":"' + item._id + '"}')
+      res.json({ _id: item._id })
     }, function(err){
       //TODO: send corresponding number error
       res.json(err.errors) 
@@ -57,7 +57,7 @@ exports.destroy = function(req, res){
   if(req.isAuthenticated() && req.currentItem){
     var item = req.currentItem
     item.remove(function(err){
-      res.json('{"_id":"' + item._id + '"}')
+      res.json({ _id: item._id })
     })
   }      
   else 
