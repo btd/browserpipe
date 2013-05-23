@@ -9,11 +9,13 @@ define([
 ], function($, _, Backbone, _state, Container, ContainerChildTag, ContainerItem){
   var TagContainer = Container.extend({
     collapsed:  false,
+    events: {
+      "click .container-tag-icon": "navigateToParentTag"
+    },
     initializeView: function(options){    
       var self = this;
       Container.prototype.initializeView.call(this, options);
-      //Add new events to existing ones      
-      this.events["click .container-tag-icon"] = "navigateToParentTag";                   
+      _.extend(this.events, Container.prototype.events)
       //Listen to tag events
       this.listenTagEvents();
     },
@@ -40,15 +42,14 @@ define([
       var $tags = this.$('.tags');
     	var cct = new ContainerChildTag({tag: childTag});
       $tags.append(cct.render().el);
-      cct.on('navigateToTag', this.navigateToTag, this);
+      this.listenTo(cct, 'navigateToTag', this.navigateToTag);
     },
     renderItems: function(){
-      var $items = $('<ul class="items"></ul>');      
+      $('.box', this.el).append('<ul class="items"></ul>');
       var items = this.model.tag.getItems();      
       for(index in items.models) {
           this.renderItem(items.at(index));
-       };
-      $('.box', this.el).append($items);
+       };      
       return this;
     }, 
     renderItem: function(item){
@@ -60,16 +61,15 @@ define([
       Container.prototype.postRender.call(this);
     },
     listenTagEvents: function(){  
-      var self = this;
       //If an item is added, we render it
-      this.model.tag.children.on('add', this.renderChildTag, this);
+      this.listenTo(this.model.tag.children, 'add', this.renderChildTag);
       //If an item is added, we render it
-      this.model.tag.getItems().on('add', this.renderItem, this);
+      this.listenTo(this.model.tag.getItems(), 'add', this.renderItem);
     },
     navigateToTag: function(tag){           
       //Unbind old tag events
-      this.model.tag.children.off('add', this.renderChildTag, this);
-      this.model.tag.getItems().off('add', this.renderItem, this)
+      this.stopListening(this.model.tag.children);
+      this.stopListening(this.model.tag.getItems());      
       //Sets the new tag
       this.model.set('title', tag.get('label'));
       this.model.set('filter', tag.getFilter());

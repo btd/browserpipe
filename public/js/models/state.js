@@ -51,7 +51,7 @@ define([
     tagFilterChangedEvent: function(tag){      
       //If filter change, it updates the key
       var self = this;
-      tag.on('filterChanged', function(filter, oldFilter){
+      this.listenTo(tag, 'filterChanged', function(filter, oldFilter){
         delete self.tags[oldFilter]
         self.tags[filter] = tag;
       }); 
@@ -59,7 +59,7 @@ define([
     tagDeletedEvent: function(tag){
       //If the tag is deleted, it removes it from tags
       var self = this;
-      tag.on('deleted', function(tag){        
+      this.listenTo(tag, 'deleted', function(tag){        
         console.log('tagDeletedEvent')
         delete self.tags[tag.getFilter()]
       });

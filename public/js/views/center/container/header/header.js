@@ -16,7 +16,7 @@ define([
       this.icon = this.options.icon;
       //Renders title if it changes
       var self = this;      
-      this.model.on('change:title', function(){          
+      this.listenTo(this.model, 'change:title', function(){          
         self.$('.title').html(self.model.get('title'));
       }); 
     },   
