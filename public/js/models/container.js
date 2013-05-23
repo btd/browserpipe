@@ -13,10 +13,10 @@ define([
       var _state = require('models/state');
       this.tag = _state.getTagByFilter(this.get('filter'));
       //If the tag changes its filter, container has to be updated
-      this.tag.on('change:path', function(filter, oldFilter){          
+      this.listenTo(this.tag, 'change:path', function(filter, oldFilter){          
         self.save({filter: self.tag.getFilter()});
       }); 
-      this.tag.on('change:label', function(filter, oldFilter){          
+      this.listenTo(this.tag, 'change:label', function(filter, oldFilter){          
         self.save({title: self.tag.get('label'), filter: self.tag.getFilter()});
       }); 
     },

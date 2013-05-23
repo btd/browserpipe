@@ -12,7 +12,7 @@ define([
     rootView: {},
     activeViews: [],
     initializeView: function(){        
-      _state.dashboards.on('currentContainerChange', this.currentContainerChanged, this);
+      this.listenTo(_state.dashboards, 'currentContainerChange', this.currentContainerChanged);
     }, 
     renderView: function(){    
       return this;
@@ -75,10 +75,10 @@ define([
       var view = new BreadCrumbTag({model: tag, opened: opened});
       $(this.el).append(view.render().el);
       //If a tag dropdown is opened, all other are closed
-      view.on('showDropDown', function(filter){
+      this.listenTo(view, 'showDropDown', function(filter){
         self.hideAllDropDowns(filter);      
       });
-      view.on('startNavigateToChildTag', function(filter){
+      this.listenTo(view, 'startNavigateToChildTag', function(filter){
         self.hideAllDropDowns();
         self.setCurrentFilter(filter, true);    
         //No current container when navigating

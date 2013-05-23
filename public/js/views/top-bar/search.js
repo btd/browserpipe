@@ -12,7 +12,7 @@ define([
       "click #search-btn" : "search"
     },   
     initializeView: function(){        
-      _state.dashboards.on('currentContainerChange', this.currentContainerChanged, this);
+      this.listenTo(_state.dashboards, 'currentContainerChange', this.currentContainerChanged);
     },
     calculateWidth: function(){
       
