@@ -15,10 +15,10 @@ define([
       "click .opt-add" : "changeDashboardOption"
     }, 
     initializeView: function(){ 
-      this.collection.on('change', this.dashboardUpdated, this);
-      this.collection.on('add', this.addDashboard, this);
-      this.collection.on('remove', this.removeDashboard, this);
-      this.collection.on('currentDashboardChange', this.renderCurrentDashboard, this);
+      this.listenTo(this.collection, 'change', this.dashboardUpdated);
+      this.listenTo(this.collection, 'add', this.addDashboard);
+      this.listenTo(this.collection, 'remove', this.removeDashboard);
+      this.listenTo(this.collection, 'currentDashboardChange', this.renderCurrentDashboard);
     },     
     renderView: function(){   
       var self = this;

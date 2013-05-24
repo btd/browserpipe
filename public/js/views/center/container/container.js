@@ -25,7 +25,7 @@ define([
       }
     },    
     initializeView: function(options){        
-      _state.dashboards.on('currentContainerChange', this.currentContainerChanged, this);
+      this.listenTo(_state.dashboards, 'currentContainerChange', this.currentContainerChange);
     },
     addMenuOptions: function(menuOptions) {
       this.menuOptions = _.union(this.menuOptions, menuOptions);

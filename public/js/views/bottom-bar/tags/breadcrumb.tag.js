@@ -31,8 +31,8 @@ define([
     },    
     initializeView: function(){ 
       this.opened = this.options.opened;
-      this.model.on('filterChanged', this.tagFilterChanged, this);
-      this.model.children.on('change reset add remove', this.renderDropDown, this);
+      this.listenTo(this.model, 'filterChanged', this.tagFilterChanged);
+      this.listenTo(this.model.children, 'change reset add remove', this.renderDropDown);
     },     
     renderView: function(){
       var compiledTemplate = _.template(tagTemplate, {tag: this.model});    
@@ -129,7 +129,7 @@ define([
     addTagOption: function(){
       var self = this;
       var editTag = new EditTag({model: this.model, editMode: false});
-      editTag.on('tagAdded', function(tag){        
+      this.listenTo(editTag, 'tagAdded', function(tag){        
         //Create container
         self.createContainerFromTag(tag);
       });

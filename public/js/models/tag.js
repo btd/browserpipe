@@ -13,7 +13,7 @@ define([
       //We set them as direct attributes so we do send the children attribute when saving a tag
       this.children = new TagCollection();
       //If filter changes, it updates children and triggers filterChanged event
-      this.on('change', function(){
+      this.listenTo(this, 'change', function(){
         if(this.hasChanged('label') || this.hasChanged('path')){
           var newFilter = this.getFilter();
           var oldFilter = (this.previous('path')===""?"":this.previous('path') + "/") + this.previous('label');

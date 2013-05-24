@@ -26,11 +26,11 @@ define([
       var self = this;
       this.containersViews = new Array();
       //A new container is added
-      this.model.containers.on('add', function(container){
+      this.listenTo(this.model.containers, 'add', function(container){
         self.addContainer(container)
       });
       //An existing container is removed
-      this.model.containers.on('remove', function(container){
+      this.listenTo(this.model.containers, 'remove', function(container){
         self.removeContainer(container)
       });
     },     
