@@ -19,8 +19,12 @@ define([
     },   
     currentContainerChanged: function(container){
       //If it is a Tag container it navigates to it
-      if(container && container.get('type') === 1)
-        this.setCurrentFilter(container.tag.getFilter(), false);
+      if(!container){
+        if(this.activeViews.length == 0)
+          this.setCurrentFilter('Tags', false)
+      }
+      else if(container.get('type') === 1)
+        this.setCurrentFilter(container.tag.getFilter(), false);        
     },
     setCurrentFilter: function(filter, opened){ //Eg. filter = Tags/Read Later/Development Tools      
       if(this.currentFilter != filter){

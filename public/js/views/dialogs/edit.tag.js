@@ -52,25 +52,35 @@ define([
     },
     save: function(){
       var self = this;
+      this.cleanErrors();
       var label = $.trim(this.$('[name=tag-label]').val());
-      if(this.editMode)
-        this.model.save({
-          label: label
-        }, {wait: true, success: function() {
-          self.close();
-        }});
-      else {
-        var openContainer = this.$('[name=tag-open]').is(':checked');
-        this.model.children.createTag({
-          label: label,
-          path: this.model.getFilter()
-        }, {wait: true, success: function(tag) {  
-          _state.addTag(tag);
-          if(openContainer)
-            self.trigger("tagAdded", tag);
-          self.close();
-        }}) 
-      }     
+      this.validateFields(label);
+      if(!this.hasErrors())
+        if(this.editMode)
+          this.model.save({
+            label: label
+          }, {wait: true, success: function() {
+            self.close();
+          }});
+        else {
+          var openContainer = this.$('[name=tag-open]').is(':checked');
+          this.model.children.createTag({
+            label: label,
+            path: this.model.getFilter()
+          }, {wait: true, success: function(tag) {  
+            _state.addTag(tag);
+            if(openContainer)
+              self.trigger("tagAdded", tag);
+            self.close();
+          }}) 
+        }     
+    },
+    cleanErrors: function(){
+      this.unSetAllErrorFields(this.$("#tag-label"));
+    },
+    validateFields: function(label){
+      if(label=="")
+        this.setErrorField(this.$("#tag-label"), this.$("#tag-label-blank"));
     },
     close: function(){
      this.$el.modal('hide');

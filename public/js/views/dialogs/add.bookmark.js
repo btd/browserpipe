@@ -2,11 +2,12 @@ define([
   'jQuery',
   'underscore',
   'backbone',
+  'util',
   'models/state',
   'models/item',
   'views/view',  
   'text!templates/dialogs/add.bookmark.text'  
-], function($, _, Backbone, _state, Item, AppView, template){
+], function($, _, Backbone, util, _state, Item, AppView, template){
   var AddBookmark = AppView.extend({
     attributes : function (){
       return {
@@ -38,27 +39,40 @@ define([
     },
     save: function(){
       var self = this;
+      this.cleanErrors();      
       var title = this.$('[name=bkmrk-title]').val();
       var url = this.$('[name=bkmrk-url]').val();
       var note = this.$('[name=bkmrk-note]').val();
       var tags = _.map(this.$('[name=bkmrk-tags]').val().split(','), function(tag){ 
         return $.trim(tag)
       });      
-      //We append current tag filter
-      tags.push(this.tag.getFilter());
-      //We create the tag
-      var item = new Item();
-      item.save({
-        type: 0,
-        tags: _.compact(_.uniq(tags)), //no blanks and non repeated
-        title: title,
-        url: url,
-        note: note
-      }, {wait: true, success: function(bookmark) {                    
-        _state.addItemToTags(bookmark);
-        self.close();
-      }})          
-
+      this.validateFields(url);
+      if(!this.hasErrors()){
+        //We append current tag filter
+        tags.push(this.tag.getFilter());
+        //We create the tag
+        var item = new Item();
+        item.save({
+          type: 0,
+          tags: _.compact(_.uniq(tags)), //no blanks and non repeated
+          title: title,
+          url: url,
+          note: note
+        }, {wait: true, success: function(bookmark) {                    
+          _state.addItemToTags(bookmark);
+          self.close();
+        }})          
+      }
+    },
+    cleanErrors: function(){
+      this.unSetAllErrorFields(this.$("#bkmrk-url"));
+    },
+    validateFields: function(url){
+      if(url=="")
+        this.setErrorField(this.$("#bkmrk-url"), this.$("#bkmrk-url-blank"));                
+      else 
+        if(!util.isValidURL(url))
+          this.setErrorField(this.$("#bkmrk-url"), this.$("#bkmrk-url-invalid"));  
     },
     close: function(){
      this.$el.modal('hide');
