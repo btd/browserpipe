@@ -19,10 +19,6 @@ define([
       this.listenTo(this.tag, 'change:label', function(filter, oldFilter){          
         self.save({title: self.tag.get('label'), filter: self.tag.getFilter()});
       }); 
-    },
-    parse : function(resp, xhr) {
-      //TODO: need to add the JSON parse to transform response string in obj. If not it does not work.
-      return JSON.parse(resp);
     }
   });
   return Container;

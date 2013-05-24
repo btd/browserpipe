@@ -8,6 +8,7 @@
       <label class="control-label" for="tag-label">Label</label>
       <div class="controls">
         <input type="text" id="tag-label" name="tag-label" placeholder="Label" value="<%if(tag){ %><%= tag.get('label') %><% } %>"/>
+        <span id="tag-label-blank" class="help-inline hide">Cannot be blank</span>
       </div>
     </div>
     <div class="control-group">

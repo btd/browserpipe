@@ -8,6 +8,8 @@
       <label class="control-label" for="bkmrk-url">Url</label>
       <div class="controls">
         <input type="text" id="bkmrk-url" name="bkmrk-url" placeholder="Url" value="<%if(bookmark){ %><%= bookmark.get('url') %><% } %>"/>
+        <span id="bkmrk-url-blank" class="help-inline hide">Cannot be blank</span>
+        <span id="bkmrk-url-invalid" class="help-inline hide">Invalid URL</span>
       </div>
     </div>
     <div class="control-group">

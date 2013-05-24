@@ -39,7 +39,25 @@ define([
       this.remove();
       this.off();
       Backbone.View.prototype.remove.call(this);
-    }
+    },
+    setErrorField: function($el, $help){
+      var $parent = $el.parents('.control-group:first');
+      $help.removeClass('hide');
+      $parent.addClass('error');
+    },
+    unSetErrorField: function($el, $help){
+      var $parent = $el.parents('.control-group:first');
+      $help.addClass('hide');
+      $parent.removeClass('error');      
+    },
+    unSetAllErrorFields: function($el){
+      var $parent = $el.parents('.control-group:first');
+      $('.help-inline', $parent).addClass('hide');
+      $parent.removeClass('error');      
+    },
+    hasErrors: function(){
+      return this.$('.help-inline:not(.hide)').length > 0  
+    }    
   });
   return AppView;
 });

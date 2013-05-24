@@ -50,17 +50,27 @@ define([
     },
     save: function(){
       var self = this;
-      var label = this.$('[name=dash-label]').val();
-      if(this.dashboard)
-        this.dashboard.save({label: label}, {wait: true, success: function() {
-          self.close();
-        }});
-      else 
-        this.collection.create({label: label}, {wait: true, success: function(dashboard) {          
-          self.collection.setCurrentDashboard(dashboard.get('_id'));
-          self.close();
-          _state.dashboards.setCurrentDashboard(dashboard);
-        }})            
+      this.cleanErrors();
+      var label = $.trim(this.$('[name=dash-label]').val());
+      this.validateFields(label);
+      if(!this.hasErrors())
+        if(this.dashboard)
+          this.dashboard.save({label: label}, {wait: true, success: function() {
+            self.close();
+          }});
+        else 
+          this.collection.create({label: label}, {wait: true, success: function(dashboard) {          
+            self.collection.setCurrentDashboard(dashboard.get('_id'));
+            self.close();
+            _state.dashboards.setCurrentDashboard(dashboard);
+          }})            
+    },
+    cleanErrors: function(){
+      this.unSetAllErrorFields(this.$("#dash-label"));
+    },
+    validateFields: function(label){
+      if(label=="")
+        this.setErrorField(this.$("#dash-label"), this.$("#dash-label-blank"));
     },
     close: function(){
      this.$el.modal('hide');

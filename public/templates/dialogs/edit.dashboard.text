@@ -8,6 +8,7 @@
       <label class="control-label" for="dash-label">Label</label>
       <div class="controls">
         <input type="text" id="dash-label" name="dash-label" placeholder="Label" value="<%if(dashboard){ %><%= dashboard.get('label') %><% } %>"/>
+        <span id="dash-label-blank" class="help-inline hide">Cannot be blank</span>
       </div>
     </div>
   </form>

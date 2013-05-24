@@ -11,9 +11,6 @@ define([
     initialize: function(){    
       this.containers = new Containers();  
     },
-    parse: function(resp, xhr){      
-      return JSON.parse(resp);
-    },
     addContainer: function(container, options){
       container.dashboard = this.get('_id')
       return this.containers.create(container, options);
