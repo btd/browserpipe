@@ -2,10 +2,12 @@ define([
   'jQuery',
   'underscore',
   'backbone',
+  'collections/tags',
   'models/state',
   'views/view',  
+  'views/tags.editor/editor',
   'text!templates/dialogs/view.bookmark.text'  
-], function($, _, Backbone, _state, AppView, template){
+], function($, _, Backbone, Tags, _state, AppView, TagsEditor, template){
   var ViewBookmark = AppView.extend({
     attributes : function (){
       return {
@@ -18,11 +20,14 @@ define([
       "hidden": "hidden",
       "click .opt-save": "save",
       "click .opt-cancel": "close",
-      "click .opt-move-to-trash": "moveToTrash",
-      "click .opt-move-to-trash-no": "moveToTrashCanceled",
       "click .opt-move-to-trash-yes": "moveToTrashConfirmed",
-      "submit .form-horizontal": "preventDefault",
-      "keyup": "keypressed"
+      "keyup": "keypressed",
+      "click .edit-bkmrk-title" : "showEditBkmrkTitleControls",
+      "click .opt-cancel-edit-bkmrk-title" : "hideEditBkmrkTitleControls",
+      "click .opt-save-edit-bkmrk-title" : "saveBkmrkTitle",
+      "click .edit-bkmrk-note" : "showEditBkmrkNoteControls",
+      "click .opt-cancel-edit-bkmrk-note" : "hideEditBkmrkNoteControls",
+      "click .opt-save-edit-bkmrk-note" : "saveBkmrkNote",
     }, 
     initializeView: function(){ 
     },     
@@ -30,7 +35,15 @@ define([
       var compiledTemplate = _.template(template, {
         bookmark: this.model
       });    
-      this.$el.html(compiledTemplate).appendTo('#dialogs').modal('show');
+      this.$el.html(compiledTemplate).appendTo('#dialogs');
+       //Append the tags
+      var tags = this.model.getTags();
+      this.tagsView = new TagsEditor({collection: new Tags(tags)})
+      this.listenTo(this.tagsView, 'tagAdded', this.addTag);
+      this.listenTo(this.tagsView, 'tagRemoved', this.updateTags);
+      this.$('.bkmrk-tags').html(this.tagsView.render().el);
+      //Show dialog
+      this.$el.modal('show');
       return this;    
     },
     postRender: function(){
@@ -40,10 +53,7 @@ define([
       var self = this;
       var title = this.$('[name=bkmrk-title]').val();
       var url = this.$('[name=bkmrk-url]').val();
-      var note = this.$('[name=bkmrk-note]').val();
-      var tags = _.map(this.$('[name=bkmrk-tags]').val().split(','), function(tag){ 
-        return $.trim(tag)
-      });      
+      var note = this.$('[name=bkmrk-note]').val();           
       this.model.save({
         title: title,
         url: url,
@@ -52,6 +62,18 @@ define([
       }, {wait: true, success: function() {
         self.close();
       }});         
+    },
+    addTag: function(tag){
+      _state.createTagIfNew(tag.getFilter());
+      this.updateTags();
+    },
+    updateTags: function(){      
+      var tags = this.tagsView.collection.map(function(tag){ 
+        return tag.getFilter();
+      }); 
+      this.model.save({
+        tags: _.compact(_.uniq(tags))
+      });     
     },
     close: function(){
      this.$el.modal('hide');
@@ -62,27 +84,75 @@ define([
     hidden: function(){
       this.dispose();
     },
-    moveToTrash: function(){
-      this.$('.move-to-trash-alert').slideDown();
-    },
-    moveToTrashCanceled: function(){
-      this.$('.move-to-trash-alert').hide();
-    },
     moveToTrashConfirmed: function(){
       console.log("move-to-trash")
-    },
-    preventDefault: function(event){
-      event.preventDefault();
     },
     keypressed: function(event){
       if(event.keyCode === 13){        
         event.preventDefault();
+        var $target = $(event.target);
         //If enter inside form, we submit it
-        if($(event.target).parents('.form-horizontal').length > 0){
-          $(".opt-save").click();
+        if($target.attr('id') === 'bkmrk-title'){
+          $(".opt-save-edit-bkmrk-title").click();
+        }
+        else if($target.attr('id') === 'bkmrk-note'){
+          $(".opt-save-edit-bkmrk-note").click();
         }
       }        
-    }    
+    },
+    showEditBkmrkTitleControls: function(){
+      this.$('.edit-bkmrk-title-controls').show();
+      this.$('#bkmrk-title').focus();      
+    },
+    hideEditBkmrkTitleControls: function(){
+      this.cleanErrors();
+      this.$('.edit-bkmrk-title-controls').hide();
+    },
+    saveBkmrkTitle: function(){
+      var self = this;
+      this.cleanErrors();      
+      var title = $.trim(this.$('[name=bkmrk-title]').val());
+      this.validateBkmrkTitle(title);
+      if(!this.hasErrors()){
+        //We save the title
+        this.model.save({
+          title: title
+        }).then(function() { 
+          self.$('.edit-bkmrk-title').html(title);
+          self.hideEditBkmrkTitleControls();
+        });
+      }      
+    },
+    validateBkmrkTitle: function(title){
+      if(title === "")
+        this.setErrorField(this.$("#bkmrk-title"), this.$("#bkmrk-title-blank"));               
+    },
+    showEditBkmrkNoteControls: function(){
+      this.$('.edit-bkmrk-note').hide();
+      this.$('.edit-bkmrk-note-controls').show();
+      this.$('.modal-body').animate({scrollTop: this.$('.edit-bkmrk-note-controls').offset().top}, 150);
+      this.$('#bkmrk-note').focus();      
+    },
+    hideEditBkmrkNoteControls: function(){
+      this.cleanErrors();
+      this.$('.edit-bkmrk-note').show();
+      this.$('.edit-bkmrk-note-controls').hide();
+    },
+    saveBkmrkNote: function(){
+      var self = this;
+      this.cleanErrors();      
+      var note = $.trim(this.$('[name=bkmrk-note]').val());
+      //We save the note
+      this.model.save({
+        note: note
+      }).then(function() { 
+        self.$('.bkmrk-note-content').html(note);
+        self.hideEditBkmrkNoteControls();
+      });     
+    },
+    cleanErrors: function(){
+      this.unSetAllErrorFields(this.$("#bkmrk-note"));
+    }
   });
   return ViewBookmark;
 });

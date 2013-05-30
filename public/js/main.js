@@ -9,7 +9,8 @@ require.config({
     text: 'libs/require/text',
     templates: '../templates',
     bootstrap: 'libs/bootstrap/bootstrap.min',
-    jquery_ui: 'libs/jquery.ui/jquery-ui-1.9.1.custom.min'
+    jquery_ui: 'libs/jquery.ui/jquery-ui-1.9.1.custom.min',
+    typeahead: 'libs/typeahead/typeahead'
   },
   shim: {
       'backbone': {
@@ -22,7 +23,8 @@ require.config({
       'jQuery': {
           exports: "jQuery"
       },
-      'jquery_ui': ['jQuery']
+      'jquery_ui': ['jQuery'],
+      'typeahead': ['bootstrap']      
   }
 });
 
@@ -30,7 +32,7 @@ require([
   // Load our app module and pass it to our definition function
   'app',
   // Some plugins have to be loaded in order due to their non AMD compliance
-  'jquery_ui'
+  'jquery_ui',
   // Because these scripts are not "modules" they do not pass any values to the definition function below
 ], function(App){
   // The "app" dependency is passed in as "App"

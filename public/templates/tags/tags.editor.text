@@ -1,0 +1,2 @@
+<input class="input-xlarge" type="text" data-provide="typeahead" id="editor-tag-input" name="editor-tag-input" placeholder="Press enter to add a tag"/>
+<div class="editor-tags"></div>

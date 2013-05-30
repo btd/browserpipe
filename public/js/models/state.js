@@ -108,6 +108,32 @@ define([
         if(tag)
           tag.addItem(item);
       });
+    },
+    createTagIfNew: function(filter){      
+      if(filter != 'Tags' && filter.substring(0, 5) != "Tags/")
+        return null; 
+      var defer = $.Deferred();
+      var tag = this.getTagByFilter(filter);
+      if(!tag){ //If it does not extists, it creates it
+        var index = filter.lastIndexOf('/'); //It has at least one "/"
+        var path = filter.substring(0, index);
+        var label = filter.substring(index + 1);  
+        //Gets or creates the parent
+        this.createTagIfNew(path)
+        .done(function(parent){                    
+          parent.children.createTag({
+            label: label,
+            path: path
+          })
+          .done(function(tag) {            
+            _state.addTag(tag);
+            defer.resolve(tag);
+          });
+        });
+      }
+      else  //Resolves with the tag if existis
+        defer.resolve(tag);
+      return defer;
     }
   });
   var _state = new State();
