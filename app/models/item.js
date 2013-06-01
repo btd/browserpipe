@@ -6,9 +6,9 @@ var mongoose = require('mongoose'),
 
 //There are to types of items: tag-item and note-item
 var ItemSchema = new Schema({
-	type: {type : Number, trim : true},
+	type: {type : Number, trim : true},//0: bookmark, 1: note
   tags: [{type : String, trim : true}],
-  user: {type : Schema.ObjectId, ref : 'User'}, //0: bookmark, 1: note
+  user: {type : Schema.ObjectId, ref : 'User'}, 
   createdAt  : {type : Date, default : Date.now},
   //tag-item
   title: {type : String, trim : true},
@@ -32,8 +32,8 @@ ItemSchema.statics.getAllByFilters = function(user, filters){
   .find({user: user, tags: {$in: filters}}, '_id type tags title url note')
   .exec(function(err, items) {
     // TODO manage errors propertly
-    if (err) error(err)
-    else deferred.resolve(items)
+    if (err) throw err;
+    else deferred.resolve(items);
   })   
   return deferred.promise;
 }

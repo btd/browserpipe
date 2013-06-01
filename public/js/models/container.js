@@ -4,7 +4,6 @@ define([
   'models/model'
 ], function(_, Backbone, AppModel) {
   var Container = AppModel.extend({
-    urlRoot: "/containers",
     defaults: {  
     },
     initialize: function(spec){

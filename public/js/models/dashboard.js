@@ -8,16 +8,18 @@ define([
     urlRoot: "/dashboards",
     defaults: {  
     },
-    initialize: function(){    
-      this.containers = new Containers();  
+    initialize: function(options){
+      //because we load it with json
+      this.unset('containers');
+
+      this.containers = new Containers(options.containers);
+      this.containers.url = this.url() + this.containers.url;
     },
     addContainer: function(container, options){
-      container.dashboard = this.get('_id')
       return this.containers.create(container, options);
     },
     removeContainer: function(container){
-      this.containers.remove(container);
-      container.destroy();
+      container.destroy(); // this also remove from collection
     }
   });
   return Dashboard;

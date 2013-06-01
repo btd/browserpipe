@@ -3,7 +3,6 @@ var _ = require('lodash'),
     mongoose = require('mongoose'),
     Tag = mongoose.model('Tag'),
     Dashboard = mongoose.model('Dashboard'),
-    Container = mongoose.model('Container'),
     Item = mongoose.model('Item')
 
 //No dashboard
@@ -14,26 +13,22 @@ exports.show = showDashboard;
 
 //Create dashboard
 exports.create = function (req, res) {  
-  if(req.isAuthenticated()){
-    var dashboard = new Dashboard(req.body)
-    dashboard.user = req.user   
-    req.user.currentDashboard = dashboard
-    q.all([dashboard.saveWithPromise(),
-      req.user.saveWithPromise()])
-    .spread(function(){
-      res.json({ _id: dashboard._id })
-    }, function(err){
-      //TODO: send corresponding number error
-      res.json(err.errors) 
-    }).done()
-  }      
-  else
-   res.send("invalid request")
+  var dashboard = new Dashboard(req.body)
+  dashboard.user = req.user   
+  req.user.currentDashboard = dashboard
+  q.all([dashboard.saveWithPromise(),
+    req.user.saveWithPromise()])
+  .spread(function(){
+    res.json({ _id: dashboard._id })
+  }, function(err){
+    //TODO: send corresponding number error
+    res.json(err.errors) 
+  }).done()
 }
 
 //Update dashboard
 exports.update = function (req, res) {  
-  if(req.isAuthenticated() && req.currentDashboard){
+  
     var dashboard = req.currentDashboard;
     dashboard.label = req.body.label
     dashboard.saveWithPromise().then(function(){
@@ -42,9 +37,8 @@ exports.update = function (req, res) {
       //TODO: send corresponding number error
       res.json(err.errors) 
     }).done()
-  }      
-  else 
-    res.send("invalid request")
+    
+  
 }
 
 //Find dashboard by id
@@ -58,33 +52,32 @@ exports.dashboard = function (req, res, next, id) {
     })
 }
 
-function showDashboard(req, res) {
-  if(req.isAuthenticated()){                       
-    q.all([
-        Dashboard.getAll(req.user),
-        Container.getAll(req.user),
-        Tag.getAll(req.user)
-    ]).spread(function(dashboards, containers, tags){                
-        //We only load the ones from opened containers
-        Item.getAllByFilters(
-          req.user, 
-          _.map(containers, function(container){ return container.get('filter');})
-        ).then(function (items) {
-          res.render('main/home', {
-            currentDashboardId: ((req.currentDashboard && req.currentDashboard.id) || req.user.currentDashboard), 
-            user: req.user, 
-            dashboards: dashboards, 
-            containers: containers, 
-            items: items,
-            tags: tags}
-          );
-        }, function (error) {
-          res.render('500')
-        });
-     }, function(){
-       res.render('500')
-     }).done()                   
-  }      
-  else
-   res.render('main/index')     
+function showDashboard(req, res) {               
+  q.all([
+      Dashboard.getAll(req.user),
+      Tag.getAll(req.user)
+  ]).spread(function(dashboards, tags){                
+      //We only load the ones from opened containers
+
+      var containerFilters = _(dashboards).map(function(dashboard) {
+        return _.map(dashboard.containers, 'filter');
+      }).flatten().value();
+
+      Item.getAllByFilters(
+        req.user, 
+        containerFilters
+      ).then(function (items) {
+        res.render('main/home', {
+          currentDashboardId: ((req.currentDashboard && req.currentDashboard.id) || req.user.currentDashboard), 
+          user: req.user, 
+          dashboards: dashboards, 
+          items: items,
+          tags: tags}
+        );
+      }, function (error) {
+        res.render('500')
+      });
+   }, function(){
+     res.render('500')
+   }).done();
 }
