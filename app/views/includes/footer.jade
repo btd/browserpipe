@@ -1,9 +1,11 @@
-#bottom-bar(class="navbar navbar-fixed-bottom")
-  ul#breadcrumb(class="nav pull-left")  
-  ul#trash-option(class="nav")
-    li(class="dropdown nav-option") 
-      a(href="#", class="dropdown-toggle", data-toggle="dropdown") 
-        img(src="/img/bin.png", alt="Trash")
+#bottom-bar.navbar.navbar-fixed-bottom
+  .navbar-inner
+    .container-fluid.clearfix
+      ul#breadcrumb.nav.pull-left
+      ul#trash-option.nav.pull-right
+        li.dropdown.nav-option
+          a.dropdown-toggle(href="#", data-toggle="dropdown") 
+            img(src="/img/bin.png", alt="Trash")
             
 
 //Application scripts
@@ -11,7 +13,6 @@
   var initialOptions = {           
     currentDashboardId: '#{currentDashboardId}',
     dashboards: !{JSON.stringify(dashboards)},
-    containers: !{JSON.stringify(containers)},
     tags: !{JSON.stringify(tags)},
     items: !{JSON.stringify(items)}
   }
