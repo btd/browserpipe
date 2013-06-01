@@ -27,7 +27,7 @@
     }
     .item {
         background-color: @blue;
-        margin: 0 3px 3px 0;
+        margin: 0 3px 0 0;
 
         &:hover{
             background-color: darken(@blue, 6%) !important;
@@ -36,18 +36,19 @@
             color: @white;
         }
     }    
-    li.one-column {        
-        float: left;
+    li.one-column {
         margin-right: 10px;
         ul {
             margin: 0 0 10px 5px;
             list-style-type: none;
 
             li {
-                a {           
+                a {       
+                    display: block;
+                    padding: 5px;
                     color: white;
                     background-color: @blue;  
-                    width: 110px;
+                    //width: 110px;
                     white-space: normal;
                     margin-top: 10px;
                     word-break: break-all;

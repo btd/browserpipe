@@ -23,8 +23,12 @@
     }
 }
 
-body {
-    background-color: @blueDark;
+body.home {
+    background-color: #EFEFEF;
+
+    .navbar-inner {
+        background: @blueDark;
+    }
 }
 h4 {
     font-size: 16px;
@@ -63,15 +67,13 @@ h4 {
         .tobutton();
     }
 }
+
 #top-bar {
     min-height: 46px;
     margin-bottom: 0px;
     border: none;
 
     .navbar-inner {
-        -webkit-box-shadow: none;
-        -moz-box-shadow: none;
-        box-shadow: none;
 
         .container-fluid {
             padding: 5px 0;
@@ -80,7 +82,10 @@ h4 {
                 margin: 2px 0 0;
                 padding: 0 20px;
                 text-align: center;
-                line-height: 16px;      
+                line-height: 16px;   
+
+                color: #fff;
+                text-shadow: none;   
 
                 i {
                     font-size: 14px;
@@ -90,6 +95,8 @@ h4 {
             #opt-dashboards{
                 text-overflow: ellipsis;
                 max-width: 250px;
+
+                margin-right: 8px;
 
                 .name {
                     margin-left: 6px;
@@ -114,7 +121,7 @@ h4 {
                 margin: 0;
 
                 #search-btn { 
-                    height: 36px;                    
+                    height: 40px;                    
                     margin: 0; 
                     .flatten();
                     font-weight: bold;
@@ -123,8 +130,8 @@ h4 {
                 }
                 #search-box {       
                     display: none;
-                    height: 26px;
-                    width: 0;                                             
+                    height: 30px;
+                    width: 500px;                                             
                     font-size: 20px;
                     -webkit-transition: all 0.1s ease-in-out;
                     -moz-transition: all 0.1s ease-in-out;
@@ -138,23 +145,26 @@ h4 {
 }
 #bottom-bar {
     min-height: 46px;
-    padding-top: 5px;
-    bottom: -5px;
+
+    .container-fluid {
+        padding: 5px 0;
+    }
 
     #trash-option {
-        position: absolute;        
-        right: 0;        
-        left: auto; 
+        margin-right: 8px;
     }
 }
 #main-container {   
     margin: 46px 0px; 
 }
 .dashboard {   
-    background: #EFEFEF;
     overflow-x: auto;
     overflow-y: hidden;
     padding: 0 3px;
     margin: 0 8px;
+}
+
+.navbar .nav > li > a {
+    text-shadow: none;
 }
 
