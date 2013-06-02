@@ -29,7 +29,7 @@ define([
       var compiledTemplate = _.template(template, {});    
       this.$el.html(compiledTemplate);
       this.collection.each(function(tag){
-        if(tag.getFilter().substring(0, 5) == "Tags/")
+        if(tag.isUserTag())
           self.renderTag(tag)
       })
       //Prepare autocomplete
@@ -48,7 +48,7 @@ define([
     },
     prepareTypeAhead: function(){       
       var self = this;   
-      this.$('#editor-tag-input').typeahead({
+      this.$('.editor-tag-input').typeahead({
         autoselect: false,
         source: this.getUserTagsList(),
         //TODO: implement something like sublime text 2 for autocomplete
@@ -66,7 +66,7 @@ define([
           if(item)
             self.addTag(item)
           else
-            self.addTag(self.$('#editor-tag-input').val())
+            self.addTag(self.$('.editor-tag-input').val())
         }
       });    
     },    
@@ -76,7 +76,7 @@ define([
       return _.chain(_state.tags)
       .values()
       .filter(function(tag){ 
-        return !self.collection.contains(tag) && tag.getFilter().substring(0, 5) == 'Tags/';
+        return !self.collection.contains(tag) && tag.isUserTag();
       })
       .map(function(tag){ 
         var filter = tag.getFilter();
@@ -89,9 +89,10 @@ define([
     keypressed: function(event){
       if(event.keyCode === 13){        
         event.stopPropagation();
+        var $target = $(event.target);
         //If enter inside form, we submit it
-        if($(event.target).attr('id') === "editor-tag-input"){
-          var $input = this.$('#editor-tag-input');
+        if($target.hasClass("editor-tag-input")){
+          var $input = $target;
           this.addTag($input.val());
           $input.val('');
         }
