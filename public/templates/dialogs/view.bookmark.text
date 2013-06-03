@@ -1,43 +1,54 @@
 <div class="modal-header">
-  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-  <h4>Bookmark</h4>
+  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>  
+  <h4>
+    <img class="favicon" src="/img/default.favicon.png" alt="Favicon">
+    <span class="edit-bkmrk-title"><%= bookmark.get('title') %></span>
+    <div class="edit-bkmrk-title-controls">      
+      <div class="control-group" style="float:left">
+        <div class="controls">
+          <input class="input-xlarge" type="text" id="bkmrk-title" name="bkmrk-title" placeholder="Title" value="<%if(bookmark){ %><%= bookmark.get('title') %><% } %>"/>      
+          <a href="#" class="opt-save-edit-bkmrk-title">Save</a>
+          <a href="#" class="opt-cancel-edit-bkmrk-title">Cancel</a>      
+          <div><span id="bkmrk-title-blank" class="help-inline hide">Cannot be blank</span></div>
+        </div>      
+      </div>      
+    </div>      
+    <div>
+      <a target="_blank" href="<%= bookmark.get('url') %>">(<%= bookmark.get('url') %>)</a>
+    </div>
+    </h4>  
 </div>
 <div class="modal-body">
-  <form class="form-horizontal">
-    <div class="control-group">
-      <label class="control-label" for="bkmrk-url">Url</label>
-      <div class="controls">
-        <input type="text" id="bkmrk-url" name="bkmrk-url" placeholder="Url" value="<%if(bookmark){ %><%= bookmark.get('url') %><% } %>"/>
-      </div>
+  <ul class="nav nav-tabs">    
+    <li><a href="#delete" data-toggle="tab">Delete</a></li>
+    <li><a href="#tags" data-toggle="tab">Tags</a></li>
+    <li><a href="#general" data-toggle="tab">General</a></li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active" id="general">      
+      <img class="img-polaroid" data-src="holder.js/300x200" alt="300x200" style="width: 500px; height: 300px;" src="/img/default.screenshot.png">
+      <p class="bkmrk-note-content"><%= bookmark.get('note') %></p>
+      <span class="edit-bkmrk-note">Edit note</span>
+      <div class="edit-bkmrk-note-controls">      
+        <div class="control-group">
+          <div class="controls">
+            <textarea class="input-xlarge" id="bkmrk-note" name="bkmrk-note" placeholder="Notes"><%if(bookmark){ %><%= bookmark.get('note') %><% } %></textarea>
+            <div>
+              <a href="#" class="opt-save-edit-bkmrk-note">Save</a>
+              <a href="#" class="opt-cancel-edit-bkmrk-note">Cancel</a>      
+            </div>
+          </div>      
+        </div>      
+      </div>   
     </div>
-    <div class="control-group">
-      <label class="control-label" for="bkmrk-title">Title</label>
-      <div class="controls">
-        <input type="text" id="bkmrk-title" name="bkmrk-title" placeholder="Title" value="<%if(bookmark){ %><%= bookmark.get('title') %><% } %>"/>
-      </div>
+    <div class="tab-pane" id="tags">
+      <div class="bkmrk-tags"></div>
     </div>
-    <div class="control-group">
-      <label class="control-label" for="bkmrk-note">Notes</label>
-      <div class="controls">
-        <textarea id="bkmrk-note" name="bkmrk-note" placeholder="Notes"><%if(bookmark){ %><%= bookmark.get('note') %><% } %></textarea>
-      </div>
-    </div>
-    <div class="control-group">
-      <i>Separate tags by comma Eg: Tags/Read Later, Tags/Cool Sites</i>
-      <label class="control-label" for="bkmrk-tags">Tags</label>
-      <div class="controls">
-        <input type="text" id="bkmrk-tags" name="bkmrk-tags" placeholder="Tags" value="<%if(bookmark){ %><%= bookmark.get('tags') %><% } %>"/>
-      </div>
-    </div>
-  </form>
-  <div>    
-    <a class="opt-button opt-move-to-trash pull-left" href="#"><img src="/img/bin.png" alt="Move to trash"></a> 
-      <div class="move-to-trash-alert alert alert-block pull-left" style="display:none;">  
+    <div class="tab-pane" id="delete">
+      <div class="move-to-trash-alert alert alert-block">  
         <p>Are you sure that you want to move the bookmark to trash?</p>
-      <a class="opt-move-to-trash-yes" href="#">Yes, move it!</a><a class="opt-move-to-trash-no opt-margin-left" href="#">No, abort!</a>
+        <a class="opt-move-to-trash-yes" href="#">Yes, move it!</a>
       </div>
+    </div>
   </div>
-</div>
-<div class="modal-footer">
-  <a href="#" class="opt-cancel opt-margin-left">Close</a>
 </div>

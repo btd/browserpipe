@@ -7,10 +7,11 @@
     <div class="control-group">
       <label class="control-label" for="tag-label">Label</label>
       <div class="controls">
-        <input type="text" id="tag-label" name="tag-label" placeholder="Label" value="<%if(tag){ %><%= tag.get('label') %><% } %>"/>
+        <input class="input-xlarge"  type="text" id="tag-label" name="tag-label" placeholder="Label" value="<%if(tag){ %><%= tag.get('label') %><% } %>"/>
         <span id="tag-label-blank" class="help-inline hide">Cannot be blank</span>
       </div>
     </div>
+    <%if(!editMode){ %>
     <div class="control-group">
       <label class="checkbox" for="tag-open">
       <div class="controls">
@@ -18,9 +19,10 @@
         Open in new container
         </label>      
       </div>
-    </div>
+    </div>    
+    <% } %>
   </form>
-  <%if(showTrash){ %>
+  <%if(editMode){ %>
     <div>    
   	  <a class="opt-button opt-move-to-trash pull-left" href="#"><img src="/img/bin.png" alt="Move to trash"></a>	
         <div class="move-to-trash-alert alert alert-block pull-left" style="display:none;">  

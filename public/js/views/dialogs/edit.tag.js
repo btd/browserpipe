@@ -29,19 +29,19 @@ define([
     },     
     renderView: function(){       
       var title = "Create tag";
-      var showTrash = false;
+      var editMode = false;
       var optSaveLabel = "Create";
       var tag;
       if(this.editMode){
         title = "Edit tag";
-        showTrash = true;
+        editMode = true;
         optSaveLabel = "Save changes";
         tag = this.model;
       }
       var compiledTemplate = _.template(template, {
         tag: tag,
         title: title,
-        showTrash: showTrash,
+        editMode: editMode,
         optSaveLabel: optSaveLabel
       });    
       this.$el.html(compiledTemplate).appendTo('#dialogs').modal('show');
@@ -67,12 +67,12 @@ define([
           this.model.children.createTag({
             label: label,
             path: this.model.getFilter()
-          }, {wait: true, success: function(tag) {  
+          }).then(function(tag) {  
             _state.addTag(tag);
             if(openContainer)
               self.trigger("tagAdded", tag);
             self.close();
-          }}) 
+          });
         }     
     },
     cleanErrors: function(){

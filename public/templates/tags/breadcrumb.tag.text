@@ -2,5 +2,8 @@
 	<% if(tag.get('icon')){ %><img width="16px" src="<%= tag.get('icon') %>"/><% } %>
 	<span><%= tag.get('label') %></span>
 </a>
-<ul class="dropdown-menu" style="display:none;">	
-</ul>
+<div class="dropdown-menu" style="display:none;">	
+	<ul class="dropdown-menu-tags"></ul>
+	<a class="dropdown-edit-tag" href="#"> Edit</a>
+	<a class="dropdown-add-tag" href="#">Add new</a>
+</div>

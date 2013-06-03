@@ -7,10 +7,21 @@
     margin:0 !important;
 
     .dropdown-menu {
-        background-color: darken(@blue, 10%);;
+        background-color: @tagnfileItGreen;
         margin-bottom: 0px !important;
         display: block;  
+        padding: 0;
 
+        &:before, &:after {
+            display: none !important;
+        }
+
+        .dropdown-menu-tags {
+            margin: 0;
+            background-color: darken(@blue, 10%);
+            overflow-y: auto;
+            list-style-type: none;
+        }
         .dropdown-edit-tag {
             color: white;
             padding: 3px 10px;
@@ -29,8 +40,9 @@
         background-color: @blue;
         margin: 0 3px 0 0;
 
-        &:hover{
-            background-color: darken(@blue, 6%) !important;
+        &:hover, &.selected{
+            background-color: @tagnfileItGreen !important;
+            text-shadow: none;
         }
         span {                        
             color: @white;
@@ -52,6 +64,7 @@
                     white-space: normal;
                     margin-top: 10px;
                     word-break: break-all;
+                    position: relative;
 
                     .children{
                         display: none;

@@ -3,6 +3,8 @@
 // Rules import
 @import "breadcrumb.less";
 @import "container.less";
+@import "tags.editor.less";
+@import "dialog.less";
 
 //Flatten styles
 .flatten() {
@@ -10,18 +12,20 @@
   box-shadow: none;
   .border-radius(0);      
 }
-.tobutton() {    
+.tobutton(@color) {    
     color: @white;
     padding: 6px 12px;
-    background-color: @blue;
+    background-color: @color;
     text-shadow: none;    
     background-image: none;
 
     &:hover{
-        background-color: darken(@blue, 6%);
+        background-color: darken(@color, 6%);
         text-decoration: none;
     }
 }
+
+@tagnfileItGreen: #1b7e1e;
 
 body.home {
     background-color: #EFEFEF;
@@ -64,7 +68,7 @@ h4 {
         vertical-align: bottom;
     }
     .opt-button {
-        .tobutton();
+        .tobutton(@blue);
     }
 }
 
@@ -126,7 +130,7 @@ h4 {
                     .flatten();
                     font-weight: bold;
                     padding: 5px 8px; 
-                    .tobutton()
+                    .tobutton(@blue)
                 }
                 #search-box {       
                     display: none;
@@ -166,5 +170,8 @@ h4 {
 
 .navbar .nav > li > a {
     text-shadow: none;
+}
+.bkmrk-tags {
+    border-top: 1px solid #e3e3e3;
 }
 

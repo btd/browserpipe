@@ -8,6 +8,12 @@ define([
     defaults: {  
     },
     initialize: function(spec){     
+    },
+    getTags: function(){
+      var _state = require('models/state');
+      return _.map(this.get('tags'), function(filter){
+        return _state.getTagByFilter(filter);
+      })
     }
   });
   return Item;

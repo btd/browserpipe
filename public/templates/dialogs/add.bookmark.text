@@ -7,7 +7,7 @@
     <div class="control-group">
       <label class="control-label" for="bkmrk-url">Url</label>
       <div class="controls">
-        <input type="text" id="bkmrk-url" name="bkmrk-url" placeholder="Url" value="<%if(bookmark){ %><%= bookmark.get('url') %><% } %>"/>
+        <input class="input-xlarge" type="text" id="bkmrk-url" name="bkmrk-url" placeholder="Url" value="<%if(bookmark){ %><%= bookmark.get('url') %><% } %>"/>
         <span id="bkmrk-url-blank" class="help-inline hide">Cannot be blank</span>
         <span id="bkmrk-url-invalid" class="help-inline hide">Invalid URL</span>
       </div>
@@ -15,22 +15,17 @@
     <div class="control-group">
       <label class="control-label" for="bkmrk-title">Title</label>
       <div class="controls">
-        <input type="text" id="bkmrk-title" name="bkmrk-title" placeholder="Title" value="<%if(bookmark){ %><%= bookmark.get('title') %><% } %>"/>
+        <input class="input-xlarge" type="text" id="bkmrk-title" name="bkmrk-title" placeholder="Title" value="<%if(bookmark){ %><%= bookmark.get('title') %><% } %>"/>
       </div>
     </div>
     <div class="control-group">
       <label class="control-label" for="bkmrk-note">Notes</label>
       <div class="controls">
-        <textarea id="bkmrk-note" name="bkmrk-note" placeholder="Notes"><%if(bookmark){ %><%= bookmark.get('note') %><% } %></textarea>
+        <textarea class="input-xlarge" id="bkmrk-note" name="bkmrk-note" placeholder="Notes"><%if(bookmark){ %><%= bookmark.get('note') %><% } %></textarea>
       </div>
     </div>
-    <div class="control-group">      
-      <label class="control-label" for="bkmrk-tags"><%= tag.getFilter() %>,</label>
-      <div class="controls">
-        <input type="text" id="bkmrk-tags" name="bkmrk-tags" placeholder="Tags" value="<%if(bookmark){ %><%= bookmark.get('tags') %><% } %>"/>
-      </div>
-      <small>Separate tags by comma Eg: Tags/Read Later, Tags/Cool Sites</small>
-    </div>
+    <div>Tags</div>
+    <div class="bkmrk-tags"/>
   </form>
 </div>
 <div class="modal-footer">
