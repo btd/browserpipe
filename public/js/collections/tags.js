@@ -8,14 +8,16 @@ define([
       var Tag = require('models/tag')
       this.model = Tag
     },
-    createTag: function(model, options) {
+    createTag: function(model) {
       var self = this;
-      var success = options.success;
-      options.success = function(tag) {  
-        success(tag);
-        self.trigger("created", tag);
-      }
-      return this.create(model, options);
+      var defer = $.Deferred();
+      this.create(model, {
+        success: function(tag) { 
+          defer.resolve(tag);
+          self.trigger("created", tag);
+        }
+      });
+      return defer; //We return a deferred
     }
   });
   return TagCollection;

@@ -3,11 +3,13 @@ define([
   'underscore',
   'backbone',
   'util',
+  'collections/tags',
   'models/state',
   'models/item',
   'views/view',  
+  'views/tags.editor/editor',
   'text!templates/dialogs/add.bookmark.text'  
-], function($, _, Backbone, util, _state, Item, AppView, template){
+], function($, _, Backbone, util, Tags, _state, Item, AppView, TagsEditor, template){
   var AddBookmark = AppView.extend({
     attributes : function (){
       return {
@@ -28,10 +30,14 @@ define([
     },     
     renderView: function(){          
       var compiledTemplate = _.template(template, {
-        bookmark: this.model,
-        tag: this.tag
+        bookmark: this.model
       });    
-      this.$el.html(compiledTemplate).appendTo('#dialogs').modal('show');
+      this.$el.html(compiledTemplate).appendTo('#dialogs');
+      //Append the tags
+      this.tagsView = new TagsEditor({collection: new Tags(this.tag)})
+      this.$('.bkmrk-tags').html(this.tagsView.render().el);
+      //Show the dialog
+      this.$el.modal('show');
       return this;    
     },
     postRender: function(){
@@ -43,8 +49,9 @@ define([
       var title = this.$('[name=bkmrk-title]').val();
       var url = this.$('[name=bkmrk-url]').val();
       var note = this.$('[name=bkmrk-note]').val();
-      var tags = _.map(this.$('[name=bkmrk-tags]').val().split(','), function(tag){ 
-        return $.trim(tag)
+      var tags = this.tagsView.collection.map(function(tag){ 
+        _state.createTagIfNew(tag.getFilter());
+        return tag.getFilter();
       });      
       this.validateFields(url);
       if(!this.hasErrors()){
@@ -55,7 +62,7 @@ define([
         item.save({
           type: 0,
           tags: _.compact(_.uniq(tags)), //no blanks and non repeated
-          title: title,
+          title: ($.trim(title)==''?url:url),
           url: url,
           note: note
         }, {wait: true, success: function(bookmark) {                    

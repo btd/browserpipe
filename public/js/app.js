@@ -5,6 +5,7 @@ define([
   'backbone',
   'router', // Request router.js
   'bootstrap', //Inclulded it one time, as it is global
+  'typeahead'
 ], function($, _, Backbone, Router){
   var initialize = function(){  
 

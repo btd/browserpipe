@@ -23,12 +23,15 @@ define([
           for(index in children)
             children[index].save({'path': newFilter});
           //Triggers filter changed          
-          this.trigger('filterChanged', newFilter, oldFilter)
+          this.trigger('filterChanged', newFilter, oldFilter);
         }          
       })
     },
     getFilter: function(){
-      return (this.get('path')===""?"":this.get('path') + "/") + this.get('label')
+      return (this.get('path')===""?"":this.get('path') + "/") + this.get('label');
+    },
+    isUserTag: function(){
+      return this.getFilter().substring(0, 5) === "Tags/";
     },
     addChildren: function(children){
       this.children.add(children);

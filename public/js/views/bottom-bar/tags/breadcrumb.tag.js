@@ -7,12 +7,10 @@ define([
   'views/view',
   'views/dialogs/edit.tag',
   'views/bottom-bar/tags/breadcrumb.dropdown.tag',
-  'text!templates/tags/breadcrumb.tag.text',
-  'text!templates/tags/breadcrumb.dropdown.options.text'  
-], function($, _, Backbone, config, _state, AppView, EditTag, BreadCrumbDropdownTag, tagTemplate, optionsTemplate){
+  'text!templates/tags/breadcrumb.tag.text' 
+], function($, _, Backbone, config, _state, AppView, EditTag, BreadCrumbDropdownTag, tagTemplate){
   var BreadCrumbTag = AppView.extend({
-    tagName: 'li',     
-    dropdownOptionsTemplate: _.template(optionsTemplate),
+    tagName: 'li', 
     events: {
       "mouseenter" : "showDropDown",
       "mouseleave" : "hideDropDown",
@@ -41,6 +39,9 @@ define([
     },
     postRender: function(){ 
       var self = this;
+      $(window).resize(function() {
+        self.renderDropDown();
+      });
       //As not all browsers support HTML5, we set data attribute by Jquery
       jQuery.data(this.el, 'filter', this.model.getFilter());
       if(this.opened)            
@@ -51,24 +52,39 @@ define([
     },
     showDropDown: function(){            
       var $dropdownMenu = this.$(".dropdown-menu");
+      $dropdownMenu.siblings('.item').addClass('selected');
       if(!this.dropDownTagViews)
-        this.renderDropDownView($dropdownMenu)
+        this.renderDropDownView(this.$('.dropdown-menu-tags'))
       $dropdownMenu.show();
       this.trigger("showDropDown", this.getTagFilter());
     },
-    renderDropDownView: function($dropdownMenu){
-      this.dropDownTagViews = [];          
+    hideDropDown: function(){
+      var $dropdownMenu = this.$(".dropdown-menu");
+      $dropdownMenu.siblings('.item').removeClass('selected');
+      if(this.dropDownTagViews)     
+        $dropdownMenu.hide(); 
+    },  
+    renderDropDownView: function($dropdownMenuTags){
+      this.dropDownTagViews = [];         
+      //Calculate max columns
+      var windowWidth = $(window).width();    
+      var columns = Math.floor((windowWidth  * 0.7) / config.DROPDOWN_COLUMN_WIDTH); //0.7 to not get all screen
+      //Calculate tags per column
+      var tagsPerColumn = Math.ceil(this.model.children.length / columns)
+      //If tags per column is less than a min, then we set the min
+      if(tagsPerColumn < config.MIN_DROPDOWN_TAGS_PER_COLUMN) 
+        tagsPerColumn = config.MIN_DROPDOWN_TAGS_PER_COLUMN;
       //Best collection interation: http://jsperf.com/backbone-js-collection-iteration/5          
       var columnsCount = 0;
       for (var i = 0, l = this.model.children.length; i < l; i++) {
         var $ul;
         //Add new column every time it reaches the max per column   
-        if(i % config.DROPDOWN_TAGS_PER_COLUMN === 0){
+        if(i % tagsPerColumn === 0){
           columnsCount++;
           $ul = $('<ul></ul');
           var $oneColumn = $('<li class="one-column"></li>');
           $oneColumn.append($ul);
-          $dropdownMenu.append($oneColumn);
+          $dropdownMenuTags.append($oneColumn);
         }
         var childTag = this.model.children.models[i];            
         var $li = $('<li></li>');
@@ -77,24 +93,43 @@ define([
         this.dropDownTagViews.push(dropDownTagView);
         $li.append(dropDownTagView.render().el);            
       }
-      //Inserts dropdwon options
-      $dropdownMenu.append(this.dropdownOptionsTemplate);
       //Sets dropdown width
       this.setDropDownWidth(columnsCount);
+      //Sets dropdown width
+      this.setDropDownMaxHeight();
+      //Positions the arrow
+      this.setArrowPosition();
     },
-    clearDropDown: function($dropdownMenu){
-      $dropdownMenu.empty();
+    clearDropDown: function($dropdownMenuTags){
+      $dropdownMenuTags.empty();
       for(index in this.dropDownTagViews)
         this.dropDownTagViews[index].dispose();
     },
     setDropDownWidth: function(columnsCount){
-      var width = columnsCount * config.DROPDOWN_COLUMN_WIDTH;
-      this.$('.dropdown-menu').width(width);
+      var width = columnsCount * config.DROPDOWN_COLUMN_WIDTH + 20; //20px for scrollbar
+      this.$('.dropdown-menu-tags').width(width);
     },
-    hideDropDown: function(){
-      if(this.dropDownTagViews)     
-        this.$(".dropdown-menu").hide(); 
-    },    
+    setDropDownMaxHeight: function(){
+      var windowHeight = $(window).height();    
+      this.$('.dropdown-menu-tags').css({
+        'max-height': Math.floor(windowHeight * 0.7)
+      });;
+    },
+    setArrowPosition: function(){
+      var bodyWidth= $('body').width();    
+      var dropDownWidth = this.$('.dropdown-menu').width();          
+      var left = this.$('.dropdown-menu').parent().position().left;
+      //console.log(this.$('.dropdown-menu').css('left'));
+      if((left + dropDownWidth) > bodyWidth){
+        var newLeft = 1- (dropDownWidth - (bodyWidth - left))        
+        this.$('.dropdown-menu').css({
+        'left': newLeft
+        });
+        this.$('.dropdown-menu').css({
+        'left': newLeft
+        });
+      }
+    },  
     startNavigateToChildTag: function(e){
       var self = this;
       var filter = jQuery.data($(e.target).parent().get(0), 'filter');
@@ -148,9 +183,9 @@ define([
     },
     renderDropDown: function(){
       //Renders dropdown again
-      var $dropdownMenu = this.$(".dropdown-menu");
-      this.clearDropDown($dropdownMenu);
-      this.renderDropDownView($dropdownMenu);
+      var $dropdownMenuTags = this.$(".dropdown-menu-tags");
+      this.clearDropDown($dropdownMenuTags);
+      this.renderDropDownView($dropdownMenuTags);
     }
   });
   return BreadCrumbTag;
