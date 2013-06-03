@@ -1,12 +1,33 @@
-/*
- *  Generic require login routing middleware
- */
-exports.requiresLogin = function (req, res, next) {
-  if (!req.isAuthenticated()) {
-    return res.redirect('/login')
+
+module.exports.redirectIfNotAuthenticated = function(redirectUrl) {
+  return function(req, res, next) {
+    if (!req.isAuthenticated()) {
+      return res.redirect(redirectUrl)
+    }
+    next()
   }
-  next()
 };
+
+var common401Error = {code: 401, message: 'Not authorized'};
+
+module.exports.send401IfNotAuthenticated = function(req, res, next) {
+  if (!req.isAuthenticated()) {
+    res.format({
+      
+      html: function(){
+        res.send(common401Error.code, common401Error.message);
+      },
+      
+      json: function(){
+        res.json(common401Error.code, common401Error);
+      }
+    });
+  } else {
+    next()
+  }
+};
+
+//TODO it is good to have one middleware that will redirect to login if not authorized and if it is then redirect to required url
 
 
 /*

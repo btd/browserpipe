@@ -47,13 +47,6 @@ module.exports = function(app, config, passport) {
   // use passport session
   app.use(passport.initialize())
   app.use(passport.session())
-  
-  app.use(function(req, res, next) {
-     if(req.session && req.session.currentUser) {
-         req.currentUser = req.session.currentUser;
-     }
-     next();
-  });
 
   app.use(express.favicon());
 
@@ -98,13 +91,33 @@ module.exports = function(app, config, passport) {
     // log it
     console.error(err.stack)
     
+    res.format({
+      
+      html: function(){
+        res.status(500).render('500')
+      },
+      
+      json: function(){
+        res.json(500, {code : 500, error: "Oop's something went wrong"});
+      }
+    });
     // error page
-    res.status(500).render('500')
+    
   })
 
   // assume 404 since no middleware responded
   app.use(function(req, res, next){
-    res.status(404).render('404', { url: req.originalUrl })
+    res.format({
+      
+      html: function(){
+        res.status(404).render('404', { url: req.originalUrl })
+      },
+      
+      json: function(){
+        res.json(404, {code : 404, error: "Not found"});
+      }
+    });
+    
   })
 
 

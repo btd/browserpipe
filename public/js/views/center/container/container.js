@@ -20,7 +20,7 @@ define([
     ],
     attributes : function (){
       return {
-        class : 'container',
+        class : 'items-container',
         id : "cont_" + this.model.get('_id')
       }
     },    

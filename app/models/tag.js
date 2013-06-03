@@ -3,11 +3,12 @@
 var mongoose = require('mongoose'),
   Schema = mongoose.Schema,
   validation = require('./validation'),
+  _ = require('lodash'),
   q = require('q')
 
 var TagSchema = new Schema({
-  label: {type : String, trim : true, validate: validation.nonEmpty},
-  path: {type : String, index : true, trim : true},
+  label: {type : String, trim : true, validate: validation.nonEmpty}, //name of this tag
+  path: {type : String, trim : true, default: ''}, //name of parent tag, default set to '' that if we will create index by this field, we do not create sparse index
   user: {type : Schema.ObjectId, ref : 'User'},
   createdAt  : {type : Date, default : Date.now}
 });
@@ -15,11 +16,6 @@ var TagSchema = new Schema({
 TagSchema.path('label').validate(function (label) {
   return label.length > 0
 }, 'Tag label cannot be blank')
-
-//Root tag has blank path, but it is not saved in db
-TagSchema.path('path').validate(function (path) {	
-  return path.length > 0
-}, 'Tag path cannot be blank')
 
 TagSchema.methods.saveWithPromise = function() {
   var deferred = q.defer();	
@@ -30,12 +26,21 @@ TagSchema.methods.saveWithPromise = function() {
   return deferred.promise;
 }
 
+TagSchema.methods.isRoot = function() {
+	return _.isEmpty(this.path);
+}
+
+//TODO it should take all parents tag!!!
+TagSchema.virtual('fullPath').get(function() {
+	return this.isRoot() ? this.label : this.path + '/' + this.label;
+})
+
 TagSchema.statics.getAll = function(user){
   var deferred = q.defer();
   this
 	.find({user: user}, '_id label path')
 	//.populate('user', 'label', 'path')
-	.sort({'path': 1}) // sort by date
+	.sort({'path': 1}) // sort by path
 	// .limit(perPage)
 	// .skip(perPage * page)
 	.exec(function(err, tags) {

@@ -18,22 +18,6 @@ var UserSchema = new Schema({
   currentDashboard: {type : Schema.ObjectId, ref : 'Dashboard'}
 });
 
-
-UserSchema.pre("save",function(next) {
-    var self = this;
-    mongoose.models["User"].findOne({email : self.email},function(err, results) {
-        if(err) {
-            next(err);
-        } else if(results) { //there was a result found, so the email address exists
-            self.invalidate("email","email must be unique");
-            next(new Error("email must be unique"));
-        } else {
-            next();
-        }
-    });
-    next();
-});
-
 UserSchema.methods.authenticate = function(password) {
   return bcrypt.compareSync(password, this.password);
 }
@@ -45,6 +29,15 @@ UserSchema.methods.saveWithPromise = function() {
     else deferred.resolve()    
   })
   return deferred.promise;
+}
+
+// 2 convinient wrappers to do not repeat in code also it populate internal doc
+UserSchema.statics.byId = function(id, callback) {
+  mongoose.model('User').findOne({ _id: id }).populate('currentDashboard').exec(callback);
+}
+
+UserSchema.statics.byEmail = function(email, callback) {
+  mongoose.model('User').findOne({ email: email }).populate('currentDashboard').exec(callback);
 }
 
 mongoose.model('User', UserSchema)

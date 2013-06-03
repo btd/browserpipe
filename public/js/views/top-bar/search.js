@@ -95,20 +95,19 @@ define([
         _state.dashboards.setCurrentContainer(container.get('_id'));
       }}); 
     },
-    calculateWidth: function(){      
-      this.$('#search-box').show();
+    calculateWidth: function(){   
       var windowWidth = $(window).width();
       var dashboardOptWidth = $("#opt-dashboards").width();      
       var width = windowWidth - dashboardOptWidth - config.SEARCH_BOX_FIX_MARGIN;
       if(width < config.SEARCH_BOX_MIN_WIDTH)
         width = config.SEARCH_BOX_MIN_WIDTH;     
-      this.$('#search-box').width(width);     
+      this.$('#search-box').width(width).show();     
     },
     postRender: function(){
       var self = this;     
       this.calculateWidth(); 
       $(window).resize(function() {
-        this.$('#search-box').hide().width(0);
+        this.$('#search-box').hide();
         self.calculateWidth();
       });
     },

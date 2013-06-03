@@ -9,41 +9,29 @@ define([
   var State = Backbone.Model.extend({
     tags: {},
     loadInitialData: function(){
+
       //Loads Tags
       this.loadTags();
 
       //Loads Dashboards
       this.loadDashboards();
 
-      //Prepares containers and dashboards
-      this.loadContainersToDashBoards();
-
       //Load items
       this.loadItems();
     },
     loadTags: function(){
-      //Create root tags
-      this.createRootTag("root_tags", "Tags");
-      this.createRootTag("root_imports", "Imports");
-      this.createRootTag("root_devices", "Devices");
-      this.createRootTag("root_trash", "Trash");
-      this.createRootTag("root_search", "Search");
-
       //Load children tags
       var initialTags = initialOptions.tags || [];
-      for(index in initialTags){        
-        var tagItem = initialTags[index];
+      _.each(initialTags, function(tagItem) {
         var tag = new Tag(tagItem);        
         this.tags[tag.getFilter()] = tag;
-        var parentTag = this.tags[tag.get('path')];
-        parentTag.addChildren(tag);       
+        if(!_.isEmpty(tag.get('path'))) {
+          var parentTag = this.tags[tag.get('path')];
+          parentTag.addChildren(tag);
+        }  
         this.tagFilterChangedEvent(tag);        
-        this.tagDeletedEvent(tag);                
-      }
-    },
-    createRootTag: function(id, label){
-      var tag = new Tag({_id: id, label: label, path: ""});
-      this.tags[label] = tag;    
+        this.tagDeletedEvent(tag);       
+      }, this);
     },
     addTag: function(tag){
       this.tags[tag.getFilter()] = tag;
@@ -66,16 +54,6 @@ define([
     },
     loadDashboards: function(){
       this.dashboards = new Dashboards(initialOptions.dashboards)      
-    },
-    loadContainersToDashBoards: function(){
-      for(index in this.dashboards.models){
-        var dashboard = this.dashboards.at(index);
-        var containers = this.getContainersByDashboard(dashboard.get('_id'))
-        dashboard.containers.add(containers);
-      }
-    },
-    getContainersByDashboard: function(dashboardId){      
-      return _.filter(initialOptions.containers, function(container){ return container.dashboard === dashboardId; })      
     },
     loadItems: function(){
       var self = this;
