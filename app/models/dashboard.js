@@ -36,10 +36,21 @@ DashboardSchema.methods.addContainerByTag = function(tag) {
   return this;
 };
 
+DashboardSchema.methods.addContainer = function(tagObj) {
+  this.containers.push({
+    type: tagObj.type,
+    title: tagObj.label,
+    filter: tagObj.filter 
+  });
+  return this;
+};
+
+
 DashboardSchema.statics.getAll = function(user) {
   var deferred = q.defer();
   this
 	.find({user: user})
+  .select('_id label containers')
 	.exec(function(err, dashboards) {
 	  // TODO manage errors propertly
 	  if (err) error(err)
@@ -47,20 +58,5 @@ DashboardSchema.statics.getAll = function(user) {
 	})   
   return deferred.promise;
 }
-
-DashboardSchema.pre("save", function(next) {
-    var repeated = _(this.containers).countBy(function(container) {
-      return container.title;
-    }).find(function(key, value) {
-      return value > 1;
-    });
-
-    if(repeated) {
-      self.invalidate("title","title must be unique");
-      next(new Error("title must be unique, but '" + repeated + "' repeat"));
-    } else {
-      next();
-    }
-});
 
 mongoose.model('Dashboard', DashboardSchema);

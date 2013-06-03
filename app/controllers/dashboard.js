@@ -13,7 +13,7 @@ exports.show = showDashboard;
 
 //Create dashboard
 exports.create = function (req, res) {  
-  var dashboard = new Dashboard(req.body)
+  var dashboard = new Dashboard(_.pick(req.body, 'label'));
   dashboard.user = req.user   
   req.user.currentDashboard = dashboard
   q.all([dashboard.saveWithPromise(),

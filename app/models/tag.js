@@ -30,6 +30,7 @@ TagSchema.methods.isRoot = function() {
 	return _.isEmpty(this.path);
 }
 
+//TODO it should take all parents tag!!!
 TagSchema.virtual('fullPath').get(function() {
 	return this.isRoot() ? this.label : this.path + '/' + this.label;
 })
@@ -39,7 +40,7 @@ TagSchema.statics.getAll = function(user){
   this
 	.find({user: user}, '_id label path')
 	//.populate('user', 'label', 'path')
-	.sort({'path': 1}) // sort by date
+	.sort({'path': 1}) // sort by path
 	// .limit(perPage)
 	// .skip(perPage * page)
 	.exec(function(err, tags) {

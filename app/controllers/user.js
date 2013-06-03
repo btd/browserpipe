@@ -95,7 +95,6 @@ exports.create = function (req, res) {
       return res.redirect('/dashboards/' + dashboard.id)
     })
   }, function(err){
-    console.warn(err);
     res.render('users/signup', { errors: err.errors })
   }).done()  
 }
