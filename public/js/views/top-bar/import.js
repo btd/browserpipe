@@ -1,15 +1,13 @@
-define([
-  'jQuery',
-  'underscore',
-  'backbone',
-  'models/state',
-  'views/view',
-  'views/dialogs/import.file',
-  'views/dialogs/import.twitter',
-  'views/dialogs/import.facebook',
-  'views/dialogs/import.delicious',
-  'views/dialogs/import.pinboard'
-], function($, _, Backbone, _state, AppView, ImportFile, ImportTwitter, ImportFacebook, ImportDelicious, ImportPinboard){
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var _state = require('models/state');
+var AppView = require('views/view');
+var ImportFile = require('views/dialogs/import.file');
+var ImportTwitter = require('views/dialogs/import.twitter');
+var ImportFacebook = require('views/dialogs/import.facebook');
+var ImportDelicious = require('views/dialogs/import.delicious');
+var ImportPinboard = require('views/dialogs/import.pinboard');
   var Import = AppView.extend({
     el: $("#opt-import"),
     events: {
@@ -70,5 +68,4 @@ define([
       this.hideDropDown();
     }
   });
-  return Import;
-});
+  module.exports = Import;

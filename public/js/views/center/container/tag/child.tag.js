@@ -1,9 +1,7 @@
-define([
-  'jQuery',
-  'underscore',
-  'backbone',
-  'views/view'
-], function($, _, Backbone, AppView){
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var AppView = require('views/view');
   var ContainerChildTag = AppView.extend({
     name: 'ContainerChildTag',
     tagName: 'li', 
@@ -31,5 +29,4 @@ define([
       this.trigger("navigateToTag", this.tag);
     }
   });
-  return ContainerChildTag;
-});
+  module.exports = ContainerChildTag;

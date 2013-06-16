@@ -1,15 +1,13 @@
-define([
-  'jQuery',
-  'underscore',
-  'backbone',
-  'util',
-  'collections/tags',
-  'models/state',
-  'models/item',
-  'views/view',  
-  'views/tags.editor/editor',
-  'text!templates/dialogs/add.bookmark.text'  
-], function($, _, Backbone, util, Tags, _state, Item, AppView, TagsEditor, template){
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var util = require('util');
+var Tags = require('collections/tags');
+var _state = require('models/state');
+var Item = require('models/item');
+var AppView = require('views/view');
+var TagsEditor = require('views/tags.editor/editor');
+var template = require('templates/dialogs/add.bookmark');
   var AddBookmark = AppView.extend({
     attributes : function (){
       return {
@@ -103,5 +101,4 @@ define([
       }        
     }    
   });
-  return AddBookmark;
-});
+  module.exports = AddBookmark;

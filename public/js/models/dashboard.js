@@ -1,26 +1,21 @@
-define([
-  'underscore',
-  'backbone',
-  'models/model',
-  'collections/containers'
-], function(_, Backbone, AppModel, Containers) {
-  var Dashboard = AppModel.extend({
-    urlRoot: "/dashboards",
-    defaults: {  
-    },
-    initialize: function(options){
-      //because we load it with json
-      this.unset('containers');
+var AppModel = require('models/model'),
+    Containers = require('collections/containers');
 
-      this.containers = new Containers(options.containers);
-      this.containers.url = this.url() + this.containers.url;
+module.exports = Dashboard = AppModel.extend({
+    urlRoot: "/dashboards",
+    defaults: {
     },
-    addContainer: function(container, options){
-      return this.containers.create(container, options);
+    initialize: function (options) {
+        //because we load it with json
+        this.unset('containers');
+
+        this.containers = new Containers(options.containers);
+        this.containers.url = this.url() + this.containers.url;
     },
-    removeContainer: function(container){
-      container.destroy(); // this also remove from collection
+    addContainer: function (container, options) {
+        return this.containers.create(container, options);
+    },
+    removeContainer: function (container) {
+        container.destroy(); // this also remove from collection
     }
-  });
-  return Dashboard;
 });

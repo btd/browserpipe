@@ -1,11 +1,9 @@
-define([
-  'jQuery',
-  'underscore',
-  'backbone',
-  'views/view',
-  'views/dialogs/edit.dashboard',
-  'views/center/dashboard',
-], function($, _, Backbone, AppView, EditDashboard, DashboardContainer){
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var AppView = require('views/view');
+var EditDashboard = require('views/dialogs/edit.dashboard');
+var DashboardContainer = require('views/center/dashboard');
   var Dashboard = AppView.extend({
     el: "#opt-dashboards",     
     dashboardTemplate: _.template('<li class="opt-add" id="opt-dash-<%= dashboard.get("_id") %>"><a tabindex="-1" href="#"><%= dashboard.get("label") %></a></li>'),  
@@ -85,5 +83,4 @@ define([
       this.$(".open").removeClass("open");
     }
   });
-  return Dashboard;
-});
+  module.exports = Dashboard;

@@ -1,11 +1,9 @@
-define([
-  'jQuery',
-  'underscore',
-  'backbone',
-  'models/state',   
-  'views/center/container/tag.container',
-  'views/dialogs/add.bookmark'
-], function($, _, Backbone, _state, TagContainer, AddBookmark){
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var _state = require('models/state');
+var TagContainer = require('views/center/container/tag.container');
+var AddBookmark = require('views/dialogs/add.bookmark');
   var UserTagContainer = TagContainer.extend({
     initializeView: function(options){   
       TagContainer.prototype.initializeView.call(this, options);
@@ -42,5 +40,4 @@ define([
       
     }
   });
-  return UserTagContainer;
-});
+  module.exports = UserTagContainer;

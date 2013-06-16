@@ -1,16 +1,14 @@
-define([
-  'jQuery',
-  'underscore',
-  'backbone',
-  'config',
-  'models/state',
-  'views/view',
-  'views/center/container/search.container',
-  'views/center/container/user.tag.container',
-  'views/center/container/import.tag.container',
-  'views/center/container/device.tag.container',
-  'views/center/container/trash.tag.container'
-], function($, _, Backbone, config, _state, AppView, SearchContainer, UserTagContainer, ImportContainer, DeviceContainer, TrashContainer){
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var config = require('config');
+var _state = require('models/state');
+var AppView = require('views/view');
+var SearchContainer = require('views/center/container/search.container');
+var UserTagContainer = require('views/center/container/user.tag.container');
+var ImportContainer = require('views/center/container/import.tag.container');
+var DeviceContainer = require('views/center/container/device.tag.container');
+var TrashContainer = require('views/center/container/trash.tag.container');
   var Dashboard = AppView.extend({
     tagName: 'div',   
     events: {      
@@ -128,5 +126,4 @@ define([
       AppView.prototype.remove.call(this);
     }  
   });
-  return Dashboard;
-});
+  module.exports = Dashboard;

@@ -1,0 +1,59 @@
+{
+    "name": "default build",
+    "root": "../public",
+    "output": "js/main.min.js",
+    "modules": {
+        "backbone" : {
+            "path": "bower_components/backbone/backbone.js",
+            "require": {
+                "underscore": "lodash",
+                "jQuery": "jquery"
+            },
+            "exports": "Backbone"
+        },
+        "lodash" : {
+            "path": "bower_components/lodash/lodash.js",
+            "exports": "_"
+        },
+        "jquery" : {
+            "path": ["bower_components/jquery/jquery.js", "bower_components/bootstrap/docs/assets/js/bootstrap.js"],
+            "exports": "jQuery"
+        },
+        "underscore" : "@lodash",
+
+        "main" : "js/main.js",
+        "app": "js/app.js",
+        "router": "js/router.js",
+        "util" : "js/util.js",
+        "config": "js/config.js",
+
+        "<%= dir[0] %>/<%= file %>": "js/{collections,models}/**/*.js",
+
+        "views/<%= file %>": "js/views/*.js",
+        "views/<%= dir[0] %>/<%= file %>": "js/views/*/*.js",
+        "views/<%= dir[1] %>/<%= dir[0] %>/<%= file %>": "js/views/*/*/*.js",
+        "views/<%= dir[2] %>/<%= dir[1] %>/<%= dir[0] %>/<%= file %>": "js/views/*/*/*/*.js",
+
+        "<%= dir.splice(0, 2).reverse().join('/') %>/<%= file %>": "templates/**/*.text"
+    },
+    "main": "main",
+
+    "sourcemap": "js/main.min.map",
+    "sourcemap_inline": true,
+    "sourcemap_www": "../",
+    "www_root": ".",
+
+    "ie": true,
+    "warn": true,
+    "log": true,
+    "stats": true,
+    "stats_sendto": true,
+    "stats_coverage" : true,
+
+    "shortcuts": true,
+
+    "pack": false,
+    "lazy": false,
+    "optimize": false
+
+}

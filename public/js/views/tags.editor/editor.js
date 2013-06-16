@@ -1,13 +1,11 @@
-define([
-  'jQuery',
-  'underscore',
-  'backbone',
-  'models/state',  
-  'models/tag',
-  'views/view',    
-  'views/tags.editor/tag',
-  'text!templates/tags/tags.editor.text'  
-], function($, _, Backbone, _state, Tag, AppView, TagsEditorTag, template){
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var _state = require('models/state');
+var Tag = require('models/tag');
+var AppView = require('views/view');
+var TagsEditorTag = require('views/tags.editor/tag');
+var template = require('templates/tags/tags.editor');
   var TagsEditor = AppView.extend({    
     attributes : function (){
       return {
@@ -118,5 +116,4 @@ define([
       });
     }
   });
-  return TagsEditor;
-});
+  module.exports = TagsEditor;

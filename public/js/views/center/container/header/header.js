@@ -1,10 +1,8 @@
-define([
-  'jQuery',
-  'underscore',
-  'backbone',
-  'views/view',
-  'text!templates/containers/header.text'
-], function($, _, Backbone, AppView, template){
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var AppView = require('views/view');
+var template = require('templates/containers/header');
   var ContainerHeader = AppView.extend({
     tagName: 'div', 
     attributes : function (){
@@ -26,5 +24,4 @@ define([
       return this;
     }
   });
-  return ContainerHeader;
-});
+  module.exports = ContainerHeader;

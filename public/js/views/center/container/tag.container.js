@@ -1,12 +1,10 @@
-define([
-  'jQuery',
-  'underscore',
-  'backbone',
-  'models/state',  
-  'views/center/container/container',  
-  'views/center/container/tag/child.tag',
-  'views/center/container/item/item'
-], function($, _, Backbone, _state, Container, ContainerChildTag, ContainerItem){
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var _state = require('models/state');
+var Container = require('views/center/container/container');
+var ContainerChildTag = require('views/center/container/tag/child.tag');
+var ContainerItem = require('views/center/container/item/item');
   var TagContainer = Container.extend({
     collapsed:  false,
     events: {
@@ -90,5 +88,4 @@ define([
         this.navigateToTag(parent);
     }
   });
-  return TagContainer;
-});
+  module.exports = TagContainer;

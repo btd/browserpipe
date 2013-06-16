@@ -1,13 +1,11 @@
-define([
-  'jQuery',
-  'underscore',
-  'backbone',
-  'collections/tags',
-  'models/state',
-  'views/view',  
-  'views/tags.editor/editor',
-  'text!templates/dialogs/view.bookmark.text'  
-], function($, _, Backbone, Tags, _state, AppView, TagsEditor, template){
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var Tags = require('collections/tags');
+var _state = require('models/state');
+var AppView = require('views/view');
+var TagsEditor = require('views/tags.editor/editor');
+var template = require('templates/dialogs/view.bookmark');
   var ViewBookmark = AppView.extend({
     attributes : function (){
       return {
@@ -154,5 +152,4 @@ define([
       this.unSetAllErrorFields(this.$("#bkmrk-note"));
     }
   });
-  return ViewBookmark;
-});
+  module.exports = ViewBookmark;

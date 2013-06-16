@@ -1,11 +1,9 @@
-define([
-  'jQuery',
-  'underscore',
-  'backbone',
-  'models/state',  
-  'views/dialogs/import',
-  'text!templates/dialogs/import.pinboard.text'  
-], function($, _, Backbone, _state, Import, template){
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var _state = require('models/state');
+var Import = require('views/dialogs/import');
+var template = require('templates/dialogs/import.pinboard');
   var ImportPinboard = Import.extend({
     attributes : function (){
       return {
@@ -28,5 +26,4 @@ define([
       this.createTagAndContainerAndClose(label, parentTag);
     }   
   });
-  return ImportPinboard;
-});
+  module.exports = ImportPinboard;

@@ -1,11 +1,9 @@
-define([
-  'jQuery',
-  'underscore',
-  'backbone',
-  'models/state',
-  'views/view',  
-  'text!templates/dialogs/edit.dashboard.text'  
-], function($, _, Backbone, _state, AppView, template){
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var _state = require('models/state');
+var AppView = require('views/view');
+var template = require('templates/dialogs/edit.dashboard');
   var EditDashboard = AppView.extend({
     attributes : function (){
       return {
@@ -103,5 +101,4 @@ define([
       }        
     }    
   });
-  return EditDashboard;
-});
+  module.exports = EditDashboard;

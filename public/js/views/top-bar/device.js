@@ -1,10 +1,8 @@
-define([
-  'jQuery',
-  'underscore',
-  'backbone',
-  'models/state',
-  'views/view'
-], function($, _, Backbone, _state, AppView){
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var _state = require('models/state');
+var AppView = require('views/view');
   var Import = AppView.extend({
     el: $("#opt-device"),
     events: {
@@ -31,5 +29,4 @@ define([
       e.preventDefault();
     }
   });
-  return Import;
-});
+  module.exports = Import;

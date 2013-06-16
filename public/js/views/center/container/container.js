@@ -1,13 +1,11 @@
-define([
-  'jQuery',
-  'underscore',
-  'backbone',
-  'config',
-  'models/state',
-  'views/view',
-  'views/center/container/header/header',
-  'text!templates/containers/menu.text'
-], function($, _, Backbone, config, _state, AppView, ContainerHeader, menuTemplate){
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var config = require('config');
+var _state = require('models/state');
+var AppView = require('views/view');
+var ContainerHeader = require('views/center/container/header/header');
+var menuTemplate = require('templates/containers/menu');
   var Container = AppView.extend({
     tagName: 'div', 
     events: {
@@ -115,5 +113,4 @@ define([
       _state.dashboards.setCurrentContainer(null);
     }
   });
-  return Container;
-});
+  module.exports = Container;

@@ -1,11 +1,9 @@
-define([
-  'jQuery',
-  'underscore',
-  'backbone',
-  'models/state',
-  'views/view',
-  'views/bottom-bar/tags/breadcrumb.tag'  
-], function($, _, Backbone, _state, AppView, BreadCrumbTag){
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var _state = require('models/state');
+var AppView = require('views/view');
+var BreadCrumbTag = require('views/bottom-bar/tags/breadcrumb.tag');
   var BreadCrumb = AppView.extend({
     el: $("#breadcrumb"),
     currentFilter: '',
@@ -105,5 +103,4 @@ define([
       });
     }
   });
-  return BreadCrumb;
-});
+  module.exports = BreadCrumb;

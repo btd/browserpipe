@@ -1,10 +1,8 @@
-define([
-  'jQuery',
-  'underscore',
-  'backbone',
-  'views/view',
-  'text!templates/tags/breadcrumb.dropdown.tag.text'  
-], function($, _, Backbone, AppView, template){
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var AppView = require('views/view');
+var template = require('templates/tags/breadcrumb.dropdown.tag');
   var BreadCrumbDropdownTag = AppView.extend({
     name: 'BreadCrumbDropdownTag',
     tagName: 'a', 
@@ -27,7 +25,7 @@ define([
     },
     postRender: function(){   
       //As not all browsers support HTML5, we set data attribute by Jquery            
-      jQuery.data(this.el, 'filter', this.model.getFilter());  
+      jquery.data(this.el, 'filter', this.model.getFilter());
     },
     showChildrenOption: function(){
       this.$(".children").show(); 
@@ -36,5 +34,4 @@ define([
       this.$(".children").hide(); 
     } 
   });
-  return BreadCrumbDropdownTag;
-});
+  module.exports = BreadCrumbDropdownTag;
