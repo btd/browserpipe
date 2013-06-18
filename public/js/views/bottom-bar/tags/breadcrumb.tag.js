@@ -101,7 +101,7 @@ var BreadCrumbTag = AppView.extend({
     },
     clearDropDown: function ($dropdownMenuTags) {
         $dropdownMenuTags.empty();
-        _.each(this.dropDownTagViews, function(dropDownTagView) {
+        _.each(this.dropDownTagViews, function (dropDownTagView) {
             dropDownTagView.dispose();
         });
     },
