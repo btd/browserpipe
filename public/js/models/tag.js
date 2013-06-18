@@ -1,12 +1,13 @@
 var AppModel = require('models/model'),
-    ItemCollection = require('collections/items'),
-    TagCollection = require('collections/tags');
+    ItemCollection = require('collections/items');
 
 module.exports = Tag = AppModel.extend({
     urlRoot: "/tags",
     defaults: {
     },
     initialize: function (spec) {
+        //We have to declare it here because of circle reference between Tag and TagCollection
+        var TagCollection = require('collections/tags');
         //We set them as direct attributes so we do send the children attribute when saving a tag
         this.children = new TagCollection();
         //If filter changes, it updates children and triggers filterChanged event
@@ -22,7 +23,7 @@ module.exports = Tag = AppModel.extend({
                 //Triggers filter changed
                 this.trigger('filterChanged', newFilter, oldFilter);
             }
-        })
+        });
     },
     getFilter: function () {
         return (this.get('path') === "" ? "" : this.get('path') + "/") + this.get('label');

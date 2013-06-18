@@ -23,19 +23,18 @@ var EditDashboard = AppView.extend({
         "keyup": "keypressed"
     },
     initializeView: function (options) {
-        this.dashboard = options.dashboard;
     },
     renderView: function () {
         var title = "Create dashboard";
         var showTrash = false;
         var optSaveLabel = "Create";
-        if (this.dashboard) {
+        if (this.model) {
             title = "Edit dashboard";
             showTrash = true;
             optSaveLabel = "Save changes";
         }
         var compiledTemplate = _.template(template, {
-            dashboard: this.dashboard,
+            dashboard: this.model,
             title: title,
             showTrash: showTrash,
             optSaveLabel: optSaveLabel
@@ -52,8 +51,8 @@ var EditDashboard = AppView.extend({
         var label = $.trim(this.$('[name=dash-label]').val());
         this.validateFields(label);
         if (!this.hasErrors())
-            if (this.dashboard)
-                this.dashboard.save({label: label}, {wait: true, success: function () {
+            if (this.model)
+                this.model.save({label: label}, {wait: true, success: function () {
                     self.close();
                 }});
             else
@@ -85,8 +84,11 @@ var EditDashboard = AppView.extend({
     moveToTrashCanceled: function () {
         this.$('.move-to-trash-alert').hide();
     },
-    moveToTrashConfirmed: function () {
-        console.log("move-to-trash")
+    moveToTrashConfirmed: function() {
+        var self = this;
+        this.model.destroy({ success: function(model, response) {
+            self.close();
+        }});
     },
     preventDefault: function (event) {
         event.preventDefault();

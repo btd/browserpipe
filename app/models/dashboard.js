@@ -39,7 +39,7 @@ DashboardSchema.methods.addContainerByTag = function(tag) {
 DashboardSchema.methods.addContainer = function(tagObj) {
   this.containers.push({
     type: tagObj.type,
-    title: tagObj.label,
+    title: tagObj.title,
     filter: tagObj.filter 
   });
   return this;

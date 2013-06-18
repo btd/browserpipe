@@ -46,7 +46,6 @@ var State = Backbone.Model.extend({
         //If the tag is deleted, it removes it from tags
         var self = this;
         this.listenTo(tag, 'deleted', function (tag) {
-            console.log('tagDeletedEvent')
             delete self.tags[tag.getFilter()]
         });
     },
@@ -86,6 +85,7 @@ var State = Backbone.Model.extend({
         });
     },
     createTagIfNew: function (filter) {
+        var self = this;
         if (filter != 'Tags' && filter.substring(0, 5) != "Tags/")
             return null;
         var defer = $.Deferred();
@@ -101,10 +101,10 @@ var State = Backbone.Model.extend({
                         label: label,
                         path: path
                     })
-                        .done(function (tag) {
-                            _state.addTag(tag);
-                            defer.resolve(tag);
-                        });
+                    .done(function (tag) {
+                        self.addTag(tag);
+                        defer.resolve(tag);
+                    });
                 });
         }
         else  //Resolves with the tag if existis

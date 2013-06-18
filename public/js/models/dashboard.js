@@ -9,7 +9,7 @@ module.exports = Dashboard = AppModel.extend({
         //because we load it with json
         this.unset('containers');
 
-        this.containers = new Containers(options.containers);
+        this.containers = new Containers(options.containers);        
         this.containers.url = this.url() + this.containers.url;
     },
     addContainer: function (container, options) {

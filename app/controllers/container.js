@@ -10,7 +10,7 @@ exports.create = function (req, res) {
     if(err) res.json(500, err.errors);
     else {
       dashboard.addContainer(_.pick(req.body, 'title', 'filter', 'type')).saveWithPromise().then(function(){
-        res.json({ _id: dashboard._id })
+        res.json({ _id: _.last(dashboard.containers)._id })
       }, function(err){
         //TODO: send corresponding number error
         res.json(500, err.errors) 
@@ -28,7 +28,7 @@ exports.update = function (req, res) {
         return c._id.toString() === req.params.containerId;
       });
 
-      if(containerIdx > 0) {
+      if(containerIdx >= 0) {
         var container = dashboard.containers[containerIdx];
 
         _.merge(container, _.pick(req.body, 'title', 'filter'));
