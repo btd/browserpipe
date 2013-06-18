@@ -1,0 +1,11 @@
+{
+  "name": "tagnfile.it",
+  "version": "0.0.0",
+  "dependencies": {
+    "lodash": "~1.3.1",
+    "backbone": "~1.0.0",
+    "jquery": "~2.0.2",
+    "bootstrap": "~2.3.2",
+    "jquery.tinyscrollbar": "http://baijs.nl/tinyscrollbar/js/jquery.tinyscrollbar.js"
+  }
+}

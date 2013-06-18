@@ -1,9 +1,6 @@
-define([
-  'underscore',
-  'backbone'
-], function(_, Backbone) {
-  var AppModel = Backbone.Model.extend({
-    idAttribute:"_id"
-  });
-  return AppModel;
+var Backbone = require('backbone');
+
+
+module.exports = AppModel = Backbone.Model.extend({
+    idAttribute: "_id"
 });

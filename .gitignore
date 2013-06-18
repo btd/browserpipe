@@ -11,3 +11,7 @@ _test-with-coverage
 .idea
 builtAssets
 data
+public/bower_components
+main.min.js
+main.min.map
+.lmd/logs
