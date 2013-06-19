@@ -5,6 +5,7 @@ module.exports = DashboardCollection = Backbone.Collection.extend({
     model: Dashboard,
     url: "/dashboards",
     initialize: function (models) {
+        this.listenTo(this, 'remove', this.dashboardRemoved);
     },
     getCurrentDashboard: function () {
         return this.currentDashboardId && this.get(this.currentDashboardId);
@@ -31,5 +32,14 @@ module.exports = DashboardCollection = Backbone.Collection.extend({
         if (currentDashboard)
             container = currentDashboard.containers.get(containerId)
         this.trigger('currentContainerChange', container);
+    },
+    dashboardRemoved: function(){
+        //If current dashboard removed, then we load another
+        if(!this.getCurrentDashboard()){
+            if(this.length > 0)
+                this.setCurrentDashboard(this.at(0).get('_id'));
+            else
+                this.setCurrentDashboard(null);
+        }
     }
 });

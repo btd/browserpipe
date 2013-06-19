@@ -34,7 +34,10 @@ var AppRouter = Backbone.Router.extend({
         _state.loadInitialData();
 
         _state.dashboards.on('currentDashboardChange', function (dashboard) {
-            Backbone.history.navigate("/dashboards/" + dashboard.get('_id'), {trigger: true});
+            if(dashboard)
+                Backbone.history.navigate('/dashboards/' + dashboard.get('_id'), {trigger: true});
+            else
+                Backbone.history.navigate('/dashboards', {trigger: true});
         }, this);
 
         //Creates the top bar options

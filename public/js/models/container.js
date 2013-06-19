@@ -1,6 +1,5 @@
 var AppModel = require('models/model');
 
-
 module.exports = Container = AppModel.extend({
     initialize: function (spec) {
         var _state = require('models/state');

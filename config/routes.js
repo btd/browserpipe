@@ -20,6 +20,7 @@ module.exports = function (app, passport, auth) {
   app.get(  '/dashboards/:dashboardId',   auth.redirectIfNotAuthenticated('/'), dashboard.show)
   app.post( '/dashboards',                auth.send401IfNotAuthenticated, dashboard.create)
   app.put(  '/dashboards/:dashboardId',   auth.send401IfNotAuthenticated, dashboard.update)  
+  app.delete('/dashboards/:dashboardId', auth.send401IfNotAuthenticated, dashboard.destroy)  
     
   app.param('dashboardId', dashboard.dashboard)
 

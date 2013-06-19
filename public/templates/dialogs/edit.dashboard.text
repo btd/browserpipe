@@ -14,11 +14,15 @@
   </form>
   <%if(showTrash){ %>
     <div>    
-  	  <a class="opt-button opt-move-to-trash pull-left" href="#"><img src="/img/bin.png" alt="Move to trash"></a>	
-        <div class="move-to-trash-alert alert alert-block pull-left" style="display:none;">  
-          <p>Are you sure that you want to move the dashboard to trash?</p>
-      	<a class="opt-move-to-trash-yes" href="#">Yes, move it!</a><a class="opt-move-to-trash-no opt-margin-left" href="#">No, abort!</a>
-    	  </div>
+      <a class="opt-button opt-move-to-trash pull-left" href="#" title="Delete dashboard"><img src="/img/bin.png" alt="Move to trash"></a>  
+      <div class="move-to-trash-alert alert alert-block pull-left" style="display:none;">  
+        <p>Are you sure that you want to delete the dashboard?</p>     
+        <p><small>Note: Tags and bookmarks will remain on the tag tree</small></p>    
+        <p>   
+          <a class="opt-move-to-trash-yes" href="#">Delete it</a><a class="opt-move-to-trash-no opt-margin-left" href="#">No, abort!</a>
+          <a href="#" class="tooltip" data-toggle="tooltip" title="">help</a>
+        </p>
+    	</div>
     </div>
   <% } %>
 </div>

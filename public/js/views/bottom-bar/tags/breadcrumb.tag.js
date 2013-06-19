@@ -119,7 +119,6 @@ var BreadCrumbTag = AppView.extend({
         var bodyWidth = $('body').width();
         var dropDownWidth = this.$('.dropdown-menu').width();
         var left = this.$('.dropdown-menu').parent().position().left;
-        //console.log(this.$('.dropdown-menu').css('left'));
         if ((left + dropDownWidth) > bodyWidth) {
             var newLeft = 1 - (dropDownWidth - (bodyWidth - left));
             this.$('.dropdown-menu').css({

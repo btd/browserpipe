@@ -67,9 +67,9 @@ var Dashboard = AppView.extend({
         this.toggle();
     },
     editDashboardOption: function () {
-        var editDashboard = new EditDashboard({collection: this.collection, dashboard: this.collection.getCurrentDashboard()});
-        editDashboard.render();
-        this.toggle();
+        var editDashboard = new EditDashboard({collection: this.collection, model: this.collection.getCurrentDashboard()});
+        editDashboard.render();  
+        this.toggle();   
     },
     changeDashboardOption: function (event) {
         var id = event.currentTarget.id.substring(9); //removes "opt-dash-" from the id
