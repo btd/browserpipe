@@ -11,9 +11,7 @@ module.exports = function (passport, config) {
   })
 
   passport.deserializeUser(function(id, done) {
-    User.byId(id, function (err, user) {
-      done(err, user)
-    })
+    User.byId(id, done);
   })
 
   // use local strategy

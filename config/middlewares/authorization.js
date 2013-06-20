@@ -29,6 +29,12 @@ module.exports.send401IfNotAuthenticated = function(req, res, next) {
 
 //TODO it is good to have one middleware that will redirect to login if not authorized and if it is then redirect to required url
 
+//this is when in req params exists from=url that user come from (it is compliment for passport authenticate), should be used as last in chain with passport
+module.exports.redirectFrom = function(redirectIfNoQueryParam, redirectIfNotAuth) {
+    return function(req, res) {
+        res.redirect(req.isAuthenticated() ? req.query.from ? req.query.from : redirectIfNoQueryParam : redirectIfNotAuth);
+    };
+}
 
 /*
  *  User authorizations routing middleware

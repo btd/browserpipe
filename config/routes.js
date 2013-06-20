@@ -1,7 +1,7 @@
 var auth = require('./middlewares/authorization');
 
 
-module.exports = function (app, passport, auth) {
+module.exports = function (app, passport) {
 
   //User routes
   var users = require('../app/controllers/user')
@@ -9,8 +9,9 @@ module.exports = function (app, passport, auth) {
   app.get('/login', users.login)
   app.get('/signup', users.signup)
   app.get('/logout', users.logout)
+
   app.post('/users', users.create)
-  app.post('/users/session', passport.authenticate('local', {failureRedirect: '/login'}), users.session)
+  app.post('/users/session', passport.authenticate('local', {failureRedirect: '/login'}), auth.redirectFrom('/', '/login'));
     
   app.param('userId', users.user)
 

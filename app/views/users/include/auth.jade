@@ -1,11 +1,11 @@
 block body
-  h2= title
+    h2= title
 
-  .row    
-    .span6
-      if (typeof errors !== 'undefined')        
-        ul
-          each error in errors
-            li= error.type
+    .row
+        .span6
+            if (typeof errors !== 'undefined')
+                ul
+                    each error in errors
+                        li= error.type
 
-      block auth
+            block auth
