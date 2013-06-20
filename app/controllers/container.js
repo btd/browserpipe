@@ -28,7 +28,8 @@ exports.update = function (req, res) {
                 return c._id.toString() === req.params.containerId;
             });
 
-            if (containerIdx > 0) {
+
+            if (containerIdx >= 0) {
                 var container = dashboard.containers[containerIdx];
 
                 _.merge(container, _.pick(req.body, 'title', 'filter'));

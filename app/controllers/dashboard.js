@@ -80,4 +80,14 @@ function showDashboard(req, res) {
         },function () {
             res.render('500')
         }).done();
+
+}
+
+//Delete item
+exports.destroy = function (req, res) {
+    var dashboard = req.currentDashboard;
+    dashboard.remove(function (err) {
+        res.json({ _id: dashboard._id })
+    })
+
 }
