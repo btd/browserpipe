@@ -30,15 +30,14 @@ describe('user controller', function () {
                     var userId = res.body._id;
                     var User = mongoose.model('User');
 
-                    User.byId(userId, function (err, user) {
-                        if (err) done(err)
-                        else {
+                    User.byId(userId)
+                        .then(function (user) {
                             user.name.should.be.equal(testUser.name);
                             user.email.should.be.equal(testUser.email);
                             user.authenticate(testUser.password).should.be.true;
                             done();
-                        }
-                    });
+                        })
+                        .fail(done);
                 }
             });
     });

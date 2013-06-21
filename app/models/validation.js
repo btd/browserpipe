@@ -2,5 +2,7 @@ exports.nonEmpty = [
     function (value) {
         return value !== ''
     },
-    'nonEmpty'
+    'should be not empty'
 ]
+
+//TODO we should be able combine validating in chains

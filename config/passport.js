@@ -1,35 +1,38 @@
 var mongoose = require('mongoose')
-  , LocalStrategy = require('passport-local').Strategy
-  , User = mongoose.model('User')
+    , LocalStrategy = require('passport-local').Strategy
+    , User = mongoose.model('User')
 
 
-module.exports = function (passport, config) {
- 
-  // serialize sessions
-  passport.serializeUser(function(user, done) {
-    done(null, user.id)
-  })
+module.exports = function (passport) {
 
-  passport.deserializeUser(function(id, done) {
-    User.byId(id, done);
-  })
+    // serialize sessions
+    passport.serializeUser(function (user, done) {
+        done(null, user.id)
+    })
 
-  // use local strategy
-  passport.use(new LocalStrategy({
-      usernameField: 'email',
-      passwordField: 'password'
-    },
-    function(email, password, done) {
-      User.byEmail(email, function (err, user) {
-        if (err) { return done(err) }
-        if (!user) {
-          return done(null, false, { message: 'Unknown user' })
+    passport.deserializeUser(function (id, done) {
+        User.byId(id)
+            .then(done.bind(undefined, null))
+            .fail(done);
+    })
+
+    // use local strategy
+    passport.use(new LocalStrategy({
+            usernameField: 'email',
+            passwordField: 'password'
+        },
+        function (email, password, done) {
+            User.byEmail(email)
+                .then(function (user) {
+                    if (!user) {
+                        return done(null, false, { message: 'Unknown user' })
+                    }
+                    if (!user.authenticate(password)) {
+                        return done(null, false, { message: 'Invalid password' })
+                    }
+                    return done(null, user)
+                })
+                .fail(done);
         }
-        if (!user.authenticate(password)) {
-          return done(null, false, { message: 'Invalid password' })
-        }
-        return done(null, user)
-      })
-    }
-  ))
+    ))
 }

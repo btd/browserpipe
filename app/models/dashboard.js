@@ -7,7 +7,7 @@ var mongoose = require('mongoose'),
     q = require('q')
 
 var DashboardSchema = new Schema({
-    label: {type: String, trim: true, validate: validation.nonEmpty },
+    label: {type: String, required: true, trim: true, validate: validation.nonEmpty },
     containers: [
         {
             type: {type: Number, trim: true}, //0: blank, 1: tag, 2: search, 3: import, 4: device, 5: trash

@@ -90,7 +90,6 @@ exports.create = function (req, res) {
             dashboard.saveWithPromise()
         ])
         .spread(function () {
-
             res.format({
 
                 html: function () {
@@ -108,6 +107,7 @@ exports.create = function (req, res) {
             res.format({
 
                 html: function () {
+                    //TODO there should be redirect!!
                     res.render('users/signup', { errors: err.errors })
                 },
 

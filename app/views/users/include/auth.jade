@@ -4,8 +4,13 @@ block body
     .row
         .span6
             if (typeof errors !== 'undefined')
-                ul
-                    each error in errors
-                        li= error.type
+
+                each error in errors
+
+                    .alert.alert-error
+                        button.close(type='button', data-dismiss='alert') ×
+
+                        strong= error.path
+                        |  #{error.type}
 
             block auth
