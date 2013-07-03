@@ -1,14 +1,16 @@
 
-MOCHA_OPTS=
+MOCHA_OPTS= ./test
 REPORTER = spec
 
 start:
-	@NODE_ENV=development ./node_modules/.bin/nodemon ./server.js
+	@NODE_ENV=development ./node_modules/.bin/nodemon --watch app --watch config server.js
 
 test: test-unit
 
 test-unit:
 	@NODE_ENV=test ./node_modules/.bin/mocha \
+		--recursive \
+		--check-leaks \
 		--reporter $(REPORTER) \
 		$(MOCHA_OPTS)
 

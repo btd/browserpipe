@@ -2,63 +2,63 @@ header#header
 // if lt IE 7
   <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
 #top-bar(class="navbar navbar-fixed-top")
-  div(class="navbar-inner")
-    div(class="container-fluid")
-      a(href="/", class="brand", data-original-title="")      
-          div TAGNFILE.IT         
-          i beta
-      ul#opt-dashboards(class="nav pull-left")
-        li(class="dropdown nav-option") 
-          a(href="#", class="dropdown-toggle", data-toggle="dropdown") 
-            img(src="/img/dashboards.png", alt="Dashboards")            
-            span.name
-          ul(class="dropdown-menu")
-            li(id="opt-edit-dash")
-              a(tabindex="-1", href="#") Edit
-            li(class="divider")            
-            li(class="divider")
-              li(id="opt-add-dash")                
-                a(tabindex="-1", href="#") Create New
-      form#search-form(class="form-search pull-left")
-        span.input-append
-          input#search-box(type="text", class="uncompressed")
-          button#search-btn(type="submit", class="btn") Search
-      ul#account-nav(class="nav pull-right")
-        li#opt-device(class="dropdown nav-option") 
-          a(href="#", class="dropdown-toggle", data-toggle="dropdown") 
-            img(src="/img/windows.png", alt="Sync devices")
-          ul(class="dropdown-menu")
-            li(class="device-open")
-              a(tabindex="-1", href="#") Open devices            
-            li(class="device-new")                
-              a(tabindex="-1", href="#") Sync new device   
-        li#opt-import(class="dropdown nav-option") 
-          a(href="#", class="dropdown-toggle", data-toggle="dropdown") 
-            img(src="/img/inbox.png", alt="Import")
-          ul(class="dropdown-menu")
-            li(class="import-open")
-              a(tabindex="-1", href="#") Open imports
-            li(class="import-new-file")
-              a(tabindex="-1", href="#") New file import
-            li(class="import-new-twitter")
-              a(tabindex="-1", href="#") New Twitter import
-            li(class="import-new-facebook")
-              a(tabindex="-1", href="#") New Facebook import
-            li(class="import-new-delicious")
-              a(tabindex="-1", href="#") New Delicious import
-            li(class="import-new-pinboard")
-              a(tabindex="-1", href="#") New Pinboard import
-        li(class="dropdown nav-option")
-          a(href="#", class="dropdown-toggle", data-toggle="dropdown") 
-            img(src="/img/user.png", alt="#{user.name}")
-          ul(class="dropdown-menu")
-            li
-              a(tabindex="-1", href="#") Settings
-            li
-              a(tabindex="-1", href="#") Help
-            li(class="divider")
-            li                
-              a(tabindex="-1", href="/logout") Logout                      
+    div(class="navbar-inner")
+        div(class="container-fluid")
+            a(href="/", class="brand", data-original-title="")
+                div TAGNFILE.IT
+                i beta
+            ul#opt-dashboards(class="nav pull-left")
+                li(class="dropdown nav-option")
+                    a(href="#", class="dropdown-toggle", data-toggle="dropdown")
+                        img(src="/img/dashboards.png", alt="Dashboards")
+                        span.name
+                    ul(class="dropdown-menu")
+                        li(id="opt-edit-dash")
+                            a(tabindex="-1", href="#") Edit
+                        li(class="divider")
+                        li(class="divider")
+                            li(id="opt-add-dash")
+                                a(tabindex="-1", href="#") Create New
+            form#search-form(class="form-search pull-left")
+                span.input-append
+                    input#search-box(type="text", class="uncompressed")
+                    button#search-btn(type="submit", class="btn") Search
+            ul#account-nav(class="nav pull-right")
+                li#opt-device(class="dropdown nav-option")
+                    a(href="#", class="dropdown-toggle", data-toggle="dropdown")
+                        img(src="/img/windows.png", alt="Sync devices")
+                    ul(class="dropdown-menu")
+                        li(class="device-open")
+                            a(tabindex="-1", href="#") Open devices
+                        li(class="device-new")
+                            a(tabindex="-1", href="#") Sync new device
+                li#opt-import(class="dropdown nav-option")
+                    a(href="#", class="dropdown-toggle", data-toggle="dropdown")
+                        img(src="/img/inbox.png", alt="Import")
+                    ul(class="dropdown-menu")
+                        li(class="import-open")
+                            a(tabindex="-1", href="#") Open imports
+                        li(class="import-new-file")
+                            a(tabindex="-1", href="#") New file import
+                        li(class="import-new-twitter")
+                            a(tabindex="-1", href="#") New Twitter import
+                        li(class="import-new-facebook")
+                            a(tabindex="-1", href="#") New Facebook import
+                        li(class="import-new-delicious")
+                            a(tabindex="-1", href="#") New Delicious import
+                        li(class="import-new-pinboard")
+                            a(tabindex="-1", href="#") New Pinboard import
+                li(class="dropdown nav-option")
+                    a(href="#", class="dropdown-toggle", data-toggle="dropdown")
+                        img(src="/img/user.png", alt="#{user.name}")
+                    ul(class="dropdown-menu")
+                        li
+                            a(tabindex="-1", href="#") Settings
+                        li
+                            a(tabindex="-1", href="#") Help
+                        li(class="divider")
+                        li
+                            a(tabindex="-1", href="/logout") Logout
 
        
      
