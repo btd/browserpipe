@@ -19,15 +19,6 @@ var ItemSchema = new Schema({
     note: {type: String, trim: true}
 })
 
-ItemSchema.methods.saveWithPromise = function () {
-    var deferred = q.defer();
-    this.save(function (err) {
-        if (err) deferred.reject(err)
-        else deferred.resolve()
-    })
-    return deferred.promise;
-}
-
 ItemSchema.statics.getAllByFilters = function (user, filters) {
     var deferred = q.defer();
     this

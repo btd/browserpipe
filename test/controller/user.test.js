@@ -13,7 +13,7 @@ describe('user controller', function () {
         });
     });
 
-    it('should be created with POST on /users when send good data', function (done) {
+    it('should create user with POST on /users when send good data', function (done) {
         request(app)
             .post('/users')
             .send(testUser)

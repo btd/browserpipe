@@ -15,6 +15,8 @@ var userWithBadEmail = { email: 'a.com', password: '123'};
 
 var User = mongoose.model('User');
 
+var errorUserCreated = new Error('User was created');
+
 describe('user model', function () {
     beforeEach(function () {
         mongoose.connection.db.dropCollection('users', function (err, result) {
@@ -26,7 +28,7 @@ describe('user model', function () {
         var user = new User(testUser1);
         user.saveWithPromise()
             .then(function () {
-                done(new Error());
+                done(errorUserCreated);
             })
             .fail(function (err) {
                 err.should.be.ok;
@@ -49,7 +51,7 @@ describe('user model', function () {
 
             user2.saveWithPromise()
                 .then(function () {
-                    done(new Error('User created, but it should not'));
+                    done(errorUserCreated);
                 })
                 .fail(function (err) {
                     err.should.be.ok;
@@ -63,11 +65,11 @@ describe('user model', function () {
     it('should not allow create users with empty or missing password', function (done) {
         var user1 = new User(userWithoutPassword);
         user1.saveWithPromise().then(function () {
-            done(new Error('User created, but it should not'));
+            done(errorUserCreated);
         }, function () {
             var user2 = new User(userWithEmptyPassword);
             user2.saveWithPromise().then(function () {
-                done(new Error('User created, but it should not'));
+                done(errorUserCreated);
             }, function () {
                 done();
             });
@@ -77,7 +79,7 @@ describe('user model', function () {
     it('should not allow create users with bad email', function (done) {
         var user1 = new User(userWithBadEmail);
         user1.saveWithPromise().then(function () {
-            done(new Error('User created, but it should not'));
+            done(errorUserCreated);
         }, function () {
             done();
         });
