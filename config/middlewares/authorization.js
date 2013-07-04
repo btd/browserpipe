@@ -26,38 +26,23 @@ module.exports.send401IfNotAuthenticated = function(req, res, next) {
     next()
   }
 };
-
-//TODO it is good to have one middleware that will redirect to login if not authorized and if it is then redirect to required url
-
-//this is when in req params exists from=url that user come from (it is compliment for passport authenticate), should be used as last in chain with passport
-module.exports.redirectFrom = function(redirectIfNoQueryParam, redirectIfNotAuth) {
-    return function(req, res) {
-        res.redirect(req.isAuthenticated() ? req.query.from ? req.query.from : redirectIfNoQueryParam : redirectIfNotAuth);
-    };
-}
-
-/*
- *  User authorizations routing middleware
- */
-/*exports.user = {
-    hasAuthorization : function (req, res, next) {
-      if (req.profile.id != req.user.id) {
-        return res.redirect('/users/'+req.profile.id)
-      }
-      next()
+// This thing uses returnTo that passport.js understand and redirect after successfull login
+module.exports.ensureLoggedIn = function (options) {
+    if (typeof options == 'string') {
+        options = { redirectTo: options }
     }
-}*/
+    options = options || {};
 
+    var url = options.redirectTo || '/login';
+    var setReturnTo = (options.setReturnTo === undefined) ? true : options.setReturnTo;
 
-/*
- *  Tag authorizations routing middleware
- */
-/*exports.tag = {
-    hasAuthorization : function (req, res, next) {
-      if (req.tag.user.id != req.user.id) {
-        return res.redirect('/articles/'+req.tag.id)
-      }
-      next()
+    return function(req, res, next) {
+        if (!req.isAuthenticated || !req.isAuthenticated()) {
+            if (setReturnTo && req.session) {
+                req.session.returnTo = req.originalUrl || req.url;
+            }
+            return res.redirect(url);
+        }
+        next();
     }
 }
-*/

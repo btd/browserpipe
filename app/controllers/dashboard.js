@@ -13,16 +13,14 @@ exports.show = showDashboard;
 
 //Create dashboard
 exports.create = function (req, res) {
-    var dashboard = new Dashboard(_.pick(req.body, 'label'));
-    dashboard.user = req.user;
+    var dashboard = new Dashboard({ label: req.body.label, user: req.user });
     req.user.currentDashboard = dashboard;
     q.all([dashboard.saveWithPromise(),
             req.user.saveWithPromise()])
         .spread(function () {
             res.json({ _id: dashboard._id })
         },function (err) {
-            //TODO: send corresponding number error
-            res.json(err.errors)
+            res.json(400, err.errors);
         }).done()
 }
 
@@ -68,7 +66,7 @@ function showDashboard(req, res) {
                     containerFilters
                 ).then(function (items) {
                     res.render('main/home', {
-                            currentDashboardId: ((req.currentDashboard && req.currentDashboard.id) || req.user.currentDashboard),
+                            currentDashboardId: ((req.currentDashboard && req.currentDashboard.id) || req.user.currentDashboard.id),
                             user: req.user,
                             dashboards: dashboards,
                             items: items,

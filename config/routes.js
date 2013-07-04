@@ -11,17 +11,17 @@ module.exports = function (app, passport) {
   app.get('/logout', users.logout)
 
   app.post('/users', users.create)
-  app.post('/users/session', passport.authenticate('local', {failureRedirect: '/login'}), auth.redirectFrom('/', '/login'));
+  app.post('/users/session', passport.authenticate('local', { successReturnToOrRedirect: '/', failureRedirect: '/login' }));
     
   app.param('userId', users.user)
 
   //Dashboard routes
   var dashboard = require('../app/controllers/dashboard')
-  app.get(  '/dashboards',                auth.redirectIfNotAuthenticated('/'), dashboard.showEmpty)
-  app.get(  '/dashboards/:dashboardId',   auth.redirectIfNotAuthenticated('/'), dashboard.show)
-  app.post( '/dashboards',                auth.send401IfNotAuthenticated, dashboard.create)
-  app.put(  '/dashboards/:dashboardId',   auth.send401IfNotAuthenticated, dashboard.update)  
-  app.delete('/dashboards/:dashboardId', auth.send401IfNotAuthenticated, dashboard.destroy)  
+  app.get(   '/dashboards',                auth.ensureLoggedIn('/login'), dashboard.showEmpty)
+  app.get(   '/dashboards/:dashboardId',   auth.ensureLoggedIn('/login'), dashboard.show)
+  app.post(  '/dashboards',                auth.send401IfNotAuthenticated, dashboard.create)
+  app.put(   '/dashboards/:dashboardId',   auth.send401IfNotAuthenticated, dashboard.update)
+  app.delete('/dashboards/:dashboardId',   auth.send401IfNotAuthenticated, dashboard.destroy)
     
   app.param('dashboardId', dashboard.dashboard)
 
@@ -33,16 +33,16 @@ module.exports = function (app, passport) {
 
   //Tags routes
   var tag = require('../app/controllers/tag')
-  app.post('/tags', tag.create)
-  app.put('/tags/:tagId', tag.update)  
+  app.post( '/tags',         tag.create)
+  app.put(  '/tags/:tagId',  tag.update)
     
   app.param('tagId', tag.tag)
 
   //Items routes
   var item = require('../app/controllers/item')
-  app.post('/items', item.create)
-  app.put('/items/:itemId', item.update)  
-  app.delete('/items/:itemId', item.destroy)  
+  app.post(   '/items',          item.create)
+  app.put(    '/items/:itemId',  item.update)
+  app.delete( '/items/:itemId',  item.destroy)
     
   app.param('itemId', item.item)
   

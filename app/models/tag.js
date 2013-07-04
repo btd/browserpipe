@@ -13,19 +13,6 @@ var TagSchema = new Schema({
     createdAt: {type: Date, default: Date.now}
 });
 
-TagSchema.path('label').validate(function (label) {
-    return label.length > 0
-}, 'Tag label cannot be blank')
-
-TagSchema.methods.saveWithPromise = function () {
-    var deferred = q.defer();
-    this.save(function (err) {
-        if (err) deferred.reject(err)
-        else deferred.resolve()
-    })
-    return deferred.promise;
-}
-
 TagSchema.methods.isRoot = function () {
     return _.isEmpty(this.path);
 };

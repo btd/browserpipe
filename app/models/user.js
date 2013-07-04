@@ -23,12 +23,10 @@ var UserSchema = new Schema({
     currentDashboard: {type: Schema.ObjectId, ref: 'Dashboard'}
 });
 
+UserSchema.plugin(require('mongoose-timestamp'));
+
 UserSchema.methods.authenticate = function (password) {
     return bcrypt.compareSync(password, this.password);
-}
-
-UserSchema.methods.saveWithPromise = function () {
-    return Q.ninvoke(this, 'save');
 }
 
 // 2 convinient wrappers to do not repeat in code also it populate internal doc
@@ -56,12 +54,7 @@ UserSchema.pre('save', function (done) {
 });
 
 var qfindOne = function (obj) {
-    var deferred = Q.defer();
-    User.findOne(obj).populate('currentDashboard').exec(deferred.makeNodeResolver());
-    return deferred.promise;
+    return User.findOne(obj).populate('currentDashboard').execWithPromise();
 };
-
-//TODO i don't know how better export it
-//UserSchema.statics.findOne = qfindOne;
 
 module.exports = User = mongoose.model('User', UserSchema);

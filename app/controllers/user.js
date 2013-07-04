@@ -39,11 +39,6 @@ exports.logout = function (req, res) {
     res.redirect('/login')
 }
 
-//User just logged in
-exports.session = function (req, res) {
-    res.redirect('/')
-}
-
 //Create user
 exports.create = function (req, res) {
     var user = new User(_.pick(req.body, 'email', 'name', 'password'));
@@ -76,7 +71,7 @@ exports.create = function (req, res) {
 
     //TODO: manage rollback
     q.all([
-            user.saveWithPromise(),
+            user.saveWithPromise(),//it is important user will be first, because this one created from external data and can fail.
             tagsTag.saveWithPromise(),
             trashTag.saveWithPromise(),
             importsTag.saveWithPromise(),
@@ -112,30 +107,21 @@ exports.create = function (req, res) {
                 },
 
                 json: function () {
-                    res.send({ errors: err.errors });
+                    res.send(400, { errors: err.errors });
                 }
             });
         }).done()
 }
 
-/*//Show profile
- exports.show = function (req, res) {
- var user = req.profile
- res.render('users/show', {
- title: user.name,
- user: user
- })
- }*/
 
 //Find user by id
 exports.user = function (req, res, next, id) {
-    User
-        .findOne({ _id: id })
-        .populate('currentDashboard')
-        .exec(function (err, user) {
-            if (err) return next(err)
+    User.byId(id)
+        .then(function(user) {
             if (!user) return next(new Error('Failed to load User ' + id))
-            req.profile = user
+            req.profile = user;
             next()
-        })
+        }).fail(function(err) {
+            next(err);
+        });
 }
