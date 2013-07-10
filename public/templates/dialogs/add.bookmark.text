@@ -24,8 +24,8 @@
         <textarea class="input-xlarge" id="bkmrk-note" name="bkmrk-note" placeholder="Notes"><%if(bookmark){ %><%= bookmark.get('note') %><% } %></textarea>
       </div>
     </div>
-    <div>Tags</div>
-    <div class="bkmrk-tags"/>
+    <div>Lists</div>
+    <div class="bkmrk-lists"/>
   </form>
 </div>
 <div class="modal-footer">

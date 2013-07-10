@@ -1,4 +1,4 @@
-/* Tagnfile.it main application entry file. */
+/* Listboard.it main application entry file. */
 
 var express = require('express'),
     fs = require('fs'),

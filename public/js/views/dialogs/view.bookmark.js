@@ -1,10 +1,10 @@
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var Tags = require('collections/tags');
+var Lists = require('collections/lists');
 var _state = require('models/state');
 var AppView = require('views/view');
-var TagsEditor = require('views/tags.editor/editor');
+var ListsEditor = require('views/lists.editor/editor');
 var template = require('templates/dialogs/view.bookmark');
 var ViewBookmark = AppView.extend({
     attributes: function () {
@@ -34,12 +34,12 @@ var ViewBookmark = AppView.extend({
             bookmark: this.model
         });
         this.$el.html(compiledTemplate).appendTo('#dialogs');
-        //Append the tags
-        var tags = this.model.getTags();
-        this.tagsView = new TagsEditor({collection: new Tags(tags)})
-        this.listenTo(this.tagsView, 'tagAdded', this.addTag);
-        this.listenTo(this.tagsView, 'tagRemoved', this.updateTags);
-        this.$('.bkmrk-tags').html(this.tagsView.render().el);
+        //Append the lists
+        var lists = this.model.getLists();
+        this.listsView = new ListsEditor({collection: new Lists(lists)})
+        this.listenTo(this.listsView, 'listAdded', this.addList);
+        this.listenTo(this.listsView, 'listRemoved', this.updateLists);
+        this.$('.bkmrk-lists').html(this.listsView.render().el);
         //Show dialog
         this.$el.modal('show');
         return this;
@@ -56,21 +56,21 @@ var ViewBookmark = AppView.extend({
             title: title,
             url: url,
             note: note,
-            tags: _.compact(_.uniq(tags))
+            lists: _.compact(_.uniq(lists))
         }, {wait: true, success: function () {
             self.close();
         }});
     },
-    addTag: function (tag) {
-        _state.createTagIfNew(tag.getFilter());
-        this.updateTags();
+    addList: function (list) {
+        _state.createListIfNew(list.getFilter());
+        this.updateLists();
     },
-    updateTags: function () {
-        var tags = this.tagsView.collection.map(function (tag) {
-            return tag.getFilter();
+    updateLists: function () {
+        var lists = this.listsView.collection.map(function (list) {
+            return list.getFilter();
         });
         this.model.save({
-            tags: _.compact(_.uniq(tags))
+            lists: _.compact(_.uniq(lists))
         });
     },
     close: function () {

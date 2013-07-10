@@ -15,28 +15,28 @@ module.exports = function (app, passport) {
     
   app.param('userId', users.user)
 
-  //Dashboard routes
-  var dashboard = require('../app/controllers/dashboard')
-  app.get(   '/dashboards',                auth.ensureLoggedIn('/login'), dashboard.showEmpty)
-  app.get(   '/dashboards/:dashboardId',   auth.ensureLoggedIn('/login'), dashboard.show)
-  app.post(  '/dashboards',                auth.send401IfNotAuthenticated, dashboard.create)
-  app.put(   '/dashboards/:dashboardId',   auth.send401IfNotAuthenticated, dashboard.update)
-  app.delete('/dashboards/:dashboardId',   auth.send401IfNotAuthenticated, dashboard.destroy)
+  //Listboard routes
+  var listboard = require('../app/controllers/listboard')
+  app.get(   '/listboards',                auth.ensureLoggedIn('/login'), listboard.showEmpty)
+  app.get(   '/listboards/:listboardId',   auth.ensureLoggedIn('/login'), listboard.show)
+  app.post(  '/listboards',                auth.send401IfNotAuthenticated, listboard.create)
+  app.put(   '/listboards/:listboardId',   auth.send401IfNotAuthenticated, listboard.update)
+  app.delete('/listboards/:listboardId',   auth.send401IfNotAuthenticated, listboard.destroy)
     
-  app.param('dashboardId', dashboard.dashboard)
+  app.param('listboardId', listboard.listboard)
 
   //Containers routes
   var container = require('../app/controllers/container')
-  app.post(   '/dashboards/:dashboardId/containers',               auth.send401IfNotAuthenticated, container.create)
-  app.put(    '/dashboards/:dashboardId/containers/:containerId',  auth.send401IfNotAuthenticated, container.update)  
-  app.delete( '/dashboards/:dashboardId/containers/:containerId',  auth.send401IfNotAuthenticated, container.destroy)  
+  app.post(   '/listboards/:listboardId/containers',               auth.send401IfNotAuthenticated, container.create)
+  app.put(    '/listboards/:listboardId/containers/:containerId',  auth.send401IfNotAuthenticated, container.update)  
+  app.delete( '/listboards/:listboardId/containers/:containerId',  auth.send401IfNotAuthenticated, container.destroy)  
 
-  //Tags routes
-  var tag = require('../app/controllers/tag')
-  app.post( '/tags',         tag.create)
-  app.put(  '/tags/:tagId',  tag.update)
+  //Lists routes
+  var list = require('../app/controllers/list')
+  app.post( '/lists',         list.create)
+  app.put(  '/lists/:listId',  list.update)
     
-  app.param('tagId', tag.tag)
+  app.param('listId', list.list)
 
   //Items routes
   var item = require('../app/controllers/item')

@@ -19,17 +19,17 @@ var Import = AppView.extend({
         "click .import-new-pinboard": "newImportPinboardDialog"
     },
     initializeView: function () {
-        this.tag = _state.getTagByFilter("Imports");
+        this.list = _state.getListByFilter("Imports");
     },
     openImportContainer: function (e) {
         e.preventDefault();
-        _state.dashboards.getCurrentDashboard().addContainer({
-            "filter": this.tag.getFilter(),
+        _state.listboards.getCurrentListboard().addContainer({
+            "filter": this.list.getFilter(),
             "order": 0, //TODO: manage order
-            "title": this.tag.get('label'),
+            "title": this.list.get('label'),
             "type": 3
         }, {wait: true, success: function (container) {
-            _state.dashboards.setCurrentContainer(container.get('_id'));
+            _state.listboards.setCurrentContainer(container.get('_id'));
         }});
         this.hideDropDown();
     },

@@ -22,8 +22,8 @@ var ImportTwitter = Import.extend({
     },
     save: function () {
         var label = this.getCurrentTime();
-        var parentTag = _state.getTagByFilter("Imports/Twitter");
-        this.createTagAndContainerAndClose(label, parentTag);
+        var parentList = _state.getListByFilter("Imports/Twitter");
+        this.createListAndContainerAndClose(label, parentList);
     }
 });
 module.exports = ImportTwitter;

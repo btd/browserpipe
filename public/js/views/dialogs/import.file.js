@@ -22,8 +22,8 @@ var ImportFile = Import.extend({
     },
     save: function () {
         var label = this.getCurrentTime();
-        var parentTag = _state.getTagByFilter("Imports/File");
-        this.createTagAndContainerAndClose(label, parentTag);
+        var parentList = _state.getListByFilter("Imports/File");
+        this.createListAndContainerAndClose(label, parentList);
     }
 });
 module.exports = ImportFile;

@@ -22,8 +22,8 @@ var ImportPinboard = Import.extend({
     },
     save: function () {
         var label = this.getCurrentTime();
-        var parentTag = _state.getTagByFilter("Imports/Pinboard");
-        this.createTagAndContainerAndClose(label, parentTag);
+        var parentList = _state.getListByFilter("Imports/Pinboard");
+        this.createListAndContainerAndClose(label, parentList);
     }
 });
 module.exports = ImportPinboard;

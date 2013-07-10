@@ -9,17 +9,17 @@ var Trash = AppView.extend({
         "click": "openTrahContainer"
     },
     initializeView: function () {
-        this.tag = _state.getTagByFilter("Trash");
+        this.list = _state.getListByFilter("Trash");
     },
     openTrashContainer: function (e) {
         e.preventDefault();
-        _state.dashboards.getCurrentDashboard().addContainer({
-            "filter": this.tag.getFilter(),
+        _state.listboards.getCurrentListboard().addContainer({
+            "filter": this.list.getFilter(),
             "order": 0, //TODO: manage order
-            "title": this.tag.get('label'),
+            "title": this.list.get('label'),
             "type": 5
         }, {wait: true, success: function (container) {
-            _state.dashboards.setCurrentContainer(container.get('_id'));
+            _state.listboards.setCurrentContainer(container.get('_id'));
         }});
     }
 });

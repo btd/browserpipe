@@ -1,7 +1,7 @@
 // Filename: router.js
 
 var _state = require('models/state'),
-    TopBarDashboard = require('views/top-bar/dashboard'),
+    TopBarListboard = require('views/top-bar/listboard'),
     Search = require('views/top-bar/search'),
     Device = require('views/top-bar/device'),
     Import = require('views/top-bar/import'),
@@ -13,19 +13,19 @@ var _state = require('models/state'),
 var AppRouter = Backbone.Router.extend({
     views: {},
     routes: {
-        'dashboards': 'showEmptyDashboard',
-        'dashboards/:id': 'showDashboard',
+        'listboards': 'showEmptyListboard',
+        'listboards/:id': 'showListboard',
         // Default
         '*actions': 'defaultAction'
     },
-    showEmptyDashboard: function (id) {
-        var currentDashboard = _state.dashboards.getCurrentDashboard();
-        if (currentDashboard && _state.dashboards.length > 0)
-            Backbone.history.navigate("/dashboards/" + currentDashboard.get('_id'), {trigger: true});
+    showEmptyListboard: function (id) {
+        var currentListboard = _state.listboards.getCurrentListboard();
+        if (currentListboard && _state.listboards.length > 0)
+            Backbone.history.navigate("/listboards/" + currentListboard.get('_id'), {trigger: true});
     },
-    showDashboard: function (id) {
-        if (_state.dashboards.length === 0)
-            Backbone.history.navigate("/dashboards", {trigger: true});
+    showListboard: function (id) {
+        if (_state.listboards.length === 0)
+            Backbone.history.navigate("/listboards", {trigger: true});
     },
     defaultAction: function (actions) {
     },
@@ -33,16 +33,16 @@ var AppRouter = Backbone.Router.extend({
         //Load initial data
         _state.loadInitialData();
 
-        _state.dashboards.on('currentDashboardChange', function (dashboard) {
-            if(dashboard)
-                Backbone.history.navigate('/dashboards/' + dashboard.get('_id'), {trigger: true});
+        _state.listboards.on('currentListboardChange', function (listboard) {
+            if(listboard)
+                Backbone.history.navigate('/listboards/' + listboard.get('_id'), {trigger: true});
             else
-                Backbone.history.navigate('/dashboards', {trigger: true});
+                Backbone.history.navigate('/listboards', {trigger: true});
         }, this);
 
         //Creates the top bar options
-        this.views.topBarDashboard = new TopBarDashboard({collection: _state.dashboards});
-        this.views.topBarDashboard.render();
+        this.views.topBarListboard = new TopBarListboard({collection: _state.listboards});
+        this.views.topBarListboard.render();
         this.views.search = new Search();
         this.views.search.render();
         this.views.device = new Device();
@@ -56,8 +56,8 @@ var AppRouter = Backbone.Router.extend({
         this.views.trash = new Trash();
         this.views.trash.render();
 
-        //Sets the current dashboard
-        _state.dashboards.setCurrentDashboard(initialOptions.currentDashboardId);
+        //Sets the current listboard
+        _state.listboards.setCurrentListboard(initialOptions.currentListboardId);
     }
 });
 
