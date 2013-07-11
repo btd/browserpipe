@@ -3,28 +3,28 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var _state = require('models/state');
 var AppView = require('views/view');
-var BreadCrumbTag = require('views/bottom-bar/tags/breadcrumb.tag');
+var BreadCrumbList = require('views/bottom-bar/lists/breadcrumb.list');
 var BreadCrumb = AppView.extend({
     el: $("#breadcrumb"),
     currentFilter: '',
     rootView: {},
     activeViews: [],
     initializeView: function () {
-        this.listenTo(_state.dashboards, 'currentContainerChange', this.currentContainerChanged);
+        this.listenTo(_state.listboards, 'currentContainerChange', this.currentContainerChanged);
     },
     renderView: function () {
         return this;
     },
     currentContainerChanged: function (container) {
-        //If it is a Tag container it navigates to it
+        //If it is a List container it navigates to it
         if (!container) {
             if (this.activeViews.length == 0)
-                this.setCurrentFilter('Tags', false)
+                this.setCurrentFilter('Lists', false)
         }
         else if (container.get('type') === 1)
-            this.setCurrentFilter(container.tag.getFilter(), false);
+            this.setCurrentFilter(container.list.getFilter(), false);
     },
-    setCurrentFilter: function (filter, opened) { //Eg. filter = Tags/Read Later/Development Tools
+    setCurrentFilter: function (filter, opened) { //Eg. filter = Lists/Read Later/Development Tools
         if (this.currentFilter != filter) {
             this.currentFilter = filter;
             var names = this.currentFilter.split('/');
@@ -32,25 +32,25 @@ var BreadCrumb = AppView.extend({
             //For each item from the filter, we create a BreadCrumbTab view
             for (i = 0; i < names.length; i++) {
                 filter = (i == 0 ? "" : filter + "/") + names[i];
-                this.createBreadCrumbTagView(filter, names, i, opened)
+                this.createBreadCrumbListView(filter, names, i, opened)
             }
             $("#bottom-bar").trigger("heightChanged");
         }
         else if (opened && this.activeViews.length > 0)
             this.activeViews[this.activeViews.length - 1].showDropDown();
     },
-    createBreadCrumbTagView: function (filter, names, index, opened) {
+    createBreadCrumbListView: function (filter, names, index, opened) {
         //Checks if view exist for that index, if so, it checks if it is the one defined by the filter
-        if (!this.activeViews[index] || this.activeViews[index].getTagFilter() != filter) {
+        if (!this.activeViews[index] || this.activeViews[index].getListFilter() != filter) {
             //If view extits for that index, but it is not the same filter, then it removes it
-            if (this.activeViews[index] && this.activeViews[index].getTagFilter() != filter) {
+            if (this.activeViews[index] && this.activeViews[index].getListFilter() != filter) {
                 this.removeActiveView(index);
             }
-            //Gets the tag for that filter
-            var tag = _state.getTagByFilter(filter)
+            //Gets the list for that filter
+            var list = _state.getListByFilter(filter)
             //Adds the view to that index
-            if (tag)
-                this.activeViews[index] = this.addTag(tag, opened);
+            if (list)
+                this.activeViews[index] = this.addList(list, opened);
         }
         else //We open the dropdown if it is the last one and opened is set to true
         if (opened && i == names.length - 1)
@@ -72,19 +72,19 @@ var BreadCrumb = AppView.extend({
         $(this.activeViews[index].el).remove();
         this.activeViews[index].dispose();
     },
-    addTag: function (tag, opened) {
+    addList: function (list, opened) {
         var self = this;
-        var view = new BreadCrumbTag({model: tag, opened: opened});
+        var view = new BreadCrumbList({model: list, opened: opened});
         $(this.el).append(view.render().el);
-        //If a tag dropdown is opened, all other are closed
+        //If a list dropdown is opened, all other are closed
         this.listenTo(view, 'showDropDown', function (filter) {
             self.hideAllDropDowns(filter);
         });
-        this.listenTo(view, 'startNavigateToChildTag', function (filter) {
+        this.listenTo(view, 'startNavigateToChildList', function (filter) {
             self.hideAllDropDowns();
             self.setCurrentFilter(filter, true);
             //No current container when navigating
-            _state.dashboards.setCurrentContainer(null);
+            _state.listboards.setCurrentContainer(null);
             //TODO: optimize if height of the bottom bar really changes
             $("#bottom-bar").trigger("heightChanged");
         });
@@ -92,7 +92,7 @@ var BreadCrumb = AppView.extend({
     },
     hideAllDropDowns: function (exception) {
         for (i = 0; i < this.activeViews.length; i++) {
-            if (exception != this.activeViews[i].getTagFilter())
+            if (exception != this.activeViews[i].getListFilter())
                 this.activeViews[i].hideDropDown();
         }
     },

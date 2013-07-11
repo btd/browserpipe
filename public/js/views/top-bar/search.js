@@ -10,7 +10,7 @@ var Search = AppView.extend({
         "click #search-btn": "search"
     },
     initializeView: function () {
-        this.listenTo(_state.dashboards, 'currentContainerChange', this.currentContainerChanged);
+        this.listenTo(_state.listboards, 'currentContainerChange', this.currentContainerChanged);
     },
     calculateWidth: function () {
 
@@ -19,10 +19,10 @@ var Search = AppView.extend({
         var $box = this.$('#search-box');
         var query = ""
         if (container) {
-            var filter = container.tag.getFilter();
+            var filter = container.list.getFilter();
             switch (container.get('type')) {
-                case 1: //Tag
-                    //Replaces "Tags/" with "#""
+                case 1: //List
+                    //Replaces "Lists/" with "#""
                     if (filter == "Trash")
                         query = "#"
                     else
@@ -60,43 +60,43 @@ var Search = AppView.extend({
     search: function (e) {
         e.preventDefault();
         var query = $.trim(this.$('#search-box').val());
-        //If search valid, creates a tag for the search and adds a container
+        //If search valid, creates a list for the search and adds a container
         if (query != "") {
             //TODO: perform the real search
-            var tag = _state.getTagByFilter("Search/" + query);
-            if (tag)
-                this.createContainer(tag);
+            var list = _state.getListByFilter("Search/" + query);
+            if (list)
+                this.createContainer(list);
             else
-                this.createTagAndContainer(query);
+                this.createListAndContainer(query);
         }
     },
-    createTagAndContainer: function (query) {
+    createListAndContainer: function (query) {
         var self = this;
-        var parentTag = _state.getTagByFilter("Search");
-        parentTag.children.createTag({
+        var parentList = _state.getListByFilter("Search");
+        parentList.children.createList({
             label: query,
-            path: parentTag.getFilter()
-        }, {wait: true, success: function (tag) {
-            self.trigger("tagAdded", tag);
+            path: parentList.getFilter()
+        }, {wait: true, success: function (list) {
+            self.trigger("listAdded", list);
             //We have to call it to make sure it is set before creating the container
-            _state.addTag(tag);
-            self.createContainer(tag);
+            _state.addList(list);
+            self.createContainer(list);
         }})
     },
-    createContainer: function (tag) {
-        var container = _state.dashboards.getCurrentDashboard().addContainer({
-            "filter": tag.getFilter(),
+    createContainer: function (list) {
+        var container = _state.listboards.getCurrentListboard().addContainer({
+            "filter": list.getFilter(),
             "order": 0, //TODO: manage order
-            "title": tag.get('label'),
+            "title": list.get('label'),
             "type": 2
         }, {wait: true, success: function (container) {
-            _state.dashboards.setCurrentContainer(container.get('_id'));
+            _state.listboards.setCurrentContainer(container.get('_id'));
         }});
     },
     calculateWidth: function () {
         var windowWidth = $(window).width();
-        var dashboardOptWidth = $("#opt-dashboards").width();
-        var width = windowWidth - dashboardOptWidth - config.SEARCH_BOX_FIX_MARGIN;
+        var listboardOptWidth = $("#opt-listboards").width();
+        var width = windowWidth - listboardOptWidth - config.SEARCH_BOX_FIX_MARGIN;
         if (width < config.SEARCH_BOX_MIN_WIDTH)
             width = config.SEARCH_BOX_MIN_WIDTH;
         this.$('#search-box').width(width).show();

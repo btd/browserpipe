@@ -22,8 +22,8 @@ var ImportFacebook = Import.extend({
     },
     save: function () {
         var label = this.getCurrentTime();
-        var parentTag = _state.getTagByFilter("Imports/Facebook");
-        this.createTagAndContainerAndClose(label, parentTag);
+        var parentList = _state.getListByFilter("Imports/Facebook");
+        this.createListAndContainerAndClose(label, parentList);
     }
 });
 module.exports = ImportFacebook;

@@ -1,1 +1,0 @@
-<%= tag.get('label') %><span class="children">...</span>

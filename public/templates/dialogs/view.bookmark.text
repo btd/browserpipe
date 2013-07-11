@@ -21,7 +21,7 @@
 <div class="modal-body">
   <ul class="nav nav-tabs">    
     <li><a href="#delete" data-toggle="tab">Delete</a></li>
-    <li><a href="#tags" data-toggle="tab">Tags</a></li>
+    <li><a href="#lists" data-toggle="tab">Lists</a></li>
     <li><a href="#general" data-toggle="tab">General</a></li>
   </ul>
   <div class="tab-content">
@@ -41,8 +41,8 @@
         </div>      
       </div>   
     </div>
-    <div class="tab-pane" id="tags">
-      <div class="bkmrk-tags"></div>
+    <div class="tab-pane" id="lists">
+      <div class="bkmrk-lists"></div>
     </div>
     <div class="tab-pane" id="delete">
       <div class="move-to-trash-alert alert alert-block">  

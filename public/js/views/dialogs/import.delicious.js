@@ -22,8 +22,8 @@ var ImportDelicious = Import.extend({
     },
     save: function () {
         var label = this.getCurrentTime();
-        var parentTag = _state.getTagByFilter("Imports/Delicious");
-        this.createTagAndContainerAndClose(label, parentTag);
+        var parentList = _state.getListByFilter("Imports/Delicious");
+        this.createListAndContainerAndClose(label, parentList);
     }
 });
 module.exports = ImportDelicious;

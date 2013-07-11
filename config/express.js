@@ -13,7 +13,7 @@ module.exports = function (app, config, passport) {
 
     // dynamic helpers
     app.use(function (req, res, next) {
-        res.locals.appName = 'Tagnfile.it';
+        res.locals.appName = 'Listboard.it';
         res.locals.title = 'Visualize your information';
 
         next();

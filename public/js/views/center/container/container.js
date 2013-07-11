@@ -23,7 +23,7 @@ var Container = AppView.extend({
         }
     },
     initializeView: function (options) {
-        this.listenTo(_state.dashboards, 'currentContainerChange', this.currentContainerChanged);
+        this.listenTo(_state.listboards, 'currentContainerChange', this.currentContainerChanged);
     },
     addMenuOptions: function (menuOptions) {
         this.menuOptions = _.union(this.menuOptions, menuOptions);
@@ -77,7 +77,7 @@ var Container = AppView.extend({
     },
     selectContainer: function (e) {
         //Sets the container as current
-        _state.dashboards.setCurrentContainer(this.model.get('_id'));
+        _state.listboards.setCurrentContainer(this.model.get('_id'));
     },
     markAsSelected: function () {
         this.$el.addClass('selected');
@@ -108,9 +108,9 @@ var Container = AppView.extend({
     },
     closeContainer: function (e) {
         e.stopPropagation();
-        _state.dashboards.getCurrentDashboard().removeContainer(this.model);
+        _state.listboards.getCurrentListboard().removeContainer(this.model);
         //As this was the current container, we set the current to null
-        _state.dashboards.setCurrentContainer(null);
+        _state.listboards.setCurrentContainer(null);
     }
 });
 module.exports = Container;

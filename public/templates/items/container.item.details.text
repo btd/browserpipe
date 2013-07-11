@@ -2,6 +2,6 @@
 <a target="_blank" href="<%= item.get('url') %>"><%= $.trim(item.get('title')) != "" ?  item.get('title') : item.get('url') %></a>
 <div class="details">
 	<div class="description"><%= item.get('note') %></div>
-	<ul class="tags clearfix"></ul>
+	<ul class="lists clearfix"></ul>
 	<img class="screenshot" src="" alt="ScreenShot" />	
 </div>

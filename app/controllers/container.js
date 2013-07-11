@@ -1,16 +1,16 @@
 var _ = require('lodash'),
     q = require('q'),
     mongoose = require('mongoose'),
-    Dashboard = mongoose.model('Dashboard');
+    Listboard = mongoose.model('Listboard');
 
 
 //Create container
 exports.create = function (req, res) {
-    Dashboard.findOne({ _id: req.params.dashboardId, user: req.user }).exec(function (err, dashboard) {
+    Listboard.findOne({ _id: req.params.listboardId, user: req.user }).exec(function (err, listboard) {
         if (err) res.json(500, err.errors);
         else {
-            dashboard.addContainer(_.pick(req.body, 'title', 'filter', 'type')).saveWithPromise().then(function () {
-                res.json({ _id: dashboard._id })
+            listboard.addContainer(_.pick(req.body, 'title', 'filter', 'type')).saveWithPromise().then(function () {
+                res.json({ _id: listboard._id })
             },function (err) {
                 //TODO: send corresponding number error
                 res.json(500, err.errors)
@@ -21,22 +21,22 @@ exports.create = function (req, res) {
 
 //Update container
 exports.update = function (req, res) {
-    Dashboard.findOne({ _id: req.params.dashboardId, user: req.user }).exec(function (err, dashboard) {
+    Listboard.findOne({ _id: req.params.listboardId, user: req.user }).exec(function (err, listboard) {
         if (err) res.json(500, err.errors);
         else {
-            var containerIdx = _.findIndex(dashboard.containers, function (c) {
+            var containerIdx = _.findIndex(listboard.containers, function (c) {
                 return c._id.toString() === req.params.containerId;
             });
 
 
             if (containerIdx >= 0) {
-                var container = dashboard.containers[containerIdx];
+                var container = listboard.containers[containerIdx];
 
                 _.merge(container, _.pick(req.body, 'title', 'filter'));
 
-                dashboard.containers.set(containerIdx, container);
+                listboard.containers.set(containerIdx, container);
 
-                dashboard.saveWithPromise().then(function () {
+                listboard.saveWithPromise().then(function () {
                     res.json({ _id: container._id })
                 },function (err) {
                     //TODO: send corresponding number error
@@ -53,12 +53,12 @@ exports.update = function (req, res) {
 
 //Delete container
 exports.destroy = function (req, res) {
-    Dashboard.findOne({ _id: req.params.dashboardId, user: req.user }).exec(function (err, dashboard) {
+    Listboard.findOne({ _id: req.params.listboardId, user: req.user }).exec(function (err, listboard) {
         if (err) res.json(500, err.errors);
         else {
-            dashboard.containers.pull({ _id: req.params.containerId });
+            listboard.containers.pull({ _id: req.params.containerId });
 
-            dashboard.saveWithPromise().then(function () {
+            listboard.saveWithPromise().then(function () {
                 res.json({ _id: req.params.containerId });
             },function (err) {
                 //TODO: send corresponding number error

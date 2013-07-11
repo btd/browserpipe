@@ -26,7 +26,7 @@ exports.create = function (req, res) {
 exports.update = function (req, res) {
     if (req.isAuthenticated() && req.currentItem) {
         var item = req.currentItem;
-        item.tags = req.body.tags
+        item.lists = req.body.lists
         item.title = req.body.title
         item.url = req.body.url
         item.note = req.body.note

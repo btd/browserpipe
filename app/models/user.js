@@ -20,7 +20,7 @@ var UserSchema = new Schema({
         //do not allow user to set empty password
         return _.isEmpty(password) ? undefined : bcrypt.hashSync(password, bcryptRounds);
     }, required: true},
-    currentDashboard: {type: Schema.ObjectId, ref: 'Dashboard'}
+    currentListboard: {type: Schema.ObjectId, ref: 'Listboard'}
 });
 
 UserSchema.plugin(require('mongoose-timestamp'));
@@ -54,7 +54,7 @@ UserSchema.pre('save', function (done) {
 });
 
 var qfindOne = function (obj) {
-    return User.findOne(obj).populate('currentDashboard').execWithPromise();
+    return User.findOne(obj).populate('currentListboard').execWithPromise();
 };
 
 module.exports = User = mongoose.model('User', UserSchema);

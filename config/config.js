@@ -5,12 +5,12 @@ var _ = require('lodash');
 var config = {
     test: {
         db: {
-            uri: 'mongodb://localhost/tagnfileit-test'
+            uri: 'mongodb://localhost/listboardit-test'
         }
     },
     development: {
         db: {
-            uri: 'mongodb://localhost/tagnfileit'
+            uri: 'mongodb://localhost/listboardit'
         }, facebook: {
             appId: "147484312059729", appSecret: "632b8055f1824abb1b8920569a53ec3d", callbackURL: "http://localhost:4000/auth/facebook/callback"
         }, twitter: {
@@ -20,7 +20,7 @@ var config = {
         }
     }, production: {
         db: {
-            uri: 'mongodb://localhost/tagnfileit'
+            uri: 'mongodb://localhost/listboardit'
         }
     }
 };

@@ -2,17 +2,17 @@ var _ = require('lodash'),
     q = require('q'),
     mongoose = require('mongoose'),
     User = mongoose.model('User'),
-    Tag = mongoose.model('Tag'),
-    Dashboard = mongoose.model('Dashboard')
+    List = mongoose.model('List'),
+    Listboard = mongoose.model('Listboard')
 
 
 //Init
 exports.init = function (req, res) {
     if (req.isAuthenticated()) {
-        if (req.user.currentDashboard)
-            res.redirect('/dashboards/' + req.user.currentDashboard._id)
+        if (req.user.currentListboard)
+            res.redirect('/listboards/' + req.user.currentListboard._id)
         else
-            res.redirect('/dashboards') //No dashboard
+            res.redirect('/listboards') //No listboard
     }
     else
         res.render('main/index')
@@ -45,44 +45,44 @@ exports.create = function (req, res) {
     user.provider = 'local' //for passport
 
     //Creates initial data
-    //Root tags
-    var tagsTag = new Tag({ label: 'Tags', user: user });
-    var trashTag = new Tag({ label: 'Trash', user: user });
-    var importsTag = new Tag({ label: 'Imports', user: user });
+    //Root lists
+    var listsList = new List({ label: 'Lists', user: user });
+    var trashList = new List({ label: 'Trash', user: user });
+    var importsList = new List({ label: 'Imports', user: user });
 
-    //Create tags
-    var readLaterTag = tagsTag.createChildTag("Read Later");
-    var coolSitesTag = tagsTag.createChildTag("Cool Sites");
+    //Create lists
+    var readLaterList = listsList.createChildList("Read Later");
+    var coolSitesList = listsList.createChildList("Cool Sites");
 
-    //Create imports tags
-    var fileImports = importsTag.createChildTag("File");
-    var twitterImports = importsTag.createChildTag("Twitter");
-    var facebookImports = importsTag.createChildTag("Facebook");
-    var deliciousImports = importsTag.createChildTag("Delicious");
-    var pinboardImports = importsTag.createChildTag("Pinboard");
+    //Create imports lists
+    var fileImports = importsList.createChildList("File");
+    var twitterImports = importsList.createChildList("Twitter");
+    var facebookImports = importsList.createChildList("Facebook");
+    var deliciousImports = importsList.createChildList("Delicious");
+    var pinboardImports = importsList.createChildList("Pinboard");
 
-    //Create dashboard
-    var dashboard = new Dashboard({ label: 'My initial dashboard', user: user})
-        .addContainerByTag(readLaterTag)
-        .addContainerByTag(coolSitesTag);
+    //Create listboard
+    var listboard = new Listboard({ label: 'My initial listboard', user: user})
+        .addContainerByList(readLaterList)
+        .addContainerByList(coolSitesList);
 
-    //Sets current dashboard to recently created one
-    user.currentDashboard = dashboard
+    //Sets current listboard to recently created one
+    user.currentListboard = listboard
 
     //TODO: manage rollback
     q.all([
             user.saveWithPromise(),//it is important user will be first, because this one created from external data and can fail.
-            tagsTag.saveWithPromise(),
-            trashTag.saveWithPromise(),
-            importsTag.saveWithPromise(),
-            readLaterTag.saveWithPromise(),
-            coolSitesTag.saveWithPromise(),
+            listsList.saveWithPromise(),
+            trashList.saveWithPromise(),
+            importsList.saveWithPromise(),
+            readLaterList.saveWithPromise(),
+            coolSitesList.saveWithPromise(),
             fileImports.saveWithPromise(),
             twitterImports.saveWithPromise(),
             facebookImports.saveWithPromise(),
             deliciousImports.saveWithPromise(),
             pinboardImports.saveWithPromise(),
-            dashboard.saveWithPromise()
+            listboard.saveWithPromise()
         ])
         .spread(function () {
             res.format({
@@ -90,7 +90,7 @@ exports.create = function (req, res) {
                 html: function () {
                     req.login(user, function (err) {
                         if (err) return res.render('500')
-                        return res.redirect('/dashboards/' + dashboard.id)
+                        return res.redirect('/listboards/' + listboard.id)
                     })
                 },
 

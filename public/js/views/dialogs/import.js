@@ -19,26 +19,26 @@ var Import = AppView.extend({
         this.$el.html(compiledTemplate).appendTo('#dialogs').modal('show');
         return this;
     },
-    createTagAndContainerAndClose: function (label, parentTag) {
+    createListAndContainerAndClose: function (label, parentList) {
         var self = this;
-        parentTag.children.createTag({
+        parentList.children.createList({
             label: label,
-            path: parentTag.getFilter()
-        }, {wait: true, success: function (tag) {
-            self.trigger("tagAdded", tag);
+            path: parentList.getFilter()
+        }, {wait: true, success: function (list) {
+            self.trigger("listAdded", list);
             //We have to call it to make sure it is set before creating the container
-            _state.addTag(tag);
-            self.createContainerAndClose(self, tag);
+            _state.addList(list);
+            self.createContainerAndClose(self, list);
         }})
     },
-    createContainerAndClose: function (self, tag) {
-        var container = _state.dashboards.getCurrentDashboard().addContainer({
-            "filter": tag.getFilter(),
+    createContainerAndClose: function (self, list) {
+        var container = _state.listboards.getCurrentListboard().addContainer({
+            "filter": list.getFilter(),
             "order": 0, //TODO: manage order
-            "title": tag.get('label'),
+            "title": list.get('label'),
             "type": 3
         }, {wait: true, success: function (container) {
-            _state.dashboards.setCurrentContainer(container.get('_id'));
+            _state.listboards.setCurrentContainer(container.get('_id'));
             self.close();
         }});
     },
