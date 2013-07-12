@@ -1,0 +1,27 @@
+.lists-editor{
+	position: relative;	
+
+	.close{
+		float: none;
+		margin-left: 12px;
+	}
+
+	.lists-editor-list {
+		display: inline-block;
+		background-color: @blue;
+        margin: 6px 3px;
+        padding: 3px 10px;
+
+        &:hover{
+            background-color: darken(@blue, 6%);
+        }
+        span {                        
+            color: @white;
+        }
+	}
+
+	.editor-list-input {
+		margin-top: 12px;
+	}
+
+}

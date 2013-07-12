@@ -1,0 +1,1 @@
+<%= list.get('label') %><span class="children">...</span>
