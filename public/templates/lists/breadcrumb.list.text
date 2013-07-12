@@ -1,0 +1,9 @@
+<a class="item" href="">
+	<% if(list.get('icon')){ %><img width="16px" src="<%= list.get('icon') %>"/><% } %>
+	<span><%= list.get('label') %></span>
+</a>
+<div class="dropdown-menu" style="display:none;">	
+	<ul class="dropdown-menu-lists"></ul>
+	<a class="dropdown-edit-list" href="#"> Edit</a>
+	<a class="dropdown-add-list" href="#">Add new</a>
+</div>
