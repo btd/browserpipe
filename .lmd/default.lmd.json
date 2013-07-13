@@ -40,15 +40,12 @@
 
     "sourcemap": "js/main.min.map",
     "sourcemap_inline": true,
-    "sourcemap_www": "../",
+    "sourcemap_www": ".",
     "www_root": ".",
 
     "ie": true,
     "warn": true,
     "log": true,
-    "stats": true,
-    "stats_sendto": true,
-    "stats_coverage" : true,
 
     "shortcuts": true,
 
