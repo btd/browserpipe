@@ -67,38 +67,40 @@ exports.create = function (req, res) {
         .addContainerByList(coolSitesList);
 
     //Sets current listboard to recently created one
-    user.currentListboard = listboard
+    user.currentListboard = listboard;
 
-    //TODO: manage rollback
-    q.all([
-            user.saveWithPromise(),//it is important user will be first, because this one created from external data and can fail.
-            listsList.saveWithPromise(),
-            trashList.saveWithPromise(),
-            importsList.saveWithPromise(),
-            readLaterList.saveWithPromise(),
-            coolSitesList.saveWithPromise(),
-            fileImports.saveWithPromise(),
-            twitterImports.saveWithPromise(),
-            facebookImports.saveWithPromise(),
-            deliciousImports.saveWithPromise(),
-            pinboardImports.saveWithPromise(),
-            listboard.saveWithPromise()
-        ])
-        .spread(function () {
-            res.format({
+    user.saveWithPromise()
+        .then(function() {
+            q.all([
+                    listsList.saveWithPromise(),
+                    trashList.saveWithPromise(),
+                    importsList.saveWithPromise(),
+                    readLaterList.saveWithPromise(),
+                    coolSitesList.saveWithPromise(),
+                    fileImports.saveWithPromise(),
+                    twitterImports.saveWithPromise(),
+                    facebookImports.saveWithPromise(),
+                    deliciousImports.saveWithPromise(),
+                    pinboardImports.saveWithPromise(),
+                    listboard.saveWithPromise()
+                ])
+                .spread(function () {
+                    res.format({
 
-                html: function () {
-                    req.login(user, function (err) {
-                        if (err) return res.render('500')
-                        return res.redirect('/listboards/' + listboard.id)
-                    })
-                },
+                        html: function () {
+                            req.login(user, function (err) {
+                                if (err) return res.render('500')
+                                return res.redirect('/listboards/' + listboard.id)
+                            })
+                        },
 
-                json: function () {
-                    res.send({ _id: user._id });
-                }
-            });
-        },function (err) {
+                        json: function () {
+                            res.send({ _id: user._id });
+                        }
+                    });
+                }).done()
+        })
+        .fail(function (err) {
             res.format({
 
                 html: function () {
@@ -110,7 +112,9 @@ exports.create = function (req, res) {
                     res.send(400, { errors: err.errors });
                 }
             });
-        }).done()
+        })
+        .done();
+
 }
 
 
