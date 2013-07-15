@@ -29,6 +29,7 @@
     "nodemon": "*",
     "should": "*",
     "supertest": "*",
-    "cookiejar": "*"
+    "cookiejar": "*",
+    "istanbul": "~0.1.42"
   }
 }
