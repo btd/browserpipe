@@ -41,4 +41,62 @@ describe('listboard controller', function () {
                 });
         });
     });
+
+    it('should return 401 with POST on /listboards when not authenticated', function (done) {
+
+            request(app)
+                .post('/listboards')
+                .send(testListboard)
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(401, done);
+
+    });
+
+    it('should return 400 with POST on /listboards when authenticated but bad data', function (done) {
+
+        helper.authUser(app, done, function(cookie, userId) {
+
+            //just empty object
+            request(app)
+                .post('/listboards')
+                .send({})
+                .set('Cookie', cookie)
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(400)
+                .end(function (err, res) {
+                    if(err) done(err);
+
+                    //empty string
+                    request(app)
+                        .post('/listboards')
+                        .send({ label: '' })
+                        .set('Cookie', cookie)
+                        .set('Accept', 'application/json')
+                        .expect('Content-Type', /json/)
+                        .expect(400)
+                        .end(function (err, res) {
+                            if(err) done(err);
+
+                            //string with just space chars
+                            request(app)
+                                .post('/listboards')
+                                .send({ label: '      ' })
+                                .set('Cookie', cookie)
+                                .set('Accept', 'application/json')
+                                .expect('Content-Type', /json/)
+                                .expect(400)
+                                .end(function (err, res) {
+                                    if(err) done(err);
+
+                                    done();
+                                });
+                        });
+
+
+                });
+        });
+
+    });
 });
