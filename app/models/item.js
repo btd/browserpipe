@@ -17,7 +17,7 @@ var ItemSchema = new Schema({
     note: {type: String, trim: true}
 });
 
-ItemSchema.plugin(require('mongoose-timestamp'));
+ItemSchema.plugin(require('../util/mongoose-timestamp'));
 
 ItemSchema.statics.getAllByFilters = function (user, filters) {
     return this
