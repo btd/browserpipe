@@ -23,7 +23,7 @@ var UserSchema = new Schema({
     currentListboard: {type: Schema.ObjectId, ref: 'Listboard'}
 });
 
-UserSchema.plugin(require('mongoose-timestamp'));
+UserSchema.plugin(require('../util/mongoose-timestamp'));
 
 UserSchema.methods.authenticate = function (password) {
     return bcrypt.compareSync(password, this.password);
@@ -39,10 +39,11 @@ UserSchema.statics.byEmail = function (email) {
 }
 
 UserSchema.pre('save', function (done) {
+    var that = this;
     User.byEmail(this.email)
         .then(function (otherUser) {
-            if (otherUser) {
-                this.invalidate('email', errorMsgs.should_be_unique);
+            if (otherUser && !otherUser._id.equals(that._id)) {
+                that.invalidate('email', errorMsgs.should_be_unique);
                 done(new Error(errorMsgs.should_be_unique));
             } else {
                 done();
@@ -50,7 +51,6 @@ UserSchema.pre('save', function (done) {
         }).fail(function (err) {
             done(err);
         });
-
 });
 
 var qfindOne = function (obj) {

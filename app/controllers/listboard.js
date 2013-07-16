@@ -14,14 +14,18 @@ exports.show = showListboard;
 //Create listboard
 exports.create = function (req, res) {
     var listboard = new Listboard({ label: req.body.label, user: req.user });
-    req.user.currentListboard = listboard;
-    q.all([listboard.saveWithPromise(),
-            req.user.saveWithPromise()])
-        .spread(function () {
+
+    listboard.saveWithPromise()
+        .then(function() {
+            req.user.currentListboard = listboard; // this is required because of curcular dependency
+            return req.user.saveWithPromise();
+        })
+        .then(function() {
             res.json({ _id: listboard._id })
-        },function (err) {
+        })
+        .fail(function(err) {
             res.json(400, err.errors);
-        }).done()
+        });
 }
 
 //Update listboard

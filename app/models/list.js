@@ -12,7 +12,7 @@ var ListSchema = new Schema({
     user: {type: Schema.ObjectId, ref: 'User'}
 });
 
-ListSchema.plugin(require('mongoose-timestamp'));
+ListSchema.plugin(require('../util/mongoose-timestamp'));
 
 ListSchema.methods.isRoot = function () {
     return _.isEmpty(this.path);
