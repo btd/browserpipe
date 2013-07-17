@@ -30,6 +30,6 @@
     "should": "*",
     "supertest": "*",
     "cookiejar": "*",
-    "istanbul": "~0.1.42"
+    "istanbul": "*"
   }
 }

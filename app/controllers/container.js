@@ -1,7 +1,6 @@
 var _ = require('lodash'),
     q = require('q'),
-    mongoose = require('mongoose'),
-    Listboard = mongoose.model('Listboard');
+    mongoose = require('mongoose');
 
 
 //Create container

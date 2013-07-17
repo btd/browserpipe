@@ -9,7 +9,7 @@ var testListboard = { label: "Dashboard" }
 
 describe('listboard controller', function () {
     beforeEach(function (done) {
-        helper.dropCollections(['users', 'listboards', 'lists'], done);
+        helper.dropCollections(['users', 'lists'], done);
     });
 
     it('should create listboard with POST on /listboards when authenticated and send good data', function (done) {
@@ -27,14 +27,16 @@ describe('listboard controller', function () {
 
                     res.body.should.have.property('_id');
 
-                    var Listboard = mongoose.model('Listboard');
+                    var User = mongoose.model('User');
 
-                    Listboard.byId(res.body._id, '_id label user')
-                        .then(function(listboard) {
-                            should.exist(listboard);
+                    User.byId(userId)
+                        .then(function(user) {
+                            should.exist(user);
+
+                            var listboard = user.currentListboard;
 
                             listboard.label.should.be.equal(testListboard.label);
-                            listboard.user._id.toString().should.be.equal(userId);
+                            listboard._id.toString().should.be.equal(res.body._id);
 
                             done();
                         }).fail(done);
