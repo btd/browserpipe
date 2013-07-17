@@ -25,7 +25,6 @@ exports.create = function (req, res) {
 
 //Update listboard
 exports.update = function (req, res) {
-
     var listboard = req.currentListboard;
     listboard.label = req.body.label
     listboard.saveWithPromise().then(function () {
@@ -34,14 +33,14 @@ exports.update = function (req, res) {
         //TODO: send corresponding number error
         res.json(err.errors)
     }).done()
-
-
 }
 
 //Find listboard by id
 exports.listboard = function (req, res, next, id) {
-    var listboard = req.user.listboards.id(id);
-    req.currentListboard = listboard;
+    if(req.isAuthenticated()) {
+        var listboard = req.user.listboards.id(id);
+        req.currentListboard = listboard;
+    }
     next();
 }
 
@@ -77,9 +76,16 @@ function showListboard(req, res) {
 
 //Delete item
 exports.destroy = function (req, res) {
-    var listboard = req.currentListboard;
-    listboard.remove(function (err) {
-        res.json({ _id: listboard._id })
-    })
-
+    if(req.currentListboard) {
+        var listboard = req.currentListboard.remove();
+        req.user.saveWithPromise()
+            .then(function() {
+                res.json({ _id: listboard._id });
+            })
+            .fail(function(err) {
+                res.send(400, err);
+            });
+    } else {
+        res.send(404, { error: 'Listboard does not exists'})
+    }
 }
