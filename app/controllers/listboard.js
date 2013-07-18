@@ -2,7 +2,6 @@ var _ = require('lodash'),
     q = require('q'),
     mongoose = require('mongoose'),
     List = mongoose.model('List'),
-    Listboard = mongoose.model('Listboard'),
     Item = mongoose.model('Item')
 
 //No listboard
@@ -13,13 +12,9 @@ exports.show = showListboard;
 
 //Create listboard
 exports.create = function (req, res) {
-    var listboard = new Listboard({ label: req.body.label, user: req.user });
+    var listboard = req.user.addCurrentListboard({ label: req.body.label });
 
-    listboard.saveWithPromise()
-        .then(function() {
-            req.user.currentListboard = listboard; // this is required because of curcular dependency
-            return req.user.saveWithPromise();
-        })
+    req.user.saveWithPromise()
         .then(function() {
             res.json({ _id: listboard._id })
         })
@@ -45,20 +40,15 @@ exports.update = function (req, res) {
 
 //Find listboard by id
 exports.listboard = function (req, res, next, id) {
-    Listboard
-        .findOne({ _id: id })
-        .exec(function (err, listboard) {
-            if (err) return next(err)
-            req.currentListboard = listboard
-            next()
-        })
+    var listboard = req.user.listboards.id(id);
+    req.currentListboard = listboard;
+    next();
 }
 
 function showListboard(req, res) {
-    q.all([
-            Listboard.getAll(req.user),
-            List.getAll(req.user)
-        ]).spread(function (listboards, lists) {
+    var listboards = req.user.listboards;
+    List.getAll(req.user)
+        .then(function (lists) {
             //We only load the ones from opened containers
 
             var containerFilters = _(listboards).map(function (listboard) {
@@ -70,7 +60,7 @@ function showListboard(req, res) {
                     containerFilters
                 ).then(function (items) {
                     res.render('main/home', {
-                            currentListboardId: ((req.currentListboard && req.currentListboard.id) || req.user.currentListboard.id),
+                            currentListboardId: ((req.currentListboard && req.currentListboard._id) || req.user.currentListboard._id),
                             user: req.user,
                             listboards: listboards,
                             items: items,

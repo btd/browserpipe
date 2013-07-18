@@ -2,8 +2,7 @@ var _ = require('lodash'),
     q = require('q'),
     mongoose = require('mongoose'),
     User = mongoose.model('User'),
-    List = mongoose.model('List'),
-    Listboard = mongoose.model('Listboard')
+    List = mongoose.model('List');
 
 
 //Init
@@ -62,13 +61,11 @@ exports.create = function (req, res) {
     var pinboardImports = importsList.createChildList("Pinboard");
 
     //Create listboard
-    var listboard = new Listboard({ label: 'My initial listboard', user: user})
+    var listboard = user.addCurrentListboard({ label: 'My initial listboard'})
         .addContainerByList(readLaterList)
         .addContainerByList(coolSitesList);
 
     //Sets current listboard to recently created one
-    user.currentListboard = listboard;
-
     user.saveWithPromise()
         .then(function() {
             q.all([
@@ -81,8 +78,7 @@ exports.create = function (req, res) {
                     twitterImports.saveWithPromise(),
                     facebookImports.saveWithPromise(),
                     deliciousImports.saveWithPromise(),
-                    pinboardImports.saveWithPromise(),
-                    listboard.saveWithPromise()
+                    pinboardImports.saveWithPromise()
                 ])
                 .spread(function () {
                     res.format({

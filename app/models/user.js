@@ -20,14 +20,31 @@ var UserSchema = new Schema({
         //do not allow user to set empty password
         return _.isEmpty(password) ? undefined : bcrypt.hashSync(password, bcryptRounds);
     }, required: true},
-    currentListboard: {type: Schema.ObjectId, ref: 'Listboard'}
+    currentListboardIdx: { type: Number },
+    listboards: [ require('./listboard') ]
 });
 
 UserSchema.plugin(require('../util/mongoose-timestamp'));
 
 UserSchema.methods.authenticate = function (password) {
     return bcrypt.compareSync(password, this.password);
-}
+};
+
+/**
+ * Add listboard to the end of listboards, set currentListboardIdx to point on it
+ * @param rawListboard {Object}
+ * @returns newly created listboard
+ */
+UserSchema.methods.addCurrentListboard = function(rawListboard) {
+    this.currentListboardIdx = this.listboards.length;
+    this.listboards.push(rawListboard);
+    return this.currentListboard;
+};
+
+UserSchema.virtual('currentListboard')
+    .get(function() {
+    return this.listboards[this.currentListboardIdx];
+})
 
 // 2 convinient wrappers to do not repeat in code also it populate internal doc
 UserSchema.statics.byId = function (id) {
@@ -54,7 +71,7 @@ UserSchema.pre('save', function (done) {
 });
 
 var qfindOne = function (obj) {
-    return User.findOne(obj).populate('currentListboard').execWithPromise();
+    return User.findOne(obj).execWithPromise();
 };
 
 module.exports = User = mongoose.model('User', UserSchema);
