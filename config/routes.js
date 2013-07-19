@@ -3,9 +3,13 @@ var auth = require('./middlewares/authorization');
 
 module.exports = function (app, passport) {
 
+  //General routes
+  var main = require('../app/controllers/main')  
+  app.get('/', main.home)
+  app.get('/about', main.about)
+
   //User routes
-  var users = require('../app/controllers/user')
-  app.get('/', users.init)
+  var users = require('../app/controllers/user')  
   app.get('/login', users.login)
   app.get('/signup', users.signup)
   app.get('/logout', users.logout)
