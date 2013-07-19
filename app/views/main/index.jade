@@ -1,68 +1,73 @@
 extends ../layouts/index
 
 block body
-  .row-fluid
-    #index-header.span12
-      .outer
-        .inner
-          h1#logo
-            a(href="/") Listboard.it
-          ul.navbar
-            li
-              a(href="/") Home
-            li
-              a(href="/login") Login
-            li
-              a.icon(href="http://twitter.com/listboardit", target="_blank")
-                i.icon-twitter      
-  .row-fluid
-    #index-center.span12
-      .inner
-        .reasons           
-          h3 NO MORE 1000 TABS IN YOUR BROWSER!
-          img(src="//s3.amazonaws.com/assets.uncover.com/assets/home-hero-reason-underline-99629b6c79504bcdbfeb73ca4bfba59b.png")
-          h3 SYNC THEM INTO LISTBOARD          
-          img(src="//s3.amazonaws.com/assets.uncover.com/assets/home-hero-reason-underline-99629b6c79504bcdbfeb73ca4bfba59b.png")  
-          h3 BOOKMARK THEM FOR PRESENT, LATER OR FUTURE USE
-          img(src="//s3.amazonaws.com/assets.uncover.com/assets/home-hero-reason-underline-99629b6c79504bcdbfeb73ca4bfba59b.png")
-        .register-box
-          form(action="/invites", method="post")
-            input(name="authenticity_token", value="49bqOdTmguk9F74cNAt78CAVj7XNeiRqnxN5bMA2MWg=",   type="hidden")
-            h2 Want to try it out?
-            h4 
-              | We are progressively adminting new users. Feel free to leave us your email and we will contact you. 
-              a(href="/early-users") Learn more
-            .control-group
-              input(type="text", name="invite[email]", placeholder="Enter your work email address",   class="input-block-level")
-              small No spam, we will only send you the invitation
-              a(href="#", class="btn btn-success btn-block") Count me in!
+  .container-fluid
     .row-fluid
       .span12
-        .box
-          h2 Feature 1
-          p Bla bla bla
+        .row-fluid.blue
+          header.span12
+            .outer.inner 
+              .inner
+                h1#logo.pull-left
+                  a(href="/") Listboard.it
+                ul.navbar.pull-right
+                  li
+                    a(href="/") Home
+                  li
+                    a(href="/login") Login
+                  li
+                    a.icon(href="http://twitter.com/listboardit", target="_blank")
+                      i.icon-twitter      
+        
+          #index-center.span12
+            .inner
+              .reasons.pull-left           
+                h3 NO MORE 1000 TABS IN YOUR BROWSER!
+                h3 SYNC THEM INTO LISTBOARD          
+                h3 BOOKMARK THEM FOR PRESENT, LATER OR FUTURE USE
+              .register-box.pull-right
+                form(action="/invites", method="post")
+                  input(name="authenticity_token", value="49bqOdTmguk9F74cNAt78CAVj7XNeiRqnxN5bMA2MWg=", type="hidden")
+                  h2 Want to try it out?
+                  h4 
+                    | We are progressively adminting new users. Feel free to leave us your email and we will contact you. 
+                    a(href="/early-users") Learn more
+                  .control-group
+                    input(type="text", name="invite[email]", placeholder="Enter your work email address", class="input-block-level")
+                    .help-block No spam, we will only send you the invitation
+                    a(href="#", class="btn btn-success btn-block") Count me in!
+        .row-fluid
+          .span12 
+            .row-fluid
+              
+                .inner
+                  .box.span4
+                    h2 Feature 1
+                    p Bla bla bla
 
-        .box
-          h2 Feature 2
-          p bla bla bla
+                  .box.span4
+                    h2 Feature 2
+                    p bla bla bla
 
-        .box
-          h2 Feature 3
-          p bla bla bla
+                  .box.span4
+                    h2 Feature 3
+                    p bla bla bla
 
-        .box
-          center(style="width:300px;margin:auto;")
-            h2 So, interested?
-            p Leave us your email and we will send you an invite soon
-            input(type="text", name="invite[email]", placeholder="Enter your work email address",     class="input-block-level")
-            a(href="#", class="btn btn-success btn-block") Count me in!
+            .row-fluid
+              .span12
+                .box
+                  center(style="width:300px;margin:auto;")
+                    h2 So, interested?
+                    p Leave us your email and we will send you an invite soon
+                    input(type="text", name="invite[email]", placeholder="Enter your work email address",     class="input-block-level")
+                    a(href="#", class="btn btn-success btn-block") Count me in!
 
-    .row-fluid
-      .span12
-        center.footer
-          p(class="footer-big")
-            | Check our 
-            a(href="http://blog.listboard.it", target="_blank") blog 
-            | or 
-            a(href="mailto:info@listboard.it", target="_blank") email us 
-          p(class="footer-small") Lisboard.it ©2013
+        .row-fluid.blue
+          .span12
+            footer
+              p(class="footer-big")
+                | Check our 
+                a(href="http://blog.listboard.it", target="_blank") blog 
+                | or 
+                a(href="mailto:info@listboard.it", target="_blank") email us 
+              p(class="footer-small") Lisboard.it ©2013

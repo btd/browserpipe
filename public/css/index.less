@@ -1,16 +1,31 @@
 @import 'bootstrap.less';
 @import 'base.less';
 
+@baseWidth: 978px;
+
 body {
-    background-color: #EFEFEF;
+  background-color: #EFEFEF;
 }
 
-#index-header{	
+.container-fluid {
+	padding: 0;
+}
+
+.blue {
 	background-color: @blueDark;
+}
+
+
+.inner {
+	margin-left: auto;
+	margin-right: auto;
+	width: @baseWidth;
+}
+
+header{	
 
 	.outer {
-		margin: 20px auto 0;		
-		width: 978px;
+		margin-top: 20px;		
 		border-bottom: 1px solid rgba(255,255,255,.2);	
 
 		.inner {
@@ -23,14 +38,12 @@ body {
 				font-weight: 100;
 				text-decoration: none;
 				text-shadow: 0 0 5px rgba(192,228,255,.12);
-				font-size: 30px;
-				letter-spacing: -2px;
-				float:left;
+				font-size: 40px;
+				letter-spacing: -1px;
 			}
 
 			.navbar {
-				float:right;
-				margin: 10px 20px 0 0;
+				margin-top: 10px;
 
 				li {
 					float: left;
@@ -38,7 +51,6 @@ body {
 					a {
 						display: block;
 						padding: 10px 20px;
-						color: #EFEFEF;
 						color: rgba(255,255,255,.5);
 						text-decoration: none;
 						font-size: 18px;
@@ -62,12 +74,9 @@ body {
 
 #index-center {	
 	height: 450px;
-	background-color: @blueDark;
+	margin-left: 0;
 
-	.inner {
-		margin: auto;
-		width: 978px;
-	}
+	
 }
 
 .box {
@@ -79,14 +88,18 @@ body {
 	color:#EFEFEF;
 	padding:40px 0px 140px;
 	width:460px;
-	float:left;
+
 	text-shadow:0px 1px 1px rgba(0, 0, 0, 0.6);
 
 	h3 {
+		text-transform: uppercase;
 		font-size:22px;
 		line-height:1.5;
 		font-weight:600;
-		margin: 40px 0 0 0;
+		margin-bottom: 40px;
+		padding-bottom: 20px;
+
+		background: url('//s3.amazonaws.com/assets.uncover.com/assets/home-hero-reason-underline-99629b6c79504bcdbfeb73ca4bfba59b.png') no-repeat 5% bottom;
 	}
 }
 
@@ -95,16 +108,15 @@ body {
 	width:380px;
 	margin:45px 0px 50px;
 	padding:20px 40px;
+
 	float:right;
+	
 	background:rgba(255, 255, 255, 0.8);
 	color:#3c4446;
-	-webkit-box-shadow:0px 2px 2px rgba(0, 0, 0, 0.5);
-	-moz-box-shadow:0px 2px 2px rgba(0, 0, 0, 0.5);
-	box-shadow:0px 2px 2px rgba(0, 0, 0, 0.5);
-	-webkit-border-radius:3px;
-	-moz-border-radius:3px;
-	border-radius:3px;
-
+	
+	.box-shadow(0px 2px 2px rgba(0, 0, 0, 0.5));
+	.border-radius(3px);
+	
 	h2 {
 		font-size:30px;
 		opacity:0.95;
@@ -121,7 +133,8 @@ body {
 	input[type='text'] {
 		margin:10px 0px 0px;
 		font-size:18px;
-		border-color:transparent;
+		line-height: 25px;
+		height: 35px;
 
 		.error {
 			border-color:#a73a1e;
@@ -145,9 +158,8 @@ body {
 
 
 
-.footer {
+footer {
 	padding: 30px 0 10px 0;
-	background-color: @blueDark;
 	text-align: center;
 
 	p {
@@ -155,8 +167,8 @@ body {
 	}
 
 	.footer-small {
-	font-size:0.8em;
-	color: #fff;
+		font-size:0.8em;
+		color: #fff;
 	}
 
 	.footer-big {
@@ -164,14 +176,14 @@ body {
 		color: #fff;
 	}
 
-	.footer-small a, .footer-big a {
+	a {
 		color:#aaa;
 		text-decoration: none;
-	}
 
-	.footer-small a:hover, .footer-big a:hover {
-		color:#fff;
-		text-decoration: none;
+		&:hover{
+			color:#fff;
+			text-decoration: none;
+		}
 	}
 }
 
