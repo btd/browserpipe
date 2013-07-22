@@ -4,20 +4,6 @@ var _ = require('lodash'),
     User = mongoose.model('User'),
     List = mongoose.model('List');
 
-
-//Init
-exports.init = function (req, res) {
-    if (req.isAuthenticated()) {
-        if (req.user.currentListboard)
-            res.redirect('/listboards/' + req.user.currentListboard._id)
-        else
-            res.redirect('/listboards') //No listboard
-    }
-    else
-        res.render('main/index')
-}
-
-
 //Login form
 exports.login = function (req, res) {
     res.render('users/login', {
