@@ -21,4 +21,7 @@ test-cov:
 		--reporter $(REPORTER) \
 		$(MOCHA_OPTS)
 
+prod:
+	@NODE_ENV=production node server.js
+
 .PHONY: test test-unit test-cov

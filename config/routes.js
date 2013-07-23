@@ -1,10 +1,21 @@
 var auth = require('./middlewares/authorization');
+var env = require('./config').env;
 
+var isProd = env === 'production';
+if(isProd) {
+    module.exports = function(app) {
+        var main = require('../app/controllers/main')
+        app.get('/', main.home);
+
+        var invitation = require('../app/controllers/invitation')
+        app.post(  '/invitations', invitation.create)
+    }
+} else {
 
 module.exports = function (app, passport) {
 
   //General routes
-  var main = require('../app/controllers/main')  
+  var main = require('../app/controllers/main')
   app.get('/', main.home)
   app.get('/about', main.about)
 
@@ -54,4 +65,5 @@ module.exports = function (app, passport) {
     
   app.param('itemId', item.item)
   
+};
 }
