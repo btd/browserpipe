@@ -18,7 +18,8 @@ var config = {
         }, google: {
             clientID: "1086393338414.apps.googleusercontent.com", clientSecret: "tFZatA6ZOzL6qkgBEBOx55ab", callbackURL: "http://localhost:4000/auth/google/callback"
         }
-    }, production: {
+    },
+    production: {
         db: {
             uri: 'mongodb://localhost/listboardit'
         }
@@ -32,5 +33,7 @@ Object.keys(config).forEach(function (key) {
         url: config[key].db.uri
     }
 });
+
+config[environment].env = environment;
 
 module.exports = config[environment];
