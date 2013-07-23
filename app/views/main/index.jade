@@ -14,67 +14,45 @@ block body
                   li
                     a(href="/") Home
                   li
-                    a(href="/login") Login
-                  li
                     a.icon(href="http://twitter.com/listboardit", target="_blank")
                       i.icon-twitter      
           #index-center.span12
-            .inner
-              img#demo(src="/img/index/demo.png",  height="")
+            .inner              
               .reasons.pull-left           
                 h3 NO MORE 1000 TABS IN YOUR BROWSER!
-                h3 SYNC THEM INTO LISTBOARD          
-                h3 BOOKMARK THEM FOR PRESENT, LATER OR FUTURE USE
+                h3 SYNC THEM WITH LISTBOARD.IT
+                h3 FOR PRESENT, LATER OR FUTURE USE
+                h3 IS THAT EASY!
               .register-box.border.pull-right
-                form(action="/invites", method="post")
-                  input(name="authenticity_token", value="49bqOdTmguk9F74cNAt78CAVj7XNeiRqnxN5bMA2MWg=", type="hidden")
+                #thanks_box.hide
+                  h2 Thank you!
+                  h4 
+                    | We will send you an invitation soon. 
+                  h4
+                    | If you want to let us know why you would like an account or just share some feedback, please email us to 
+                    a(href="mailto:info@listboard.it", target="_blank") info@listboard.it
+                  h4
+                    | For more updates, 
+                    a(href="http://twitter.com/listboardit", target="_blank") follow us 
+                    | on Twitter.
+                form#form_invitation(action="/invites", method="post")
                   h2 Want to try it out?
                   h4 
                     | We are progressively adminting new users. Feel free to leave us your email and we will contact you. 
-                    a(href="/early-users") Learn more
                   .control-group
-                    input(type="text", name="invite[email]", placeholder="Enter your email address", class="input-block-level")
-                    .note-block No spam, we will only send you the invitation
-                    a(href="#", class="btn btn-success btn-block") Count me in!
-        .row-fluid
-          .span12 
-            .row-fluid              
-                .inner
-
-                  #demoappcont
-                    img#demoapp(src="/img/index/capture.png")
-                    a#demobtnsync(href="#", class="btn btn-success btn-block") sync
-                    a#demobtnimport(href="#", class="btn btn-success btn-block") import
-                  
-                  .box
-                    h2 All features are                 
-                    h3 fast
-                    h3 easy to use                    
-                    h3 on real time 
-                    h2 and more are coming!
-
-                  .box.register-box
-                    form(action="/invites", method="post")
-                      input(name="authenticity_token",     value="49bqOdTmguk9F74cNAt78CAVj7XNeiRqnxN5bMA2MWg=", type="hidden")
-                      h2 Interested?
-                      .control-group
-                        input(type="text", name="invite[email]", placeholder="Enter your email address", class="input-block-level")
-                        .note-block No spam, we will only send you the invitation
-                        a(href="#", class="btn btn-success btn-block") Send me an invite!
-
-                  .box.last
-                    h2 Comments?
-                    p 
-                      | We would love to 
-                      a(href="mailto:info@listboard.it", target="_blank") hear from you
-
-
+                    input(type="text", name="invite_email", placeholder="Enter your email address", class="input-block-level")
+                    span.help-inline.hide Please enter a valid email
+                    .note-block No spam, we will only send you an invitation
+                  .control-group
+                    input(type="submit", class="btn btn-success btn-block", value="Count me in!")
+        .row-fluid.blue
         .row-fluid.blue
           .span12
             footer
               p(class="footer-big")
-                | Check our 
-                a(href="http://blog.listboard.it", target="_blank") blog 
-                | or 
-                a(href="mailto:info@listboard.it", target="_blank") email us 
+                | We would love to 
+                a(href="mailto:info@listboard.it", target="_blank") hear from you
               p(class="footer-small") Lisboard.it ©2013
+
+  script(src="/bower_components/jquery/jquery.min.js")
+  script(src="/js/index.js")

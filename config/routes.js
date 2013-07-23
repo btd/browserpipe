@@ -19,6 +19,10 @@ module.exports = function (app, passport) {
     
   app.param('userId', users.user)
 
+  //Invitation routes
+  var invitation = require('../app/controllers/invitation')
+  app.post(  '/invitations', invitation.create)  
+
   //Listboard routes
   var listboard = require('../app/controllers/listboard')
   app.get(   '/listboards',                auth.ensureLoggedIn('/login'), listboard.showEmpty)
