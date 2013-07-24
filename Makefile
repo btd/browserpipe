@@ -7,6 +7,13 @@ start:
 
 test: test-unit
 
+test-jenkins-xunit:
+	@NODE_ENV=test ./node_modules/.bin/mocha \
+		--recursive \
+		--check-leaks \
+		--reporter xunit \
+		$(MOCHA_OPTS)
+
 test-unit:
 	@NODE_ENV=test ./node_modules/.bin/mocha \
 		--recursive \
