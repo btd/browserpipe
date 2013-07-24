@@ -6,9 +6,10 @@ var _ = require('lodash'),
 
 //Create list
 exports.create = function (req, res) {
-    if (req.isAuthenticated()) {
-        var list = new List(req.body)
+    findByFullPath(req.body.path, function() {
+        var list = new List({ label: req.body.label, path: req.body.path })
         list.user = req.user
+
         q.all([list.saveWithPromise()])
             .spread(function () {
                 res.json({ _id: list._id })
@@ -16,9 +17,9 @@ exports.create = function (req, res) {
                 //TODO: send corresponding number error
                 res.json(err.errors)
             }).done()
-    }
-    else
-        res.send("invalid request")
+    }, function() {
+        res.send(500, {error: 'Invalid call'});
+    })
 }
 
 //Update list
@@ -50,6 +51,31 @@ exports.list = function (req, res, next, id) {
             next()
         })
 }
+
+
+//Find list by full path; returns success for empty path
+var findByFullPath = function (fullpath, success, failure) {
+    if(fullpath.trim() == "") {
+        success()
+    }
+    else {      
+        var label = fullpath; var path = '';
+        var index = fullpath.lastIndexOf('/');        
+        if(index > 0) {
+            path = fullpath.substring(0, index);
+            label = fullpath.substring(index + 1);
+        }
+        List
+            .findOne({ label: label, path: path })
+            .exec(function (err, list) {
+                if (err) return failure(err)
+                if (!list) return failure("Not found")
+                success(list)
+            })        
+    }
+}
+
+exports.findByFullPath = findByFullPath
 
 
 // Listing of Lists
