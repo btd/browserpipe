@@ -36,6 +36,23 @@ module.exports.authUser = function(app, done, callback) {
         });
 };
 
+module.exports.createList = function(app, list, done, cookie, callback) {
+    request(app)
+        .post('/lists')
+        .send(list)
+        .set('Cookie', cookie)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end(function (err, res) {
+            if(err) done(err);
+
+            res.body.should.have.property('_id');
+
+            callback();
+        });
+};
+
 function dropCollection(collectionName, done) {
     mongoose.connection.db.dropCollection(collectionName, function (err, result) {
         done();

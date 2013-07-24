@@ -52,8 +52,8 @@ module.exports = function (app, passport) {
 
   //Lists routes
   var list = require('../app/controllers/list')
-  app.post( '/lists',         list.create)
-  app.put(  '/lists/:listId',  list.update)
+  app.post( '/lists',         auth.send401IfNotAuthenticated, list.create)
+  app.put(  '/lists/:listId', auth.send401IfNotAuthenticated, list.update)
     
   app.param('listId', list.list)
 
