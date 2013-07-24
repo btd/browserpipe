@@ -15,7 +15,7 @@ test-jenkins-xunit:
 		$(MOCHA_OPTS)
 
 test-jenkins-cov:
-	@NODE_ENV=test ./node_modules/.bin/istanbul cover --report lcovonly --dir ./results ./node_modules/.bin/_mocha -- \
+	@NODE_ENV=test ./node_modules/.bin/istanbul cover --report cobertura --dir ./results ./node_modules/.bin/_mocha -- \
 		--recursive \
 		--check-leaks \
 		--reporter $(REPORTER) \
