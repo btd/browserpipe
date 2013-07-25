@@ -48,8 +48,9 @@ module.exports.createList = function(app, list, done, cookie, callback) {
             if(err) done(err);
 
             res.body.should.have.property('_id');
+            list._id = res.body._id;
 
-            callback();
+            callback(list);
         });
 };
 

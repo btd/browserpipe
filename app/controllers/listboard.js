@@ -26,13 +26,17 @@ exports.create = function (req, res) {
 //Update listboard
 exports.update = function (req, res) {
     var listboard = req.currentListboard;
-    listboard.label = req.body.label
-    listboard.saveWithPromise().then(function () {
-        res.json({ _id: listboard._id })
-    },function (err) {
-        //TODO: send corresponding number error
-        res.json(err.errors)
-    }).done()
+    if(listboard) {
+        listboard.label = req.body.label
+        listboard.saveWithPromise().then(function () {
+            res.json({ _id: listboard._id })
+        },function (err) {
+            //TODO: send corresponding number error
+            res.json(err.errors)
+        }).done()
+    }    
+    else
+        res.send(404, {error: 'Not found'});
 }
 
 //Find listboard by id
