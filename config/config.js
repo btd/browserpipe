@@ -7,6 +7,10 @@ var config = {
     test: {
         db: {
             uri: 'mongodb://localhost/listboardit-test'
+        },
+        mincer: {
+            url: '/public',
+            roots: './public'
         }
     },
     development: {
