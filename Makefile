@@ -2,7 +2,11 @@
 MOCHA_OPTS= ./test
 REPORTER = spec
 
-start:
+clean:
+	@rm -fr ./cache
+	@rm -fr ./compiled-assets
+
+start: clean
 	@NODE_ENV=development ./node_modules/.bin/nodemon --watch app --watch config server.js
 
 test: test-unit
@@ -35,7 +39,8 @@ test-cov:
 		--reporter $(REPORTER) \
 		$(MOCHA_OPTS)
 
-prod:
-	@NODE_ENV=production node server.js
+start-prod: clean
+	@NODE_ENV=production ./node_modules/.bin/nodemon --watch app --watch config server.js
+
 
 .PHONY: test test-unit test-cov

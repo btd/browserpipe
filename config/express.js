@@ -1,5 +1,6 @@
 var express = require('express'),
-    mongoStore = require('connect-mongo')(express)
+    mongoStore = require('connect-mongo')(express),
+    config = require('./config');
 
 // App settings and middleware
 module.exports = function (app, config, passport) {
@@ -9,7 +10,11 @@ module.exports = function (app, config, passport) {
     app.set('view engine', 'jade')
     app.set('view options', {'layout': false});
 
-    app.use(require('connect-assets')({ src: 'public' }));
+    var cm = new (require('./connect-mincer'))(config.mincer);
+    require('./less-mincer')(cm.environment);
+    cm.preprocess();
+    app.use(cm.middleware());
+    app.use(config.mincer.url, cm.createServer());
 
     // dynamic helpers
     app.use(function (req, res, next) {

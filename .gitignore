@@ -16,3 +16,4 @@ main.min.js
 main.min.map
 .lmd/logs
 coverage
+compiled-assets
