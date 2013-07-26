@@ -3,7 +3,7 @@ var mongoose = require('mongoose'),
     _ = require('lodash');
 
 var QueryMethogs = ['exec'];
-var ModelMethods = ['save'];
+var ModelMethods = ['save', 'remove'];
 
 var suffix = 'WithPromise';
 

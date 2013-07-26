@@ -4,7 +4,7 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     validation = require('./validation'),
     _ = require('lodash'),
-    q = require('q')
+    q = require('q')    
 
 var ListSchema = new Schema({
     label: {type: String, trim: true, validate: validation.nonEmpty}, //name of this list
@@ -27,6 +27,10 @@ ListSchema.virtual('fullPath').get(function () {
     return this.isRoot() ? this.label : this.path + '/' + this.label;
 })
 
+ListSchema.statics.byId = function (id) {
+    return qfindOne({ _id: id});
+}
+
 ListSchema.statics.getAll = function (user) {
     return this
         .find({user: user}, '_id label path')
@@ -37,22 +41,34 @@ ListSchema.statics.getAll = function (user) {
         .execWithPromise();
 }
 
-
-//POSIBLE NEEDED FILTER LIST FUNCTIONS FOR THE FUTURE WHEN THEY ARE NOT ALL HOLD IN MEMORY IN THE CLIENT
-/* Not used
-ListSchema.statics.getChildrenByPath = function (user, path, success, error) {
-    this
-        .find({user: user, path: path })
-        //.populate('user', 'label', 'path')
-        .sort({'path': 1}) // sort by date
+ListSchema.statics.findAllByPath = function (user, path) {
+    return this
+        .find({user: user, path: path }, 'user label path')
+        .sort({'path': 1}) // sort by path
         // .limit(perPage)
         // .skip(perPage * page)
-        .exec(function (err, lists) {
-            // TODO manage errors propertly
-            if (err) error(err)
-            else success(lists)
-        })
+        .execWithPromise();
 }
+
+ListSchema.statics.removeChildrenByPath = function (user, path) {
+    return this
+        .remove({user: user, path: new RegExp("^" + path)})
+        .execWithPromise();
+}
+
+ListSchema.methods.removeFull = function () {
+    var Item = mongoose.model('Item');
+    var User = mongoose.model('User');
+    return q.all([
+            List.removeChildrenByPath(this.user, this.fullPath),
+            User.removeContainersByFilter(this.user, this.fullPath),
+            Item.removeAllByFilters(this.user, [this.fullPath]),
+            this.removeWithPromise()
+        ]);
+}
+
+
+/* Not used
 ListSchema.statics.getListAndChildrenByPath = function (user, parentPath, path, success, error) {
     this
         .find({user: user, path: { $in: [path, parentPath] } })
@@ -79,5 +95,9 @@ ListSchema.statics.getAllDescendantByPath = function (user, path, success, error
             else success(lists)
         })
 }*/
+
+var qfindOne = function (obj) {
+    return List.findOne(obj).execWithPromise();
+};
 
 module.exports = List = mongoose.model('List', ListSchema);

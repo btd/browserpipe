@@ -2,11 +2,11 @@ var should = require('should'),
     request = require('supertest'),
     mongoose = require('mongoose');
 
-var app = require('../../app/server');
+var app = require('../../../app/server');
 
 var testUser = { name: 'Test', email: 'a@a.com', password: '123' };
 
-describe('user controller', function () {
+describe('user controller create', function () {
     before(function () {
         mongoose.connection.db.dropCollection('users', function (err, result) {
             //i really dont worry about result i just need clean db

@@ -1,15 +1,15 @@
 var should = require('should'),
     request = require('supertest'),
-    helper = require('./helper'),
+    helper = require('../helper'),
     mongoose = require('mongoose');
 
-var app = require('../../app/server');
+var app = require('../../../app/server');
 
 var rootList = { label: "Development", path: "" }
 var level1List = { label: "Database", path: "Development" }
 var level2List = { label: "MongoDB", path: "Development/Database" }
 
-describe('list controller', function () {
+describe('list controller create', function () {
     beforeEach(function (done) {
         helper.dropCollections(['users', 'lists'], done);
     });
@@ -85,16 +85,16 @@ describe('list controller', function () {
 
     it('should return 401 with POST on /lists when not authenticated', function (done) {
 
-            request(app)
-                .post('/lists')
-                .send(rootList)
-                .set('Accept', 'application/json')
-                .expect('Content-Type', /json/)
-                .expect(401, done);
+        request(app)
+            .post('/lists')
+            .send(rootList)
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .expect(401, done);
 
     });
 
-    it('should return 500 when creating a list which parent does not exit', function (done) {
+    it('should return 400 when creating a list which parent does not exit', function (done) {
         helper.authUser(app, done, function(cookie, userId) {
 
             request(app)
@@ -103,7 +103,8 @@ describe('list controller', function () {
                 .set('Cookie', cookie)
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
-                .expect(500, done);
+                .expect(400, done);
         });
     });
+
 });

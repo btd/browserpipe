@@ -26,13 +26,17 @@ exports.create = function (req, res) {
 //Update listboard
 exports.update = function (req, res) {
     var listboard = req.currentListboard;
-    listboard.label = req.body.label
-    listboard.saveWithPromise().then(function () {
-        res.json({ _id: listboard._id })
-    },function (err) {
-        //TODO: send corresponding number error
-        res.json(err.errors)
-    }).done()
+    if(listboard) {
+        listboard.label = req.body.label
+        listboard.saveWithPromise().then(function () {
+            res.json({ _id: listboard._id })
+        },function (err) {
+            //TODO: send corresponding number error
+            res.json(err.errors)
+        }).done()
+    }    
+    else
+        res.send(404, {error: 'Not found'});
 }
 
 //Find listboard by id
@@ -54,7 +58,7 @@ function showListboard(req, res) {
                 return _.map(listboard.containers, 'filter');
             }).flatten().value();
 
-            Item.getAllByFilters(
+            Item.findAllByFilters(
                     req.user,
                     containerFilters
                 ).then(function (items) {
