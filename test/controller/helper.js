@@ -3,8 +3,17 @@ var Cookie = require('cookiejar').Cookie,
     mongoose = require('mongoose');
 
 var user = { name: 'User Test', email: 'user@example.com', password: '123456' };
+var user2 = { name: 'User Test 2', email: 'user2@example.com', password: '123456' };
 
 module.exports.authUser = function(app, done, callback) {
+    authUserInternal(app, done, callback, user)
+};
+
+module.exports.authUser2 = function(app, done, callback) {
+    authUserInternal(app, done, callback, user2)
+};
+
+function authUserInternal(app, done, callback, user) {
     request(app)
         .post('/users')
         .send(user)
@@ -34,7 +43,7 @@ module.exports.authUser = function(app, done, callback) {
 
                 });
         });
-};
+}   
 
 module.exports.createList = function(app, list, done, cookie, callback) {
     request(app)

@@ -56,7 +56,7 @@ module.exports = function (app, passport) {
   app.put(  '/lists/:listId',     auth.send401IfNotAuthenticated, list.update)
   app.delete('/lists/:listId',    auth.send401IfNotAuthenticated, list.destroy)
     
-  app.param('listId', list.list)
+  app.param('listId', auth.send401IfNotAuthenticated, list.list)
 
   //Items routes
   var item = require('../app/controllers/item')

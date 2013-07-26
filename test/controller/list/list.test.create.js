@@ -85,12 +85,12 @@ describe('list controller create', function () {
 
     it('should return 401 with POST on /lists when not authenticated', function (done) {
 
-            request(app)
-                .post('/lists')
-                .send(rootList)
-                .set('Accept', 'application/json')
-                .expect('Content-Type', /json/)
-                .expect(401, done);
+        request(app)
+            .post('/lists')
+            .send(rootList)
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .expect(401, done);
 
     });
 

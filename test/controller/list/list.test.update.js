@@ -70,4 +70,23 @@ describe('list controller update', function () {
             });
     });
 
+    it('should return 403 when updating list and not have not permission to do it', function (done) {
+        helper.authUser(app, done, function(cookie, userId) {
+
+            helper.createList(app, rootList, done, cookie, function(list) {
+
+                helper.authUser2(app, done, function(cookie2, userId2) {
+
+                    request(app)
+                        .put('/lists/' + list._id)
+                        .send( { label: "Programming" } )
+                        .set('Cookie', cookie2)
+                        .set('Accept', 'application/json')
+                        .expect('Content-Type', /json/)
+                        .expect(403, done);
+                });
+            });
+        });
+    });
+
 });

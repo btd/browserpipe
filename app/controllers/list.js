@@ -1,8 +1,8 @@
 var _ = require('lodash'),
     q = require('q'),
     mongoose = require('mongoose'),
-    List = mongoose.model('List')
-
+    List = mongoose.model('List'),
+    errorCodes = require('../util/error.codes')
 
 //Create list
 exports.create = function (req, res) {
@@ -14,11 +14,12 @@ exports.create = function (req, res) {
             .spread(function () {
                 res.json({ _id: list._id })
             },function (err) {
-                res.json(400, err.errors);
+                connect.logger(err);
+                res.send.apply(res, errorCodes.BadRequest);
             }).done()
             
     }, function() {
-        res.send(400, {error: 'Bad request'});
+        res.send.apply(res, errorCodes.BadRequest);
     })
 }
 
@@ -32,7 +33,8 @@ exports.update = function (req, res) {
     list.saveWithPromise().then(function () {
         res.json({ _id: list._id })
     },function (err) {
-        res.json(400, err.errors);
+        connect.logger(err);
+        res.send.apply(res, errorCodes.BadRequest);
     }).done()        
 }
 
@@ -42,7 +44,8 @@ exports.destroy = function (req, res) {
     list.removeFull().then(function () {
         res.json({ _id: list._id })
     },function (err) {
-        res.json(400, err.errors);
+        connect.logger(err);
+        res.send.apply(res, errorCodes.BadRequest);
     }).done()        
 }
 
@@ -50,11 +53,15 @@ exports.destroy = function (req, res) {
 exports.list = function (req, res, next, id) {
     List.byId(id)
         .then(function(list) {
-            if (!list) res.send(404, {error: 'Not found'});
+            if (!list) 
+                res.send.apply(res, errorCodes.NotFound); 
+            else {
+                if (list.user !=  req.user._id.toString()) 
+                res.send.apply(res, errorCodes.Forbidden);
             else {
                 req.currentList = list;
                 next()
-            }
+            }}
         }).fail(function(err) {
             next(err);
         });
