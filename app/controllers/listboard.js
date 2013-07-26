@@ -58,7 +58,7 @@ function showListboard(req, res) {
                 return _.map(listboard.containers, 'filter');
             }).flatten().value();
 
-            Item.getAllByFilters(
+            Item.findAllByFilters(
                     req.user,
                     containerFilters
                 ).then(function (items) {

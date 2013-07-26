@@ -1,5 +1,6 @@
 var Schema = require('mongoose').Schema,
-    validation = require('./validation');
+    validation = require('./validation'),    
+    q = require('q');
 
 var ContainerSchema = new Schema({
     type: {type: Number, required: true}, //0: blank, 1: list, 2: search, 3: import, 4: device, 5: trash

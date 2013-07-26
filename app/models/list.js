@@ -4,7 +4,7 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     validation = require('./validation'),
     _ = require('lodash'),
-    q = require('q')
+    q = require('q')    
 
 var ListSchema = new Schema({
     label: {type: String, trim: true, validate: validation.nonEmpty}, //name of this list
@@ -41,34 +41,32 @@ ListSchema.statics.getAll = function (user) {
         .execWithPromise();
 }
 
-ListSchema.statics.findChildrenByPath = function (user, path) {
+ListSchema.statics.findAllByPath = function (user, path) {
     return this
-        .find({user: user, path: path })
-        //.populate('user', 'label', 'path')
-        .sort({'path': 1}) // sort by date
+        .find({user: user, path: path }, 'user label path')
+        .sort({'path': 1}) // sort by path
         // .limit(perPage)
         // .skip(perPage * page)
         .execWithPromise();
 }
 
-ListSchema.methods.removeFull = function () {
+ListSchema.statics.removeChildrenByPath = function (user, path) {
+    return this
+        .remove({user: user, path: new RegExp("^" + path)})
+        .execWithPromise();
+}
 
-    return q.spread([
-            this.removeChildrenByPath(),
-            /*Container.findByFilter(req.user, list.path),
-            Items.findByList(req.user, list.path),*/
+ListSchema.methods.removeFull = function () {
+    var Item = mongoose.model('Item');
+    var User = mongoose.model('User');
+    return q.all([
+            List.removeChildrenByPath(this.user, this.fullPath),
+            User.removeContainersByFilter(this.user, this.fullPath),
+            Item.removeAllByFilters(this.user, [this.fullPath]),
             this.removeWithPromise()
         ]);
 }
 
-ListSchema.methods.removeChildrenByPath = function () {
-    return List
-        .findChildrenByPath(this.user, this.fullPath)
-        .then(function(lists){
-            var promises = lists.map(function(childList){ return childList.removeFull() });            
-            return q.spread(promises);
-        });
-}
 
 /* Not used
 ListSchema.statics.getListAndChildrenByPath = function (user, parentPath, path, success, error) {

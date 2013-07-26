@@ -2,8 +2,7 @@
 
 var Schema = require('mongoose').Schema,
     _ = require('lodash'),
-    validation = require('./validation'),
-    Q = require('q');
+    validation = require('./validation');
 
 
 var ListboardSchema = new Schema({

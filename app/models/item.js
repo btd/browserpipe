@@ -1,7 +1,8 @@
 // Item schema
 
 var mongoose = require('mongoose'),
-    Schema = mongoose.Schema;
+    Schema = mongoose.Schema,
+    q = require('q');
 
 //There are to types of items: list-item and note-item
 var ItemSchema = new Schema({
@@ -19,10 +20,17 @@ var ItemSchema = new Schema({
 
 ItemSchema.plugin(require('../util/mongoose-timestamp'));
 
-ItemSchema.statics.getAllByFilters = function (user, filters) {
+ItemSchema.statics.findAllByFilters = function (user, filters) {
     return this
         .find({user: user, lists: {$in: filters}}, '_id type lists title url note')
         .execWithPromise();
 }
+
+ItemSchema.statics.removeAllByFilters = function (user, filters) {
+    return this
+        .remove({user: user, lists: {$in: filters}})
+        .execWithPromise();
+}
+
 
 module.exports = Item = mongoose.model('Item', ItemSchema);

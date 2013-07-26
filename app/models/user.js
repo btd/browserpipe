@@ -6,7 +6,7 @@ var mongoose = require('mongoose'),
     _ = require('lodash'),
     bcryptRounds = 10,
     validation = require('./validation'),
-    Q = require('q');
+    q = require('q');
 
 var errorMsgs = {
     invalid: 'is not valid',
@@ -45,6 +45,13 @@ UserSchema.virtual('currentListboard')
     .get(function() {
     return this.listboards[this.currentListboardIdx];
 })
+
+UserSchema.statics.removeContainersByFilter = function (user, filter) {
+    return this
+        .update({_id: user, 'listboards.containers.filter': filter}, {$pull: {'listboards.$.containers': {filter: filter}}} )
+        .execWithPromise();
+}
+
 
 // 2 convinient wrappers to do not repeat in code also it populate internal doc
 UserSchema.statics.byId = function (id) {

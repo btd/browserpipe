@@ -1,7 +1,8 @@
 var should = require('should'),
     request = require('supertest'),
     helper = require('../helper'),
-    mongoose = require('mongoose');
+    mongoose = require('mongoose'),
+    q = require('q');
 
 var app = require('../../../app/server');
 
@@ -39,6 +40,45 @@ describe('list controller delete', function () {
                             });
                         }
                     });
+            });
+        });
+    });
+
+    it('should delete list, child lists and return 200 when authenticated and list found', function (done) {
+        helper.authUser(app, done, function(cookie, userId) {
+
+            helper.createList(app, rootList, done, cookie, function(list) {
+
+                helper.createList(app, level1List, done, cookie, function(list1) {
+
+                    helper.createList(app, level2List, done, cookie, function(list2) {
+                        
+                        request(app)
+                            .del('/lists/' + list._id)
+                            .set('Cookie', cookie)
+                            .set('Accept', 'application/json')
+                            .expect('Content-Type', /json/)
+                            .expect(200)
+                            .end(function (err, res) {
+                                if(err) done(err);
+                                else {
+                                    q.all([
+                                        List.byId(list._id),
+                                        List.byId(list1._id),
+                                        List.byId(list2._id),
+                                    ])
+                                    .spread(function (l, l1, l2) { 
+                                        if(l || l1 || l2) done(new Error('Lists were not deleted'));
+                                        else done();
+                                    })
+                                    .fail(function (err) {
+                                        err.should.be.ok;
+                                        done();
+                                    });
+                                }
+                            });
+                    });
+                });
             });
         });
     });
