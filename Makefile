@@ -5,6 +5,9 @@ REPORTER = spec
 clean:
 	@rm -fr ./cache
 	@rm -fr ./compiled-assets
+	@rm -fr ./coverage
+	@rm ./public/js/*.min.js
+	@rm ./public/js/*.min.map
 
 start: clean
 	@NODE_ENV=development ./node_modules/.bin/nodemon --watch app --watch config server.js
@@ -41,6 +44,9 @@ test-cov:
 
 start-prod: clean
 	@NODE_ENV=production ./node_modules/.bin/nodemon --watch app --watch config server.js
+
+lint:
+	./node_modules/.bin/jshint app config public/js
 
 
 .PHONY: test test-unit test-cov

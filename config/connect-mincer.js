@@ -114,7 +114,7 @@ ConnectMincer.prototype.stylesheet_tag = function(path, attributes) {
     });
     return (assetPaths && assetPaths.map(function(assetPath) {
         return makeTag('link', _.extend(attributes, { href: assetPath }), true, true);
-    }).join('\n')) || makeTag('link', _.extend(attributes, { href: path }), true, true);;
+    }).join('\n')) || makeTag('link', _.extend(attributes, { href: path }), true, true);
 };
 
 ConnectMincer.prototype.javascript_tag = function(path, attributes) {
@@ -126,7 +126,7 @@ ConnectMincer.prototype.javascript_tag = function(path, attributes) {
 
     return (assetPaths && assetPaths.map(function(assetPath) {
         return makeTag('script', _.extend(attributes, { src: assetPath }));
-    }).join('\n')) || makeTag('script', _.extend(attributes, { src: path }));;
+    }).join('\n')) || makeTag('script', _.extend(attributes, { src: path }));
 };
 
 ConnectMincer.prototype.image_tag = function(path, attributes) {
@@ -134,7 +134,7 @@ ConnectMincer.prototype.image_tag = function(path, attributes) {
 
     return (assetPaths && assetPaths.map(function(assetPath) {
         return makeTag('img', _.extend(attributes, { src: assetPath }));
-    }).join('\n')) || makeTag('img', _.extend(attributes, { src: path }));;
+    }).join('\n')) || makeTag('img', _.extend(attributes, { src: path }));
 };
 
 ConnectMincer.prototype.createServer = function() {

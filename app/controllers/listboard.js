@@ -2,7 +2,8 @@ var _ = require('lodash'),
     q = require('q'),
     mongoose = require('mongoose'),
     List = mongoose.model('List'),
-    Item = mongoose.model('Item')
+    Item = mongoose.model('Item'),
+    errors = require('../util/errors.js');
 
 //No listboard
 exports.showEmpty = showListboard;
@@ -10,43 +11,42 @@ exports.showEmpty = showListboard;
 //Show listboard
 exports.show = showListboard;
 
+var sendModelId = function(res, model) {
+    return function() {
+        res.json({ _id: model._id });
+    };
+};
+
 //Create listboard
 exports.create = function (req, res) {
     var listboard = req.user.addCurrentListboard({ label: req.body.label });
 
     req.user.saveWithPromise()
-        .then(function() {
-            res.json({ _id: listboard._id })
-        })
-        .fail(function(err) {
-            res.json(400, err.errors);
-        });
+        .then(sendModelId(res, listboard))
+        .fail(errors.ifErrorSendBadRequest(res))
+        .done();
 }
 
 //Update listboard
 exports.update = function (req, res) {
     var listboard = req.currentListboard;
-    if(listboard) {
-        listboard.label = req.body.label
-        listboard.saveWithPromise().then(function () {
-            res.json({ _id: listboard._id })
-        },function (err) {
-            //TODO: send corresponding number error
-            res.json(err.errors)
-        }).done()
-    }    
-    else
-        res.send(404, {error: 'Not found'});
-}
+    listboard.label = req.body.label;
+
+    req.user.saveWithPromise()
+        .then(sendModelId(res, listboard))
+        .fail(errors.ifErrorSendBadRequest(res))
+        .done();
+};
 
 //Find listboard by id
 exports.listboard = function (req, res, next, id) {
-    if(req.isAuthenticated()) {
-        var listboard = req.user.listboards.id(id);
-        req.currentListboard = listboard;
+    req.currentListboard = req.user.listboards.id(id);
+    if(!req.currentListboard) {
+        errors.sendNotFound(res);
+    } else {
+        next();
     }
-    next();
-}
+};
 
 function showListboard(req, res) {
     var listboards = req.user.listboards;
@@ -80,16 +80,10 @@ function showListboard(req, res) {
 
 //Delete item
 exports.destroy = function (req, res) {
-    if(req.currentListboard) {
-        var listboard = req.currentListboard.remove();
-        req.user.saveWithPromise()
-            .then(function() {
-                res.json({ _id: listboard._id });
-            })
-            .fail(function(err) {
-                res.send(400, err);
-            });
-    } else {
-        res.send(404, { error: 'Listboard does not exists'})
-    }
+    var listboard = req.currentListboard.remove();
+
+    req.user.saveWithPromise()
+        .then(sendModelId(res, listboard))
+        .fail(errors.ifErrorSendBadRequest(res))
+        .done();
 }

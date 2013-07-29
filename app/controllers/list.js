@@ -2,19 +2,18 @@ var _ = require('lodash'),
     q = require('q'),
     mongoose = require('mongoose'),
     List = mongoose.model('List'),
-    errorCodes = require('../util/error.codes')
+    errorCodes = require('../util/errors.js')
 
 //Create list
 exports.create = function (req, res) {
     findByFullPath(req.body.path, function() {
-        var list = new List({ label: req.body.label, path: req.body.path })
-        list.user = req.user
+        var list = new List({ label: req.body.label, path: req.body.path });
+        list.user = req.user;
 
         q.all([list.saveWithPromise()])
             .spread(function () {
                 res.json({ _id: list._id })
             },function (err) {
-                connect.logger(err);
                 res.send.apply(res, errorCodes.BadRequest);
             }).done()
             
@@ -70,8 +69,8 @@ exports.list = function (req, res, next, id) {
 
 //Find list by full path; returns success for empty path
 var findByFullPath = function (fullpath, success, failure) {
-    if(fullpath.trim() == "") {
-        success()
+    if(fullpath.trim() === "") {
+        success();
     }
     else {      
         var label = fullpath; var path = '';
