@@ -1,0 +1,18 @@
+//Flatten styles
+.flatten() {
+  border: none;
+  box-shadow: none;
+  .border-radius(0);      
+}
+.tobutton(@color) {    
+    color: @white;
+    padding: 6px 12px;
+    background-color: @color;
+    text-shadow: none;    
+    background-image: none;
+
+    &:hover{
+        background-color: darken(@color, 6%);
+        text-decoration: none;
+    }
+}

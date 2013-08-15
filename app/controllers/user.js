@@ -5,16 +5,20 @@ var _ = require('lodash'),
     List = mongoose.model('List');
 
 //Login form
-exports.login = function (req, res) {
+exports.login = function (req, res, err) {    
+    var errors = _.map(req.flash().error, function(error) { return { msg: error}});
     res.render('users/login', {
-        title: 'Login'
+        title: 'Login',
+        errors: errors
     })
 }
 
 //Sign up form
 exports.signup = function (req, res) {
+    var errors = req.flash().errors;
     res.render('users/signup', {
-        title: 'Sign up'
+        title: 'Sign up',
+        errors: errors
     })
 }
 
@@ -26,8 +30,34 @@ exports.logout = function (req, res) {
 
 //Create user
 exports.create = function (req, res) {
+
+    //Validate user input
+    req.check('name', 'Please enter a first name').notEmpty();
+    req.check('email', 'Please enter a valid email.').len(6,64).isEmail();    
+
+    //If errors, flash or send them
+    var errors = req.validationErrors();
+    if (errors) {
+        res.format({
+
+            html: function () {
+                req.flash('errors', errors);
+                res.redirect('/signup');
+            },
+
+            json: function () {
+                res.send(400, { errors: errors });
+            }
+        });
+        
+        return;
+    }
+
     var user = new User(_.pick(req.body, 'email', 'name', 'password'));
     user.provider = 'local' //for passport
+
+    //temp!!!!!!!!!!!!!!!!!!!!
+    user.addBrowser({ name: 'Ubuntu Chrome'});
 
     //Creates initial data
     //Root lists
@@ -47,7 +77,7 @@ exports.create = function (req, res) {
     var pinboardImports = importsList.createChildList("Pinboard");
 
     //Create listboard
-    var listboard = user.addCurrentListboard({ label: 'My initial listboard'})
+    var listboard = user.addListboard({ label: 'My initial listboard'})
         .addContainerByList(readLaterList)
         .addContainerByList(coolSitesList);
 
@@ -85,9 +115,10 @@ exports.create = function (req, res) {
         .fail(function (err) {
             res.format({
 
-                html: function () {
-                    //TODO there should be redirect!!
-                    res.render('users/signup', { errors: err.errors })
+                //TODO: log errors in server
+
+                html: function () {                    
+                    res.render('500');
                 },
 
                 json: function () {

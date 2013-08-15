@@ -24,11 +24,8 @@ module.exports = function (passport) {
         function (email, password, done) {
             User.byEmail(email)
                 .then(function (user) {
-                    if (!user) {
-                        return done(null, false, { message: 'Unknown user' })
-                    }
-                    if (!user.authenticate(password)) {
-                        return done(null, false, { message: 'Invalid password' })
+                    if (!user || !user.authenticate(password)) {
+                        return done(null, false, { message: 'Invalid email or password' })
                     }
                     return done(null, user)
                 })

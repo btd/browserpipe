@@ -1,58 +1,36 @@
 extends ../layouts/index
 
-block body
-  .container-fluid
-    .row-fluid
-      .span12
-        .row-fluid.blue
-          header.span12
-            .outer.inner 
-              .inner
-                h1#logo.pull-left
-                  a(href="/") Listboard.it
-                ul.navbar.pull-right
-                  li
-                    a(href="/") Home
-                  li
-                    a.icon(href="http://twitter.com/listboardit", target="_blank")
-                      i.icon-twitter      
-          #index-center.span12
-            .inner              
-              .reasons.pull-left           
-                h3 NO MORE 1000 TABS IN YOUR BROWSER!
-                h3 SYNC THEM WITH LISTBOARD.IT
-                h3 FOR PRESENT, LATER OR FUTURE USE
-                h3 IS THAT EASY!
-              .register-box.border.pull-right
-                #thanks_box.hide
-                  h2 Thank you!
-                  h4 
-                    | We will send you an invitation soon. 
-                  h4
-                    | If you want to let us know why you would like an account or just share some feedback, please email us to 
-                    a(href="mailto:info@listboard.it", target="_blank") info@listboard.it
-                  h4
-                    | For more updates, 
-                    a(href="http://twitter.com/listboardit", target="_blank") follow us 
-                    | on Twitter.
-                form#form_invitation(action="/invites", method="post")
-                  h2 Want to try it out?
-                  h4 
-                    | We are progressively admitting new users. Feel free to leave us your email and we will contact you. 
-                  .control-group
-                    input(type="text", name="invite_email", placeholder="Enter your email address", class="input-block-level")
-                    span.help-inline.hide Please enter a valid email
-                    .note-block No spam, we will only send you an invitation
-                  .control-group
-                    input(type="submit", class="btn btn-success btn-block", value="Count me in!")
-        .row-fluid.blue
-        .row-fluid.blue
-          .span12
-            footer
-              p(class="footer-big")
-                | We would love to 
-                a(href="mailto:info@listboard.it", target="_blank") hear from you
-              p(class="footer-small") Lisboard.it ©2013
+block content
+            
+  .reasons.pull-left           
+    h3 NO MORE 1000 TABS IN YOUR BROWSER!
+    h3 SYNC THEM WITH LISTBOARD.IT
+    h3 FOR PRESENT, LATER OR FUTURE USE
+    h3 IS THAT EASY!
+  .box.register-box.border.pull-right
+    #thanks_box.hide
+      h2 Thank you!
+      h4 
+        | We will send you an invitation soon. 
+      h4
+        | If you want to let us know why you would like an account or just share some feedback, please email us to 
+        a(href="mailto:info@listboard.it", target="_blank") info@listboard.it
+      h4
+        | For more updates, 
+        a(href="http://twitter.com/listboardit", target="_blank") follow us 
+        | on Twitter.
+    form#form_invitation(action="/invites", method="post")
+      h2 Want to try it out?
+      h4 
+        | We are progressively admitting new users. Feel free to leave us your email and we will contact you. 
+      .control-group
+        input(type="text", name="invite_email", placeholder="Enter your email address", class="input-block-level")
+        span.help-inline.hide Please enter a valid email
+        .note-block No spam, we will only send you an invitation
+      .control-group
+        input(type="submit", class="btn btn-success btn-block btn-big", value="Count me in!")
+        
+block footer
   :js
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),

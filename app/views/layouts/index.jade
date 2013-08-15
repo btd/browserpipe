@@ -14,4 +14,30 @@ head
     != stylesheet_tag('css/index.css')
     
 body.blue
-    block body
+    .container-fluid
+        .row-fluid
+          .span12
+            .row-fluid.blue
+              header.span12
+                .outer.inner 
+                  .inner
+                    h1#logo.pull-left
+                      a(href="/") Listboard.it
+                    ul.navbar.pull-right
+                      li
+                        a(href="/") Home
+                      li
+                        a.icon(href="http://twitter.com/listboardit", target="_blank")
+                          i.icon-twitter      
+              #index-center.span12
+                .inner  
+                    block content
+    .row-fluid.blue
+    .row-fluid.blue
+      .span12
+        footer
+          p(class="footer-big")
+            | We would love to 
+            a(href="mailto:info@listboard.it", target="_blank") hear from you
+          p(class="footer-small") Lisboard.it ©2013
+    body.footer

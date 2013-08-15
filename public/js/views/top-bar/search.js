@@ -12,9 +12,6 @@ var Search = AppView.extend({
     initializeView: function () {
         this.listenTo(_state.listboards, 'currentContainerChange', this.currentContainerChanged);
     },
-    calculateWidth: function () {
-
-    },
     currentContainerChanged: function (container) {
         var $box = this.$('#search-box');
         var query = ""
@@ -92,22 +89,6 @@ var Search = AppView.extend({
         }, {wait: true, success: function (container) {
             _state.listboards.setCurrentContainer(container.get('_id'));
         }});
-    },
-    calculateWidth: function () {
-        var windowWidth = $(window).width();
-        var listboardOptWidth = $("#opt-listboards").width();
-        var width = windowWidth - listboardOptWidth - config.SEARCH_BOX_FIX_MARGIN;
-        if (width < config.SEARCH_BOX_MIN_WIDTH)
-            width = config.SEARCH_BOX_MIN_WIDTH;
-        this.$('#search-box').width(width).show();
-    },
-    postRender: function () {
-        var self = this;
-        this.calculateWidth();
-        $(window).resize(function () {
-            this.$('#search-box').hide();
-            self.calculateWidth();
-        });
-    },
+    }
 });
 module.exports = Search;

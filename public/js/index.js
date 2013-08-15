@@ -26,7 +26,7 @@ $(function() {
                 error("An error has occurred, please try again.");
             });
         } else {
-            error('Does it really email?');
+            error('Please, enter a valid email.');
         }
 	});
 });

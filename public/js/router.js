@@ -1,63 +1,79 @@
 // Filename: router.js
 
-var _state = require('models/state'),
-    TopBarListboard = require('views/top-bar/listboard'),
+var _state = require('models/state'),    
     Search = require('views/top-bar/search'),
-    Device = require('views/top-bar/device'),
-    Import = require('views/top-bar/import'),
-    BreadCrumb = require('views/bottom-bar/breadcrumb'),
-    Trash = require('views/bottom-bar/trash'),
+    Center = require('views/center/center'),
+    Home = require('views/center/home'),
+    Welcome = require('views/center/welcome'),
+    Now = require('views/center/now'),
+    Later = require('views/center/later'),    
+    Future = require('views/center/future'),    
     Backbone = require('backbone');
-
 
 var AppRouter = Backbone.Router.extend({
     views: {},
-    routes: {
-        'listboards': 'showEmptyListboard',
-        'listboards/:id': 'showListboard',
+    routes: {        
+        '/' : 'home',
+        'welcome' : 'welcome',
+        'now': 'showEmptyNow',
+        'now/:id': 'showNow',
+        'later': 'showEmptyLater',
+        'later/:id': 'showLater',
+        'later': 'showFuture',
         // Default
-        '*actions': 'defaultAction'
+        '*actions': 'home'
     },
-    showEmptyListboard: function (id) {
-        var currentListboard = _state.listboards.getCurrentListboard();
-        if (currentListboard && _state.listboards.length > 0)
-            Backbone.history.navigate("/listboards/" + currentListboard.get('_id'), {trigger: true});
+    home: function (actions) {   
+        var home = new Home();       
+        home.render();
     },
-    showListboard: function (id) {
+    welcome: function (actions) {     
+        var welcome = new Welcome();       
+        welcome.render();
+    },
+    showEmptyNow: function (id) {   
+        if (_state.browsers.length > 0)
+            Backbone.history.navigate("/now/" + _state.browsers.at(0).get('_id'), {trigger: true});
+        else {
+            var now = new Now();       
+            now.render();
+        }
+    },
+    showNow: function (id) {
+        if (_state.browsers.length === 0)
+            Backbone.history.navigate("/now", {trigger: true});
+         else {
+            var now = new Now();       
+            now.render();
+        }
+    },
+    showEmptyLater: function (id) {        
+        if (_state.listboards.length > 0)
+            Backbone.history.navigate("/later/" + _state.listboards.at(0).get('_id'), {trigger: true});
+        else {
+            var later = new Later();       
+            later.render();
+        }
+    },
+    showLater: function (id) {
         if (_state.listboards.length === 0)
-            Backbone.history.navigate("/listboards", {trigger: true});
+            Backbone.history.navigate("/later", {trigger: true});
+        else {
+            var later = new Later();       
+            later.render();
+        }
     },
-    defaultAction: function (actions) {
-    },
+    showFuture: function() {
+        var future = new Future();       
+        future.render();
+    },    
     initialize: function () {
         //Load initial data
         _state.loadInitialData();
 
-        _state.listboards.on('currentListboardChange', function (listboard) {
-            if(listboard)
-                Backbone.history.navigate('/listboards/' + listboard.get('_id'), {trigger: true});
-            else
-                Backbone.history.navigate('/listboards', {trigger: true});
-        }, this);
-
-        //Creates the top bar options
-        this.views.topBarListboard = new TopBarListboard({collection: _state.listboards});
-        this.views.topBarListboard.render();
-        this.views.search = new Search();
-        this.views.search.render();
-        this.views.device = new Device();
-        this.views.device.render();
-        this.views.imports = new Import();
-        this.views.imports.render();
-
-        //Creates the bottom bar options
-        this.views.breadCrumb = new BreadCrumb();
-        this.views.breadCrumb.render();
-        this.views.trash = new Trash();
-        this.views.trash.render();
-
-        //Sets the current listboard
-        _state.listboards.setCurrentListboard(initialOptions.currentListboardId);
+        //Renders the center
+        this.views.center = new Center();       
+        this.views.center.render();
     }
 });
 

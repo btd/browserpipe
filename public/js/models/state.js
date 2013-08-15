@@ -1,4 +1,5 @@
 var Backbone = require('backbone'),
+    Browsers = require('collections/browsers'),
     Listboards = require('collections/listboards'),
     ItemCollection = require('collections/items'),
     List = require('models/list'),
@@ -10,6 +11,9 @@ var State = Backbone.Model.extend({
 
         //Loads Lists
         this.loadLists();
+
+        //Loads Browsers
+        this.loadBrowsers();
 
         //Loads Listboards
         this.loadListboards();
@@ -48,6 +52,9 @@ var State = Backbone.Model.extend({
         this.listenTo(list, 'deleted', function (list) {
             delete self.lists[list.getFilter()]
         });
+    },
+    loadBrowsers: function () {        
+        this.browsers = new Browsers(initialOptions.browsers)
     },
     loadListboards: function () {
         this.listboards = new Listboards(initialOptions.listboards)

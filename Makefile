@@ -6,8 +6,12 @@ clean:
 	@rm -fr ./cache
 	@rm -fr ./compiled-assets
 	@rm -fr ./coverage
-	@rm ./public/js/*.min.js
-	@rm ./public/js/*.min.map
+	@rm -f ./public/js/*.min.js
+	@rm -f ./public/js/*.min.map
+
+lmd: 
+	lmd build default
+	lmd watch default
 
 start: clean
 	@NODE_ENV=development ./node_modules/.bin/nodemon --watch app --watch config server.js

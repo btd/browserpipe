@@ -11,7 +11,8 @@
 //Application scripts
 :js
     var initialOptions = {
-        currentListboardId: '#{currentListboardId}',
+        browsers: !{JSON.stringify(browsers)},
+        windows: !{JSON.stringify(windows)},        
         listboards: !{JSON.stringify(listboards)},
         lists: !{JSON.stringify(lists)},
         items: !{JSON.stringify(items)}

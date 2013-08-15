@@ -6,7 +6,7 @@ var Schema = require('mongoose').Schema,
 
 
 var ListboardSchema = new Schema({
-    label: { type: String, required: true, trim: true, validate: validation.nonEmpty },
+    label: { type: String, required: true, trim: true, validate: validation.nonEmpty("Label") },
     containers: [ require('./container') ]
 });
 

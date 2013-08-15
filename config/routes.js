@@ -17,16 +17,15 @@ module.exports = function (app, passport) {
   //General routes
   var main = require('../app/controllers/main');
   app.get('/', main.home);
-  app.get('/about', main.about);
-
+  app.get('/welcome', auth.ensureLoggedIn('/login'), main.home);
+  
   //User routes
   var users = require('../app/controllers/user')  ;
   app.get('/login', users.login);
   app.get('/signup', users.signup);
   app.get('/logout', users.logout);
-
   app.post('/users', users.create);
-  app.post('/users/session', passport.authenticate('local', { successReturnToOrRedirect: '/', failureRedirect: '/login' }));
+  app.post('/users/session', passport.authenticate('local', { successReturnToOrRedirect: '/', failureRedirect: '/login', badRequestMessage: "Please enter valid email and password", failureFlash: true }));
     
   app.param('userId', users.user);
 
@@ -36,8 +35,6 @@ module.exports = function (app, passport) {
 
   //Listboard routes
   var listboard = require('../app/controllers/listboard');
-  app.get(   '/listboards',                auth.ensureLoggedIn('/login'), listboard.showEmpty);
-  app.get(   '/listboards/:listboardId',   auth.ensureLoggedIn('/login'), listboard.show);
   app.post(  '/listboards',                auth.send401IfNotAuthenticated, listboard.create);
   app.put(   '/listboards/:listboardId',   auth.send401IfNotAuthenticated, listboard.update);
   app.delete('/listboards/:listboardId',   auth.send401IfNotAuthenticated, listboard.destroy);
@@ -65,6 +62,31 @@ module.exports = function (app, passport) {
   app.delete( '/items/:itemId',  item.destroy);
     
   app.param('itemId', item.item);
+
+  //Browser routes
+  var browser = require('../app/controllers/browser');
+  app.post(   '/browsers',                  auth.send401IfNotAuthenticated, browser.create);
+  app.put(    '/browsers/:browserId',       auth.send401IfNotAuthenticated, browser.update);
+  app.delete( '/browsers/:browserId',       auth.send401IfNotAuthenticated, browser.destroy);
+  //TODO: manage properly api OAuth from http://developer.chrome.com/extensions/tut_oauth.html
+  app.post(   '/browsers/:browserId/sync',  /*auth.send401IfNotAuthenticated,*/ browser.sync);
+
+  app.param(  'browserId', /*auth.send401IfNotAuthenticated,*/ browser.browser);
+
+  //Extension
+  app.get(    '/clients/chrome/extension.crx', auth.send401IfNotAuthenticated, main.chromeExtension);
+
+  //Now
+  app.get(    '/now',                  auth.ensureLoggedIn('/login'), main.home);
+  app.get(    '/now/:browserId',       auth.ensureLoggedIn('/login'), main.home);  
+
+  //Later
+  app.get(    '/later',                auth.ensureLoggedIn('/login'), main.home);
+  app.get(    '/later/:listboardId',   auth.ensureLoggedIn('/login'), main.home);  
+    
+  //Future
+  app.get(    '/future',               auth.ensureLoggedIn('/login'), main.home);  
+    
   
 };
 }

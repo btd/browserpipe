@@ -7,7 +7,7 @@ var AppView = require('views/view');
 var SearchContainer = require('views/center/container/search.container');
 var UserListContainer = require('views/center/container/user.list.container');
 var ImportContainer = require('views/center/container/import.list.container');
-var DeviceContainer = require('views/center/container/device.list.container');
+var BrowserContainer = require('views/center/container/browser.list.container');
 var TrashContainer = require('views/center/container/trash.list.container');
 var Listboard = AppView.extend({
     tagName: 'div',
@@ -99,7 +99,10 @@ var Listboard = AppView.extend({
             'margin-top': topBarHeight,
             'margin-bottom': bottomBarHeight
         });
-        this.$el.height(wheight - topBarHeight - bottomBarHeight);
+        var height = wheight - topBarHeight - bottomBarHeight;
+        if (height < config.LISTBOARD_MIN_HEIGHT)
+            height = config.LISTBOARD_MIN_HEIGHT;
+        this.$el.height(height);
         //Calculates the height of each container view
         for (index in this.containersViews)
             this.containersViews[index].calculateHeight();

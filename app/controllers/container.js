@@ -1,6 +1,8 @@
 var _ = require('lodash'),
     q = require('q'),
-    mongoose = require('mongoose');
+    mongoose = require('mongoose'),
+    responses = require('../util/responses.js'),
+    errors = require('../util/errors.js');
 
 
 //Create container
@@ -10,16 +12,13 @@ exports.create = function (req, res) {
         .then(function (listboard) {
 
             listboard.addContainer(_.pick(req.body, 'title', 'filter', 'type'))
-                .saveWithPromise().then(function () {
-                    res.json({ _id: listboard._id })
-                },function (err) {
-                    //TODO: send corresponding number error
-                    res.json(500, err.errors)
-                });
+                .saveWithPromise()
+                .then(responses.sendModelId(res, _.last(listboard.containers)._id))
+                .fail(errors.ifErrorSendBadRequest(res))
+                .done();
         })
-        .fail(function(err) {
-            res.json(500, err.errors);
-        });
+        .fail(errors.ifErrorSendBadRequest(res))
+        .done();
 }
 
 //Update container
@@ -40,21 +39,17 @@ exports.update = function (req, res) {
 
                 listboard.containers.set(containerIdx, container);
 
-                listboard.saveWithPromise().then(function () {
-                    res.json({ _id: container._id })
-                },function (err) {
-                    //TODO: send corresponding number error
-                    res.json(err.errors)
-                }).done()
+                listboard.saveWithPromise()
+                    .then(responses.sendModelId(res, container._id))
+                    .fail(errors.ifErrorSendBadRequest(res))
+                    .done()
             } else {
-                res.json(404, 'Not found');
+                errors.sendNotFound(res);
             }
 
         })
-        .fail(function(err) {
-            res.json(500, err.errors);
-        });
-
+        .fail(errors.ifErrorSendBadRequest(res))
+        .done();
 }
 
 
@@ -63,16 +58,14 @@ exports.destroy = function (req, res) {
     Listboard.findOne({ _id: req.params.listboardId, user: req.user })
         .execWithPromise()
         .then(function (listboard) {
-            listboard.containers.pull({ _id: req.params.containerId });
+            var containerId = req.params.containerId
+            listboard.containers.pull({ _id: containerId });
 
-            listboard.saveWithPromise().then(function () {
-                res.json({ _id: req.params.containerId });
-            },function (err) {
-                //TODO: send corresponding number error
-                res.json(500, err.errors)
-            }).done()
+            listboard.saveWithPromise()
+                .then(responses.sendModelId(res, containerId))
+                .fail(errors.ifErrorSendBadRequest(res))
+                .done();
         })
-        .fail(function(err) {
-            res.json(500, err.errors);
-        });
+        .fail(errors.ifErrorSendBadRequest(res))
+        .done();
 }

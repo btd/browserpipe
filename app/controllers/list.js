@@ -2,50 +2,42 @@ var _ = require('lodash'),
     q = require('q'),
     mongoose = require('mongoose'),
     List = mongoose.model('List'),
-    errorCodes = require('../util/errors.js')
+    responses = require('../util/responses.js'),
+    errors = require('../util/errors.js');
 
 //Create list
 exports.create = function (req, res) {
     findByFullPath(req.body.path, function() {
-        var list = new List({ label: req.body.label, path: req.body.path });
+        var list = new List(_.pick(req.body, 'label', 'path'));
         list.user = req.user;
 
-        q.all([list.saveWithPromise()])
-            .spread(function () {
-                res.json({ _id: list._id })
-            },function (err) {
-                res.send.apply(res, errorCodes.BadRequest);
-            }).done()
+        list.saveWithPromise()
+            .then(responses.sendModelId(res, list._id))
+            .fail(errors.ifErrorSendBadRequest(res))
+            .done();
             
     }, function() {
-        res.send.apply(res, errorCodes.BadRequest);
+        errors.sendBadRequest(res);
     })
 }
 
 //Update list
 exports.update = function (req, res) {    
     var list = req.currentList;
-    if (req.body.label)
-        list.label = req.body.label
-    if (req.body.path)
-        list.path = req.body.path
-    list.saveWithPromise().then(function () {
-        res.json({ _id: list._id })
-    },function (err) {
-        connect.logger(err);
-        res.send.apply(res, errorCodes.BadRequest);
-    }).done()        
+    _.merge(list, _.pick(req.body, 'label', 'path'));
+    list.saveWithPromise()
+        .then(responses.sendModelId(res, list._id))
+        .fail(errors.ifErrorSendBadRequest(res))
+        .done();      
 }
 
 //Delete list, all its childs, containers associated and remove tag from item
 exports.destroy = function (req, res) {
     var list = req.currentList;    
-    list.removeFull().then(function () {
-        res.json({ _id: list._id })
-    },function (err) {
-        connect.logger(err);
-        res.send.apply(res, errorCodes.BadRequest);
-    }).done()        
+    list.removeFull()
+        .then(responses.sendModelId(res, list._id))
+        .fail(errors.ifErrorSendBadRequest(res))
+        .done()
 }
 
 //Find list by id
@@ -53,10 +45,10 @@ exports.list = function (req, res, next, id) {
     List.byId(id)
         .then(function(list) {
             if (!list) 
-                res.send.apply(res, errorCodes.NotFound); 
+                errors.sendNotFound(res);
             else {
                 if (list.user !=  req.user._id.toString()) 
-                res.send.apply(res, errorCodes.Forbidden);
+                    errors.sendForbidden(res);
             else {
                 req.currentList = list;
                 next()

@@ -7,9 +7,18 @@ var mongoose = require('mongoose'),
     q = require('q')    
 
 var ListSchema = new Schema({
-    label: {type: String, trim: true, validate: validation.nonEmpty}, //name of this list
+    //Generic fields
+    label: {type: String, trim: true, validate: validation.nonEmpty("Label")}, //name of this list
     path: {type: String, trim: true, default: ''}, //name of parent list, default set to '' that if we will create index by this field, we do not create sparse index
-    user: {type: Schema.ObjectId, ref: 'User'}
+    user: {type: Schema.ObjectId, ref: 'User'},
+
+    //Browser Window
+    externalId: {type: String, trim: true},
+    active: {type: Boolean, default: true},
+    lastSyncDate: Date,
+    closedDate: Date
+
+    
 });
 
 ListSchema.plugin(require('../util/mongoose-timestamp'));

@@ -17,6 +17,9 @@ var ListContainer = Container.extend({
         //Listen to list events
         this.listenListEvents();
     },
+    initializeView: function (options) {
+        this.listenTo(_state.listboards, 'currentContainerChange', this.currentContainerChanged);
+    },
     renderView: function () {
         this
             .renderMenuOptions()

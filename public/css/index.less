@@ -9,6 +9,7 @@ body {
 
 .container-fluid {
 	padding: 0;
+	min-height: 600px;
 }
 
 .blue {
@@ -74,10 +75,7 @@ header{
 }
 
 #index-center {	
-	height: 450px;
 	margin-left: 0;
-
-	
 }
 
 .box {
@@ -110,7 +108,7 @@ header{
 
 .reasons {
 	color:#EFEFEF;
-	padding:40px 0px 140px;
+	padding:40px 0px 40px;
 	width:460px;
 
 	text-shadow:0px 1px 1px rgba(0, 0, 0, 0.6);
@@ -127,12 +125,19 @@ header{
 	}
 }
 
-
-.register-box{
+.box{
 	width:380px;
 	margin:45px auto 50px;
 	padding:20px 40px;
 	color:#3c4446;
+
+	&.register-box{
+		width:380px;
+	}
+
+	&.login-box, &.signup-box{
+		width:280px;
+	}
 
 	&.border {
 		background:rgba(255, 255, 255, 0.8);
@@ -152,7 +157,7 @@ header{
 			color: @blueDark;
 		}
 	}
-	input[type='text'] {
+	input[type='text'], input[type='password'] {
 		margin:10px 0px 0px;
 		font-size:18px;
 		line-height: 25px;
@@ -169,9 +174,9 @@ header{
 		text-align: left;
 		font-size: 12px;
 	}
-	.btn-block {
+	.btn-big {
 		margin-top: 20px;
-		padding:15px 0px;
+		padding:15px 40px;
 		text-shadow:0px -1px 1px rgba(0, 0, 0, 0.2);
 		font-weight:600;
 		font-size:22px;
@@ -218,10 +223,16 @@ header{
 	}
 }
 
+#login, #signup {
+	text-align: center;
 
+	input{
+		width: 230px;
+	}
+}
 
 footer {
-	padding: 30px 0 10px 0;
+	padding: 10px 0 10px 0;
 	text-align: center;
 
 	p {

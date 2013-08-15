@@ -22,9 +22,6 @@ var Container = AppView.extend({
             id: "cont_" + this.model.get('_id')
         }
     },
-    initializeView: function (options) {
-        this.listenTo(_state.listboards, 'currentContainerChange', this.currentContainerChanged);
-    },
     addMenuOptions: function (menuOptions) {
         this.menuOptions = _.union(this.menuOptions, menuOptions);
     },

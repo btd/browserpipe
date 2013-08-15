@@ -29,16 +29,17 @@ var Listboard = AppView.extend({
     postRender: function () {
     },
     renderCurrentListboard: function (currentListboard) {
-        if (currentListboard) {
+        /*if (currentListboard) {
             if (this.listboardContainerView)
                 this.listboardContainerView.dispose();
-            this.$('.name').html(currentListboard.get('label'))
+           // this.$('.name').html(currentListboard.get('label'))
             this.listboardContainerView = new ListboardContainer({model: currentListboard})
             $("#main-container").html(this.listboardContainerView.render().el);
         }
+        
         else {
             this.$('.name').html('<i>No listboard</i>');
-        }
+        }*/
     },
     listboardUpdated: function (listboard) {
         this.$("#opt-dash-" + listboard.get("_id") + " > a").html(listboard.get('label'))
