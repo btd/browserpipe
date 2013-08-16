@@ -3,10 +3,10 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var config = require('config');
 var _state = require('models/state');
-var AppView = require('views/view');
+var Center = require('views/center/center');
 var template = require('templates/home/home');
 
-var Home = AppView.extend({
+var Home = Center.extend({    
     tagName: 'div',
     attributes: function () {
         return {
@@ -22,8 +22,8 @@ var Home = AppView.extend({
         var compiledTemplate = _.template(template, {
         });
         this.$el.html(compiledTemplate);
-        $('#main-container-inner').empty();
-        $('#main-container-inner').append(this.$el);
+        $('#main-container').empty();
+        $('#main-container').append(this.$el);
         return this;
     },
     navigateToOption: function(e){

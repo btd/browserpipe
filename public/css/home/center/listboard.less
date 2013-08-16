@@ -1,5 +1,76 @@
-.listboard {   
-    overflow-x: auto;
+.accordion {
+  overflow:hidden; 
+  margin:0; 
+  color:#474747; 
+  background:#414141; 
+  padding:5px auto; 
+
+  section {
+    float:left; 
+    overflow:hidden; 
+    color:#333; 
+    cursor:pointer; 
+    background: #333; 
+    margin:3px; 
+    width:65px; 
+    height:350px; 
+    -moz-transition:width 0.2s ease-out; 
+    -webkit-transition:width 0.2s ease-out;
+    -o-transition:width 0.2s ease-out;
+    -ms-transition:width 0.2s ease-out;
+    transition:width 0.2s ease-out;
+
+    &:after{
+      position:relative;
+      font-size:24px;
+      color:#000;
+      font-weight:bold;
+    }
+    &:hover {
+      background:#444;
+    }
+    h2 {
+      -webkit-transform:rotate(90deg);
+      -moz-transform:rotate(90deg);
+      -o-transform: rotate(90deg);
+      -ms-transform: rotate(90deg);
+      transform: rotate(90deg);
+      width:240px; 
+      position:relative; 
+      left:-100px; 
+      top:85px;
+
+      a { 
+        padding:8px 10px;
+        display:block;
+        font-size:16px; 
+        font-weight:normal;
+        color:#eee; 
+        text-decoration:none; 
+      }
+    }
+    .listboard { 
+      display:none; 
+    }
+    &.opened  { 
+      background:#FFF;
+      height:30px; 
+
+      &:hover { 
+        background:#FFF; 
+      }
+      h2 {
+        display: none;
+      }
+      .listboard {
+        display:block;
+      }
+    }
+  }
+}
+
+.containers {		
+	  overflow-x: auto;
     overflow-y: hidden;
     padding: 0 3px;
     margin: 0 8px;
@@ -11,4 +82,26 @@
 }
 .bkmrk-lists {
     border-top: 1px solid #e3e3e3;
+}
+
+.sub-bar {
+	margin: 0;
+}
+
+.collapsed-text {
+  -webkit-transform: rotate(-90deg);
+  -moz-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+  -o-transform: rotate(-90deg);
+  transform: rotate(-90deg);
+
+  /* also accepts left, right, top, bottom coordinates; not required, but a good idea for styling */
+  -webkit-transform-origin: 50% 50%;
+  -moz-transform-origin: 50% 50%;
+  -ms-transform-origin: 50% 50%;
+  -o-transform-origin: 50% 50%;
+  transform-origin: 50% 50%;
+
+  /* Should be unset in IE9+ I think. */
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
 }

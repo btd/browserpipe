@@ -24,14 +24,13 @@ header#header
                                     span Logout 
             a.pull-left(href="/", class="brand", data-original-title="")
                 div Listboard.it
-            ul#listboard-selector(class="nav pull-left")                
-                li(class="dropdown nav-option")
-                    a(href="#", class="dropdown-toggle", data-toggle="dropdown") Now
-                    ul(class="dropdown-menu")
-                        li      
-                            a(href="#") Later
-                        li
-                            a(href="#") Future
+            ul#section-selector(class="nav pull-left")                
+                li(class="nav-option")
+                    a(href="/listboards#now") Now
+                li(class="nav-option")
+                    a(href="/listboards#later") Later
+                li(class="nav-option")
+                    a(href="/listboards#future") Future
             #search-cont.hide
                 button#search-btn(type="submit", class="btn") 
                     i.icon-search

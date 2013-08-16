@@ -6,8 +6,12 @@ var Schema = require('mongoose').Schema,
 
 
 var ListboardSchema = new Schema({
+    type: {type: Number, required: true}, //0: now, 1: later, 2: future
     label: { type: String, required: true, trim: true, validate: validation.nonEmpty("Label") },
-    containers: [ require('./container') ]
+    containers: [ require('./container') ],
+
+    //For 0 container (associated with a browser)
+    lastSyncDate: Date
 });
 
 ListboardSchema.plugin(require('../util/mongoose-timestamp'));
@@ -17,13 +21,25 @@ ListboardSchema.methods.addContainerByList = function (list) {
     return this.addContainer({ type: 1, title: list.label, filter: list.fullPath });
 };
 
-ListboardSchema.methods.addContainer = function (listObj) {
+ListboardSchema.methods.addContainer = function (cont) {
     this.containers.push({
-        type: listObj.type,
-        title: listObj.title,
-        filter: listObj.filter
+        type: cont.type,
+        title: cont.title,
+        filter: cont.filter,
+        externalId: cont.externalId,
+        active: cont.active
     });
     return this;
 };
+
+ListboardSchema.methods.getContainerByExternalId = function (externalId) {
+    var result = _.filter(this.containers, function(cont){ return cont.externalId === externalId; });
+    if(result.length == 1)
+        return result[0];
+    else if(result.length === 0)
+        return null
+    else if(result.length > 1)
+        throw "Cannot be two containers with same external id on a listboard"
+}
 
 module.exports = ListboardSchema;

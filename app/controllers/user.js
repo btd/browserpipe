@@ -55,10 +55,7 @@ exports.create = function (req, res) {
 
     var user = new User(_.pick(req.body, 'email', 'name', 'password'));
     user.provider = 'local' //for passport
-
-    //temp!!!!!!!!!!!!!!!!!!!!
-    user.addBrowser({ name: 'Ubuntu Chrome'});
-
+    
     //Creates initial data
     //Root lists
     var listsList = new List({ label: 'Lists', user: user });
@@ -76,10 +73,19 @@ exports.create = function (req, res) {
     var deliciousImports = importsList.createChildList("Delicious");
     var pinboardImports = importsList.createChildList("Pinboard");
 
-    //Create listboard
-    var listboard = user.addListboard({ label: 'My initial listboard'})
+    //Create a later listboard
+    user.addLaterListboard({ type: 1, label: 'My later listboard'})
         .addContainerByList(readLaterList)
         .addContainerByList(coolSitesList);
+
+    //Creates the future listboard
+    user.addFutureListboard({ type: 2, label: 'My future listboard'})
+
+    //TODO: THIS IS TEMPORAL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    //CREATES A NOW LISTBOARD
+    //UNTIL IT CREATES IT AUTOMATICALLY VIA EXTENSION AND AP
+    user.addNowListboard({type: 0, label: 'My Chrome Browser'})
+
 
     //Sets current listboard to recently created one
     user.saveWithPromise()
@@ -102,7 +108,7 @@ exports.create = function (req, res) {
                         html: function () {
                             req.login(user, function (err) {
                                 if (err) return res.render('500')
-                                return res.redirect('/listboards/' + listboard.id)
+                                return res.redirect('/welcome')
                             })
                         },
 

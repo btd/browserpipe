@@ -1,18 +1,18 @@
  <ul id="home-options">
     <li>
-        <a class="home-option" href="/now">
+        <a class="home-option" href="/listboards#now">
             Now
         </a>
         <p>Check all the tabs your are working now in your browsers</p>
     </li>
     <li>      
-        <a class="home-option" href="/later">
+        <a class="home-option" href="/listboards#later">
             Later
         </a>
         <p>Use your listboards to check your saved items</p>
     </li>
     <li>
-        <a class="home-option" href="/future">
+        <a class="home-option" href="/listboards#future">
             Future
         </a>
         <p>Import items from external sources</p>

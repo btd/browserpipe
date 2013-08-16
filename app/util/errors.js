@@ -21,6 +21,7 @@ Object.keys(errorCodes).forEach(function(errorName) {
 Object.keys(errorCodes).forEach(function(errorName) {
     module.exports['ifErrorSend' + errorName] = function(res) {
         return function(err) {
+            console.log(err)
             module.exports['send' + errorName](res);
         }
 

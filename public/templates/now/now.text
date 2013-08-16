@@ -1,18 +1,24 @@
-<div id="browser-bar" class="navbar">
-  <div class="navbar-inner">    
-	<div class="btn-group pull-left">
-		<a id="browser-selector" class="btn btn-success dropdown-toggle" data-toggle="dropdown" href="#">
-			<i class="icon-folder-close"><span class="icon-label">Chrome in Mac</span></i>
-			<span class="caret"></span>
-		</a>
-		<ul class="dropdown-menu">
-			 <li><a href="#"><i class="icon-none">Create New</i></a></li>
-		</ul>
-	</div>
-    <ul class="nav">
-      <li><a href="#">Lisboard all</a></li>
-      <li><a href="#">Archive all</a></li>
-      <li><a href="#">Open all in browser</a></li>
-    </ul>
+<h2><a class="section-selector" href="#now">Now</a></h2>
+<div class="listboard">
+  <div class="navbar sub-bar">
+    <div class="navbar-inner">    
+    <div class="btn-group pull-left">
+      <a id="now-listboard-selector" class="btn btn-success dropdown-toggle" data-toggle="dropdown" href="#">
+        <i class="icon-folder-close"><span class="icon-label">Chrome in Mac</span></i>
+        <span class="caret"></span>
+      </a>
+      <ul class="dropdown-menu">
+         <li><a href="#"><i class="icon-none">Create New</i></a></li>
+      </ul>
+    </div>
+      <ul class="nav">
+        <li><a href="#">Lisboard all</a></li>
+        <li><a href="#">Archive all</a></li>
+        <li><a href="#">Open all in browser</a></li>
+      </ul>
+    </div>
   </div>
-</div>
+  <div class="containers">
+    <div class="containers-inner"></div>
+  </div>
+</div>  

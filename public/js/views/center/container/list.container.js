@@ -5,6 +5,7 @@ var _state = require('models/state');
 var Container = require('views/center/container/container');
 var ContainerChildList = require('views/center/container/list/child.list');
 var ContainerItem = require('views/center/container/item/item');
+
 var ListContainer = Container.extend({
     collapsed: false,
     events: {

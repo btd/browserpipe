@@ -1,13 +1,11 @@
 // Filename: router.js
 
 var _state = require('models/state'),    
-    Search = require('views/top-bar/search'),
-    Center = require('views/center/center'),
+    Search = require('views/top-bar/search'),    
+    Sections = require('views/top-bar/sections'),
     Home = require('views/center/home'),
     Welcome = require('views/center/welcome'),
-    Now = require('views/center/now'),
-    Later = require('views/center/later'),    
-    Future = require('views/center/future'),    
+    AccordionListboards = require('views/center/listboard/accordion.listboards'),
     Backbone = require('backbone');
 
 var AppRouter = Backbone.Router.extend({
@@ -15,11 +13,10 @@ var AppRouter = Backbone.Router.extend({
     routes: {        
         '/' : 'home',
         'welcome' : 'welcome',
-        'now': 'showEmptyNow',
-        'now/:id': 'showNow',
-        'later': 'showEmptyLater',
-        'later/:id': 'showLater',
-        'later': 'showFuture',
+        'listboards': 'listboards',
+        'listboards#now': 'listboards',
+        'listboards#later': 'listboards',
+        'listboards#future': 'listboards',
         // Default
         '*actions': 'home'
     },
@@ -31,49 +28,16 @@ var AppRouter = Backbone.Router.extend({
         var welcome = new Welcome();       
         welcome.render();
     },
-    showEmptyNow: function (id) {   
-        if (_state.browsers.length > 0)
-            Backbone.history.navigate("/now/" + _state.browsers.at(0).get('_id'), {trigger: true});
-        else {
-            var now = new Now();       
-            now.render();
-        }
-    },
-    showNow: function (id) {
-        if (_state.browsers.length === 0)
-            Backbone.history.navigate("/now", {trigger: true});
-         else {
-            var now = new Now();       
-            now.render();
-        }
-    },
-    showEmptyLater: function (id) {        
-        if (_state.listboards.length > 0)
-            Backbone.history.navigate("/later/" + _state.listboards.at(0).get('_id'), {trigger: true});
-        else {
-            var later = new Later();       
-            later.render();
-        }
-    },
-    showLater: function (id) {
-        if (_state.listboards.length === 0)
-            Backbone.history.navigate("/later", {trigger: true});
-        else {
-            var later = new Later();       
-            later.render();
-        }
-    },
-    showFuture: function() {
-        var future = new Future();       
-        future.render();
-    },    
+    listboards: function (actions) {     
+        var accordionListboards = new AccordionListboards();       
+        accordionListboards.render();
+    },   
     initialize: function () {
         //Load initial data
         _state.loadInitialData();
 
-        //Renders the center
-        this.views.center = new Center();       
-        this.views.center.render();
+        this.sections = new Sections();
+        this.sections.render();
     }
 });
 

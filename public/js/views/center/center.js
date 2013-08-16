@@ -4,12 +4,8 @@ var Backbone = require('backbone');
 var config = require('config');
 var _state = require('models/state');
 var AppView = require('views/view');
-var Center = AppView.extend({
-    el: '#main-container-inner',
-    events: {
-    },
-    initializeView: function (options) {
-    },
+
+var Center = AppView.extend({  
     calculateHeight: function () {
         //Calculates the height of the listboard
         var wheight = $(window).height();

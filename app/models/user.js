@@ -13,6 +13,8 @@ var errorMsgs = {
     should_be_unique: 'already used'
 }
 
+var ListboardSchema = require('./listboard');
+
 var UserSchema = new Schema({
     name: { type: String, match: /(\w| )+/, trim: true, validate: validation.nonEmpty("Name ")},
     email: { type: String, required: true, validate: [ /\S+@\S+\.\S/, errorMsgs.invalid], trim: true, lowercase: true},
@@ -20,8 +22,9 @@ var UserSchema = new Schema({
         //do not allow user to set empty password
         return _.isEmpty(password) ? undefined : bcrypt.hashSync(password, bcryptRounds);
     }, required: true},    
-    listboards: [ require('./listboard') ],
-    browsers: [ require('./browser') ]
+    nowListboards: [ ListboardSchema ],
+    laterListboards: [ ListboardSchema ],
+    futureListboards: [ ListboardSchema ]
 });
 
 UserSchema.plugin(require('../util/mongoose-timestamp'));
@@ -30,9 +33,19 @@ UserSchema.methods.authenticate = function (password) {
     return bcrypt.compareSync(password, this.password);
 };
 
-UserSchema.methods.addListboard = function(rawListboard) {    
-    this.listboards.push(rawListboard);
-    return _.last(this.listboards);
+UserSchema.methods.addNowListboard = function(rawListboard) {    
+    this.nowListboards.push(rawListboard);
+    return _.last(this.nowListboards);
+};
+
+UserSchema.methods.addLaterListboard = function(rawListboard) {    
+    this.laterListboards.push(rawListboard);
+    return _.last(this.laterListboards);
+};
+
+UserSchema.methods.addFutureListboard = function(rawListboard) {    
+    this.futureListboards.push(rawListboard);
+    return _.last(this.futureListboards);
 };
 
 UserSchema.methods.addBrowser = function(rawBrowser) {    

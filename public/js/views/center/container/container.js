@@ -6,6 +6,7 @@ var _state = require('models/state');
 var AppView = require('views/view');
 var ContainerHeader = require('views/center/container/header/header');
 var menuTemplate = require('templates/containers/menu');
+
 var Container = AppView.extend({
     tagName: 'div',
     events: {
@@ -16,6 +17,8 @@ var Container = AppView.extend({
     menuOptions: [
         {name: "menu_option_close", label: "Close", method: "closeContainer"}
     ],
+    initializeView: function (options) {
+    },
     attributes: function () {
         return {
             class: 'items-container',
@@ -46,11 +49,10 @@ var Container = AppView.extend({
         $(this.el).html(compiledTemplate);
 
         //Load the menu options events
-        for (var i = 0, l = this.menuOptions.length; i < l; i++) {
-            var menuOption = this.menuOptions[i];
-            this.events['click .' + menuOption.name] = menuOption.method;
-        }
-
+        //for (var i = 0, l = this.menuOptions.length; i < l; i++) {
+        //    var menuOption = this.menuOptions[i];
+        //    this.events['click .' + menuOption.name] = menuOption.method;
+        //}
         return this;
     },
     renderBox: function () {
@@ -61,17 +63,11 @@ var Container = AppView.extend({
         this.addEvents(this.events);
         this.calculateHeight();
     },
-    calculateHeight: function () {
-        //Gets the page height
-        var wheight = $(window).height();
-        //Gets the container header height
-        var topBarHeight = $('#top-bar').height();
-        var bottomBarHeight = $('#bottom-bar').height();
-        var headerHeight = $('.header', this.el).height();
-        //Sets the max-height of the container content (not the header)
-        var value = wheight - topBarHeight - bottomBarHeight - headerHeight - (config.CONTAINER_VERTICAL_MARGIN * 2);
+    calculateHeight: function (height) {
+        //TODO: check why is needed to rest 30
+        var value = height - 60 -(config.CONTAINER_VERTICAL_MARGIN * 2);
         $(".box", this.el).css("max-height", value);
-    },
+    }/*,
     selectContainer: function (e) {
         //Sets the container as current
         _state.listboards.setCurrentContainer(this.model.get('_id'));
@@ -108,6 +104,7 @@ var Container = AppView.extend({
         _state.listboards.getCurrentListboard().removeContainer(this.model);
         //As this was the current container, we set the current to null
         _state.listboards.setCurrentContainer(null);
-    }
+    }*/
 });
+
 module.exports = Container;

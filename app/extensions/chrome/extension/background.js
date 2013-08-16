@@ -1,5 +1,5 @@
 var config = {
-	apiUpdateTabsURL: 'http://localhost:4000/browsers/520827e4b62b3e0114000006/sync'
+	apiUpdateTabsURL: 'http://localhost:4000/now/listboard/520d11079dd690ed5f000014/sync'
 }
 
 chrome.windows.getAll({populate : true}, function (windows) {

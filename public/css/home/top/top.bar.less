@@ -11,17 +11,19 @@
         .dropdown-menu, .modal, .btn {    
             .flatten();
         }
-        .dropdown-toggle {
-            color: @white;
-            font-weight: bold;
-            background-color: @blue;
+        .nav-option {
+            a {
+                color: @white;
+                font-weight: bold;
+                background-color: @blue;
 
-            &:hover {
-                background-color: darken(@blue, 6%);
-                text-decoration: none;    
-                text-shadow: none;    
-                background-image: none;
-                outline: none;
+                &:hover {
+                    background-color: darken(@blue, 6%);
+                    text-decoration: none;    
+                    text-shadow: none;    
+                    background-image: none;
+                    outline: none;
+                }
             }
         }        
         .dropdown-menu {        
@@ -66,17 +68,21 @@
             letter-spacing: -1px;
 
         }
-        #listboard-selector{            
+        #section-selector{            
             text-overflow: ellipsis;
             max-width: 450px;                
             margin-left: 3px;
             margin-right: 8px;
 
-            .dropdown-toggle {
-                background-color: @green;
+            .nav-option {
+                margin-right: 6px;
 
-                &:hover {
-                    background-color: darken(@green, 6%);
+                a {
+                    background-color: @green;
+
+                    &:hover {
+                        background-color: darken(@green, 6%);
+                    }
                 }
             }    
         }

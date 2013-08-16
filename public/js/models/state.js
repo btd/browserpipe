@@ -12,15 +12,37 @@ var State = Backbone.Model.extend({
         //Loads Lists
         this.loadLists();
 
-        //Loads Browsers
-        this.loadBrowsers();
+        //Loads NowListboards
+        this.loadNowListboards();
 
-        //Loads Listboards
-        this.loadListboards();
+        //Loads LaterListboards
+        this.loadLaterListboards();
+
+        //Loads FutureListboards
+        this.loadFutureListboards();
 
         //Load items
         this.loadItems();
     },
+    loadNowListboards: function () {
+        this.nowListboards = new Listboards(initialOptions.nowListboards)
+    },
+    loadLaterListboards: function () {
+        this.laterListboards = new Listboards(initialOptions.laterListboards)
+    },
+    loadFutureListboards: function () {
+        this.futureListboards = new Listboards(initialOptions.futureListboards)
+    },
+    loadItemsByContainer: function(container) {
+        var self = this;                       
+        _.map(initialOptions.items, function(item){            
+            if(_.contains(item.containers,container.get('_id')))
+                container.addItem(item);
+        });
+    },
+
+
+
     loadLists: function () {
         //Load children lists
         var initialLists = initialOptions.lists || [];
@@ -55,10 +77,7 @@ var State = Backbone.Model.extend({
     },
     loadBrowsers: function () {        
         this.browsers = new Browsers(initialOptions.browsers)
-    },
-    loadListboards: function () {
-        this.listboards = new Listboards(initialOptions.listboards)
-    },
+    },    
     loadItems: function () {
         var self = this;
         for (index in initialOptions.items) {

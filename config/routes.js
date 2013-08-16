@@ -33,20 +33,40 @@ module.exports = function (app, passport) {
   var invitation = require('../app/controllers/invitation');
   app.post(  '/invitations', invitation.create);
 
-  //Listboard routes
+  //Extension
+  app.get(    '/clients/chrome/extension.crx', auth.send401IfNotAuthenticated, main.chromeExtension);
+
+  //Listboard
   var listboard = require('../app/controllers/listboard');
+
+  app.get(    '/listboards',         auth.ensureLoggedIn('/login'), main.home);
+
+  //Now
+  //TODO: manage properly api OAuth from http://developer.chrome.com/extensions/tut_oauth.html
+  app.post(  '/now/listboard/:nowListboardId/sync',  auth.send401IfNotAuthenticated, listboard.sync);
+
+  app.param('nowListboardId', auth.send401IfNotAuthenticated, listboard.nowListboard);    
+  
+  //Later
+    
+  //Future
+  
+
+  /*//Listboard routes  
   app.post(  '/listboards',                auth.send401IfNotAuthenticated, listboard.create);
   app.put(   '/listboards/:listboardId',   auth.send401IfNotAuthenticated, listboard.update);
   app.delete('/listboards/:listboardId',   auth.send401IfNotAuthenticated, listboard.destroy);
-    
-  app.param('listboardId', auth.send401IfNotAuthenticated, listboard.listboard);
+  
+  
+  app.param('laterListboardId', auth.send401IfNotAuthenticated, listboard.laterListboard);
+  app.param('futureListboardId', auth.send401IfNotAuthenticated, listboard.futureListboard);
 
   //Containers routes
   var container = require('../app/controllers/container');
   app.post(   '/listboards/:listboardId/containers',               auth.send401IfNotAuthenticated, container.create);
   app.put(    '/listboards/:listboardId/containers/:containerId',  auth.send401IfNotAuthenticated, container.update);
   app.delete( '/listboards/:listboardId/containers/:containerId',  auth.send401IfNotAuthenticated, container.destroy);
-
+*/
   //Lists routes
   var list = require('../app/controllers/list');
   app.post( '/lists',             auth.send401IfNotAuthenticated, list.create);
@@ -63,29 +83,6 @@ module.exports = function (app, passport) {
     
   app.param('itemId', item.item);
 
-  //Browser routes
-  var browser = require('../app/controllers/browser');
-  app.post(   '/browsers',                  auth.send401IfNotAuthenticated, browser.create);
-  app.put(    '/browsers/:browserId',       auth.send401IfNotAuthenticated, browser.update);
-  app.delete( '/browsers/:browserId',       auth.send401IfNotAuthenticated, browser.destroy);
-  //TODO: manage properly api OAuth from http://developer.chrome.com/extensions/tut_oauth.html
-  app.post(   '/browsers/:browserId/sync',  /*auth.send401IfNotAuthenticated,*/ browser.sync);
-
-  app.param(  'browserId', /*auth.send401IfNotAuthenticated,*/ browser.browser);
-
-  //Extension
-  app.get(    '/clients/chrome/extension.crx', auth.send401IfNotAuthenticated, main.chromeExtension);
-
-  //Now
-  app.get(    '/now',                  auth.ensureLoggedIn('/login'), main.home);
-  app.get(    '/now/:browserId',       auth.ensureLoggedIn('/login'), main.home);  
-
-  //Later
-  app.get(    '/later',                auth.ensureLoggedIn('/login'), main.home);
-  app.get(    '/later/:listboardId',   auth.ensureLoggedIn('/login'), main.home);  
-    
-  //Future
-  app.get(    '/future',               auth.ensureLoggedIn('/login'), main.home);  
     
   
 };
