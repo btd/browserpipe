@@ -25,13 +25,13 @@ header#header
             a.pull-left(href="/", class="brand", data-original-title="")
                 div Listboard.it
             ul#section-selector(class="nav pull-left")                
-                li(class="nav-option")
+                li(id="selector-now", class="nav-option")
                     a(href="/listboards#now") Now
-                li(class="nav-option")
+                li(id="selector-later", class="nav-option")
                     a(href="/listboards#later") Later
-                li(class="nav-option")
+                li(id="selector-future", class="nav-option")
                     a(href="/listboards#future") Future
-            #search-cont.hide
+            #search-cont
                 button#search-btn(type="submit", class="btn") 
                     i.icon-search
                         span.icon-label Search

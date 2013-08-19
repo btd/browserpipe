@@ -15,7 +15,7 @@ var AccordionListboards = AppView.extend({
     attributes: function () {
         return {
             id: 'listboards',
-            class: 'accordion horizontal'
+            class: 'accordion horizontal hide'
         }
     },
     initializeView: function (options) {
@@ -28,22 +28,22 @@ var AccordionListboards = AppView.extend({
         $('#main-container').append(this.$el);
         $(this.el).append(this.nowView.render().el);
         $(this.el).append(this.laterView.render().el);
-        $(this.el).append(this.futureView.render().el);
-        this.selectSection(location.hash)   
+        $(this.el).append(this.futureView.render().el);        
         return this;
     },    
-    clickedSection: function(e){
-        this.selectSection($(e.target).attr('href'));
+    clickedSection: function(e){        
+        Backbone.history.navigate($(e.target).attr('href'), {trigger: true});
     },
     selectSection: function(section){     
+        this.$el.removeClass('hide');
         this.$('.opened').removeClass('opened');
         this.nowView.$el.css('width', '');
         this.laterView.$el.css('width', '');
         this.futureView.$el.css('width', '');
         switch(section){
-            case '#now': this.nowView.selectSection(); break;
-            case '#later': this.laterView.selectSection(); break;
-            case '#future': this.futureView.selectSection(); break;
+            case 'now': this.nowView.selectSection(); break;
+            case 'later': this.laterView.selectSection(); break;
+            case 'future': this.futureView.selectSection(); break;
         }
     },
     calculateHeight: function () {

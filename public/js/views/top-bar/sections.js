@@ -13,8 +13,15 @@ var Sections = AppView.extend({
     navigateToSection: function (e) {        
         var $target = $('a', e.currentTarget);
         e.preventDefault();
-        console.log($target.attr('href'))
+        var section = $target.attr('href');
         Backbone.history.navigate($target.attr('href'), {trigger: true});
+    },
+    unSelectSelectors: function(){
+        this.$('.nav-option a').removeClass('selected');
+    },
+    selectSelector: function(section){
+        this.unSelectSelectors();
+        this.$('.nav-option#selector-' + section + ' a').addClass('selected');
     }
 });
 module.exports = Sections;

@@ -1,13 +1,13 @@
 .items-container {
     position: relative;
-    background: #EFEFEF;
+    background: @grey1;
     margin: 6px 2px 6px 2px;
     padding: 6px;
     float:left;
     width: 314px;
     overflow-y: hidden;         
     .box-sizing(border-box);    
-    border: 2px solid #EFEFEF;
+    border: 2px solid @grey1;
 
     &:hover {
         cursor: pointer;
@@ -35,7 +35,8 @@
             position: absolute;
         }
         .title {
-            margin-left: 20px;
+            color: @grey3;
+            margin: 0 0 6px 6px;
             font-weight: bold;
             font-size: 16px;
             word-wrap: break-word;
@@ -106,19 +107,20 @@
             text-align: left;
             font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
 
-            .item {                    
+            .item {                               
                 background: #FFFFFF;
-                border: 1px solid #EFEFEF;
+                border: 1px solid @grey;
                 margin: 0 0 6px 0;
                 padding: 3px 6px;     
                 font-size: 14x;       
-                .box-sizing(border-box);                
+                .box-sizing(border-box);  
 
                 &:hover {
                     cursor: pointer;
                     border: 1px solid @blue;
                 }
                 a {
+                    color: @grey3;     
                     word-break: break-all;
                 }
                 .description {

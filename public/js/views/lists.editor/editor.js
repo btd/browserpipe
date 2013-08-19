@@ -1,4 +1,4 @@
-var $ = require('jquery');
+/*var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var _state = require('models/state');
@@ -50,7 +50,7 @@ var ListsEditor = AppView.extend({
             autoselect: false,
             source: this.getUserListsList(),
             //TODO: implement something like sublime text 2 for autocomplete
-            /*,
+            ,
              matcher: function (item) {
 
              },
@@ -59,7 +59,7 @@ var ListsEditor = AppView.extend({
              },
              highlighter: function (item) {
 
-             },*/
+             },
             updater: function (item) {
                 if (item)
                     self.addList(item)
@@ -119,3 +119,4 @@ var ListsEditor = AppView.extend({
     }
 });
 module.exports = ListsEditor;
+*/

@@ -2,23 +2,19 @@
   overflow:hidden; 
   margin:0; 
   color:#474747; 
-  background:#414141; 
+  background:@blue3; 
   padding:5px auto; 
 
   section {
     float:left; 
     overflow:hidden; 
-    color:#333; 
+    color:@blue2; 
     cursor:pointer; 
-    background: #333; 
+    background: @blue2; 
     margin:3px; 
     width:65px; 
     height:350px; 
-    -moz-transition:width 0.2s ease-out; 
-    -webkit-transition:width 0.2s ease-out;
-    -o-transition:width 0.2s ease-out;
-    -ms-transition:width 0.2s ease-out;
-    transition:width 0.2s ease-out;
+    .easeout-width();
 
     &:after{
       position:relative;
@@ -27,7 +23,7 @@
       font-weight:bold;
     }
     &:hover {
-      background:#444;
+      background:@blue1;
     }
     h2 {
       -webkit-transform:rotate(90deg);
@@ -53,11 +49,11 @@
       display:none; 
     }
     &.opened  { 
-      background:#FFF;
+      background:@blue3;
       height:30px; 
 
       &:hover { 
-        background:#FFF; 
+        background:@blue3; 
       }
       h2 {
         display: none;
@@ -84,8 +80,55 @@
     border-top: 1px solid #e3e3e3;
 }
 
+#now-listboard-selector, #later-listboard-selector, #future-listboard-selector {    
+  
+  .dropdown-toggle {
+    background-color: @green;
+    margin: 0;
+    font-size: 16px;
+    height: 32px;
+    padding: 9px 12px 0;
+    color: @white;    
+    text-shadow: none;    
+    background-image: none;
+    .flatten();
+
+    &:hover{
+        background-color: @green2;
+        text-decoration: none;
+    }
+    .icon-label {
+      margin-left: 6px;
+    }
+    .caret {
+      margin-left: 6px; 
+    }
+  }
+}
+
 .sub-bar {
 	margin: 0;
+
+  .navbar-inner {
+    background: @grey1; 
+    .flatten();  
+
+    .nav {
+
+      a {
+        background-color: @grey;
+        padding: 5px 15px 5px;
+        margin: 5px 0 0 15px;
+        color: @grey4;
+        .easein-background();
+
+        &:hover {
+          color: #eee;
+          background-color: @grey4
+        }
+      } 
+    }
+  }
 }
 
 .collapsed-text {

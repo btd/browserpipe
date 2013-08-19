@@ -1,5 +1,8 @@
+//TODO: UNTIL we do proper Oauth2 it does not matter the id of the listboard, 
+//it will use the first one with type = 0
+
 var config = {
-	apiUpdateTabsURL: 'http://localhost:4000/now/listboard/520d11079dd690ed5f000014/sync'
+	apiUpdateTabsURL: 'http://localhost:4000/now/listboard/123/sync'
 }
 
 chrome.windows.getAll({populate : true}, function (windows) {
@@ -9,7 +12,6 @@ chrome.windows.getAll({populate : true}, function (windows) {
 	Will send this data to the server
 	
 	{
-		deviceId : "457348571dhasjkdha",
 		windows: [
 			{
 				externalId:
@@ -26,8 +28,7 @@ chrome.windows.getAll({populate : true}, function (windows) {
 		]
 	}*/
 
-	var result = {
-		deviceId : config.deviceId,
+	var result = {		
 		windows: []
 	}    
     for(var i=0;i<windows.length;i++) {

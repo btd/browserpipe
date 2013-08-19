@@ -4,7 +4,7 @@
     border: none;
 
     .navbar-inner {
-        background: @blueDark;
+        background: @blue1;
         padding-bottom: 6px;
         border: none;
 
@@ -15,10 +15,10 @@
             a {
                 color: @white;
                 font-weight: bold;
-                background-color: @blue;
+                background-color: @blue2;
 
                 &:hover {
-                    background-color: darken(@blue, 6%);
+                    background-color: @blue3;
                     text-decoration: none;    
                     text-shadow: none;    
                     background-image: none;
@@ -34,13 +34,13 @@
             }
             li {
                 a {
-                    color: @greyDark;
+                    color: @grey4;
                     font-weight: bold;
                     background-color: @white;
 
                     &:hover {
                         color: @white;
-                        background-color: @greyDark;
+                        background-color: @grey4;
                         text-decoration: none;    
                         text-shadow: none;    
                         background-image: none;
@@ -78,10 +78,19 @@
                 margin-right: 6px;
 
                 a {
-                    background-color: @green;
+                    background-color: @blue2;                    
+                    -moz-transition:width 0.2s ease-out; 
+                    -webkit-transition:width 0.2s ease-out;
+                    -o-transition:width 0.2s ease-out;
+                    -ms-transition:width 0.2s ease-out;
+                    transition:width 0.2s ease-out;
+
+                    &.selected {
+                        background-color: @blue;       
+                    }
 
                     &:hover {
-                        background-color: darken(@green, 6%);
+                        background-color: @blue3;
                     }
                 }
             }    
@@ -95,7 +104,7 @@
                 margin-bottom: 0; 
                 .flatten();
                 font-weight: bold;
-                .tobutton(@blue)
+                .tobutton(@blue2, @blue3)
             }
             #search-span {
                 display: block;

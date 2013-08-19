@@ -24,6 +24,12 @@ module.exports = AppView = Backbone.View.extend({
         }
         return this;
     },
+    hide: function(){
+        this.$el.addClass('hide');
+    },
+    show: function(){
+        this.$el.removeClass('hide');
+    },
     //Use to extend events
     addEvents: function (events) {
         this.delegateEvents(_.extend(_.clone(this.events || {}), events));

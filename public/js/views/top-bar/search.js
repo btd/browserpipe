@@ -1,4 +1,4 @@
-var $ = require('jquery');
+/*var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var config = require('config');
@@ -92,3 +92,4 @@ var Search = AppView.extend({
     }
 });
 module.exports = Search;
+*/

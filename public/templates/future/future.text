@@ -1,20 +1,18 @@
-<h2><a class="section-selector" href="#future">Future</a></h2>
+<h2><a class="section-selector" href="/listboards#future">Future</a></h2>
 <div class="listboard">
+	<div id="future-listboard-selector" class="btn-group pull-left">
+		<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+			<i class="icon-folder-close"><span class="icon-label"><%= listboard_label %></span></i>
+			<span class="caret"></span>
+		</a>
+		<ul class="dropdown-menu">
+			 <li><a href="#"><i class="icon-none">Create New</i></a></li>
+		</ul>
+	</div>
 	<div class="navbar sub-bar">
-	  <div class="navbar-inner">    
-		<div class="btn-group pull-left">
-			<a id="future-listboard-selector" class="btn btn-success dropdown-toggle" data-toggle="dropdown" href="#">
-				<i class="icon-folder-close"><span class="icon-label">Archive</span></i>
-				<span class="caret"></span>
-			</a>
-			<ul class="dropdown-menu">
-				 <li><a href="#"><i class="icon-none">Create New</i></a></li>
-			</ul>
-		</div>
+	  <div class="navbar-inner">    		
 	    <ul class="nav">
-	      <li><a href="#">Lisboard all</a></li>
-	      <li><a href="#">Archive all</a></li>
-	      <li><a href="#">Open all in browser</a></li>
+	      <li><a href="#">Open new container</a></li>
 	    </ul>
 	  </div>
 	</div>

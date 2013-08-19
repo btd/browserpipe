@@ -1,4 +1,4 @@
-var $ = require('jquery');
+/*var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var config = require('config');
@@ -188,3 +188,4 @@ var BreadCrumbList = AppView.extend({
     }
 });
 module.exports = BreadCrumbList;
+*/

@@ -9,8 +9,9 @@ var SectionListboard = AppView.extend({
     tagName: 'section',
     initializeView: function (options) {        
     }, 
-    renderView: function () {          
+    renderView: function () {     
         var compiledTemplate = _.template(this.template, {
+            listboard_label: this.model.get('label')
         });
         this.$el.html(compiledTemplate);             
         if(this.model) {

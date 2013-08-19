@@ -10,7 +10,8 @@ var Welcome = AppView.extend({
     tagName: 'div',
     attributes: function () {
         return {
-            id: 'welcome'
+            id: 'welcome',
+            class: 'hide'
         }
     },
     events: {
@@ -23,8 +24,8 @@ var Welcome = AppView.extend({
         var compiledTemplate = _.template(template, {
         });
         this.$el.html(compiledTemplate);
-        $('#main-container-inner').empty();
-        $('#main-container-inner').append(this.$el);
+        $('#main-container').empty();
+        $('#main-container').append(this.$el);
         return this;
     },
     installExtension: function(e){

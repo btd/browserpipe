@@ -10,7 +10,8 @@ var Home = Center.extend({
     tagName: 'div',
     attributes: function () {
         return {
-            id: 'home'
+            id: 'home',
+            class: 'hide'
         }
     },
     events: {
@@ -21,8 +22,7 @@ var Home = Center.extend({
     renderView: function () {        
         var compiledTemplate = _.template(template, {
         });
-        this.$el.html(compiledTemplate);
-        $('#main-container').empty();
+        this.$el.html(compiledTemplate);        
         $('#main-container').append(this.$el);
         return this;
     },

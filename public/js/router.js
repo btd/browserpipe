@@ -12,26 +12,53 @@ var AppRouter = Backbone.Router.extend({
     views: {},
     routes: {        
         '/' : 'home',
-        'welcome' : 'welcome',
-        'listboards': 'listboards',
-        'listboards#now': 'listboards',
-        'listboards#later': 'listboards',
-        'listboards#future': 'listboards',
+        'welcome' : 'welcome',        
+        'listboards#now': 'listboardSection',
+        'listboards#later': 'listboardSection',
+        'listboards#future': 'listboardSection',
+        'listboards': 'listboardSection',
         // Default
         '*actions': 'home'
     },
     home: function (actions) {   
-        var home = new Home();       
-        home.render();
+        if(!this.homeView) {
+            this.homeView = new Home();       
+            this.homeView.render();
+        }
+        this.cleaMainContainer('home');
+        this.homeView.show();
     },
     welcome: function (actions) {     
-        var welcome = new Welcome();       
-        welcome.render();
+        if(!this.welcomeView) {
+            this.welcomeView = new Welcome();       
+            this.welcomeView.render();
+        }
+        this.cleaMainContainer('welcome');
+        this.welcomeView.show();
     },
-    listboards: function (actions) {     
-        var accordionListboards = new AccordionListboards();       
-        accordionListboards.render();
+    listboardSection: function (actions) {             
+        if(location.hash === '')
+            Backbone.history.navigate('/listboards#now', {trigger: true});
+        else {
+            if(!this.accordionListboardsView) {
+                this.accordionListboardsView = new AccordionListboards();       
+                this.accordionListboardsView.render();
+            }
+            this.cleaMainContainer('accordionListboards');
+            section = location.hash.substr(1);        
+            this.accordionListboardsView.show();
+            this.accordionListboardsView.selectSection(section);
+            this.sections.selectSelector(section);
+        }
     },   
+    cleaMainContainer: function(exception){
+        if(exception != 'home' && this.homeView)
+            this.homeView.hide();
+        if(exception != 'welcome' && this.welcomeView)
+            this.welcomeView.hide();        
+        if(exception != 'accordionListboards' && this.accordionListboardsView)
+            this.accordionListboardsView.hide();
+    },
     initialize: function () {
         //Load initial data
         _state.loadInitialData();

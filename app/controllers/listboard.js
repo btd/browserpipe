@@ -36,12 +36,19 @@ exports.update = function (req, res) {
 
 //Find nowListboard by id
 exports.nowListboard = function (req, res, next, id) {
-    req.nowListboard = req.user.nowListboards.id(id);
+    /*req.nowListboard = req.user.nowListboards.id(id);
     if(!req.nowListboard) {
         errors.sendNotFound(res);
     } else {
         next();
+    }*/
+    //TODO: this is temporal until we use OAuth2 to get proper listboard    
+    if(req.user.nowListboards.length > 0){
+        req.nowListboard = req.user.nowListboards[0]
+        next();
     }
+    else 
+        errors.sendNotFound(res);
 };
 
 /*function showListboard(req, res) {
