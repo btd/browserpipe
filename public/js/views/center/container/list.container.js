@@ -1,10 +1,11 @@
-var $ = require('jquery');
+/*var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var _state = require('models/state');
 var Container = require('views/center/container/container');
 var ContainerChildList = require('views/center/container/list/child.list');
 var ContainerItem = require('views/center/container/item/item');
+
 var ListContainer = Container.extend({
     collapsed: false,
     events: {
@@ -16,6 +17,9 @@ var ListContainer = Container.extend({
         _.extend(this.events, Container.prototype.events)
         //Listen to list events
         this.listenListEvents();
+    },
+    initializeView: function (options) {
+        this.listenTo(_state.listboards, 'currentContainerChange', this.currentContainerChanged);
     },
     renderView: function () {
         this
@@ -91,3 +95,4 @@ var ListContainer = Container.extend({
     }
 });
 module.exports = ListContainer;
+*/

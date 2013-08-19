@@ -1,0 +1,16 @@
+{
+  "manifest_version": 2,
+
+  "name": "Listboard.it",
+  "description": "This extension is to sync tabs with Listboard.it.",
+  "version": "1.0",
+
+  "permissions": [
+    "tabs",
+    "http://localhost:8080/*"
+  ],
+
+  "background": {
+    "scripts": ["jquery.min.js", "background.js"]
+  }
+}

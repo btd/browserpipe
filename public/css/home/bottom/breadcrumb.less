@@ -1,0 +1,81 @@
+#breadcrumb {
+    margin: 0 60px 0 8px;    
+    padding: 0;
+
+    .list-breadcrumb {    
+        margin:0 !important;
+
+        .dropdown-menu {
+            background-color: @green;
+            margin-bottom: 0px !important;
+            display: block;  
+            padding: 0;
+
+            &:before, &:after {
+                display: none !important;
+            }
+
+            .dropdown-menu-lists {
+                margin: 0;
+                background-color: darken(@blue, 10%);
+                overflow-y: auto;
+                list-style-type: none;
+            }
+            .dropdown-edit-list {
+                color: white;
+                padding: 3px 10px;
+                display: inline;
+                font-size: 12px;
+            }  
+
+            .dropdown-add-list {
+                color: white;
+                padding: 3px 10px;
+                font-weight: bold;
+                float: right;
+            }  
+        }
+        .item {
+            font-size: 13px;
+            padding: 0 6px;
+            margin: 0 3px 0 0;
+
+            &:hover, &.selected{
+                background-color: @green !important;
+                text-shadow: none;
+            }
+        }    
+        li.one-column {
+            margin-right: 10px;
+            ul {
+                margin: 0 0 10px 5px;
+                list-style-type: none;
+
+                li {
+                    a {       
+                        display: block;
+                        padding: 5px;
+                        color: white;
+                        background-color: @blue;  
+                        //width: 110px;
+                        white-space: normal;
+                        margin-top: 10px;
+                        word-break: break-all;
+                        position: relative;
+
+                        .children{
+                            display: none;
+                            position: absolute;
+                            right: 12px;
+                            left: auto;
+                        }                    
+                        &:hover{
+                            cursor: pointer;
+                            background-color: darken(@blue, 6%);
+                        }
+                    }
+                }
+            }
+        }
+    } 
+}

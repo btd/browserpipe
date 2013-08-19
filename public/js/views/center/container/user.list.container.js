@@ -1,4 +1,4 @@
-var $ = require('jquery');
+/*var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var _state = require('models/state');
@@ -13,7 +13,7 @@ var UserListContainer = ListContainer.extend({
         /* this.addMenuOptions([
          {name: "menu_option_changeName", label: "Edit", method: "editList"}
          ]); */
-    },
+   /* },
     renderView: function () {
         this
             .renderMenuOptions()
@@ -41,3 +41,4 @@ var UserListContainer = ListContainer.extend({
     }
 });
 module.exports = UserListContainer;
+*/

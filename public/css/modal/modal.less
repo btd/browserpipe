@@ -1,0 +1,115 @@
+.modal {
+    .modal-header {
+        background-color: #3360af;
+        color: #fff;
+    }
+    .opt-margin-left {
+        margin-left: 12px;
+        vertical-align: bottom;
+    }
+    .opt-button {
+        .tobutton(@blue2, @blue3);
+    }
+}
+
+
+#dialogs {
+    .modal {
+        .modal-header {
+            padding: 3px 15px;
+            word-break: break-all;
+
+            .close {
+                margin-top: 6px;
+            }
+        }
+        .modal-body{
+            .nav-tabs {
+                margin-bottom: 3px;
+                border-bottom: none;
+
+                li{
+                    float: right;
+
+                    &.active {
+
+                        a, a:hover, a:focus{
+                            border: none;                            
+                        }
+                    }
+                }
+            }                        
+            .tooltip {
+                position: absolute;
+                right:0;
+                bottom: 0;
+             }
+        }
+    }
+}
+
+
+
+
+#modal-view-bkmkr {
+    .modal-header {
+        a {
+            font-size: 13px;
+            font-weight: normal;
+            line-height: 0;
+            color: #999999;
+        }
+        .favicon {
+            margin-right: 12px;
+            height: 16px;
+            width: 16px;
+        }
+        .edit-bkmrk-title {
+            &:hover{
+                cursor: pointer;
+            }
+        }            
+        .edit-bkmrk-title-controls {                
+            display: none;
+            margin: 6px 0;
+        }
+        .opt-save-edit-bkmrk-title {
+            .tobutton(@green, @green2);
+        }
+        #bkmrk-title {
+            margin: 0;
+        }
+        .help-inline {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 14px;
+            color: #6b2423;
+        }
+    }
+    .modal-body{
+        .bkmrk-note-content {
+            font-style: italic;
+            margin-top: 12px;
+        }
+        .edit-bkmrk-note {
+            color: #777;
+            font-size: 12px;
+
+            &:hover {
+                cursor: pointer;
+                text-decoration: underline;
+                color: #333;
+            }
+        }  
+        .edit-bkmrk-note-controls {
+            display: none; 
+        }  
+        .opt-save-edit-bkmrk-note {
+            .tobutton(@green, @green2);
+        } 
+        #bkmrk-note {                       
+            margin: 12px 0;
+            width: 450px;
+        }      
+    }
+}
+

@@ -1,177 +1,31 @@
 // Core variables and mixins
 
 // Rules import
-@import "breadcrumb.less";
-@import "container.less";
-@import "lists.editor.less";
-@import "dialog.less";
+@import "common/colors.less";
+@import "common/util.less";
+@import "home/home.responsive.less";
+@import "home/top/top.bar.less";
+@import "home/center/home.less";
+@import "home/center/welcome.less";
+@import "home/center/listboard.less";
+@import "home/center/container.less";
+@import "home/bottom/bottom.bar.less";
+@import "home/bottom/breadcrumb.less";
+@import "modal/modal.less";
+@import "modal/lists.editor.less";
 
-//Flatten styles
-.flatten() {
-  border: none;
-  box-shadow: none;
-  .border-radius(0);      
-}
-.tobutton(@color) {    
-    color: @white;
-    padding: 6px 12px;
-    background-color: @color;
-    text-shadow: none;    
-    background-image: none;
-
-    &:hover{
-        background-color: darken(@color, 6%);
-        text-decoration: none;
-    }
-}
-
-@listboardItGreen: #1b7e1e;
 
 body.home {
-    background-color: #EFEFEF;
-
-    .navbar-inner {
-        background: @blueDark;
-    }
+    background-color: @grey;
 }
 h4 {
     font-size: 16px;
 }
-.dropdown-menu, .modal, .btn {    
-    .flatten();
-}
-.dropdown-menu li > a:hover, .dropdown-menu li > a:focus {
-    background-color: @blue;
-    text-decoration: none;    
-    text-shadow: none;    
-    background-image: none;
-    outline: none;
-}
-.nav-option{
-    background-color: @blue;
-    margin-left: 3px;
 
-    &:hover{
-        background-color: darken(@blue, 6%);
-    }
-    span {                        
-        color: @white;
-    }
-}
-.modal {
-    .modal-header {
-        background-color: #3360af;
-        color: #fff;
-    }
-    .opt-margin-left {
-        margin-left: 12px;
-        vertical-align: bottom;
-    }
-    .opt-button {
-        .tobutton(@blue);
-    }
-}
-
-#top-bar {
-    min-height: 46px;
-    margin-bottom: 0px;
-    border: none;
-
-    .navbar-inner {
-
-        .container-fluid {
-            padding: 5px 0;
-
-            .brand {
-                margin: 2px 0 0;
-                padding: 0 20px;
-                text-align: center;
-                line-height: 16px;   
-
-                color: #fff;
-                text-shadow: none;   
-
-                i {
-                    font-size: 14px;
-                    line-height: 0px;      
-                }
-            }
-            #opt-listboards{
-                text-overflow: ellipsis;
-                max-width: 250px;
-
-                margin-right: 8px;
-
-                .name {
-                    margin-left: 6px;
-                }
-            }
-
-            #account-nav{
-                margin: 0 8px 0 0;                
-
-                #opt-import {
-                    li {
-                        a {
-                            img {
-                                margin-right: 6px;
-                            }
-                        }
-                    }
-                }
-            }
-
-            #search-form {
-                margin: 0;
-
-                #search-btn { 
-                    height: 40px;                    
-                    margin: 0; 
-                    .flatten();
-                    font-weight: bold;
-                    padding: 5px 8px; 
-                    .tobutton(@blue)
-                }
-                #search-box {       
-                    display: none;
-                    height: 30px;
-                    width: 500px;                                             
-                    font-size: 20px;
-                    -webkit-transition: all 0.1s ease-in-out;
-                    -moz-transition: all 0.1s ease-in-out;
-                    -o-transition: all 0.1s ease-in-out;
-                    transition: all 0.1s ease-in-out;
-                    .border-radius(0);
-                }      
-            }
-        }          
-    }
-}
-#bottom-bar {
-    min-height: 46px;
-
-    .container-fluid {
-        padding: 5px 0;
-    }
-
-    #trash-option {
-        margin-right: 8px;
-    }
-}
 #main-container {   
-    margin: 46px 0px; 
-}
-.listboard {   
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding: 0 3px;
-    margin: 0 8px;
-}
+    margin: 0px; 
 
-.navbar .nav > li > a {
-    text-shadow: none;
+    #main-container-inner {   
+        overflow-y: auto;
+    }
 }
-.bkmrk-lists {
-    border-top: 1px solid #e3e3e3;
-}
-

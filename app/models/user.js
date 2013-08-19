@@ -13,15 +13,18 @@ var errorMsgs = {
     should_be_unique: 'already used'
 }
 
+var ListboardSchema = require('./listboard');
+
 var UserSchema = new Schema({
-    name: { type: String, match: /(\w| )+/, trim: true, validate: validation.nonEmpty},
+    name: { type: String, match: /(\w| )+/, trim: true, validate: validation.nonEmpty("Name ")},
     email: { type: String, required: true, validate: [ /\S+@\S+\.\S/, errorMsgs.invalid], trim: true, lowercase: true},
     password: {type: String, set: function (password) {
         //do not allow user to set empty password
         return _.isEmpty(password) ? undefined : bcrypt.hashSync(password, bcryptRounds);
-    }, required: true},
-    currentListboardIdx: { type: Number },
-    listboards: [ require('./listboard') ]
+    }, required: true},    
+    nowListboards: [ ListboardSchema ],
+    laterListboards: [ ListboardSchema ],
+    futureListboards: [ ListboardSchema ]
 });
 
 UserSchema.plugin(require('../util/mongoose-timestamp'));
@@ -30,21 +33,25 @@ UserSchema.methods.authenticate = function (password) {
     return bcrypt.compareSync(password, this.password);
 };
 
-/**
- * Add listboard to the end of listboards, set currentListboardIdx to point on it
- * @param rawListboard {Object}
- * @returns newly created listboard
- */
-UserSchema.methods.addCurrentListboard = function(rawListboard) {
-    this.currentListboardIdx = this.listboards.length;
-    this.listboards.push(rawListboard);
-    return this.currentListboard;
+UserSchema.methods.addNowListboard = function(rawListboard) {    
+    this.nowListboards.push(rawListboard);
+    return _.last(this.nowListboards);
 };
 
-UserSchema.virtual('currentListboard')
-    .get(function() {
-    return this.listboards[this.currentListboardIdx];
-})
+UserSchema.methods.addLaterListboard = function(rawListboard) {    
+    this.laterListboards.push(rawListboard);
+    return _.last(this.laterListboards);
+};
+
+UserSchema.methods.addFutureListboard = function(rawListboard) {    
+    this.futureListboards.push(rawListboard);
+    return _.last(this.futureListboards);
+};
+
+UserSchema.methods.addBrowser = function(rawBrowser) {    
+    this.browsers.push(rawBrowser);
+    return _.last(this.browsers);
+};
 
 UserSchema.statics.removeContainersByFilter = function (user, filter) {
     return this

@@ -1,6 +1,6 @@
 var express = require('express'),
     mongoStore = require('connect-mongo')(express),
-    config = require('./config');
+    config = require('./config');    
 
 // App settings and middleware
 module.exports = function (app, config, passport) {
@@ -28,6 +28,10 @@ module.exports = function (app, config, passport) {
     app.use(express.bodyParser());
     app.use(express.methodOverride());
 
+    // parameters validator
+    var expressValidator = require('express-validator');
+    app.use(expressValidator());
+
     // cookieParser should be above session
     app.use(express.cookieParser());
 
@@ -38,8 +42,11 @@ module.exports = function (app, config, passport) {
     }))
 
     // use passport session
-    app.use(passport.initialize())
-    app.use(passport.session())
+    app.use(passport.initialize());
+    app.use(passport.session());
+
+    // flash messages
+    app.use(require('connect-flash')());
 
     app.use(express.favicon());
 

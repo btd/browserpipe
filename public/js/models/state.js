@@ -1,4 +1,5 @@
 var Backbone = require('backbone'),
+    Browsers = require('collections/browsers'),
     Listboards = require('collections/listboards'),
     ItemCollection = require('collections/items'),
     List = require('models/list'),
@@ -11,12 +12,37 @@ var State = Backbone.Model.extend({
         //Loads Lists
         this.loadLists();
 
-        //Loads Listboards
-        this.loadListboards();
+        //Loads NowListboards
+        this.loadNowListboards();
+
+        //Loads LaterListboards
+        this.loadLaterListboards();
+
+        //Loads FutureListboards
+        this.loadFutureListboards();
 
         //Load items
         this.loadItems();
     },
+    loadNowListboards: function () {
+        this.nowListboards = new Listboards(initialOptions.nowListboards)
+    },
+    loadLaterListboards: function () {
+        this.laterListboards = new Listboards(initialOptions.laterListboards)
+    },
+    loadFutureListboards: function () {
+        this.futureListboards = new Listboards(initialOptions.futureListboards)
+    },
+    loadItemsByContainer: function(container) {
+        var self = this;                       
+        _.map(initialOptions.items, function(item){            
+            if(_.contains(item.containers,container.get('_id')))
+                container.addItem(item);
+        });
+    },
+
+
+
     loadLists: function () {
         //Load children lists
         var initialLists = initialOptions.lists || [];
@@ -49,9 +75,9 @@ var State = Backbone.Model.extend({
             delete self.lists[list.getFilter()]
         });
     },
-    loadListboards: function () {
-        this.listboards = new Listboards(initialOptions.listboards)
-    },
+    loadBrowsers: function () {        
+        this.browsers = new Browsers(initialOptions.browsers)
+    },    
     loadItems: function () {
         var self = this;
         for (index in initialOptions.items) {

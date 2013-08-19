@@ -1,65 +1,52 @@
 var _ = require('lodash'),
     q = require('q'),
     mongoose = require('mongoose'),
-    Item = mongoose.model('Item')
+    Item = mongoose.model('Item'),
+    responses = require('../util/responses.js'),
+    errors = require('../util/errors.js');
 
 //Create item
 exports.create = function (req, res) {
-    if (req.isAuthenticated()) {
-        var item = new Item(req.body)
-        item.user = req.user
-        req.user.currentItem = item
-        q.all([item.saveWithPromise(),
-                req.user.saveWithPromise()])
-            .spread(function () {
-                res.json({ _id: item._id })
-            },function (err) {
-                //TODO: send corresponding number error
-                res.json(err.errors)
-            }).done()
-    }
-    else
-        res.send("invalid request")
+    var item = new Item(_.pick(req.body, 'lists', 'title', 'url', 'note'))
+    item.user = req.user
+    item.saveWithPromise()
+        .then(responses.sendModelId(res, item._id))
+        .fail(errors.ifErrorSendBadRequest(res))
+        .done();
 }
 
 //Update item
-exports.update = function (req, res) {
-    if (req.isAuthenticated() && req.currentItem) {
-        var item = req.currentItem;
-        item.lists = req.body.lists
-        item.title = req.body.title
-        item.url = req.body.url
-        item.note = req.body.note
-        item.saveWithPromise().then(function () {
-            res.json({ _id: item._id })
-        },function (err) {
-            //TODO: send corresponding number error
-            res.json(err.errors)
-        }).done()
-    }
-    else
-        res.send("invalid request")
+exports.update = function (req, res) {    
+    var item = req.currentItem;
+    _.merge(item, _.pick(req.body, 'lists', 'title', 'url', 'note'));
+    item.saveWithPromise()
+        .then(responses.sendModelId(res, item._id))
+        .fail(errors.ifErrorSendBadRequest(res))
+        .done();
 }
 
 //Find item by id
 exports.item = function (req, res, next, id) {
-    Item
-        .findOne({ _id: id })
-        .exec(function (err, item) {
-            if (err) return next(err)
-            req.currentItem = item
-            next()
-        })
+    Item.byId(id)
+        .then(function(item) {
+            if (!item) 
+                errors.sendNotFound(res);
+            else {
+                if (item.user !=  req.user._id.toString()) 
+                    errors.sendForbidden(res);
+            else {
+                req.currentList = item;
+                next()
+            }}
+        }).fail(function(err) {
+            next(err);
+        });
 }
 
 //Delete item
 exports.destroy = function (req, res) {
-    if (req.isAuthenticated() && req.currentItem) {
-        var item = req.currentItem
-        item.remove(function (err) {
-            res.json({ _id: item._id })
-        })
-    }
-    else
-        res.send("invalid request")
+    var item = req.currentItem
+    item.remove(function (err) {
+        res.json({ _id: item._id })
+    })
 }

@@ -1,63 +1,70 @@
 // Filename: router.js
 
-var _state = require('models/state'),
-    TopBarListboard = require('views/top-bar/listboard'),
-    Search = require('views/top-bar/search'),
-    Device = require('views/top-bar/device'),
-    Import = require('views/top-bar/import'),
-    BreadCrumb = require('views/bottom-bar/breadcrumb'),
-    Trash = require('views/bottom-bar/trash'),
+var _state = require('models/state'),    
+    Search = require('views/top-bar/search'),    
+    Sections = require('views/top-bar/sections'),
+    Home = require('views/center/home'),
+    Welcome = require('views/center/welcome'),
+    AccordionListboards = require('views/center/listboard/accordion.listboards'),
     Backbone = require('backbone');
-
 
 var AppRouter = Backbone.Router.extend({
     views: {},
-    routes: {
-        'listboards': 'showEmptyListboard',
-        'listboards/:id': 'showListboard',
+    routes: {        
+        '/' : 'home',
+        'welcome' : 'welcome',        
+        'listboards#now': 'listboardSection',
+        'listboards#later': 'listboardSection',
+        'listboards#future': 'listboardSection',
+        'listboards': 'listboardSection',
         // Default
-        '*actions': 'defaultAction'
+        '*actions': 'home'
     },
-    showEmptyListboard: function (id) {
-        var currentListboard = _state.listboards.getCurrentListboard();
-        if (currentListboard && _state.listboards.length > 0)
-            Backbone.history.navigate("/listboards/" + currentListboard.get('_id'), {trigger: true});
+    home: function (actions) {   
+        if(!this.homeView) {
+            this.homeView = new Home();       
+            this.homeView.render();
+        }
+        this.cleaMainContainer('home');
+        this.homeView.show();
     },
-    showListboard: function (id) {
-        if (_state.listboards.length === 0)
-            Backbone.history.navigate("/listboards", {trigger: true});
+    welcome: function (actions) {     
+        if(!this.welcomeView) {
+            this.welcomeView = new Welcome();       
+            this.welcomeView.render();
+        }
+        this.cleaMainContainer('welcome');
+        this.welcomeView.show();
     },
-    defaultAction: function (actions) {
+    listboardSection: function (actions) {             
+        if(location.hash === '')
+            Backbone.history.navigate('/listboards#now', {trigger: true});
+        else {
+            if(!this.accordionListboardsView) {
+                this.accordionListboardsView = new AccordionListboards();       
+                this.accordionListboardsView.render();
+            }
+            this.cleaMainContainer('accordionListboards');
+            section = location.hash.substr(1);        
+            this.accordionListboardsView.show();
+            this.accordionListboardsView.selectSection(section);
+            this.sections.selectSelector(section);
+        }
+    },   
+    cleaMainContainer: function(exception){
+        if(exception != 'home' && this.homeView)
+            this.homeView.hide();
+        if(exception != 'welcome' && this.welcomeView)
+            this.welcomeView.hide();        
+        if(exception != 'accordionListboards' && this.accordionListboardsView)
+            this.accordionListboardsView.hide();
     },
     initialize: function () {
         //Load initial data
         _state.loadInitialData();
 
-        _state.listboards.on('currentListboardChange', function (listboard) {
-            if(listboard)
-                Backbone.history.navigate('/listboards/' + listboard.get('_id'), {trigger: true});
-            else
-                Backbone.history.navigate('/listboards', {trigger: true});
-        }, this);
-
-        //Creates the top bar options
-        this.views.topBarListboard = new TopBarListboard({collection: _state.listboards});
-        this.views.topBarListboard.render();
-        this.views.search = new Search();
-        this.views.search.render();
-        this.views.device = new Device();
-        this.views.device.render();
-        this.views.imports = new Import();
-        this.views.imports.render();
-
-        //Creates the bottom bar options
-        this.views.breadCrumb = new BreadCrumb();
-        this.views.breadCrumb.render();
-        this.views.trash = new Trash();
-        this.views.trash.render();
-
-        //Sets the current listboard
-        _state.listboards.setCurrentListboard(initialOptions.currentListboardId);
+        this.sections = new Sections();
+        this.sections.render();
     }
 });
 

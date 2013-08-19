@@ -1,4 +1,4 @@
-var $ = require('jquery');
+/*var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var _state = require('models/state');
@@ -104,3 +104,4 @@ var EditListboard = AppView.extend({
     }
 });
 module.exports = EditListboard;
+*/

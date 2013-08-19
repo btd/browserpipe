@@ -1,0 +1,31 @@
+//Flatten styles
+.flatten() {
+  border: none;
+  box-shadow: none;
+  .border-radius(0);      
+}
+.tobutton(@color, @hoverColor) {    
+    color: @white;
+    padding: 6px 12px;
+    background-color: @color;
+    text-shadow: none;    
+    background-image: none;
+
+    &:hover{
+        background-color: @hoverColor;
+        text-decoration: none;
+    }
+}
+.easeout-width() {
+  -moz-transition:width 0.2s ease-out; 
+  -webkit-transition:width 0.2s ease-out;
+  -o-transition:width 0.2s ease-out;
+  -ms-transition:width 0.2s ease-out;
+  transition:width 0.2s ease-out;
+}
+.easein-background() {
+  -webkit-transition:background-color 0.2s ease-in;  
+  -moz-transition:background 0.2s ease-in;  
+  -o-transition:background 0.2s ease-in;  
+  transition:background 0.2s ease-in;  
+}
