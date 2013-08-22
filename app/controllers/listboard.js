@@ -6,34 +6,6 @@ var _ = require('lodash'),
     responses = require('../util/responses.js'),
     errors = require('../util/errors.js');
 
-//No listboard
-//exports.showEmpty = showListboard;
-
-//Show listboard
-//exports.show = showListboard;
-
-//Create listboard
-exports.create = function (req, res) {
-
-    var listboard = req.user.addLaterListboard(_.pick(req.body, 'label'));
-
-    req.user.saveWithPromise()
-        .then(responses.sendModelId(res, listboard._id))
-        .fail(errors.ifErrorSendBadRequest(res))
-        .done();
-}
-
-//Update listboard
-exports.update = function (req, res) {
-    var listboard = req.currentListboard;
-    _.merge(listboard, _.pick(req.body, 'label'));
-
-    req.user.saveWithPromise()
-        .then(responses.sendModelId(res, listboard._id))
-        .fail(errors.ifErrorSendBadRequest(res))
-        .done();
-};
-
 //Find nowListboard by id
 exports.nowListboard = function (req, res, next, id) {
     /*req.nowListboard = req.user.nowListboards.id(id);
@@ -50,6 +22,74 @@ exports.nowListboard = function (req, res, next, id) {
     else 
         errors.sendNotFound(res);
 };
+
+//Find laterListboard by id
+exports.laterListboard = function (req, res, next, id) {
+    req.laterListboard = req.user.laterListboards.id(id);
+    if(!req.laterListboard) {
+        errors.sendNotFound(res);
+    } else {
+        next();
+    }
+};
+
+//Find futureListboard by id
+exports.futureListboard = function (req, res, next, id) {
+    req.futureListboard = req.user.futureListboards.id(id);
+    if(!req.futureListboard) {
+        errors.sendNotFound(res);
+    } else {
+        next();
+    }
+};
+
+var saveListboard = function(req, res, listboard){
+    req.user.saveWithPromise()
+        .then(responses.sendModelId(res, listboard._id))
+        .fail(errors.ifErrorSendBadRequest(res))
+        .done();
+}
+
+//Create Later listboard
+exports.createLater = function (req, res) {
+    var listboard = req.user.addLaterListboard(_.pick(req.body, 'label'));
+    listboard.type = 1;
+    saveListboard(req, res, listboard);    
+}
+
+//Update Later listboard
+exports.updateLater = function (req, res) {
+    var listboard = req.laterListboard;
+    _.merge(listboard, _.pick(req.body, 'label'));
+    saveListboard(req, res, listboard);    
+};
+
+//Delete Later Listboard
+exports.destroyLater = function (req, res) {
+    var listboard = req.laterListboard.remove();
+    saveListboard(req, res, listboard);    
+}
+
+//Create Future listboard
+exports.createFuture = function (req, res) {
+    var listboard = req.user.addFutureListboard(_.pick(req.body, 'label'));
+    listboard.type = 2;
+    saveListboard(req, res, listboard);    
+}
+
+//Update Future listboard
+exports.updateFuture = function (req, res) {
+    var listboard = req.futureListboard;
+    _.merge(listboard, _.pick(req.body, 'label'));
+    saveListboard(req, res, listboard);    
+};
+
+//Delete future Listboard
+exports.destroyFuture = function (req, res) {
+    var listboard = req.futureListboard.remove();
+    saveListboard(req, res, listboard);    
+}
+
 
 /*function showListboard(req, res) {
     var listboards = req.user.listboards;
@@ -81,15 +121,7 @@ exports.nowListboard = function (req, res, next, id) {
 
 }*/
 
-//Delete item
-exports.destroy = function (req, res) {
-    var listboard = req.currentListboard.remove();
 
-    req.user.saveWithPromise()
-        .then(responses.sendModelId(res, listboard._id))
-        .fail(errors.ifErrorSendBadRequest(res))
-        .done();
-}
 
 
 //Sync windows and tabs

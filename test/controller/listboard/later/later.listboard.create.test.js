@@ -1,4 +1,4 @@
-var should = require('should'),
+/*var should = require('should'),
     request = require('supertest'),
     helper = require('../helper'),
     mongoose = require('mongoose');
@@ -7,16 +7,16 @@ var app = require('../../../app/server');
 
 var testListboard = { label: "Dashboard" }
 
-describe('listboard controller create', function () {
+describe('later listboard controller create', function () {
     beforeEach(function (done) {
         helper.dropCollections(['users', 'lists'], done);
     });
 
-    it('should return 200 and create listboard with POST on /listboards when authenticated and send good data', function (done) {
+    it('should return 200 and create later listboard with POST on /later/listboards when authenticated and send good data', function (done) {
         helper.authUser(app, done, function(cookie, userId) {
 
             request(app)
-                .post('/listboards')
+                .post('/later/listboards')
                 .send(testListboard)
                 .set('Cookie', cookie)
                 .set('Accept', 'application/json')
@@ -33,7 +33,7 @@ describe('listboard controller create', function () {
                         .then(function(user) {
                             should.exist(user);
 
-                            var listboard = user.currentListboard;
+                            var listboard = user.laterListboards.id(res.body._id);
 
                             listboard.label.should.be.equal(testListboard.label);
                             listboard._id.toString().should.be.equal(res.body._id);
@@ -44,10 +44,10 @@ describe('listboard controller create', function () {
         });
     });
 
-    it('should return 401 with POST on /listboards when not authenticated', function (done) {
+    it('should return 401 with POST on /later/listboards when not authenticated', function (done) {
 
             request(app)
-                .post('/listboards')
+                .post('/later/listboards')
                 .send(testListboard)
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
@@ -55,13 +55,13 @@ describe('listboard controller create', function () {
 
     });
 
-    it('should return 400 with POST on /listboards when authenticated but bad data', function (done) {
+    it('should return 400 with POST on /later/listboards when authenticated but bad data', function (done) {
 
         helper.authUser(app, done, function(cookie, userId) {
 
             //just empty object
             request(app)
-                .post('/listboards')
+                .post('/later/listboards')
                 .send({})
                 .set('Cookie', cookie)
                 .set('Accept', 'application/json')
@@ -72,7 +72,7 @@ describe('listboard controller create', function () {
 
                     //empty string
                     request(app)
-                        .post('/listboards')
+                        .post('/later/listboards')
                         .send({ label: '' })
                         .set('Cookie', cookie)
                         .set('Accept', 'application/json')
@@ -83,7 +83,7 @@ describe('listboard controller create', function () {
 
                             //string with just space chars
                             request(app)
-                                .post('/listboards')
+                                .post('/later/listboards')
                                 .send({ label: '      ' })
                                 .set('Cookie', cookie)
                                 .set('Accept', 'application/json')
@@ -101,4 +101,4 @@ describe('listboard controller create', function () {
         });
 
     });
-});
+});*/
