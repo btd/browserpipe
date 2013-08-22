@@ -132,6 +132,8 @@ ConnectMincer.prototype.javascript_tag = function(path, attributes) {
 ConnectMincer.prototype.image_tag = function(path, attributes) {
     var assetPaths = this._findAssetPaths(path, {});
 
+    attributes = attributes || {};
+
     return (assetPaths && assetPaths.map(function(assetPath) {
         return makeTag('img', _.extend(attributes, { src: assetPath }));
     }).join('\n')) || makeTag('img', _.extend(attributes, { src: path }));
