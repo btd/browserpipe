@@ -41,4 +41,13 @@ $(function() {
         var email = $input2.val().trim();
         postInvitation(email, $input2);
     });
+
+    $('button, input[type=submit]').on('click', function(e) {
+        ga && ga('send', 'event', 'button', 'click', $(e.currentTarget).val());
+    });
+    
+    $('a').on('click', function(e) {
+        var trg = $(e.currentTarget);
+        ga && ga('send', 'event', 'link', 'click', trg.attr('href'));
+    });
 });
