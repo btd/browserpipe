@@ -44,8 +44,8 @@ module.exports = function (app, passport) {
   app.post(  '/listboards',                auth.send401IfNotAuthenticated, listboard.create);
   app.put(   '/listboards/:listboardId',   auth.send401IfNotAuthenticated, listboard.update);
   app.delete('/listboards/:listboardId',   auth.send401IfNotAuthenticated, listboard.destroy);
-  //TODO: manage properly api OAuth from http://developer.chrome.com/extensions/tut_oauth.html
-  app.post(  '/now/listboards/:nowListboardId/sync',  auth.send401IfNotAuthenticated, listboard.sync);
+  //TODO: manage properly api OAuth from http://developer.chrome.com/extensions/tut_oauth.html  
+  app.post(  '/now/listboards/xxxxxxxxxxx/sync',  auth.send401IfNotAuthenticated, listboard.sync);
 
   app.param('listboardId', auth.send401IfNotAuthenticated, listboard.listboard);    
 

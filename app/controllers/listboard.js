@@ -61,46 +61,13 @@ exports.destroy = function (req, res) {
     saveListboard(req, res, listboard);    
 }
 
-
-/*function showListboard(req, res) {
-    var listboards = req.user.listboards;
-    List.getAll(req.user)
-        .then(function (lists) {
-            //We only load the ones from opened containers
-
-            var containerFilters = _(listboards).map(function (listboard) {
-                return _.map(listboard.containers, 'filter');
-            }).flatten().value();
-
-            Item.findAllByFilters(
-                    req.user,
-                    containerFilters
-                ).then(function (items) {
-                    res.render('main/home', {
-                            currentListboardId: ((req.currentListboard && req.currentListboard._id) || req.user.currentListboard._id),
-                            user: req.user,
-                            listboards: listboards,
-                            items: items,
-                            lists: lists}
-                    );
-                }, function (error) {
-                    res.render('500')
-                });
-        },function () {
-            res.render('500')
-        }).done();
-
-}*/
-
-
-
-
 //Sync windows and tabs
 exports.sync = function (req, res) {
     //TODO: it has to get the user according to the browser and oauth
 
     var user = req.user;
-    var nowListboard = req.nowListboard;
+    //TODO: listboard should be created by the extension if it does not existis, if not it should be loded by :listboardId
+    var nowListboard = user.nowListboards[0];
     var windows = req.body.windows;
     var syncDate = new Date();
 
