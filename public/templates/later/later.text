@@ -1,21 +1,23 @@
-<h2><a class="section-selector" href="/listboards#later">Later</a></h2> 
+<div class="selector" unselectable='on' onselectstart='return false;' onmousedown='return false;'>
+	<a href="later">Later</a>
+</div> 
 <div class="listboard">
-	<div id="later-listboard-selector" class="btn-group pull-left">
-		<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-			<i class="icon-folder-close"><span class="icon-label"><%= listboard_label %></span></i>
-			<span class="caret"></span>
-		</a>
-		<ul class="dropdown-menu">
-			 <li><a href="#"><i class="icon-none">Create New</i></a></li>
-		</ul>
-	</div>
 	<div class="navbar sub-bar">
-	  <div class="navbar-inner">    		
-	    <ul class="nav">
-	      <li><a href="#">Archive all for future</a></li>
-	      <li><a href="#">Open all in browser</a></li>
-	    </ul>
-	  </div>
+		<div id="later-listboard-selector" class="btn-group pull-left">
+			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+				<i class="icon-folder-close"><span class="icon-label"><%= listboard_label %></span></i>
+				<span class="caret"></span>
+			</a>
+			<ul class="dropdown-menu">
+				 <li><a href="#"><i class="icon-none">Create New</i></a></li>
+			</ul>
+		</div>
+		<div class="navbar-inner">    		
+			<ul class="nav">
+			  <li><a href="#">Archive all for future</a></li>
+			  <li><a href="#">Open all in browser</a></li>
+			</ul>
+		</div>
 	</div>
 	<div class="containers">
 		<div class="containers-inner"></div>

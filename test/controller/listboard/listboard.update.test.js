@@ -1,24 +1,24 @@
-/*var should = require('should'),
+var should = require('should'),
     request = require('supertest'),
     helper = require('../helper'),
     mongoose = require('mongoose');
 
 var app = require('../../../app/server');
 
-var testListboard = { label: "Dashboard" };
-var testListboard2 = { label: "Lisboard" };
+var testLaterListboard = { type: 1, label: "My Later listboard" }
+var testLaterListboard2 = { type: 1, label: "My Later listboard 2" }
 
 describe('listboard controller update', function () {
     beforeEach(function (done) {
         helper.dropCollections(['users', 'lists'], done);
     });
 
-    it('should return 200 and update listboard with POST on /later/listboards/:listboardId when authenticated and send good data', function (done) {
+    it('should return 200 and update listboard with POST on /listboards/:listboardId when authenticated and send good data', function (done) {
         helper.authUser(app, done, function(cookie, userId) {
 
             request(app)
-                .post('/later/listboards')
-                .send(testListboard)
+                .post('/listboards')
+                .send(testLaterListboard)
                 .set('Cookie', cookie)
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
@@ -30,8 +30,8 @@ describe('listboard controller update', function () {
                     var createdListboardId = res.body._id;
 
                     request(app)
-                        .put('/later/listboards/' + createdListboardId)
-                        .send(testListboard2)
+                        .put('/listboards/' + createdListboardId)
+                        .send(testLaterListboard2)
                         .set('Cookie', cookie)
                         .set('Accept', 'application/json')
                         .expect('Content-Type', /json/)
@@ -50,7 +50,7 @@ describe('listboard controller update', function () {
 
                                     var listboard = user.laterListboards.id(createdListboardId);
 
-                                    listboard.label.should.be.equal(testListboard2.label);
+                                    listboard.label.should.be.equal(testLaterListboard2.label);
 
                                     done();
                                 }).fail(done);
@@ -62,24 +62,24 @@ describe('listboard controller update', function () {
         });
     });
 
-    it('should return 401 with PUT on /later/listboards/:listboardId when not authenticated', function (done) {
+    it('should return 401 with PUT on /listboards/:listboardId when not authenticated', function (done) {
 
         request(app)
-            .put('/later/listboards/SOME+ID')
-            .send(testListboard)
+            .put('/listboards/SOME+ID')
+            .send(testLaterListboard)
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
             .expect(401, done);
 
     });
 
-    it('should return 400 with PUT on /later/listboards/:listboardId when authenticated but bad data', function (done) {
+    it('should return 400 with PUT on /listboards/:listboardId when authenticated but bad data', function (done) {
 
         helper.authUser(app, done, function(cookie, userId) {
 
             request(app)
-                .post('/later/listboards')
-                .send(testListboard)
+                .post('/listboards')
+                .send(testLaterListboard)
                 .set('Cookie', cookie)
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
@@ -92,7 +92,7 @@ describe('listboard controller update', function () {
 
                     //just empty object
                     request(app)
-                        .put('/later/listboards/' + createdListboardId)
+                        .put('/listboards/' + createdListboardId)
                         .send({})
                         .set('Cookie', cookie)
                         .set('Accept', 'application/json')
@@ -103,7 +103,7 @@ describe('listboard controller update', function () {
 
                             //empty string
                             request(app)
-                                .put('/later/listboards/' + createdListboardId)
+                                .put('/listboards/' + createdListboardId)
                                 .send({ label: '' })
                                 .set('Cookie', cookie)
                                 .set('Accept', 'application/json')
@@ -114,7 +114,7 @@ describe('listboard controller update', function () {
 
                                     //string with just space chars
                                     request(app)
-                                        .put('/later/listboards/' + createdListboardId)
+                                        .put('/listboards/' + createdListboardId)
                                         .send({ label: '      ' })
                                         .set('Cookie', cookie)
                                         .set('Accept', 'application/json')
@@ -132,4 +132,3 @@ describe('listboard controller update', function () {
 
     });
 });
-*/

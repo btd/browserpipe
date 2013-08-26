@@ -41,41 +41,20 @@ module.exports = function (app, passport) {
   app.get(    '/listboards',         auth.ensureLoggedIn('/login'), main.home);
 
   //Now
-  //TODO: manage properly api OAuth from http://developer.chrome.com/extensions/tut_oauth.html
-  app.post(  '/now/listboards/:nowListboardId/sync',  auth.send401IfNotAuthenticated, listboard.sync);
-
-  app.param('nowListboardId', auth.send401IfNotAuthenticated, listboard.nowListboard);    
-  
-  //Later
-  app.post(  'later/listboards',                auth.send401IfNotAuthenticated, listboard.createLater);
-  app.put(   'later/listboards/:laterListboardId',   auth.send401IfNotAuthenticated, listboard.updateLater);
-  app.delete('later/listboards/:laterListboardId',   auth.send401IfNotAuthenticated, listboard.destroyLater);
-  
-  app.param('laterListboardId', auth.send401IfNotAuthenticated, listboard.laterListboard);    
-
-  //Future
-  app.post(  'future/listboards',                auth.send401IfNotAuthenticated, listboard.createFuture);
-  app.put(   'future/listboards/:futureListboardId',   auth.send401IfNotAuthenticated, listboard.updateFuture);
-  app.delete('future/listboards/:futureListboardId',   auth.send401IfNotAuthenticated, listboard.destroyFuture);
-
-  app.param('futureListboardId', auth.send401IfNotAuthenticated, listboard.futureListboard);
-  
-
-  /*//Listboard routes  
   app.post(  '/listboards',                auth.send401IfNotAuthenticated, listboard.create);
   app.put(   '/listboards/:listboardId',   auth.send401IfNotAuthenticated, listboard.update);
   app.delete('/listboards/:listboardId',   auth.send401IfNotAuthenticated, listboard.destroy);
-  
-  
-  app.param('laterListboardId', auth.send401IfNotAuthenticated, listboard.laterListboard);
-  app.param('futureListboardId', auth.send401IfNotAuthenticated, listboard.futureListboard);
+  //TODO: manage properly api OAuth from http://developer.chrome.com/extensions/tut_oauth.html  
+  app.post(  '/now/listboards/xxxxxxxxxxx/sync',  auth.send401IfNotAuthenticated, listboard.sync);
+
+  app.param('listboardId', auth.send401IfNotAuthenticated, listboard.listboard);    
 
   //Containers routes
   var container = require('../app/controllers/container');
   app.post(   '/listboards/:listboardId/containers',               auth.send401IfNotAuthenticated, container.create);
   app.put(    '/listboards/:listboardId/containers/:containerId',  auth.send401IfNotAuthenticated, container.update);
   app.delete( '/listboards/:listboardId/containers/:containerId',  auth.send401IfNotAuthenticated, container.destroy);
-*/
+
   //Lists routes
   var list = require('../app/controllers/list');
   app.post( '/lists',             auth.send401IfNotAuthenticated, list.create);

@@ -1,4 +1,5 @@
 var $ = require('jquery');
+var Jquer = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var config = require('config');
@@ -9,8 +10,8 @@ var Future = require('views/center/listboard/future/future');
 
 var AccordionListboards = AppView.extend({
     tagName: 'div',
-    events: {
-        'click .section-selector': 'clickedSection'
+    events: {        
+        'dblclick .selector' : 'doubleClickedSection'
     },
     attributes: function () {
         return {
@@ -21,47 +22,173 @@ var AccordionListboards = AppView.extend({
     initializeView: function (options) {
         this.nowView = new Now();
         this.laterView = new Later();
-        this.futureView = new Future();
+        this.futureView = new Future();  
     },
     renderView: function () {              
         $('#main-container').empty();
         $('#main-container').append(this.$el);
         $(this.el).append(this.nowView.render().el);
         $(this.el).append(this.laterView.render().el);
-        $(this.el).append(this.futureView.render().el);        
+        $(this.el).append(this.futureView.render().el);       
+        this.initializeSectionsExpantion();
         return this;
     },    
-    clickedSection: function(e){        
-        Backbone.history.navigate($(e.target).attr('href'), {trigger: true});
-    },
-    selectSection: function(section){     
-        this.$el.removeClass('hide');
-        this.$('.opened').removeClass('opened');
-        this.nowView.$el.css('width', '');
-        this.laterView.$el.css('width', '');
-        this.futureView.$el.css('width', '');
+    doubleClickedSection: function(e){      
+        e.preventDefault();
+        var $target = $('a', e.target);
+        var section = $target.attr('href');
         switch(section){
-            case 'now': this.nowView.selectSection(); break;
-            case 'later': this.laterView.selectSection(); break;
-            case 'future': this.futureView.selectSection(); break;
+            case 'now' : 
+                this.expandSectionFull(
+                    this.nowView, 
+                    this.laterView, 
+                    this.futureView
+                );
+                break;
+            case 'later' : 
+                this.expandSectionFull(
+                    this.laterView, 
+                    this.futureView, 
+                    this.nowView
+                );
+                break;
+            case 'future' : 
+                this.expandSectionFull(
+                    this.futureView, 
+                    this.nowView, 
+                    this.laterView
+                );
+                break;
+        };
+    },
+    initializeSectionsExpantion: function(){
+        var wwidth = $(window).width();     
+        if(wwidth < config.TWO_SECTION_WIDTH){ //We show one section (now)
+            this.expandSectionFull(
+                this.nowView, 
+                this.laterView, 
+                this.futureView
+            );
+        }
+        else if(wwidth < config.THREE_SECTION_WIDTH) { //We show two sections (now, later)
+            var space = wwidth - config.SECTION_COLLAPSED_WIDTH;
+            var space1 = Math.floor(space / 2);
+            var space2 = space - space1;
+            this.expandSectionsByWidth(
+                this.nowView, 
+                space1, 
+                this.laterView, 
+                space2, 
+                this.futureView, 
+                config.SECTION_COLLAPSED_WIDTH
+            );
+        }
+        else { //We show three sections (now, later, future)
+            var space1 = Math.floor(wwidth / 3);
+            var space2 = space1;
+            var space3 = space - space1 - space2;
+            this.expandSectionsByWidth(
+                this.nowView, 
+                space1, 
+                this.laterView, 
+                space2, 
+                this.futureView, 
+                space3
+            );
+        }
+    },
+    expandSectionFull: function(expandedSection, section2, section3){
+        var wwidth = $(window).width();     
+        var expandedSectionSpace = wwidth - (config.SECTION_COLLAPSED_WIDTH * 2);
+        this.expandSectionsByWidth(
+            expandedSection, 
+            expandedSectionSpace, 
+            section2, 
+            config.SECTION_COLLAPSED_WIDTH, 
+            section3, 
+            config.SECTION_COLLAPSED_WIDTH
+        );        
+    },
+    expandSectionsByWidth: function(section1, width1, section2, width2, section3, width3){
+        section1.expandSection(width1); 
+        section2.expandSection(width2);
+        section3.expandSection(width3);         
+    },
+    dragLaterSection: function(e, ui) {                 
+        var wwidth = $(window).width();                    
+        var direction = ui.originalPosition.left > ui.position.left ?  'left' : 'right';              
+        var difference = 0;
+
+        //Fix dragging outside the page
+        if(ui.offset.left < config.SECTION_COLLAPSED_WIDTH)
+            ui.offset.left = config.SECTION_COLLAPSED_WIDTH;
+        if(ui.offset.left > (wwidth -  (2 * config.SECTION_COLLAPSED_WIDTH)))
+            ui.offset.left = wwidth -  (2 * config.SECTION_COLLAPSED_WIDTH);
+
+        //We calculate the difference of drag
+        difference = ui.offset.left  - this.laterView.$el.offset().left;
+
+        if(difference != 0){            
+
+            //We always expand or reduce (depending on the difference) the now listboard
+            this.nowView.expandSection(this.nowView.$el.outerWidth() + difference);
+
+            //If drag to right we always reduce first later listboard and then future listboard
+            if(direction === 'right' && this.laterView.$el.outerWidth() - difference < config.SECTION_COLLAPSED_WIDTH){                
+                var difference = difference - (this.laterView.$el.outerWidth() - config.SECTION_COLLAPSED_WIDTH);                
+                if(this.laterView.$el.width() != config.SECTION_COLLAPSED_WIDTH)
+                    this.laterView.expandSection(config.SECTION_COLLAPSED_WIDTH);
+                this.futureView.expandSection(this.futureView.$el.outerWidth() - difference);                
+            }
+            else
+                this.laterView.expandSection(this.laterView.$el.outerWidth() - difference);             
+        }
+    },
+    dragFutureSection: function(e, ui) {
+        var wwidth = $(window).width();  
+        var direction = ui.originalPosition.left > ui.position.left ?  'left' : 'right';              
+        var difference = 0;        
+        
+        //Fix dragging outside the page
+        if(ui.offset.left < (2 * config.SECTION_COLLAPSED_WIDTH))
+            ui.offset.left = (2 * config.SECTION_COLLAPSED_WIDTH);
+        if(ui.offset.left > (wwidth - config.SECTION_COLLAPSED_WIDTH))
+            ui.offset.left = wwidth - config.SECTION_COLLAPSED_WIDTH;        
+
+        //We calculate the difference of drag
+        difference = ui.offset.left  - this.futureView.$el.offset().left;
+
+        if(difference != 0){
+
+            //We always expand or reduce (depending on the difference) the future listboard            
+            if(this.futureView.$el.outerWidth() - difference < config.SECTION_COLLAPSED_WIDTH)
+                this.futureView.expandSection(config.SECTION_COLLAPSED_WIDTH);                         
+            else
+                this.futureView.expandSection(this.futureView.$el.outerWidth() - difference);                         
+
+            //If drag to left we always reduce first later listboard and then now listboard
+            if(direction === 'left' && this.laterView.$el.outerWidth() + difference < config.SECTION_COLLAPSED_WIDTH){
+                var difference = (this.laterView.$el.outerWidth() - config.SECTION_COLLAPSED_WIDTH) - difference;
+                if(this.laterView.$el.width() != config.SECTION_COLLAPSED_WIDTH)
+                    this.laterView.expandSection(config.SECTION_COLLAPSED_WIDTH);
+                this.nowView.expandSection(this.nowView.$el.outerWidth() - difference);
+            }                
+            else
+                this.laterView.expandSection(this.laterView.$el.outerWidth() + difference);            
         }
     },
     calculateHeight: function () {
         //Calculates the height of the listboards accordion
         var wheight = $(window).height();
-        var topBarHeight = $('#top-bar').outerHeight() - 1;
-        var bottomBarHeight = $('#bottom-bar').outerHeight();
+        var topBarHeight = $('#top-bar').outerHeight();        
         this.$el.css({
             'margin-top': topBarHeight
         });        
-        var height = wheight - topBarHeight - bottomBarHeight;
-        if (height < config.LISTBOARD_MIN_HEIGHT)
-            height = config.LISTBOARD_MIN_HEIGHT;
+        var height = wheight - topBarHeight;
         this.$el.height(height); 
-
-        this.nowView.calculateHeight(height - 6);
-        this.laterView.calculateHeight(height - 6);
-        this.futureView.calculateHeight(height - 6);
+        this.nowView.calculateHeight(height);
+        this.laterView.calculateHeight(height);
+        this.futureView.calculateHeight(height);
     },
     postRender: function () {
         var self = this;
@@ -69,9 +196,21 @@ var AccordionListboards = AppView.extend({
         //If window size changes, height is recalculated
         $(window).resize(function () {
             self.calculateHeight();
+            self.initializeSectionsExpantion();
         });
-        $("#bottom-bar").on("heightChanged", function () {
-            self.calculateHeight();
+        this.laterView.$el.draggable({        
+            handle: ".selector",
+            axis: "x", 
+            drag: function(e, ui){
+                self.dragLaterSection(e, ui)
+            }
+        });
+        this.futureView.$el.draggable({ 
+            handle: ".selector",
+            axis: "x", 
+            drag: function(e, ui){
+                self.dragFutureSection(e, ui)
+            }
         });
     }
 });

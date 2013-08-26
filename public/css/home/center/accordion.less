@@ -1,0 +1,165 @@
+.accordion {
+  overflow:hidden; 
+  margin:0; 
+  color:#474747; 
+  background-color:@blue3;   
+  padding: 0;
+
+  section {
+    left: 0 !important;
+    float:left; 
+    overflow:hidden; 
+    color:@blue2; 
+    cursor:pointer; 
+    background-color: @blue3; 
+    width:42px; 
+    height:350px; 
+    margin-top: 4px;
+    -moz-user-select: none; 
+    -webkit-user-select: none; 
+    -ms-user-select:none; 
+    user-select:none;
+
+    &:after{
+      position:relative;
+      font-size:24px;
+      color:#000;
+      font-weight:bold;
+    }
+
+    &.hover {
+      background:@blue1;
+    }
+   
+    .selector {
+      background-color: @blue2; 
+      float: left;
+      width: 42px;      
+      margin-left: 3px;
+       
+      a { 
+        -webkit-transform:rotate(90deg);
+        -moz-transform:rotate(90deg);
+        -o-transform: rotate(90deg);
+        -ms-transform: rotate(90deg);
+        transform: rotate(90deg);
+        margin: 28px auto;
+        display:block;
+        font-size:15px; 
+        font-weight:normal;
+        color:#eee; 
+        text-decoration:none; 
+      }
+    }    
+    &.opened  { 
+      //
+      //height:30px; 
+
+      /*&:hover { 
+        //background:@blue3; 
+      }*/
+      /*h2 {
+        display: none;
+      }*/
+      .listboard {
+        //background:@blue3;
+        //display:block;
+      }
+    }
+  }
+}
+
+.navbar .nav > li > a {
+    text-shadow: none;
+}
+
+.listboard { 
+  background:@blue3;
+  overflow: hidden;
+  margin-right: 3px;
+  
+  .sub-bar {
+    margin: 0;
+    background:@blue2;
+    padding-left: 12px;
+    height: 40px;
+
+    #now-listboard-selector, #later-listboard-selector, #future-listboard-selector {      
+
+      margin-top: 0;
+  
+      .dropdown-toggle {
+        background-color: @green;
+        margin: 0;
+        font-size: 16px;
+        height: 31px;
+        padding: 9px 12px 0;
+        color: @white;    
+        text-shadow: none;    
+        background-image: none;
+        .flatten();
+
+        &:hover{
+            background-color: @green2;
+            text-decoration: none;
+        }
+        .icon-label {
+          margin-left: 6px;
+        }
+        .caret {
+          margin-left: 6px; 
+        }
+      }
+    }
+    .navbar-inner {            
+      background: @grey1; 
+      .flatten();  
+
+      .nav {
+
+        display: none;
+
+        a {
+          background-color: @grey;
+          padding: 5px 15px 5px;
+          margin: 5px 0 0 15px;
+          color: @grey4;
+          .easein-background();
+
+          &:hover {
+            color: #eee;
+            background-color: @grey4
+          }
+        } 
+      }
+    }
+  }
+  .containers {   
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 0 3px;
+      -webkit-overflow-scrolling: touch;
+  }
+  .bkmrk-lists {
+      border-top: 1px solid #e3e3e3;
+  }
+}
+
+
+.collapsed-text {
+  -webkit-transform: rotate(-90deg);
+  -moz-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+  -o-transform: rotate(-90deg);
+  transform: rotate(-90deg);
+
+  /* also accepts left, right, top, bottom coordinates; not required, but a good idea for styling */
+  -webkit-transform-origin: 50% 50%;
+  -moz-transform-origin: 50% 50%;
+  -ms-transform-origin: 50% 50%;
+  -o-transform-origin: 50% 50%;
+  transform-origin: 50% 50%;
+
+  /* Should be unset in IE9+ I think. */
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
