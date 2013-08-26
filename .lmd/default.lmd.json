@@ -21,6 +21,8 @@
                 "bower_components/bootstrap/docs/assets/js/bootstrap.js",
                 "bower_components/jquery-ui/ui/jquery.ui.core.js",
                 "bower_components/jquery-ui/ui/jquery.ui.widget.js",
+                "bower_components/jquery-ui/ui/jquery.ui.mouse.js",
+                "bower_components/jquery-ui/ui/jquery.ui.draggable.js",
                 "bower_components/jquery-ui/ui/jquery.ui.accordion.js"
             ],
             "exports": "jQuery"

@@ -1,5 +1,6 @@
 //TODO: UNTIL we do proper Oauth2 it does not matter the id of the listboard, 
 //it will use the first one with type = 0
+// TODO remove jquery if we use it only for ajax !
 
 var config = {
 	apiUpdateTabsURL: 'http://localhost:4000/now/listboards/xxxxxxxxxxx/sync'
