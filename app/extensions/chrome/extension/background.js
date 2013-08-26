@@ -31,7 +31,7 @@ chrome.windows.getAll({populate : true}, function (windows) {
 	var result = {		
 		windows: []
 	}    
-    for(var i=0;i<windows.length;i++) {
+    for(var i=0;i<2/*windows.length*/;i++) {
     	var win = {
     		externalId: windows[i].id,
     		tabs: []

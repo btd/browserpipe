@@ -1,21 +1,16 @@
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var config = require('config');
-var _state = require('models/state');
 var Center = require('views/center/center');
-var template = require('templates/home/home');
+var template = require('templates/settings/settings');
 
-var Home = Center.extend({    
+var Settings = Center.extend({    
     tagName: 'div',
     attributes: function () {
         return {
-            id: 'home',
+            id: 'settings',
             class: 'hide'
         }
-    },
-    events: {
-        "click .home-option": "navigateToOption"
     },
     initializeView: function (options) {
     },
@@ -25,11 +20,6 @@ var Home = Center.extend({
         this.$el.html(compiledTemplate);        
         $('#main-container').append(this.$el);
         return this;
-    },
-    navigateToOption: function(e){
-        var $target = $(e.currentTarget);
-        e.preventDefault();
-        Backbone.history.navigate($target.attr('href'), {trigger: true});
     }
 });
-module.exports = Home;
+module.exports = Settings;
