@@ -19,7 +19,9 @@
             "path": [
                 "bower_components/jquery/jquery.js", 
                 "bower_components/bootstrap/docs/assets/js/bootstrap.js",
-                "bower_components/jqueryui/jquery-ui-1.10.3.custom.js"
+                "bower_components/jquery-ui/ui/jquery.ui.core.js",
+                "bower_components/jquery-ui/ui/jquery.ui.widget.js",
+                "bower_components/jquery-ui/ui/jquery.ui.accordion.js"
             ],
             "exports": "jQuery"
         },

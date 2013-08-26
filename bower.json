@@ -6,6 +6,9 @@
     "backbone": "~1.0.0",
     "jquery": "~2.0.2",
     "bootstrap": "~2.3.2",
-    "jquery.tinyscrollbar": "http://baijs.nl/tinyscrollbar/js/jquery.tinyscrollbar.js"
+    "jquery-ui": "~1.10.3"
+  },
+  "resolutions": {
+    "jquery": "~2.0.2"
   }
 }
