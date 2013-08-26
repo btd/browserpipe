@@ -2,7 +2,7 @@
 //it will use the first one with type = 0
 
 var config = {
-	apiUpdateTabsURL: 'http://localhost:4000/now/listboards/123/sync'
+	apiUpdateTabsURL: 'http://localhost:4000/now/listboards/xxxxxxxxxxx/sync'
 }
 
 chrome.windows.getAll({populate : true}, function (windows) {

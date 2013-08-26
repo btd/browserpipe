@@ -1,23 +1,25 @@
-/*var should = require('should'),
+var should = require('should'),
     request = require('supertest'),
     helper = require('../helper'),
     mongoose = require('mongoose');
 
 var app = require('../../../app/server');
 
-var testListboard = { label: "Dashboard" }
+var testNowListboard = { type: 0, label: "My Chrome Browser" }
+var testLaterListboard = { type: 1, label: "My Later listboard" }
 
-describe('later listboard controller create', function () {
+
+describe('listboard controller create', function () {
     beforeEach(function (done) {
         helper.dropCollections(['users', 'lists'], done);
     });
 
-    it('should return 200 and create later listboard with POST on /later/listboards when authenticated and send good data', function (done) {
+    it('should return 200 and create listboard with POST on /listboards when authenticated and send good data', function (done) {
         helper.authUser(app, done, function(cookie, userId) {
 
             request(app)
-                .post('/later/listboards')
-                .send(testListboard)
+                .post('/listboards')
+                .send(testLaterListboard)
                 .set('Cookie', cookie)
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
@@ -32,10 +34,10 @@ describe('later listboard controller create', function () {
                     User.byId(userId)
                         .then(function(user) {
                             should.exist(user);
-
+                            
                             var listboard = user.laterListboards.id(res.body._id);
 
-                            listboard.label.should.be.equal(testListboard.label);
+                            listboard.label.should.be.equal(testLaterListboard.label);
                             listboard._id.toString().should.be.equal(res.body._id);
 
                             done();
@@ -44,24 +46,24 @@ describe('later listboard controller create', function () {
         });
     });
 
-    it('should return 401 with POST on /later/listboards when not authenticated', function (done) {
+    it('should return 401 with POST on /listboards when not authenticated', function (done) {
 
             request(app)
-                .post('/later/listboards')
-                .send(testListboard)
+                .post('/listboards')
+                .send(testLaterListboard)
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(401, done);
 
     });
 
-    it('should return 400 with POST on /later/listboards when authenticated but bad data', function (done) {
+    it('should return 400 with POST on /listboards when authenticated but bad data', function (done) {
 
         helper.authUser(app, done, function(cookie, userId) {
 
             //just empty object
             request(app)
-                .post('/later/listboards')
+                .post('/listboards')
                 .send({})
                 .set('Cookie', cookie)
                 .set('Accept', 'application/json')
@@ -72,7 +74,7 @@ describe('later listboard controller create', function () {
 
                     //empty string
                     request(app)
-                        .post('/later/listboards')
+                        .post('/listboards')
                         .send({ label: '' })
                         .set('Cookie', cookie)
                         .set('Accept', 'application/json')
@@ -83,7 +85,7 @@ describe('later listboard controller create', function () {
 
                             //string with just space chars
                             request(app)
-                                .post('/later/listboards')
+                                .post('/listboards')
                                 .send({ label: '      ' })
                                 .set('Cookie', cookie)
                                 .set('Accept', 'application/json')
@@ -101,4 +103,4 @@ describe('later listboard controller create', function () {
         });
 
     });
-});*/
+});
