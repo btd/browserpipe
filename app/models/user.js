@@ -33,6 +33,22 @@ UserSchema.methods.authenticate = function (password) {
     return bcrypt.compareSync(password, this.password);
 };
 
+UserSchema.methods.addListboard = function(rawListboard) {    
+    switch(rawListboard.type) {
+        case 0 : 
+            this.nowListboards.push(rawListboard); 
+            return _.last(this.nowListboards);
+        case 1 : 
+            this.laterListboards.push(rawListboard);
+            return _.last(this.laterListboards);
+        case 2 : 
+            this.futureListboards.push(rawListboard);
+            return _.last(this.futureListboards);
+    }        
+    //TODO: how are we going to handle and log errors?
+    throw new Error('Invalid listboard type');
+}
+
 UserSchema.methods.addNowListboard = function(rawListboard) {    
     this.nowListboards.push(rawListboard);
     return _.last(this.nowListboards);
@@ -46,11 +62,6 @@ UserSchema.methods.addLaterListboard = function(rawListboard) {
 UserSchema.methods.addFutureListboard = function(rawListboard) {    
     this.futureListboards.push(rawListboard);
     return _.last(this.futureListboards);
-};
-
-UserSchema.methods.addBrowser = function(rawBrowser) {    
-    this.browsers.push(rawBrowser);
-    return _.last(this.browsers);
 };
 
 UserSchema.statics.removeContainersByFilter = function (user, filter) {
