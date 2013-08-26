@@ -3,7 +3,9 @@
 var _state = require('models/state'),    
     Search = require('views/top-bar/search'),    
     Sections = require('views/top-bar/sections'),
-    Home = require('views/center/home'),
+    AccountNav  = require('views/top-bar/account.nav'),
+    Settings = require('views/center/settings'),
+    Help = require('views/center/help'),
     Welcome = require('views/center/welcome'),
     AccordionListboards = require('views/center/listboard/accordion.listboards'),
     Backbone = require('backbone');
@@ -11,22 +13,16 @@ var _state = require('models/state'),
 var AppRouter = Backbone.Router.extend({
     views: {},
     routes: {        
-        '/' : 'home',
+        '/' : 'gotoListboards',
         'welcome' : 'welcome',        
-        'listboards#now': 'listboardSection',
-        'listboards#later': 'listboardSection',
-        'listboards#future': 'listboardSection',
-        'listboards': 'listboardSection',
+        'listboards': 'listboards',
+        'settings': 'settings',
+        'help': 'help',
         // Default
-        '*actions': 'home'
+        '*actions': 'gotoListboards'
     },
-    home: function (actions) {   
-        if(!this.homeView) {
-            this.homeView = new Home();       
-            this.homeView.render();
-        }
-        this.cleaMainContainer('home');
-        this.homeView.show();
+    gotoListboards: function (actions) {   
+        Backbone.history.navigate('/listboards', {trigger: true});
     },
     welcome: function (actions) {     
         if(!this.welcomeView) {
@@ -36,35 +32,51 @@ var AppRouter = Backbone.Router.extend({
         this.cleaMainContainer('welcome');
         this.welcomeView.show();
     },
-    listboardSection: function (actions) {             
-        if(location.hash === '')
-            Backbone.history.navigate('/listboards#now', {trigger: true});
-        else {
-            if(!this.accordionListboardsView) {
-                this.accordionListboardsView = new AccordionListboards();       
-                this.accordionListboardsView.render();
-            }
-            this.cleaMainContainer('accordionListboards');
-            section = location.hash.substr(1);        
-            this.accordionListboardsView.show();
-            this.accordionListboardsView.selectSection(section);
-            this.sections.selectSelector(section);
+    listboards: function (actions) {               
+        if(!this.accordionListboardsView) {
+            this.accordionListboardsView = new AccordionListboards();       
+            this.accordionListboardsView.render();
         }
+        this.cleaMainContainer('accordionListboards');
+        this.accordionListboardsView.show();        
     },   
+    settings: function (actions) {     
+        if(!this.settingsView) {
+            this.settingsView = new Settings();       
+            this.settingsView.render();
+        }
+        this.cleaMainContainer('settings');
+        this.settingsView.show();
+    },
+    help: function (actions) {     
+        if(!this.helpView) {
+            this.helpView = new Help();       
+            this.helpView.render();
+        }
+        this.cleaMainContainer('help');
+        this.helpView.show();
+    },
     cleaMainContainer: function(exception){
-        if(exception != 'home' && this.homeView)
-            this.homeView.hide();
         if(exception != 'welcome' && this.welcomeView)
             this.welcomeView.hide();        
         if(exception != 'accordionListboards' && this.accordionListboardsView)
             this.accordionListboardsView.hide();
+        if(exception != 'settings' && this.settingsView)
+            this.settingsView.hide();
+        if(exception != 'help' && this.helpView)
+            this.helpView.hide();        
     },
     initialize: function () {
         //Load initial data
         _state.loadInitialData();
 
+        //Top bar accordtion sections
         this.sections = new Sections();
         this.sections.render();
+
+        //Top bar account nav
+        this.accountNav = new AccountNav();
+        this.accountNav.render();
     }
 });
 
