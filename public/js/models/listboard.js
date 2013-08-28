@@ -15,7 +15,7 @@ module.exports = Listboard = AppModel.extend({
     addContainer: function (container, options) {
         return this.containers.create(container, options);
     },
-    removeContainer: function (container) {
-        container.destroy(); // this also remove from collection
+    removeContainer: function (container, options) {
+        container.destroy(options);
     }
 });

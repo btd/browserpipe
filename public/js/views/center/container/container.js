@@ -11,12 +11,10 @@ var Container = AppView.extend({
     tagName: 'div',
     events: {
         "click": "selectContainer",
-        "mouseenter": "showOptionsToggle",
-        "mouseleave": "hideOptionsToggle"
+        "click .close-container" : "close",
+        /*"mouseenter": "showOptionsToggle",
+        "mouseleave": "hideOptionsToggle"*/
     },
-    menuOptions: [
-        {name: "menu_option_close", label: "Close", method: "closeContainer"}
-    ],
     initializeView: function (options) {
     },
     attributes: function () {
@@ -25,15 +23,11 @@ var Container = AppView.extend({
             id: "cont_" + this.model.get('_id')
         }
     },
-    addMenuOptions: function (menuOptions) {
-        this.menuOptions = _.union(this.menuOptions, menuOptions);
-    },
     clean: function () {
         $(this.el).empty();
     },
     renderView: function () {
-        this
-            .renderMenuOptions()
+        this            
             .renderHeader()
             .renderBox();
         return this;
@@ -41,18 +35,6 @@ var Container = AppView.extend({
     renderHeader: function () {
         this.header = new ContainerHeader({model: this.model});
         $(this.el).append(this.header.render().el);
-        return this;
-    },
-    renderMenuOptions: function () {
-        var compiledTemplate = _.template(menuTemplate, {options: this.menuOptions});
-        //Render options
-        $(this.el).html(compiledTemplate);
-
-        //Load the menu options events
-        //for (var i = 0, l = this.menuOptions.length; i < l; i++) {
-        //    var menuOption = this.menuOptions[i];
-        //    this.events['click .' + menuOption.name] = menuOption.method;
-        //}
         return this;
     },
     renderBox: function () {
@@ -67,44 +49,11 @@ var Container = AppView.extend({
         //TODO: check why is needed to rest 30
         var value = height - 60 -(config.CONTAINER_VERTICAL_MARGIN * 2);
         $(".box", this.el).css("max-height", value);
-    }/*,
-    selectContainer: function (e) {
-        //Sets the container as current
-        _state.listboards.setCurrentContainer(this.model.get('_id'));
     },
-    markAsSelected: function () {
-        this.$el.addClass('selected');
-    },
-    unMarkAsSelected: function () {
-        this.$el.removeClass('selected');
-    },
-    isSelected: function () {
-        return this.$el.hasClass('selected');
-    },
-    currentContainerChanged: function (container) {
-        if (container)
-            if (container.get('_id') === this.model.get('_id')) {
-                if (!this.isSelected())
-                    this.markAsSelected();
-            }
-            else
-                this.unMarkAsSelected();
-        else
-            this.unMarkAsSelected();
-    },
-    showOptionsToggle: function () {
-        this.$('.options .dropdown-toggle').css('display', 'block');
-    },
-    hideOptionsToggle: function () {
-        this.$('.options').removeClass('open');
-        this.$('.options .dropdown-toggle').css('display', 'none');
-    },
-    closeContainer: function (e) {
-        e.stopPropagation();
-        _state.listboards.getCurrentListboard().removeContainer(this.model);
-        //As this was the current container, we set the current to null
-        _state.listboards.setCurrentContainer(null);
-    }*/
+    close: function(){
+        this.trigger("close", this);        
+    }
+
 });
 
 module.exports = Container;

@@ -9,12 +9,6 @@
     .box-sizing(border-box);    
     border: 2px solid @grey1;
 
-    &:hover {
-        cursor: pointer;
-    }
-    &.selected{
-        border-color: @blue;
-    }
     .options{
         position: absolute;
         margin-left: 280px;
@@ -29,43 +23,64 @@
     .header {        
         .clearfix();   
         min-height: 20px; 
+        position: relative;
 
-        .container-list-icon {
-            float:left;
+        .container-list-icon {            
+            .opacity(50);
             position: absolute;
+
+            &:hover {
+                cursor:pointer; 
+                .opacity(100);
+            } 
         }
         .title {
             color: @grey3;
             margin: 0 0 6px 6px;
-            font-weight: bold;
             font-size: 16px;
             word-wrap: break-word;
             float: left;
-            max-width: 240px;  
+            max-width: 240px;              
+            width: 200px;
+            margin-left: 20px;
+
+            &:hover {
+                cursor:pointer; 
+            } 
+            i {
+                color: @grey4;
+            }
         }
+        .close-container {
+            .opacity(50);
+            position: absolute;
+            right: 0px;
 
-        .lists {
-            margin: 0!important;
+            &:hover {
+                cursor:pointer; 
+                .opacity(100);
+            } 
+        }
+        .edit-title {
+            width: 200px;
+            margin-left: 20px;
+            margin-bottom: 6px;
 
-            .list{
-                min-height: 20px;
-                margin: 0 3px 3px 0;
-                float: left;
-                list-style:none;                 
-                color: white;
-                font-weight: bold;
-                background-color: @blue;
-                padding: 6px 12px;                   
-                text-shadow: none;
-
-                &:hover{
-                    cursor: pointer;
-                }
-            }   
-        }   
-
+            input {
+                width: 180px;
+                margin-bottom: 3px;
+            }
+            .edit-title-save {
+                .flatten();
+            }
+            .edit-title-cancel {
+                margin-left: 6px;
+                vertical-align: bottom;
+                font-size: 13px;
+                color: @grey4;                
+            }
+        }
     }
-
     .favicon {
         height: 16px;
         width: 16px;
@@ -74,9 +89,34 @@
         overflow-y: auto; 
         min-height: 80px;
         margin-bottom: 6px;
-        .lists {
+        position: relative;
+
+        .add-list-icon {    
+            font-size: 10px;
+            color: @blue; 
+            position: absolute;
+            right: 12px;
+            top: -4px;            
+        }
+        .add-list {
             margin: 4px 5px 6px !important;
 
+            .add-list-save {
+                .flatten();
+                .tobutton(@blue, darken(@blue, 6%));
+            }
+            .add-list-cancel {
+                margin-left: 6px;
+                vertical-align: bottom;
+                font-size: 13px;
+                color: @grey4;       
+            }
+        }
+        .lists {
+            margin: 4px 5px 6px !important;
+            padding-top: 10px;
+
+            
             &.collapsed {
 
                 .collapser {
@@ -88,17 +128,32 @@
             }
 
             .list {
-                color: white;
-                text-shadow: 0 1px 0 @blue;
-                background-color: @blue;
                 margin-bottom: 3px;
-                padding: 6px 12px;                   
-                text-shadow: none;
-                word-break: break-all;
+                padding: 6px 12px;          
+                background-color: @blue;   
+                position: relative;          
 
                 &:hover{
                     cursor: pointer;
                     background-color: darken(@blue, 6%);
+                }        
+                .list-label {
+                    color: white;
+                    text-shadow: 0 1px 0 @blue;                    
+                    text-shadow: none;
+                    word-break: break-all; 
+                    width: 180px;   
+                }
+                .remove-child-list {
+                    display: none;
+                    .opacity(30);
+                    position: absolute;
+                    right: 12px;
+                    top: 6px;
+
+                    &:hover{
+                        .opacity(50);
+                    } 
                 }
             }
         }

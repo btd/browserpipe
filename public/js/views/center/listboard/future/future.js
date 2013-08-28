@@ -7,7 +7,10 @@ var SectionListboard = require('views/center/listboard/section.listboard');
 var FutureContainer = require('views/center/container/future.container');
 var template = require('templates/future/future');
 
-var Future = SectionListboard.extend({
+var Future = SectionListboard.extend({    
+    events: {                
+        'click .open-container' : 'addFutureContainer'
+    },
     attributes: function () {
         return {
             id: 'future'
@@ -22,6 +25,18 @@ var Future = SectionListboard.extend({
     },
     createContainerView: function(container) {
         return new FutureContainer({model: container});
+    },
+    addFutureContainer: function(){
+        var self = this;
+        var cont = new Container({ type: 2, filter: 'Lists', title: 'Lists' });
+        this.model.addContainer(cont, {
+            wait: true, 
+            success: function (container) {                
+                var cv = self.addContainerView(self.createContainerView(container));
+                self.calculateInnterContainerWidth();
+                self.scrollToContainer(cv);
+            }
+        });        
     }
 });
 module.exports = Future;

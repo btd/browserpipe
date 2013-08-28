@@ -40,9 +40,6 @@ var State = Backbone.Model.extend({
                 container.addItem(item);
         });
     },
-
-
-
     loadLists: function () {
         //Load children lists
         var initialLists = initialOptions.lists || [];

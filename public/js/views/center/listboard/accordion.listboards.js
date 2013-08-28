@@ -19,10 +19,19 @@ var AccordionListboards = AppView.extend({
             class: 'accordion horizontal hide'
         }
     },
-    initializeView: function (options) {
+    initializeView: function (options) {        
         this.nowView = new Now();
         this.laterView = new Later();
         this.futureView = new Future();  
+        this.nowView.on('clickedSelectorLink', function(){
+            this.expandSectionFullBySectionName('now');
+        }, this);
+        this.laterView.on('clickedSelectorLink', function(){
+            this.expandSectionFullBySectionName('later');
+        }, this);
+        this.futureView.on('clickedSelectorLink', function(){
+            this.expandSectionFullBySectionName('future');
+        }, this);
     },
     renderView: function () {              
         $('#main-container').empty();
@@ -37,29 +46,7 @@ var AccordionListboards = AppView.extend({
         e.preventDefault();
         var $target = $('a', e.target);
         var section = $target.attr('href');
-        switch(section){
-            case 'now' : 
-                this.expandSectionFull(
-                    this.nowView, 
-                    this.laterView, 
-                    this.futureView
-                );
-                break;
-            case 'later' : 
-                this.expandSectionFull(
-                    this.laterView, 
-                    this.futureView, 
-                    this.nowView
-                );
-                break;
-            case 'future' : 
-                this.expandSectionFull(
-                    this.futureView, 
-                    this.nowView, 
-                    this.laterView
-                );
-                break;
-        };
+        this.expandSectionFullBySectionName(section);
     },
     initializeSectionsExpantion: function(){
         var wwidth = $(window).width();     
@@ -96,6 +83,31 @@ var AccordionListboards = AppView.extend({
                 space3
             );
         }
+    },
+    expandSectionFullBySectionName: function(section) {
+        switch(section){
+            case 'now' : 
+                this.expandSectionFull(
+                    this.nowView, 
+                    this.laterView, 
+                    this.futureView
+                );
+                break;
+            case 'later' : 
+                this.expandSectionFull(
+                    this.laterView, 
+                    this.futureView, 
+                    this.nowView
+                );
+                break;
+            case 'future' : 
+                this.expandSectionFull(
+                    this.futureView, 
+                    this.nowView, 
+                    this.laterView
+                );
+                break;
+        };
     },
     expandSectionFull: function(expandedSection, section2, section3){
         var wwidth = $(window).width();     

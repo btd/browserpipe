@@ -1,11 +1,12 @@
 <div class="selector" unselectable='on' onselectstart='return false;' onmousedown='return false;'>
+  <i class="icon-globe"/>
   <a href="now">Now</a>
 </div>
 <div class="listboard">      
   <div class="navbar sub-bar">
     <div id="now-listboard-selector" class="btn-group pull-left">
       <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-        <i class="icon-folder-close"><span class="icon-label"><%= listboard_label %></span></i>
+        <span class="icon-label"><%= listboard_label %></span>
         <span class="caret"></span>
       </a>
       <ul class="dropdown-menu">
@@ -14,9 +15,7 @@
     </div>
     <div class="navbar-inner">
       <ul class="nav">
-        <li><a href="#">Save session for later</a></li>
-        <li><a href="#">Archive session for future</a></li>
-        <li><a href="#">Open in browser</a></li>
+        
       </ul>
     </div>
   </div>

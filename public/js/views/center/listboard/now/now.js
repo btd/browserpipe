@@ -11,7 +11,6 @@ var Now = SectionListboard.extend({
     attributes: function () {
         return {
             id: 'now'
-
         }
     },
     initializeView: function (options) {

@@ -1,2 +1,8 @@
-<% if(container.list){ %><img class="container-list-icon" src="/img/up.arrow.png" alt="Container Icon"><% } %>
-<span class="title"><% if(container.get('type') == 2) { %>Search:&nbsp;<% } %><%=container.get('title') %></span>
+<% if(container.get('type')===2 && container.get('filter')!='Lists'){ %><i class="icon-arrow-up container-list-icon" title="Navigate lists up"></i><% } %>
+<i class="icon-remove close-container" title="Close"></i>
+<span class="title"><% if($.trim(container.get('title')) === '') { %><i>Unnamed</i><% } else { %><b><%= container.get('title')%></b><% } %></span>
+<div class="edit-title hide">
+	<input type="text" value="<%= container.get('title') %>"/>
+	<a href="#" class="btn btn-success edit-title-save">Save</a>
+	<a href="#" class="edit-title-cancel">cancel</a>
+</div>
