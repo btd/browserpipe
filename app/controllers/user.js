@@ -66,21 +66,14 @@ exports.create = function (req, res) {
     var readLaterList = listsList.createChildList("Read Later");
     var coolSitesList = listsList.createChildList("Cool Sites");
 
-    //Create imports lists
-    var fileImports = importsList.createChildList("File");
-    var twitterImports = importsList.createChildList("Twitter");
-    var facebookImports = importsList.createChildList("Facebook");
-    var deliciousImports = importsList.createChildList("Delicious");
-    var pinboardImports = importsList.createChildList("Pinboard");
+    //Creates the future listboard
+    user.addLaterListboard({ type: 1, label: 'My later listboard'})
 
     //Create a later listboard
-    user.addLaterListboard({ type: 1, label: 'My later listboard'})
+    user.addFutureListboard({ type: 2, label: 'My future  listboard'})
         .addContainerByList(readLaterList)
         .addContainerByList(coolSitesList);
-
-    //Creates the future listboard
-    user.addFutureListboard({ type: 2, label: 'My future listboard'})
-
+   
     //TODO: THIS IS TEMPORAL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     //CREATES A NOW LISTBOARD
     //UNTIL IT CREATES IT AUTOMATICALLY VIA EXTENSION AND AP
@@ -95,12 +88,7 @@ exports.create = function (req, res) {
                     trashList.saveWithPromise(),
                     importsList.saveWithPromise(),
                     readLaterList.saveWithPromise(),
-                    coolSitesList.saveWithPromise(),
-                    fileImports.saveWithPromise(),
-                    twitterImports.saveWithPromise(),
-                    facebookImports.saveWithPromise(),
-                    deliciousImports.saveWithPromise(),
-                    pinboardImports.saveWithPromise()
+                    coolSitesList.saveWithPromise(),                    
                 ])
                 .spread(function () {
                     res.format({

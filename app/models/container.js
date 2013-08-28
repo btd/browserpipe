@@ -4,7 +4,7 @@ var Schema = require('mongoose').Schema,
 
 var ContainerSchema = new Schema({
     type: {type: Number, required: true}, //0: now, 1: later, 2: future
-    title: {type: String, trim: true, required: true, validate: validation.nonEmpty("Title")},
+    title: {type: String, trim: true},
     
     //For 0 container (associated with a window)
     externalId: {type: String, trim: true},

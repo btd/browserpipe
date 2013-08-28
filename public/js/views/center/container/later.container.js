@@ -6,11 +6,10 @@ var ContainerItem = require('views/center/container/item/item');
 
 var LaterContainer = Container.extend({
     initializeView: function (options) {
-    	Container.prototype.initializeView.call(this, options);
+    	Container.prototype.initializeView.call(this, options);        
     },
     renderView: function () {
-        this
-            .renderMenuOptions()
+        this            
             .renderHeader()
             .renderBox()
             .renderItems();

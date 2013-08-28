@@ -9,8 +9,7 @@ var NowContainer = Container.extend({
     	Container.prototype.initializeView.call(this, options);
     },
     renderView: function () {
-        this
-            .renderMenuOptions()
+        this            
             .renderHeader()
             .renderBox()
             .renderItems();

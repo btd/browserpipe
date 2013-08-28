@@ -9,8 +9,6 @@
     left: 0 !important;
     float:left; 
     overflow:hidden; 
-    color:@blue2; 
-    cursor:pointer; 
     background-color: @blue3; 
     width:42px; 
     height:350px; 
@@ -36,7 +34,13 @@
       float: left;
       width: 42px;      
       margin-left: 3px;
+      color:#eee;   
        
+      i {
+        margin: 12px 0 0 12px;
+        font-size: 21px;
+        display: block;
+      }
       a { 
         -webkit-transform:rotate(90deg);
         -moz-transform:rotate(90deg);
@@ -74,6 +78,7 @@
     background:@blue2;
     padding-left: 12px;
     height: 40px;
+    width: 100%;
 
     #now-listboard-selector, #later-listboard-selector, #future-listboard-selector {      
 
@@ -102,15 +107,15 @@
         }
       }
     }
-    .navbar-inner {            
+    .navbar-inner {   
+      padding-left: 0;         
       background: @grey1; 
       .flatten();  
+      overflow: hidden;
 
       .nav {
 
-        display: none;
-
-        a {
+        a {          
           background-color: @grey;
           padding: 5px 15px 5px;
           margin: 5px 0 0 15px;

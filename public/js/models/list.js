@@ -34,6 +34,9 @@ module.exports = List = AppModel.extend({
     addChildren: function (children) {
         this.children.add(children);
     },
+    removeChildren: function (children, options) {
+        children.destroy(options);
+    },
     getItems: function () {
         //Check if children are not loaded at init
         if (!this.items) {

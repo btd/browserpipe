@@ -18,7 +18,7 @@ ListboardSchema.plugin(require('../util/mongoose-timestamp'));
 
 
 ListboardSchema.methods.addContainerByList = function (list) {
-    return this.addContainer({ type: 1, title: list.label, filter: list.fullPath });
+    return this.addContainer({ type: this.type, title: list.label, filter: list.fullPath });
 };
 
 ListboardSchema.methods.addContainer = function (cont) {
@@ -30,6 +30,10 @@ ListboardSchema.methods.addContainer = function (cont) {
         active: cont.active
     });
     return this;
+};
+
+ListboardSchema.methods.last = function () {
+    return _.last(this.containers);
 };
 
 ListboardSchema.methods.getContainerByExternalId = function (externalId) {

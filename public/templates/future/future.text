@@ -1,11 +1,12 @@
 <div class="selector" unselectable='on' onselectstart='return false;' onmousedown='return false;'>
+	<i class="icon-calendar"/>
 	<a href="future">Future</a>
 </div>
 <div class="listboard">
 	<div class="navbar sub-bar">
 		<div id="future-listboard-selector" class="btn-group pull-left">
 			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-				<i class="icon-folder-close"><span class="icon-label"><%= listboard_label %></span></i>
+				<span class="icon-label"><%= listboard_label %></span>
 				<span class="caret"></span>
 			</a>
 			<ul class="dropdown-menu">
@@ -14,7 +15,11 @@
 		</div>
 		<div class="navbar-inner">    		
 			<ul class="nav">
-			  <li><a href="#">Open new container</a></li>
+			  <li>
+			  	<a class="open-container" href="#" title="Open a container">
+			  		<i class="icon-plus"></i>
+			  	</a>
+			  </li>
 			</ul>
 		</div>
 	</div>
