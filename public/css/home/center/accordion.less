@@ -1,9 +1,10 @@
 .accordion {
   overflow:hidden; 
-  margin:0; 
-  color:#474747; 
-  background-color:@blue3;   
+
+  margin:0;
   padding: 0;
+
+  color:#474747;
 
   section {
     left: 0 !important;
@@ -41,12 +42,13 @@
         font-size: 21px;
         display: block;
       }
-      a { 
+      .selector-label {
         -webkit-transform:rotate(90deg);
         -moz-transform:rotate(90deg);
         -o-transform: rotate(90deg);
         -ms-transform: rotate(90deg);
         transform: rotate(90deg);
+
         margin: 28px auto;
         display:block;
         font-size:15px; 
@@ -64,23 +66,21 @@
   }
 }
 
-.navbar .nav > li > a {
-    text-shadow: none;
-}
+
 
 .listboard { 
-  background:@blue3;
+  background-color: @blue3;
   overflow: hidden;
   margin-right: 3px;
   
   .sub-bar {
     margin: 0;
-    background:@blue2;
+    background-color:@blue2;
     padding-left: 12px;
     height: 40px;
     width: 100%;
 
-    #now-listboard-selector, #later-listboard-selector, #future-listboard-selector {      
+    /*#now-listboard-selector, #later-listboard-selector, #future-listboard-selector {
 
       margin-top: 0;
   
@@ -106,27 +106,35 @@
           margin-left: 6px; 
         }
       }
+    }*/
+    .btn {
+      margin-right: 4px;
+      .border-radius(0);
+      .box-shadow(none);
+
+
+      background: lighten(@grey1, 20%);
+      border: 0;
+
+      &:hover {
+        background-position: 0 0;
+        background: @grey1;
+      }
+
+      font-family: Arial, Helvetica, sans-serif;
     }
+
     .navbar-inner {   
-      padding-left: 0;         
-      background: @grey1; 
+      padding-left: 0;
+
+      background: @blue2;
+      //background: @grey1;
       .flatten();  
       overflow: hidden;
 
-      .nav {
-
-        a {          
-          background-color: @grey;
-          padding: 5px 15px 5px;
-          margin: 5px 0 0 15px;
-          color: @grey4;
-          .easein-background();
-
-          &:hover {
-            color: #eee;
-            background-color: @grey4
-          }
-        } 
+      a {
+        text-shadow: none;
+        padding: 4px 12px;
       }
     }
   }
@@ -135,6 +143,10 @@
       overflow-y: hidden;
       padding: 0 3px;
       -webkit-overflow-scrolling: touch;
+
+      .containers-inner {
+        width: 10000px;
+      }
   }
   .bkmrk-lists {
       border-top: 1px solid #e3e3e3;

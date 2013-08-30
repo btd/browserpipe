@@ -1,29 +1,29 @@
-<div class="selector" unselectable='on' onselectstart='return false;' onmousedown='return false;'>
+<div class="selector"  data-section="future" unselectable='on' onselectstart='return false;' onmousedown='return false;'>
 	<i class="icon-calendar"/>
-	<a href="future">Future</a>
+	<span class="selector-label">Future</span>
 </div>
 <div class="listboard">
 	<div class="navbar sub-bar">
-		<div id="future-listboard-selector" class="btn-group pull-left">
+		<div class="btn-group pull-left listboard-selector">
 			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-				<span class="icon-label"><%= listboard_label %></span>
+				<%= listboard_label %>
 				<span class="caret"></span>
 			</a>
 			<ul class="dropdown-menu">
-				 <li><a href="#"><i class="icon-none">Create New</i></a></li>
+				 <li><a href="javascript: void(0)" class="js-create-listboard"><i class="icon-none">Create New</i></a></li>
 			</ul>
 		</div>
 		<div class="navbar-inner">    		
 			<ul class="nav">
 			  <li>
-			  	<a class="open-container" href="#" title="Open a container">
-			  		<i class="icon-plus"></i>
-			  	</a>
+			    <a class="add-container btn" href="#" title="Open a container">
+			        <i class="icon-plus"></i>
+			    </a>
 			  </li>
 			</ul>
 		</div>
 	</div>
-	<div class="containers">
-		<div class="containers-inner"></div>
+	<div class="containers clearfix">
+		<div class="containers-inner clearfix"></div>
 	</div>
 </div>  

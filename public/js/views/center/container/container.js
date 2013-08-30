@@ -5,7 +5,6 @@ var config = require('config');
 var _state = require('models/state');
 var AppView = require('views/view');
 var ContainerHeader = require('views/center/container/header/header');
-var menuTemplate = require('templates/containers/menu');
 
 var Container = AppView.extend({
     tagName: 'div',
@@ -20,7 +19,8 @@ var Container = AppView.extend({
     attributes: function () {
         return {
             class: 'items-container',
-            id: "cont_" + this.model.get('_id')
+            id: "cont_" + this.model.get('_id'),
+            'data-id': this.model.get('_id')
         }
     },
     clean: function () {
@@ -33,7 +33,7 @@ var Container = AppView.extend({
         return this;
     },
     renderHeader: function () {
-        this.header = new ContainerHeader({model: this.model});
+        this.header = new ContainerHeader({ model: this.model });
         $(this.el).append(this.header.render().el);
         return this;
     },

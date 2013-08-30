@@ -39,7 +39,6 @@ var ContainerHeader = AppView.extend({
         this.model.save({
             title: title
         },{
-            wait: true, 
             success: function () {
                 self.render();
                 self.hideEditTitle();

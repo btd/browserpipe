@@ -27,9 +27,6 @@ var Center = AppView.extend({
         $(window).resize(function () {
             self.calculateHeight();
         });
-        $("#bottom-bar").on("heightChanged", function () {
-            self.calculateHeight();
-        });
     }
 });
 module.exports = Center;

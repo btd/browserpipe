@@ -1,7 +1,7 @@
 {
     "name": "default build",
     "root": "../public",
-    "output": "js/main.min.js",
+    "output": "js/apps/main.js",
     "modules": {
         "backbone" : {
             "path": "bower_components/backbone/backbone.js",
@@ -45,10 +45,7 @@
     },
     "main": "main",
 
-    "sourcemap": "js/main.min.map",
-    "sourcemap_inline": true,
-    "sourcemap_www": ".",
-    "www_root": ".",
+
 
     "ie": true,
     "warn": true,

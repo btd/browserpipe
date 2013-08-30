@@ -35,6 +35,11 @@
     "supertest": "*",
     "cookiejar": "*",
     "istanbul": "*",
-    "jshint": "~2.1.6"
+    "jshint": "~2.1.6",
+    "grunt": "~0.4.1",
+    "grunt-contrib-jshint": "~0.6.3",
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-lmd": "~0.1.12",
+    "grunt-develop": "~0.2.1"
   }
 }

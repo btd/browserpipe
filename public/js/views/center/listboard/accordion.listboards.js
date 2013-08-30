@@ -10,15 +10,16 @@ var Future = require('views/center/listboard/future/future');
 
 var AccordionListboards = AppView.extend({
     tagName: 'div',
-    events: {        
+
+    events: {
         'dblclick .selector' : 'doubleClickedSection'
     },
-    attributes: function () {
-        return {
-            id: 'listboards',
-            class: 'accordion horizontal hide'
-        }
+
+    attributes: {
+        id: 'listboards',
+        class: 'accordion horizontal hide'
     },
+
     initializeView: function (options) {        
         this.nowView = new Now();
         this.laterView = new Later();
@@ -44,12 +45,11 @@ var AccordionListboards = AppView.extend({
     },    
     doubleClickedSection: function(e){      
         e.preventDefault();
-        var $target = $('a', e.target);
-        var section = $target.attr('href');
-        this.expandSectionFullBySectionName(section);
+
+        this.expandSectionFullBySectionName($(e.currentTarget).data('section'));
     },
     initializeSectionsExpantion: function(){
-        var wwidth = $(window).width();     
+        var wwidth = $(window).width(), space, space1, space2, space3;
         if(wwidth < config.TWO_SECTION_WIDTH){ //We show one section (now)
             this.expandSectionFull(
                 this.nowView, 
@@ -58,9 +58,9 @@ var AccordionListboards = AppView.extend({
             );
         }
         else if(wwidth < config.THREE_SECTION_WIDTH) { //We show two sections (now, later)
-            var space = wwidth - config.SECTION_COLLAPSED_WIDTH;
-            var space1 = Math.floor(space / 2);
-            var space2 = space - space1;
+            space = wwidth - config.SECTION_COLLAPSED_WIDTH;
+            space1 = Math.floor(space / 2);
+            space2 = space - space1;
             this.expandSectionsByWidth(
                 this.nowView, 
                 space1, 
@@ -71,9 +71,10 @@ var AccordionListboards = AppView.extend({
             );
         }
         else { //We show three sections (now, later, future)
-            var space1 = Math.floor(wwidth / 3);
-            var space2 = space1;
-            var space3 = space - space1 - space2;
+            space = wwidth
+            space1 = Math.floor(wwidth / 3);
+            space2 = space1;
+            space3 = space - space1 - space2;
             this.expandSectionsByWidth(
                 this.nowView, 
                 space1, 
@@ -107,7 +108,7 @@ var AccordionListboards = AppView.extend({
                     this.laterView
                 );
                 break;
-        };
+        }
     },
     expandSectionFull: function(expandedSection, section2, section3){
         var wwidth = $(window).width();     
@@ -140,14 +141,14 @@ var AccordionListboards = AppView.extend({
         //We calculate the difference of drag
         difference = ui.offset.left  - this.laterView.$el.offset().left;
 
-        if(difference != 0){            
+        if(difference !== 0){
 
             //We always expand or reduce (depending on the difference) the now listboard
             this.nowView.expandSection(this.nowView.$el.outerWidth() + difference);
 
             //If drag to right we always reduce first later listboard and then future listboard
             if(direction === 'right' && this.laterView.$el.outerWidth() - difference < config.SECTION_COLLAPSED_WIDTH){                
-                var difference = difference - (this.laterView.$el.outerWidth() - config.SECTION_COLLAPSED_WIDTH);                
+                difference = difference - (this.laterView.$el.outerWidth() - config.SECTION_COLLAPSED_WIDTH);
                 if(this.laterView.$el.width() != config.SECTION_COLLAPSED_WIDTH)
                     this.laterView.expandSection(config.SECTION_COLLAPSED_WIDTH);
                 this.futureView.expandSection(this.futureView.$el.outerWidth() - difference);                
@@ -170,7 +171,7 @@ var AccordionListboards = AppView.extend({
         //We calculate the difference of drag
         difference = ui.offset.left  - this.futureView.$el.offset().left;
 
-        if(difference != 0){
+        if(difference !== 0){
 
             //We always expand or reduce (depending on the difference) the future listboard            
             if(this.futureView.$el.outerWidth() - difference < config.SECTION_COLLAPSED_WIDTH)
@@ -180,7 +181,7 @@ var AccordionListboards = AppView.extend({
 
             //If drag to left we always reduce first later listboard and then now listboard
             if(direction === 'left' && this.laterView.$el.outerWidth() + difference < config.SECTION_COLLAPSED_WIDTH){
-                var difference = (this.laterView.$el.outerWidth() - config.SECTION_COLLAPSED_WIDTH) - difference;
+                difference = (this.laterView.$el.outerWidth() - config.SECTION_COLLAPSED_WIDTH) - difference;
                 if(this.laterView.$el.width() != config.SECTION_COLLAPSED_WIDTH)
                     this.laterView.expandSection(config.SECTION_COLLAPSED_WIDTH);
                 this.nowView.expandSection(this.nowView.$el.outerWidth() - difference);
