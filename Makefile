@@ -52,5 +52,9 @@ start-prod: clean
 lint:
 	./node_modules/.bin/jshint app config public/js
 
+install:
+	bower install
+	npm install
+
 
 .PHONY: test test-unit test-cov

@@ -1,8 +1,8 @@
 <% if(container.get('type')===2 && container.get('filter')!='Lists'){ %><i class="icon-arrow-up container-list-icon" title="Navigate lists up"></i><% } %>
 <i class="icon-remove close-container" title="Close"></i>
 <span class="title"><% if($.trim(container.get('title')) === '') { %><i>Unnamed</i><% } else { %><b><%= container.get('title')%></b><% } %></span>
-<div class="edit-title hide">
-	<input type="text" value="<%= container.get('title') %>"/>
-	<a href="#" class="btn btn-success edit-title-save">Save</a>
-	<a href="#" class="edit-title-cancel">cancel</a>
+<div class="input-append edit-title hide">
+  <input type="text" value="<%= container.get('title') %>"/>
+  <button class="btn edit-title-save" type="button"><i class="icon-ok"></i></button>
+  <button class="btn edit-title-cancel" type="button"><i class="icon-remove"></i></button>
 </div>

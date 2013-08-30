@@ -8,17 +8,14 @@ var NowContainer = require('views/center/container/now.container');
 var template = require('templates/now/now');
 
 var Now = SectionListboard.extend({
-    attributes: function () {
-        return {
-            id: 'now'
-        }
+    attributes: {
+        id: 'now'
     },
     initializeView: function (options) {
         SectionListboard.prototype.initializeView.call(this, options);
         this.template = template;
         if(_state.nowListboards.length > 0)
-            this.model = _state.nowListboards.at(0);        
-        this.containersViews = new Array();
+            this.model = _state.nowListboards.at(0);
     },
     createContainerView: function(container) {
         return new NowContainer({model: container});

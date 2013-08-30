@@ -26,9 +26,9 @@ var FutureContainer = Container.extend({
     renderItems: function () {
         $('.box', this.el).append('<ul class="items"></ul>');
         var items = this.model.getItems();
-        for (index in items.models) {
+        for (var index in items.models) {
             this.renderItem(items.at(index));
-        };
+        }
         return this;
     },
     renderItem: function (item) {
@@ -44,7 +44,6 @@ var FutureContainer = Container.extend({
             var childList = this.model.list.children.models[i];
             this.renderChildList(childList);
         }
-        ;
         return this;
     },
     renderChildList: function (childList) {
