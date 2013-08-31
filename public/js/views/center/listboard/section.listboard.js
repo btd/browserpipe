@@ -55,7 +55,13 @@ var SectionListboard = AppView.extend({
         //Creates a view for the container depending on the type        
         this.containersViews.push(containerView);
 
-        //Renders the view
+        //Expand the container if necessary
+        var minWidth = this.$('.containers-inner').width() + config.CONTAINER_WIDTH;
+        //if(self.$('.containers-inner').width() < minWidth){
+            this.$('.containers-inner').width(minWidth);
+        //}
+
+        //Renders the view  
         this.$('.containers-inner').append(containerView.render().el);
         return containerView;
     },
@@ -70,6 +76,10 @@ var SectionListboard = AppView.extend({
             success: function () {
                 self.containersViews = _.without(self.containersViews, _.findWhere(self.containersViews, { cid: containerView.cid }));
                 containerView.dispose();
+
+                //Reduce the container if necessary
+                var width = self.$('.containers-inner').width() - config.CONTAINER_WIDTH;
+                self.$('.containers-inner').width(width);
             }
         });
     },
@@ -80,7 +90,7 @@ var SectionListboard = AppView.extend({
         var containerWidth = space - config.SECTION_COLLAPSED_WIDTH;
         this.$('.containers').width(containerWidth);
 
-        var containerWidth = this.containersViews.length * (config.CONTAINER_WIDTH + config.CONTAINER_HORIZONTAL_MARGIN);
+        var containerWidth = this.containersViews.length * config.CONTAINER_WIDTH;
         this.$('.containers-inner').width(containerWidth);
     },
 

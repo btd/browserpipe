@@ -17,3 +17,4 @@ main.min.map
 .lmd/logs
 coverage
 compiled-assets
+public/js/apps/
