@@ -1,5 +1,5 @@
 <div class="selector" data-section="later" unselectable='on' onselectstart='return false;' onmousedown='return false;'>
-	<i class="icon-time"/>
+	<i class="icon-time selector-icon"/>
 	<span class="selector-label">Later</span>
 </div>
 <div class="listboard">

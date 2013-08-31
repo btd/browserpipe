@@ -21058,22 +21058,25 @@ module.exports = BrowserCollection = Backbone.Collection.extend({
     model: Browser
 });
 }),
-"collections/containers": (function (require, exports, module) { /* wrapped by builder */
-var Container = require('models/container'),
-    Backbone = require('backbone');
+"collections/lists": (function (require, exports, module) { /* wrapped by builder */
+var List = require('models/list'),
+    Backbone = require('backbone'),
+    $ = require('jquery');
 
-module.exports = ContainerCollection = Backbone.Collection.extend({
-    model: Container,
-    url: "/containers"
-});
-}),
-"collections/items": (function (require, exports, module) { /* wrapped by builder */
-var Item = require('models/item'),
-    Backbone = require('backbone');
-
-module.exports = ItemCollection = Backbone.Collection.extend({
-    model: Item,
-    url: "/items"
+module.exports = ListCollection = Backbone.Collection.extend({
+    model: List,
+    url: "/lists",
+    createList: function (model) {
+        var self = this;
+        var defer = $.Deferred();
+        this.create(model, {
+            success: function (list) {
+                defer.resolve(list);
+                self.trigger("created", list);
+            }
+        });
+        return defer; //We return a deferred
+    }
 });
 }),
 "collections/listboards": (function (require, exports, module) { /* wrapped by builder */
@@ -21123,88 +21126,22 @@ module.exports = ListboardCollection = Backbone.Collection.extend({
     }
 });
 }),
-"collections/lists": (function (require, exports, module) { /* wrapped by builder */
-var List = require('models/list'),
-    Backbone = require('backbone'),
-    $ = require('jquery');
+"collections/items": (function (require, exports, module) { /* wrapped by builder */
+var Item = require('models/item'),
+    Backbone = require('backbone');
 
-module.exports = ListCollection = Backbone.Collection.extend({
-    model: List,
-    url: "/lists",
-    createList: function (model) {
-        var self = this;
-        var defer = $.Deferred();
-        this.create(model, {
-            success: function (list) {
-                defer.resolve(list);
-                self.trigger("created", list);
-            }
-        });
-        return defer; //We return a deferred
-    }
+module.exports = ItemCollection = Backbone.Collection.extend({
+    model: Item,
+    url: "/items"
 });
 }),
-"models/browser": (function (require, exports, module) { /* wrapped by builder */
-var AppModel = require('models/model');
+"collections/containers": (function (require, exports, module) { /* wrapped by builder */
+var Container = require('models/container'),
+    Backbone = require('backbone');
 
-module.exports = Browser = AppModel.extend({
-    initialize: function (spec) {
-    }
-});
-
-}),
-"models/container": (function (require, exports, module) { /* wrapped by builder */
-var AppModel = require('models/model');
-
-module.exports = Container = AppModel.extend({
-    initialize: function (spec) {
-        this.loadItems();
-        if(this.get('type') === 2) {
-            var _state = require('models/state');
-            this.list = _state.getListByFilter(this.get('filter'));
-            //If the list changes its filter, container has to be updated
-            this.listenTo(this.list, 'change:path', function (filter, oldFilter) {
-                this.save({filter: self.list.getFilter()});
-            });
-            this.listenTo(this.list, 'change:label', function (filter, oldFilter) {
-                this.save({title: self.list.get('label'), filter: self.list.getFilter()});
-            });
-        }
-    },
-    loadItems: function () {
-        //Check if children are not loaded at init
-        if (!this.items) {
-            var _state = require('models/state')            
-            this.items = new ItemCollection();
-            _state.loadItemsByContainer(this);
-        }
-        return this.items;
-    },
-    getItems: function () {        
-        if (!this.items) {
-            this.loadItems();
-        }
-        return this.items;
-    },
-    addItem: function (item) {
-        var items = this.getItems();
-        this.items.add(item);
-    }
-});
-
-}),
-"models/item": (function (require, exports, module) { /* wrapped by builder */
-var AppModel = require('models/model');
-
-module.exports = AppModel.extend({
-    urlRoot: "/items",
-    getLists: function () {
-        return _.map(this.get('lists'), function (filter) {
-        	//We have to declare it here because of circle reference between Item and State
-        	var _state = require('models/state');
-            return _state.getListByFilter(filter);
-        })
-    }
+module.exports = ContainerCollection = Backbone.Collection.extend({
+    model: Container,
+    url: "/containers"
 });
 }),
 "models/list": (function (require, exports, module) { /* wrapped by builder */
@@ -21287,13 +21224,54 @@ module.exports = Listboard = AppModel.extend({
 });
 
 }),
-"models/model": (function (require, exports, module) { /* wrapped by builder */
-var Backbone = require('backbone');
+"models/container": (function (require, exports, module) { /* wrapped by builder */
+var AppModel = require('models/model');
 
-
-module.exports = AppModel = Backbone.Model.extend({
-    idAttribute: "_id"
+module.exports = Container = AppModel.extend({
+    initialize: function (spec) {
+        this.loadItems();
+        if(this.get('type') === 2) {
+            var _state = require('models/state');
+            this.list = _state.getListByFilter(this.get('filter'));
+            //If the list changes its filter, container has to be updated
+            this.listenTo(this.list, 'change:path', function (filter, oldFilter) {
+                this.save({filter: self.list.getFilter()});
+            });
+            this.listenTo(this.list, 'change:label', function (filter, oldFilter) {
+                this.save({title: self.list.get('label'), filter: self.list.getFilter()});
+            });
+        }
+    },
+    loadItems: function () {
+        //Check if children are not loaded at init
+        if (!this.items) {
+            var _state = require('models/state')            
+            this.items = new ItemCollection();
+            _state.loadItemsByContainer(this);
+        }
+        return this.items;
+    },
+    getItems: function () {        
+        if (!this.items) {
+            this.loadItems();
+        }
+        return this.items;
+    },
+    addItem: function (item) {
+        var items = this.getItems();
+        this.items.add(item);
+    }
 });
+
+}),
+"models/browser": (function (require, exports, module) { /* wrapped by builder */
+var AppModel = require('models/model');
+
+module.exports = Browser = AppModel.extend({
+    initialize: function (spec) {
+    }
+});
+
 }),
 "models/state": (function (require, exports, module) { /* wrapped by builder */
 var Backbone = require('backbone'),
@@ -21438,6 +21416,28 @@ module.exports = new State();
 
 
 }),
+"models/item": (function (require, exports, module) { /* wrapped by builder */
+var AppModel = require('models/model');
+
+module.exports = AppModel.extend({
+    urlRoot: "/items",
+    getLists: function () {
+        return _.map(this.get('lists'), function (filter) {
+        	//We have to declare it here because of circle reference between Item and State
+        	var _state = require('models/state');
+            return _state.getListByFilter(filter);
+        })
+    }
+});
+}),
+"models/model": (function (require, exports, module) { /* wrapped by builder */
+var Backbone = require('backbone');
+
+
+module.exports = AppModel = Backbone.Model.extend({
+    idAttribute: "_id"
+});
+}),
 "views/view": (function (require, exports, module) { /* wrapped by builder */
 var $ = require('jquery'), _ = require('lodash'), Backbone = require('backbone');
 
@@ -21504,6 +21504,194 @@ module.exports = AppView = Backbone.View.extend({
         return this.$('.help-inline:not(.hide)').length > 0
     }
 });
+}),
+"views/top-bar/search": (function (require, exports, module) { /* wrapped by builder */
+/*var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var config = require('config');
+var _state = require('models/state');
+var AppView = require('views/view');
+var Search = AppView.extend({
+    el: $("#search-form"),
+    events: {
+        "click #search-btn": "search"
+    },
+    initializeView: function () {
+        this.listenTo(_state.listboards, 'currentContainerChange', this.currentContainerChanged);
+    },
+    currentContainerChanged: function (container) {
+        var $box = this.$('#search-box');
+        var query = ""
+        if (container) {
+            var filter = container.list.getFilter();
+            switch (container.get('type')) {
+                case 1: //List
+                    //Replaces "Lists/" with "#""
+                    if (filter == "Trash")
+                        query = "#"
+                    else
+                        query = "#" + filter.substring(5);
+                    break;
+                case 2: //Search
+                    //Removes "Search/"
+                    query = filter.substring(7);
+                    break;
+                case 3: //Import
+                    //Replaces "Import/" with ":import"
+                    if (filter == "Import")
+                        query = ":import"
+                    else
+                        query = ":import" + filter.substring(7);
+                    break;
+                case 4: //Device
+                    //Replaces "Device/" with ":device"
+                    if (filter == "Device")
+                        query = ":device"
+                    else
+                        query = ":device" + filter.substring(7);
+                    break;
+                case 5: //Trash
+                    //Replaces "Trash/" with ":device"
+                    if (filter == "Trash")
+                        query = ":trash"
+                    else
+                        query = ":trash" + filter.substring(6);
+                    break;
+            }
+        }
+        $box.val(query);
+    },
+    search: function (e) {
+        e.preventDefault();
+        var query = $.trim(this.$('#search-box').val());
+        //If search valid, creates a list for the search and adds a container
+        if (query != "") {
+            //TODO: perform the real search
+            var list = _state.getListByFilter("Search/" + query);
+            if (list)
+                this.createContainer(list);
+            else
+                this.createListAndContainer(query);
+        }
+    },
+    createListAndContainer: function (query) {
+        var self = this;
+        var parentList = _state.getListByFilter("Search");
+        parentList.children.createList({
+            label: query,
+            path: parentList.getFilter()
+        }, {wait: true, success: function (list) {
+            self.trigger("listAdded", list);
+            //We have to call it to make sure it is set before creating the container
+            _state.addList(list);
+            self.createContainer(list);
+        }})
+    },
+    createContainer: function (list) {
+        var container = _state.listboards.getCurrentListboard().addContainer({
+            "filter": list.getFilter(),
+            "order": 0, //TODO: manage order
+            "title": list.get('label'),
+            "type": 2
+        }, {wait: true, success: function (container) {
+            _state.listboards.setCurrentContainer(container.get('_id'));
+        }});
+    }
+});
+module.exports = Search;
+*/
+}),
+"views/top-bar/account.nav": (function (require, exports, module) { /* wrapped by builder */
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var AppView = require('views/view');
+
+var AccountNav = AppView.extend({
+    el: "#account-nav",
+    events: {
+        "click .dropdown-menu a": "navigateToSection"
+    },
+    initializeView: function () {        
+    },
+    navigateToSection: function (e) {        
+        var $target = $(e.currentTarget);
+        var url = $target.attr('href');
+        if(url != "/logout") {
+        	e.preventDefault();        
+        	Backbone.history.navigate(url, {trigger: true});
+        }
+    }
+});
+module.exports = AccountNav;
+
+}),
+"views/top-bar/sections": (function (require, exports, module) { /* wrapped by builder */
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var AppView = require('views/view');
+
+var Sections = AppView.extend({
+    el: "#section-selector",
+    events: {
+        "click .nav-option": "navigateTo"
+    },
+    initializeView: function () {        
+    },
+    navigateTo: function (e) {        
+        var $target = $('a', e.currentTarget);
+        e.preventDefault();
+        var section = $target.attr('href');
+        Backbone.history.navigate(section, {trigger: true});
+    }
+});
+module.exports = Sections;
+
+}),
+"views/center/welcome": (function (require, exports, module) { /* wrapped by builder */
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var config = require('config');
+var _state = require('models/state');
+var AppView = require('views/view');
+var template = require('templates/welcome/welcome');
+
+var Welcome = AppView.extend({
+    tagName: 'div',
+    attributes: function () {
+        return {
+            id: 'welcome',
+            class: 'hide'
+        }
+    },
+    events: {
+        "click #btn-install-extension": "installExtension",
+        "click #btn-explore-app": "navigateToHome"
+    },
+    initializeView: function (options) {
+    },
+    renderView: function () {        
+        var compiledTemplate = _.template(template, {
+        });
+        this.$el.html(compiledTemplate);
+        $('#main-container').empty();
+        $('#main-container').append(this.$el);
+        return this;
+    },
+    installExtension: function(e){
+
+    },
+    navigateToHome: function(e){
+        var $target = $(e.currentTarget);
+        e.preventDefault();
+        Backbone.history.navigate($target.attr('href'), {trigger: true});
+    }
+});
+module.exports = Welcome;
+
 }),
 "views/center/center": (function (require, exports, module) { /* wrapped by builder */
 var $ = require('jquery');
@@ -21596,48 +21784,163 @@ var Settings = Center.extend({
 module.exports = Settings;
 
 }),
-"views/center/welcome": (function (require, exports, module) { /* wrapped by builder */
-var $ = require('jquery');
+"views/lists.editor/list": (function (require, exports, module) { /* wrapped by builder */
+/*var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var config = require('config');
 var _state = require('models/state');
 var AppView = require('views/view');
-var template = require('templates/welcome/welcome');
-
-var Welcome = AppView.extend({
-    tagName: 'div',
+var template = require('templates/lists/lists.editor.list');
+var ListsEditorList = AppView.extend({
     attributes: function () {
         return {
-            id: 'welcome',
-            class: 'hide'
+            class: 'lists-editor-list'
         }
     },
     events: {
-        "click #btn-install-extension": "installExtension",
-        "click #btn-explore-app": "navigateToHome"
+        "click .close": "removeList"
     },
-    initializeView: function (options) {
+    initializeView: function () {
     },
-    renderView: function () {        
+    renderView: function () {
+        var filter = this.model.getFilter();
         var compiledTemplate = _.template(template, {
+            label: filter.substring(5, filter.length)
         });
         this.$el.html(compiledTemplate);
-        $('#main-container').empty();
-        $('#main-container').append(this.$el);
         return this;
     },
-    installExtension: function(e){
-
-    },
-    navigateToHome: function(e){
-        var $target = $(e.currentTarget);
-        e.preventDefault();
-        Backbone.history.navigate($target.attr('href'), {trigger: true});
+    removeList: function (e) {
+        this.trigger('listRemoved', this.model);
+        this.dispose();
     }
 });
-module.exports = Welcome;
+module.exports = ListsEditorList;
+*/
+}),
+"views/lists.editor/editor": (function (require, exports, module) { /* wrapped by builder */
+/*var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var _state = require('models/state');
+var List = require('models/list');
+var AppView = require('views/view');
+var ListsEditorList = require('views/lists.editor/list');
+var template = require('templates/lists/lists.editor');
+var ListsEditor = AppView.extend({
+    attributes: function () {
+        return {
+            class: 'lists-editor'
+        }
+    },
+    events: {
+        "keyup": "keypressed"
+    },
+    initializeView: function () {
+        var self = this;
+        this.listenTo(this.collection, 'add', function (list) {
+            self.renderList(list)
+            self.trigger("listAdded", list);
+        });
+    },
+    renderView: function () {
+        var self = this;
+        var compiledTemplate = _.template(template, {});
+        this.$el.html(compiledTemplate);
+        this.collection.each(function (list) {
+            if (list.isUserList())
+                self.renderList(list)
+        })
+        //Prepare autocomplete
+        this.prepareTypeAhead();
+        return this;
+    },
+    renderList: function (list) {
+        var self = this;
+        var listsEditorListView = new ListsEditorList({model: list});
+        this.$('.editor-lists').prepend(listsEditorListView.render().el);
+        this.listenTo(listsEditorListView, 'listRemoved', function (list) {
+            self.collection.remove(list);
+            self.stopListening(listsEditorListView);
+            self.trigger("listRemoved", list);
+        });
+    },
+    prepareTypeAhead: function () {
+        var self = this;
+        this.$('.editor-list-input').typeahead({
+            autoselect: false,
+            source: this.getUserListsList(),
+            //TODO: implement something like sublime text 2 for autocomplete
+            ,
+             matcher: function (item) {
 
+             },
+             sorter: function (items) {
+
+             },
+             highlighter: function (item) {
+
+             },
+            updater: function (item) {
+                if (item)
+                    self.addList(item)
+                else
+                    self.addList(self.$('.editor-list-input').val())
+            }
+        });
+    },
+    getUserListsList: function () {
+        //TODO: review this if we load lists from server async in the future
+        var self = this;
+        return _.chain(_state.lists)
+            .values()
+            .filter(function (list) {
+                return !self.collection.contains(list) && list.isUserList();
+            })
+            .map(function (list) {
+                var filter = list.getFilter();
+                return filter.substring(5, filter.length);
+            })
+            .value();
+    },
+    postRender: function () {
+    },
+    keypressed: function (event) {
+        if (event.keyCode === 13) {
+            event.stopPropagation();
+            var $target = $(event.target);
+            //If enter inside form, we submit it
+            if ($target.hasClass("editor-list-input")) {
+                var $input = $target;
+                this.addList($input.val());
+                $input.val('');
+            }
+        }
+    },
+    addList: function (label) {
+        var filter = 'Lists/' + $.trim(label);
+        //Check if already exists
+        if (this.collection.filter(function (list) {
+            return list.getFilter() === filter;
+        }).length > 0)
+            return;
+        var list = _state.getListByFilter(filter);
+        if (!list)
+            list = this.createList(filter);
+        this.collection.add(list);
+    },
+    createList: function (filter) {
+        var index = filter.lastIndexOf('/'); //It has at least one /
+        var path = filter.substring(0, index);
+        var label = filter.substring(index + 1);
+        return new List({
+            label: label,
+            path: path
+        });
+    }
+});
+module.exports = ListsEditor;
+*/
 }),
 "views/dialogs/add.bookmark": (function (require, exports, module) { /* wrapped by builder */
 /*var $ = require('jquery');
@@ -22012,309 +22315,6 @@ var ViewBookmark = AppView.extend({
 module.exports = ViewBookmark;
 
 }),
-"views/lists.editor/editor": (function (require, exports, module) { /* wrapped by builder */
-/*var $ = require('jquery');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var _state = require('models/state');
-var List = require('models/list');
-var AppView = require('views/view');
-var ListsEditorList = require('views/lists.editor/list');
-var template = require('templates/lists/lists.editor');
-var ListsEditor = AppView.extend({
-    attributes: function () {
-        return {
-            class: 'lists-editor'
-        }
-    },
-    events: {
-        "keyup": "keypressed"
-    },
-    initializeView: function () {
-        var self = this;
-        this.listenTo(this.collection, 'add', function (list) {
-            self.renderList(list)
-            self.trigger("listAdded", list);
-        });
-    },
-    renderView: function () {
-        var self = this;
-        var compiledTemplate = _.template(template, {});
-        this.$el.html(compiledTemplate);
-        this.collection.each(function (list) {
-            if (list.isUserList())
-                self.renderList(list)
-        })
-        //Prepare autocomplete
-        this.prepareTypeAhead();
-        return this;
-    },
-    renderList: function (list) {
-        var self = this;
-        var listsEditorListView = new ListsEditorList({model: list});
-        this.$('.editor-lists').prepend(listsEditorListView.render().el);
-        this.listenTo(listsEditorListView, 'listRemoved', function (list) {
-            self.collection.remove(list);
-            self.stopListening(listsEditorListView);
-            self.trigger("listRemoved", list);
-        });
-    },
-    prepareTypeAhead: function () {
-        var self = this;
-        this.$('.editor-list-input').typeahead({
-            autoselect: false,
-            source: this.getUserListsList(),
-            //TODO: implement something like sublime text 2 for autocomplete
-            ,
-             matcher: function (item) {
-
-             },
-             sorter: function (items) {
-
-             },
-             highlighter: function (item) {
-
-             },
-            updater: function (item) {
-                if (item)
-                    self.addList(item)
-                else
-                    self.addList(self.$('.editor-list-input').val())
-            }
-        });
-    },
-    getUserListsList: function () {
-        //TODO: review this if we load lists from server async in the future
-        var self = this;
-        return _.chain(_state.lists)
-            .values()
-            .filter(function (list) {
-                return !self.collection.contains(list) && list.isUserList();
-            })
-            .map(function (list) {
-                var filter = list.getFilter();
-                return filter.substring(5, filter.length);
-            })
-            .value();
-    },
-    postRender: function () {
-    },
-    keypressed: function (event) {
-        if (event.keyCode === 13) {
-            event.stopPropagation();
-            var $target = $(event.target);
-            //If enter inside form, we submit it
-            if ($target.hasClass("editor-list-input")) {
-                var $input = $target;
-                this.addList($input.val());
-                $input.val('');
-            }
-        }
-    },
-    addList: function (label) {
-        var filter = 'Lists/' + $.trim(label);
-        //Check if already exists
-        if (this.collection.filter(function (list) {
-            return list.getFilter() === filter;
-        }).length > 0)
-            return;
-        var list = _state.getListByFilter(filter);
-        if (!list)
-            list = this.createList(filter);
-        this.collection.add(list);
-    },
-    createList: function (filter) {
-        var index = filter.lastIndexOf('/'); //It has at least one /
-        var path = filter.substring(0, index);
-        var label = filter.substring(index + 1);
-        return new List({
-            label: label,
-            path: path
-        });
-    }
-});
-module.exports = ListsEditor;
-*/
-}),
-"views/lists.editor/list": (function (require, exports, module) { /* wrapped by builder */
-/*var $ = require('jquery');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var _state = require('models/state');
-var AppView = require('views/view');
-var template = require('templates/lists/lists.editor.list');
-var ListsEditorList = AppView.extend({
-    attributes: function () {
-        return {
-            class: 'lists-editor-list'
-        }
-    },
-    events: {
-        "click .close": "removeList"
-    },
-    initializeView: function () {
-    },
-    renderView: function () {
-        var filter = this.model.getFilter();
-        var compiledTemplate = _.template(template, {
-            label: filter.substring(5, filter.length)
-        });
-        this.$el.html(compiledTemplate);
-        return this;
-    },
-    removeList: function (e) {
-        this.trigger('listRemoved', this.model);
-        this.dispose();
-    }
-});
-module.exports = ListsEditorList;
-*/
-}),
-"views/top-bar/account.nav": (function (require, exports, module) { /* wrapped by builder */
-var $ = require('jquery');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var AppView = require('views/view');
-
-var AccountNav = AppView.extend({
-    el: "#account-nav",
-    events: {
-        "click .dropdown-menu a": "navigateToSection"
-    },
-    initializeView: function () {        
-    },
-    navigateToSection: function (e) {        
-        var $target = $(e.currentTarget);
-        var url = $target.attr('href');
-        if(url != "/logout") {
-        	e.preventDefault();        
-        	Backbone.history.navigate(url, {trigger: true});
-        }
-    }
-});
-module.exports = AccountNav;
-
-}),
-"views/top-bar/search": (function (require, exports, module) { /* wrapped by builder */
-/*var $ = require('jquery');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var config = require('config');
-var _state = require('models/state');
-var AppView = require('views/view');
-var Search = AppView.extend({
-    el: $("#search-form"),
-    events: {
-        "click #search-btn": "search"
-    },
-    initializeView: function () {
-        this.listenTo(_state.listboards, 'currentContainerChange', this.currentContainerChanged);
-    },
-    currentContainerChanged: function (container) {
-        var $box = this.$('#search-box');
-        var query = ""
-        if (container) {
-            var filter = container.list.getFilter();
-            switch (container.get('type')) {
-                case 1: //List
-                    //Replaces "Lists/" with "#""
-                    if (filter == "Trash")
-                        query = "#"
-                    else
-                        query = "#" + filter.substring(5);
-                    break;
-                case 2: //Search
-                    //Removes "Search/"
-                    query = filter.substring(7);
-                    break;
-                case 3: //Import
-                    //Replaces "Import/" with ":import"
-                    if (filter == "Import")
-                        query = ":import"
-                    else
-                        query = ":import" + filter.substring(7);
-                    break;
-                case 4: //Device
-                    //Replaces "Device/" with ":device"
-                    if (filter == "Device")
-                        query = ":device"
-                    else
-                        query = ":device" + filter.substring(7);
-                    break;
-                case 5: //Trash
-                    //Replaces "Trash/" with ":device"
-                    if (filter == "Trash")
-                        query = ":trash"
-                    else
-                        query = ":trash" + filter.substring(6);
-                    break;
-            }
-        }
-        $box.val(query);
-    },
-    search: function (e) {
-        e.preventDefault();
-        var query = $.trim(this.$('#search-box').val());
-        //If search valid, creates a list for the search and adds a container
-        if (query != "") {
-            //TODO: perform the real search
-            var list = _state.getListByFilter("Search/" + query);
-            if (list)
-                this.createContainer(list);
-            else
-                this.createListAndContainer(query);
-        }
-    },
-    createListAndContainer: function (query) {
-        var self = this;
-        var parentList = _state.getListByFilter("Search");
-        parentList.children.createList({
-            label: query,
-            path: parentList.getFilter()
-        }, {wait: true, success: function (list) {
-            self.trigger("listAdded", list);
-            //We have to call it to make sure it is set before creating the container
-            _state.addList(list);
-            self.createContainer(list);
-        }})
-    },
-    createContainer: function (list) {
-        var container = _state.listboards.getCurrentListboard().addContainer({
-            "filter": list.getFilter(),
-            "order": 0, //TODO: manage order
-            "title": list.get('label'),
-            "type": 2
-        }, {wait: true, success: function (container) {
-            _state.listboards.setCurrentContainer(container.get('_id'));
-        }});
-    }
-});
-module.exports = Search;
-*/
-}),
-"views/top-bar/sections": (function (require, exports, module) { /* wrapped by builder */
-var $ = require('jquery');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var AppView = require('views/view');
-
-var Sections = AppView.extend({
-    el: "#section-selector",
-    events: {
-        "click .nav-option": "navigateTo"
-    },
-    initializeView: function () {        
-    },
-    navigateTo: function (e) {        
-        var $target = $('a', e.currentTarget);
-        e.preventDefault();
-        var section = $target.attr('href');
-        Backbone.history.navigate(section, {trigger: true});
-    }
-});
-module.exports = Sections;
-
-}),
 "views/center/container/container": (function (require, exports, module) { /* wrapped by builder */
 var $ = require('jquery');
 var _ = require('underscore');
@@ -22534,41 +22534,6 @@ var LaterContainer = Container.extend({
 module.exports = LaterContainer;
 
 }),
-"views/center/container/now.container": (function (require, exports, module) { /* wrapped by builder */
-var $ = require('jquery');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var Container = require('views/center/container/container');
-var ContainerItem = require('views/center/container/item/item');
-
-var NowContainer = Container.extend({
-    initializeView: function (options) {
-    	Container.prototype.initializeView.call(this, options);
-    },
-    renderView: function () {
-        this            
-            .renderHeader()
-            .renderBox()
-            .renderItems();
-        return this;
-    },
-    renderItems: function () {
-        $('.box', this.el).append('<ul class="items"></ul>');
-        var items = this.model.getItems();
-        for (index in items.models) {
-            this.renderItem(items.at(index));
-        };
-        return this;
-    },
-    renderItem: function (item) {
-        var $items = this.$('.items');
-        var containerItem = new ContainerItem({model: item});
-        $items.append(containerItem.render().el);
-    }
-});
-module.exports = NowContainer;
-
-}),
 "views/center/container/user.list.container": (function (require, exports, module) { /* wrapped by builder */
 /*var $ = require('jquery');
 var _ = require('underscore');
@@ -22614,6 +22579,41 @@ var UserListContainer = ListContainer.extend({
 });
 module.exports = UserListContainer;
 */
+}),
+"views/center/container/now.container": (function (require, exports, module) { /* wrapped by builder */
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var Container = require('views/center/container/container');
+var ContainerItem = require('views/center/container/item/item');
+
+var NowContainer = Container.extend({
+    initializeView: function (options) {
+    	Container.prototype.initializeView.call(this, options);
+    },
+    renderView: function () {
+        this            
+            .renderHeader()
+            .renderBox()
+            .renderItems();
+        return this;
+    },
+    renderItems: function () {
+        $('.box', this.el).append('<ul class="items"></ul>');
+        var items = this.model.getItems();
+        for (index in items.models) {
+            this.renderItem(items.at(index));
+        };
+        return this;
+    },
+    renderItem: function (item) {
+        var $items = this.$('.items');
+        var containerItem = new ContainerItem({model: item});
+        $items.append(containerItem.render().el);
+    }
+});
+module.exports = NowContainer;
+
 }),
 "views/center/listboard/accordion.listboards": (function (require, exports, module) { /* wrapped by builder */
 var $ = require('jquery');
@@ -22864,7 +22864,8 @@ var SectionListboard = AppView.extend({
     tagName: 'section',
     initializeView: function (options) {          
         this.events = _.merge(this.events || {}, {
-            'click .selector': 'clickedSelector',
+            'click .selector-label': 'clickedSelector',            
+            'click .selector-icon': 'clickedSelector',
             'click .add-container': 'addContainer'
         });
         // child view should set this.model to listboard
@@ -22924,11 +22925,14 @@ var SectionListboard = AppView.extend({
         });
     },
 
-    expandSection: function(space){
-        var containerWidth = space - config.SECTION_COLLAPSED_WIDTH;
+    expandSection: function(space){        
         this.$el.width(space);
 
+        var containerWidth = space - config.SECTION_COLLAPSED_WIDTH;
         this.$('.containers').width(containerWidth);
+
+        var containerWidth = this.containersViews.length * (config.CONTAINER_WIDTH + config.CONTAINER_HORIZONTAL_MARGIN);
+        this.$('.containers-inner').width(containerWidth);
     },
 
     calculateHeight: function (height) {
@@ -22949,6 +22953,93 @@ var SectionListboard = AppView.extend({
 });
 
 module.exports = SectionListboard;
+
+}),
+"views/center/container/list/child.list": (function (require, exports, module) { /* wrapped by builder */
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var AppView = require('views/view');
+var template = require('templates/containers/list');
+
+var ContainerChildList = AppView.extend({
+    name: 'ContainerChildList',
+    tagName: 'li',
+    events: {
+        "click": "navigateToList",
+        "mouseenter": "showRemoveChildListIcon",
+        "mouseleave": "hideRemoveChildListIcon",
+        "click .remove-child-list": "removeChildList"
+    },
+    attributes: function () {
+        return {
+            class: 'list'
+        }
+    },
+    initializeView: function () {
+    },
+    renderView: function () {
+        var compiledTemplate = _.template(template, { label: this.model.get('label') });
+        $(this.el).html(compiledTemplate);
+        return this;
+    },
+    navigateToList: function (e) {
+        e.stopPropagation();
+        this.trigger("navigateToList", this.model);
+    },
+    showRemoveChildListIcon: function() {
+        this.$('.remove-child-list').show();
+    },
+    hideRemoveChildListIcon: function() {
+        this.$('.remove-child-list').hide();
+    },
+    removeChildList: function(e) {
+        e.stopPropagation();
+        this.trigger('childRemoved', this);
+    }
+
+});
+module.exports = ContainerChildList;
+
+}),
+"views/center/container/item/item": (function (require, exports, module) { /* wrapped by builder */
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var AppView = require('views/view');
+var ViewBookmark = require('views/dialogs/view.bookmark');
+var mainTemplate = require('templates/items/container.item.simple');
+var ContainerItem = AppView.extend({
+    name: 'ContainerItem',
+    tagName: 'li',
+    events: {
+        "click": "open",
+        "click a": "stopPropagation"
+    },
+    attributes: function () {
+        return {
+            class: 'item',
+            id: "item_" + this.model.get('_id')
+        }
+    },
+    initializeView: function () {
+    },
+    renderView: function () {
+        var compiledTemplate = _.template(mainTemplate, {item: this.model});
+        $(this.el).html(compiledTemplate);
+        return this;
+    },
+    postRender: function () {
+    },
+    open: function () {
+        var viewBookmark = new ViewBookmark({model: this.model});
+        viewBookmark.render();
+    },
+    stopPropagation: function (e) {
+        e.stopPropagation();
+    }
+});
+module.exports = ContainerItem;
 
 }),
 "views/center/container/header/header": (function (require, exports, module) { /* wrapped by builder */
@@ -23010,93 +23101,6 @@ var ContainerHeader = AppView.extend({
 module.exports = ContainerHeader;
 
 }),
-"views/center/container/item/item": (function (require, exports, module) { /* wrapped by builder */
-var $ = require('jquery');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var AppView = require('views/view');
-var ViewBookmark = require('views/dialogs/view.bookmark');
-var mainTemplate = require('templates/items/container.item.simple');
-var ContainerItem = AppView.extend({
-    name: 'ContainerItem',
-    tagName: 'li',
-    events: {
-        "click": "open",
-        "click a": "stopPropagation"
-    },
-    attributes: function () {
-        return {
-            class: 'item',
-            id: "item_" + this.model.get('_id')
-        }
-    },
-    initializeView: function () {
-    },
-    renderView: function () {
-        var compiledTemplate = _.template(mainTemplate, {item: this.model});
-        $(this.el).html(compiledTemplate);
-        return this;
-    },
-    postRender: function () {
-    },
-    open: function () {
-        var viewBookmark = new ViewBookmark({model: this.model});
-        viewBookmark.render();
-    },
-    stopPropagation: function (e) {
-        e.stopPropagation();
-    }
-});
-module.exports = ContainerItem;
-
-}),
-"views/center/container/list/child.list": (function (require, exports, module) { /* wrapped by builder */
-var $ = require('jquery');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var AppView = require('views/view');
-var template = require('templates/containers/list');
-
-var ContainerChildList = AppView.extend({
-    name: 'ContainerChildList',
-    tagName: 'li',
-    events: {
-        "click": "navigateToList",
-        "mouseenter": "showRemoveChildListIcon",
-        "mouseleave": "hideRemoveChildListIcon",
-        "click .remove-child-list": "removeChildList"
-    },
-    attributes: function () {
-        return {
-            class: 'list'
-        }
-    },
-    initializeView: function () {
-    },
-    renderView: function () {
-        var compiledTemplate = _.template(template, { label: this.model.get('label') });
-        $(this.el).html(compiledTemplate);
-        return this;
-    },
-    navigateToList: function (e) {
-        e.stopPropagation();
-        this.trigger("navigateToList", this.model);
-    },
-    showRemoveChildListIcon: function() {
-        this.$('.remove-child-list').show();
-    },
-    hideRemoveChildListIcon: function() {
-        this.$('.remove-child-list').hide();
-    },
-    removeChildList: function(e) {
-        e.stopPropagation();
-        this.trigger('childRemoved', this);
-    }
-
-});
-module.exports = ContainerChildList;
-
-}),
 "views/center/listboard/future/future": (function (require, exports, module) { /* wrapped by builder */
 var $ = require('jquery');
 var _ = require('underscore');
@@ -23126,6 +23130,33 @@ var Future = SectionListboard.extend({
     }
 });
 module.exports = Future;
+
+}),
+"views/center/listboard/now/now": (function (require, exports, module) { /* wrapped by builder */
+var $ = require('jquery');
+var _ = require('underscore');
+var Backbone = require('backbone');
+var config = require('config');
+var _state = require('models/state');
+var SectionListboard = require('views/center/listboard/section.listboard');
+var NowContainer = require('views/center/container/now.container');
+var template = require('templates/now/now');
+
+var Now = SectionListboard.extend({
+    attributes: {
+        id: 'now'
+    },
+    initializeView: function (options) {
+        SectionListboard.prototype.initializeView.call(this, options);
+        this.template = template;
+        if(_state.nowListboards.length > 0)
+            this.model = _state.nowListboards.at(0);
+    },
+    createContainerView: function(container) {
+        return new NowContainer({model: container});
+    }
+});
+module.exports = Now;
 
 }),
 "views/center/listboard/later/later": (function (require, exports, module) { /* wrapped by builder */
@@ -23169,46 +23200,19 @@ var Later = SectionListboard.extend({
 module.exports = Later;
 
 }),
-"views/center/listboard/now/now": (function (require, exports, module) { /* wrapped by builder */
-var $ = require('jquery');
-var _ = require('underscore');
-var Backbone = require('backbone');
-var config = require('config');
-var _state = require('models/state');
-var SectionListboard = require('views/center/listboard/section.listboard');
-var NowContainer = require('views/center/container/now.container');
-var template = require('templates/now/now');
-
-var Now = SectionListboard.extend({
-    attributes: {
-        id: 'now'
-    },
-    initializeView: function (options) {
-        SectionListboard.prototype.initializeView.call(this, options);
-        this.template = template;
-        if(_state.nowListboards.length > 0)
-            this.model = _state.nowListboards.at(0);
-    },
-    createContainerView: function(container) {
-        return new NowContainer({model: container});
-    }
-});
-module.exports = Now;
-
-}),
+"templates/future/future": "<div class=\"selector\"  data-section=\"future\" unselectable='on' onselectstart='return false;' onmousedown='return false;'>\n\t<i class=\"icon-calendar selector-icon\"/>\n\t<span class=\"selector-label\">Future</span>\n</div>\n<div class=\"listboard\">\n\t<div class=\"navbar sub-bar\">\n\t\t<div class=\"btn-group pull-left listboard-selector\">\n\t\t\t<a class=\"btn dropdown-toggle\" data-toggle=\"dropdown\" href=\"#\">\n\t\t\t\t<%= listboard_label %>\n\t\t\t\t<span class=\"caret\"></span>\n\t\t\t</a>\n\t\t\t<ul class=\"dropdown-menu\">\n\t\t\t\t <li><a href=\"javascript: void(0)\" class=\"js-create-listboard\"><i class=\"icon-none\">Create New</i></a></li>\n\t\t\t</ul>\n\t\t</div>\n\t\t<div class=\"navbar-inner\">    \t\t\n\t\t\t<ul class=\"nav\">\n\t\t\t  <li>\n\t\t\t    <a class=\"add-container btn\" href=\"#\" title=\"Open a container\">\n\t\t\t        <i class=\"icon-plus\"></i>\n\t\t\t    </a>\n\t\t\t  </li>\n\t\t\t</ul>\n\t\t</div>\n\t</div>\n\t<div class=\"containers clearfix\">\n\t\t<div class=\"containers-inner clearfix\"></div>\n\t</div>\n</div>  ",
+"templates/now/now": "<div class=\"selector\" data-section=\"now\" unselectable='on' onselectstart='return false;' onmousedown='return false;'>\n\t<i class=\"icon-globe selector-icon\"/>\n\t<span class=\"selector-label\">Now</span>\n</div>\n<div class=\"listboard\">\n\t<div class=\"navbar sub-bar\">\n    <div class=\"btn-group pull-left listboard-selector\">\n      <a class=\"btn dropdown-toggle\" data-toggle=\"dropdown\" href=\"#\">\n\t\t\t\t<%= listboard_label %>\n\t\t\t\t<span class=\"caret\"></span>\n      </a>\n      <ul class=\"dropdown-menu\">\n         <li><a href=\"javascript: void(0)\"><i class=\"icon-none\">Sync new browser</i></a></li>\n      </ul>\n    </div>\n    <div class=\"navbar-inner\">\n      <ul class=\"nav\">\n        \n      </ul>\n    </div>\n  </div>\n  <div class=\"containers clearfix\">\n    <div class=\"containers-inner clearfix\"></div>\n  </div>\n</div>  ",
+"templates/welcome/welcome": "<div id=\"welcome-options\">\n    <h2>Welcome to Listboard.it!</h2>\n    <p>Start right away by syncing your tab</p>\n    <a id=\"btn-install-extension\" href=\"/clients/chrome/extension.crx\" class=\"btn btn-success btn-block btn-big\">Install sync extension</a>\n    <p>or</p>\n    <p><a id=\"btn-explore-app\" class=\"\" href=\"/\">explore the app</a></p>\n</div>",
 "templates/containers/header": "<% if(container.get('type')===2 && container.get('filter')!='Lists'){ %><i class=\"icon-arrow-up container-list-icon\" title=\"Navigate lists up\"></i><% } %>\n<i class=\"icon-remove close-container\" title=\"Close\"></i>\n<span class=\"title\"><% if($.trim(container.get('title')) === '') { %><i>Unnamed</i><% } else { %><b><%= container.get('title')%></b><% } %></span>\n<div class=\"input-append edit-title hide\">\n  <input type=\"text\" value=\"<%= container.get('title') %>\"/>\n  <button class=\"btn edit-title-save\" type=\"button\"><i class=\"icon-ok\"></i></button>\n  <button class=\"btn edit-title-cancel\" type=\"button\"><i class=\"icon-remove\"></i></button>\n</div>",
-"templates/containers/list": "<div class=\"list-label\"><%= label %></div>\n<i class=\"icon-remove remove-child-list\"></i>",
 "templates/containers/lists": "<a href=\"#\" class=\"add-list-icon\">&nbsp;Add list</a>\n<ul class=\"lists <% if(collapsed) { %>collapsed<% } %>\">\t\n</ul>\n<div class=\"add-list hide\">\n\t<input type=\"text\" value=\"\"/>\n\t<a href=\"#\" class=\"add-list-save\">Add</a>\n\t<a href=\"#\" class=\"add-list-cancel\">cancel</a>\n</div>\n",
-"templates/dialogs/add.bookmark": "<div class=\"modal-header\">\n  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">&times;</button>\n  <h4>Add bookmark</h4>\n</div>\n<div class=\"modal-body\">\n  <form class=\"form-horizontal\">\n    <div class=\"control-group\">\n      <label class=\"control-label\" for=\"bkmrk-url\">Url</label>\n      <div class=\"controls\">\n        <input class=\"input-xlarge\" type=\"text\" id=\"bkmrk-url\" name=\"bkmrk-url\" placeholder=\"Url\" value=\"<%if(bookmark){ %><%= bookmark.get('url') %><% } %>\"/>\n        <span id=\"bkmrk-url-blank\" class=\"help-inline hide\">Cannot be blank</span>\n        <span id=\"bkmrk-url-invalid\" class=\"help-inline hide\">Invalid URL</span>\n      </div>\n    </div>\n    <div class=\"control-group\">\n      <label class=\"control-label\" for=\"bkmrk-title\">Title</label>\n      <div class=\"controls\">\n        <input class=\"input-xlarge\" type=\"text\" id=\"bkmrk-title\" name=\"bkmrk-title\" placeholder=\"Title\" value=\"<%if(bookmark){ %><%= bookmark.get('title') %><% } %>\"/>\n      </div>\n    </div>\n    <div class=\"control-group\">\n      <label class=\"control-label\" for=\"bkmrk-note\">Notes</label>\n      <div class=\"controls\">\n        <textarea class=\"input-xlarge\" id=\"bkmrk-note\" name=\"bkmrk-note\" placeholder=\"Notes\"><%if(bookmark){ %><%= bookmark.get('note') %><% } %></textarea>\n      </div>\n    </div>\n    <div>Lists</div>\n    <div class=\"bkmrk-lists\"/>\n  </form>\n</div>\n<div class=\"modal-footer\">\n  <a href=\"#\" class=\"opt-button opt-save\">Create</a>\n  <a href=\"#\" class=\"opt-cancel opt-margin-left\">Cancel</a>\n</div>",
-"templates/dialogs/edit.list": "<div class=\"modal-header\">\n  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">&times;</button>\n  <h4><%= title %></h4>\n</div>\n<div class=\"modal-body\">\n  <form class=\"form-horizontal\">\n    <div class=\"control-group\">\n      <label class=\"control-label\" for=\"list-label\">Label</label>\n      <div class=\"controls\">\n        <input class=\"input-xlarge\"  type=\"text\" id=\"list-label\" name=\"list-label\" placeholder=\"Label\" value=\"<%if(list){ %><%= list.get('label') %><% } %>\"/>\n        <span id=\"list-label-blank\" class=\"help-inline hide\">Cannot be blank</span>\n      </div>\n    </div>\n    <%if(!editMode){ %>\n    <div class=\"control-group\">\n      <label class=\"checkbox\" for=\"list-open\">\n      <div class=\"controls\">\n        <input type=\"checkbox\" id=\"list-open\" name=\"list-open\" placeholder=\"Open in new container\"/>\n        Open in new container\n        </label>      \n      </div>\n    </div>    \n    <% } %>\n  </form>\n  <%if(editMode){ %>\n    <div>    \n  \t  <a class=\"opt-button opt-move-to-trash pull-left\" href=\"#\"><img src=\"/img/bin.png\" alt=\"Move to trash\"></a>\t\n        <div class=\"move-to-trash-alert alert alert-block pull-left\" style=\"display:none;\">  \n          <p>Are you sure that you want to move the list to trash?</p>\n      \t<a class=\"opt-move-to-trash-yes\" href=\"#\">Yes, move it!</a><a class=\"opt-move-to-trash-no opt-margin-left\" href=\"#\">No, abort!</a>\n    \t  </div>\n    </div>\n  <% } %>\n</div>\n<div class=\"modal-footer\">\n  <a href=\"#\" class=\"opt-button opt-save\"><%= optSaveLabel %></a>\n  <a href=\"#\" class=\"opt-cancel opt-margin-left\">Cancel</a>\n</div>",
-"templates/dialogs/edit.listboard": "<div class=\"modal-header\">\n  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">&times;</button>\n  <h4><%= title %></h4>\n</div>\n<div class=\"modal-body\">\n  <form class=\"form-horizontal\">\n    <div class=\"control-group\">\n      <label class=\"control-label\" for=\"dash-label\">Label</label>\n      <div class=\"controls\">\n        <input class=\"input-xlarge\" type=\"text\" id=\"dash-label\" name=\"dash-label\" placeholder=\"Label\" value=\"<%if(listboard){ %><%= listboard.get('label') %><% } %>\"/>\n        <span id=\"dash-label-blank\" class=\"help-inline hide\">Cannot be blank</span>\n      </div>\n    </div>\n  </form>\n  <%if(showTrash){ %>\n    <div>    \n      <a class=\"opt-button opt-move-to-trash pull-left\" href=\"#\" title=\"Delete listboard\"><img src=\"/img/bin.png\" alt=\"Move to trash\"></a>  \n      <div class=\"move-to-trash-alert alert alert-block pull-left\" style=\"display:none;\">  \n        <p>Are you sure that you want to delete the listboard?</p>     \n        <p><small>Note: Lists and bookmarks will remain on the list tree</small></p>    \n        <p>   \n          <a class=\"opt-move-to-trash-yes\" href=\"#\">Delete it</a><a class=\"opt-move-to-trash-no opt-margin-left\" href=\"#\">No, abort!</a>\n          <a href=\"#\" class=\"tooltip\" data-toggle=\"tooltip\" title=\"\">help</a>\n        </p>\n    \t</div>\n    </div>\n  <% } %>\n</div>\n<div class=\"modal-footer\">\n  <a href=\"#\" class=\"opt-button opt-save\"><%= optSaveLabel %></a>\n  <a href=\"#\" class=\"opt-cancel opt-margin-left\">Cancel</a>\n</div>",
-"templates/dialogs/view.bookmark": "<div class=\"modal-header\">\n  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">&times;</button>  \n  <h4>\n    <img class=\"favicon\" src=\"/img/default.favicon.png\" alt=\"Favicon\">\n    <span class=\"edit-bkmrk-title\"><%= bookmark.get('title') %></span>\n    <div class=\"edit-bkmrk-title-controls\">      \n      <div class=\"control-group\" style=\"float:left\">\n        <div class=\"controls\">\n          <input class=\"input-xlarge\" type=\"text\" id=\"bkmrk-title\" name=\"bkmrk-title\" placeholder=\"Title\" value=\"<%if(bookmark){ %><%= bookmark.get('title') %><% } %>\"/>      \n          <a href=\"#\" class=\"opt-save-edit-bkmrk-title\">Save</a>\n          <a href=\"#\" class=\"opt-cancel-edit-bkmrk-title\">Cancel</a>      \n          <div><span id=\"bkmrk-title-blank\" class=\"help-inline hide\">Cannot be blank</span></div>\n        </div>      \n      </div>      \n    </div>      \n    <div>\n      <a target=\"_blank\" href=\"<%= bookmark.get('url') %>\">(<%= bookmark.get('url') %>)</a>\n    </div>\n    </h4>  \n</div>\n<div class=\"modal-body\">\n  <ul class=\"nav nav-tabs\">    \n    <li><a href=\"#delete\" data-toggle=\"tab\">Delete</a></li>\n    <li><a href=\"#lists\" data-toggle=\"tab\">Lists</a></li>\n    <li><a href=\"#general\" data-toggle=\"tab\">General</a></li>\n  </ul>\n  <div class=\"tab-content\">\n    <div class=\"tab-pane active\" id=\"general\">      \n      <img class=\"img-polaroid\" data-src=\"holder.js/300x200\" alt=\"300x200\" style=\"width: 500px; height: 300px;\" src=\"/img/default.screenshot.png\">\n      <p class=\"bkmrk-note-content\"><%= bookmark.get('note') %></p>\n      <span class=\"edit-bkmrk-note\">Edit note</span>\n      <div class=\"edit-bkmrk-note-controls\">      \n        <div class=\"control-group\">\n          <div class=\"controls\">\n            <textarea class=\"input-xlarge\" id=\"bkmrk-note\" name=\"bkmrk-note\" placeholder=\"Notes\"><%if(bookmark){ %><%= bookmark.get('note') %><% } %></textarea>\n            <div>\n              <a href=\"#\" class=\"opt-save-edit-bkmrk-note\">Save</a>\n              <a href=\"#\" class=\"opt-cancel-edit-bkmrk-note\">Cancel</a>      \n            </div>\n          </div>      \n        </div>      \n      </div>   \n    </div>\n    <div class=\"tab-pane\" id=\"lists\">\n      <div class=\"bkmrk-lists\"></div>\n    </div>\n    <div class=\"tab-pane\" id=\"delete\">\n      <div class=\"move-to-trash-alert alert alert-block\">  \n        <p>Are you sure that you want to move the bookmark to trash?</p>\n        <a class=\"opt-move-to-trash-yes\" href=\"#\">Yes, move it!</a>\n      </div>\n    </div>\n  </div>\n</div>",
-"templates/future/future": "<div class=\"selector\"  data-section=\"future\" unselectable='on' onselectstart='return false;' onmousedown='return false;'>\n\t<i class=\"icon-calendar\"/>\n\t<span class=\"selector-label\">Future</span>\n</div>\n<div class=\"listboard\">\n\t<div class=\"navbar sub-bar\">\n\t\t<div class=\"btn-group pull-left listboard-selector\">\n\t\t\t<a class=\"btn dropdown-toggle\" data-toggle=\"dropdown\" href=\"#\">\n\t\t\t\t<%= listboard_label %>\n\t\t\t\t<span class=\"caret\"></span>\n\t\t\t</a>\n\t\t\t<ul class=\"dropdown-menu\">\n\t\t\t\t <li><a href=\"javascript: void(0)\" class=\"js-create-listboard\"><i class=\"icon-none\">Create New</i></a></li>\n\t\t\t</ul>\n\t\t</div>\n\t\t<div class=\"navbar-inner\">    \t\t\n\t\t\t<ul class=\"nav\">\n\t\t\t  <li>\n\t\t\t    <a class=\"add-container btn\" href=\"#\" title=\"Open a container\">\n\t\t\t        <i class=\"icon-plus\"></i>\n\t\t\t    </a>\n\t\t\t  </li>\n\t\t\t</ul>\n\t\t</div>\n\t</div>\n\t<div class=\"containers clearfix\">\n\t\t<div class=\"containers-inner clearfix\"></div>\n\t</div>\n</div>  ",
-"templates/help/help": " <h2>Help</h2>\n <ul>\n    <li>\n        Help 1\n    </li>\n    <li>      \n        Help 2\n    </li>\n    <li>\n        Help 3\n    </li>\n</ul>",
-"templates/items/container.item.details": "<img class=\"favicon\" src=\"/img/default.favicon.png\" alt=\"Favicon\" />\n<a target=\"_blank\" href=\"<%= item.get('url') %>\"><%= $.trim(item.get('title')) != \"\" ?  item.get('title') : item.get('url') %></a>\n<div class=\"details\">\n\t<div class=\"description\"><%= item.get('note') %></div>\n\t<ul class=\"lists clearfix\"></ul>\n\t<img class=\"screenshot\" src=\"\" alt=\"ScreenShot\" />\t\n</div>",
-"templates/items/container.item.simple": "<img class=\"favicon\" src=\"<%= item.get('favicon') %>\" alt=\"Favicon\" />\n<a target=\"_blank\" href=\"<%= item.get('url') %>\"><%= $.trim(item.get('title')) != \"\" ?  item.get('title') : item.get('url') %></a>\n<div class=\"description\"><%= item.get('note') %></div>",
-"templates/later/later": "<div class=\"selector\" data-section=\"later\" unselectable='on' onselectstart='return false;' onmousedown='return false;'>\n\t<i class=\"icon-time\"/>\n\t<span class=\"selector-label\">Later</span>\n</div>\n<div class=\"listboard\">\n\t<div class=\"navbar sub-bar\">\n\t\t<div class=\"btn-group pull-left listboard-selector\">\n\t\t\t<a class=\"btn dropdown-toggle\" data-toggle=\"dropdown\" href=\"#\">\n\t\t\t\t<%= listboard_label %>\n\t\t\t\t<span class=\"caret\"></span>\n\t\t\t</a>\n\t\t\t<ul class=\"dropdown-menu\">\n\t\t\t\t <li><a href=\"javascript: void(0)\" class=\"js-create-listboard\"><i class=\"icon-none\">Create New</i></a></li>\n\t\t\t</ul>\n\t\t</div>\n\t\t<div class=\"navbar-inner\">    \t\t\n\t\t\t<ul class=\"nav\">\n\t\t\t  <li>\n\t\t\t    <a class=\"add-container btn\" href=\"#\" title=\"Add container\">\n\t\t\t        <i class=\"icon-plus\"></i>\n\t\t\t    </a>\n\t\t\t  </li>\n\t\t\t</ul>\n\t\t</div>\n\t</div>\n\t<div class=\"containers clearfix\">\n\t\t<div class=\"containers-inner clearfix\"></div>\n\t</div>\n</div>  ",
-"templates/now/now": "<div class=\"selector\" data-section=\"now\" unselectable='on' onselectstart='return false;' onmousedown='return false;'>\n\t<i class=\"icon-globe\"/>\n\t<span class=\"selector-label\">Now</span>\n</div>\n<div class=\"listboard\">\n\t<div class=\"navbar sub-bar\">\n    <div class=\"btn-group pull-left listboard-selector\">\n      <a class=\"btn dropdown-toggle\" data-toggle=\"dropdown\" href=\"#\">\n\t\t\t\t<%= listboard_label %>\n\t\t\t\t<span class=\"caret\"></span>\n      </a>\n      <ul class=\"dropdown-menu\">\n         <li><a href=\"javascript: void(0)\"><i class=\"icon-none\">Sync new browser</i></a></li>\n      </ul>\n    </div>\n    <div class=\"navbar-inner\">\n      <ul class=\"nav\">\n        \n      </ul>\n    </div>\n  </div>\n  <div class=\"containers clearfix\">\n    <div class=\"containers-inner clearfix\"></div>\n  </div>\n</div>  ",
+"templates/containers/list": "<div class=\"list-label\"><%= label %></div>\n<i class=\"icon-remove remove-child-list\"></i>",
 "templates/settings/settings": " <h2>Settings</h2>\n <ul>\n    <li>\n        Setting 1\n    </li>\n    <li>      \n        Setting 2\n    </li>\n    <li>\n        Setting 3\n    </li>\n</ul>",
-"templates/welcome/welcome": "<div id=\"welcome-options\">\n    <h2>Welcome to Listboard.it!</h2>\n    <p>Start right away by syncing your tab</p>\n    <a id=\"btn-install-extension\" href=\"/clients/chrome/extension.crx\" class=\"btn btn-success btn-block btn-big\">Install sync extension</a>\n    <p>or</p>\n    <p><a id=\"btn-explore-app\" class=\"\" href=\"/\">explore the app</a></p>\n</div>"
+"templates/items/container.item.simple": "<img class=\"favicon\" src=\"<%= item.get('favicon') %>\" alt=\"Favicon\" />\n<a target=\"_blank\" href=\"<%= item.get('url') %>\"><%= $.trim(item.get('title')) != \"\" ?  item.get('title') : item.get('url') %></a>\n<div class=\"description\"><%= item.get('note') %></div>",
+"templates/items/container.item.details": "<img class=\"favicon\" src=\"/img/default.favicon.png\" alt=\"Favicon\" />\n<a target=\"_blank\" href=\"<%= item.get('url') %>\"><%= $.trim(item.get('title')) != \"\" ?  item.get('title') : item.get('url') %></a>\n<div class=\"details\">\n\t<div class=\"description\"><%= item.get('note') %></div>\n\t<ul class=\"lists clearfix\"></ul>\n\t<img class=\"screenshot\" src=\"\" alt=\"ScreenShot\" />\t\n</div>",
+"templates/help/help": " <h2>Help</h2>\n <ul>\n    <li>\n        Help 1\n    </li>\n    <li>      \n        Help 2\n    </li>\n    <li>\n        Help 3\n    </li>\n</ul>",
+"templates/dialogs/add.bookmark": "<div class=\"modal-header\">\n  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">&times;</button>\n  <h4>Add bookmark</h4>\n</div>\n<div class=\"modal-body\">\n  <form class=\"form-horizontal\">\n    <div class=\"control-group\">\n      <label class=\"control-label\" for=\"bkmrk-url\">Url</label>\n      <div class=\"controls\">\n        <input class=\"input-xlarge\" type=\"text\" id=\"bkmrk-url\" name=\"bkmrk-url\" placeholder=\"Url\" value=\"<%if(bookmark){ %><%= bookmark.get('url') %><% } %>\"/>\n        <span id=\"bkmrk-url-blank\" class=\"help-inline hide\">Cannot be blank</span>\n        <span id=\"bkmrk-url-invalid\" class=\"help-inline hide\">Invalid URL</span>\n      </div>\n    </div>\n    <div class=\"control-group\">\n      <label class=\"control-label\" for=\"bkmrk-title\">Title</label>\n      <div class=\"controls\">\n        <input class=\"input-xlarge\" type=\"text\" id=\"bkmrk-title\" name=\"bkmrk-title\" placeholder=\"Title\" value=\"<%if(bookmark){ %><%= bookmark.get('title') %><% } %>\"/>\n      </div>\n    </div>\n    <div class=\"control-group\">\n      <label class=\"control-label\" for=\"bkmrk-note\">Notes</label>\n      <div class=\"controls\">\n        <textarea class=\"input-xlarge\" id=\"bkmrk-note\" name=\"bkmrk-note\" placeholder=\"Notes\"><%if(bookmark){ %><%= bookmark.get('note') %><% } %></textarea>\n      </div>\n    </div>\n    <div>Lists</div>\n    <div class=\"bkmrk-lists\"/>\n  </form>\n</div>\n<div class=\"modal-footer\">\n  <a href=\"#\" class=\"opt-button opt-save\">Create</a>\n  <a href=\"#\" class=\"opt-cancel opt-margin-left\">Cancel</a>\n</div>",
+"templates/dialogs/edit.listboard": "<div class=\"modal-header\">\n  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">&times;</button>\n  <h4><%= title %></h4>\n</div>\n<div class=\"modal-body\">\n  <form class=\"form-horizontal\">\n    <div class=\"control-group\">\n      <label class=\"control-label\" for=\"dash-label\">Label</label>\n      <div class=\"controls\">\n        <input class=\"input-xlarge\" type=\"text\" id=\"dash-label\" name=\"dash-label\" placeholder=\"Label\" value=\"<%if(listboard){ %><%= listboard.get('label') %><% } %>\"/>\n        <span id=\"dash-label-blank\" class=\"help-inline hide\">Cannot be blank</span>\n      </div>\n    </div>\n  </form>\n  <%if(showTrash){ %>\n    <div>    \n      <a class=\"opt-button opt-move-to-trash pull-left\" href=\"#\" title=\"Delete listboard\"><img src=\"/img/bin.png\" alt=\"Move to trash\"></a>  \n      <div class=\"move-to-trash-alert alert alert-block pull-left\" style=\"display:none;\">  \n        <p>Are you sure that you want to delete the listboard?</p>     \n        <p><small>Note: Lists and bookmarks will remain on the list tree</small></p>    \n        <p>   \n          <a class=\"opt-move-to-trash-yes\" href=\"#\">Delete it</a><a class=\"opt-move-to-trash-no opt-margin-left\" href=\"#\">No, abort!</a>\n          <a href=\"#\" class=\"tooltip\" data-toggle=\"tooltip\" title=\"\">help</a>\n        </p>\n    \t</div>\n    </div>\n  <% } %>\n</div>\n<div class=\"modal-footer\">\n  <a href=\"#\" class=\"opt-button opt-save\"><%= optSaveLabel %></a>\n  <a href=\"#\" class=\"opt-cancel opt-margin-left\">Cancel</a>\n</div>",
+"templates/dialogs/edit.list": "<div class=\"modal-header\">\n  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">&times;</button>\n  <h4><%= title %></h4>\n</div>\n<div class=\"modal-body\">\n  <form class=\"form-horizontal\">\n    <div class=\"control-group\">\n      <label class=\"control-label\" for=\"list-label\">Label</label>\n      <div class=\"controls\">\n        <input class=\"input-xlarge\"  type=\"text\" id=\"list-label\" name=\"list-label\" placeholder=\"Label\" value=\"<%if(list){ %><%= list.get('label') %><% } %>\"/>\n        <span id=\"list-label-blank\" class=\"help-inline hide\">Cannot be blank</span>\n      </div>\n    </div>\n    <%if(!editMode){ %>\n    <div class=\"control-group\">\n      <label class=\"checkbox\" for=\"list-open\">\n      <div class=\"controls\">\n        <input type=\"checkbox\" id=\"list-open\" name=\"list-open\" placeholder=\"Open in new container\"/>\n        Open in new container\n        </label>      \n      </div>\n    </div>    \n    <% } %>\n  </form>\n  <%if(editMode){ %>\n    <div>    \n  \t  <a class=\"opt-button opt-move-to-trash pull-left\" href=\"#\"><img src=\"/img/bin.png\" alt=\"Move to trash\"></a>\t\n        <div class=\"move-to-trash-alert alert alert-block pull-left\" style=\"display:none;\">  \n          <p>Are you sure that you want to move the list to trash?</p>\n      \t<a class=\"opt-move-to-trash-yes\" href=\"#\">Yes, move it!</a><a class=\"opt-move-to-trash-no opt-margin-left\" href=\"#\">No, abort!</a>\n    \t  </div>\n    </div>\n  <% } %>\n</div>\n<div class=\"modal-footer\">\n  <a href=\"#\" class=\"opt-button opt-save\"><%= optSaveLabel %></a>\n  <a href=\"#\" class=\"opt-cancel opt-margin-left\">Cancel</a>\n</div>",
+"templates/dialogs/view.bookmark": "<div class=\"modal-header\">\n  <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">&times;</button>  \n  <h4>\n    <img class=\"favicon\" src=\"/img/default.favicon.png\" alt=\"Favicon\">\n    <span class=\"edit-bkmrk-title\"><%= bookmark.get('title') %></span>\n    <div class=\"edit-bkmrk-title-controls\">      \n      <div class=\"control-group\" style=\"float:left\">\n        <div class=\"controls\">\n          <input class=\"input-xlarge\" type=\"text\" id=\"bkmrk-title\" name=\"bkmrk-title\" placeholder=\"Title\" value=\"<%if(bookmark){ %><%= bookmark.get('title') %><% } %>\"/>      \n          <a href=\"#\" class=\"opt-save-edit-bkmrk-title\">Save</a>\n          <a href=\"#\" class=\"opt-cancel-edit-bkmrk-title\">Cancel</a>      \n          <div><span id=\"bkmrk-title-blank\" class=\"help-inline hide\">Cannot be blank</span></div>\n        </div>      \n      </div>      \n    </div>      \n    <div>\n      <a target=\"_blank\" href=\"<%= bookmark.get('url') %>\">(<%= bookmark.get('url') %>)</a>\n    </div>\n    </h4>  \n</div>\n<div class=\"modal-body\">\n  <ul class=\"nav nav-tabs\">    \n    <li><a href=\"#delete\" data-toggle=\"tab\">Delete</a></li>\n    <li><a href=\"#lists\" data-toggle=\"tab\">Lists</a></li>\n    <li><a href=\"#general\" data-toggle=\"tab\">General</a></li>\n  </ul>\n  <div class=\"tab-content\">\n    <div class=\"tab-pane active\" id=\"general\">      \n      <img class=\"img-polaroid\" data-src=\"holder.js/300x200\" alt=\"300x200\" style=\"width: 500px; height: 300px;\" src=\"/img/default.screenshot.png\">\n      <p class=\"bkmrk-note-content\"><%= bookmark.get('note') %></p>\n      <span class=\"edit-bkmrk-note\">Edit note</span>\n      <div class=\"edit-bkmrk-note-controls\">      \n        <div class=\"control-group\">\n          <div class=\"controls\">\n            <textarea class=\"input-xlarge\" id=\"bkmrk-note\" name=\"bkmrk-note\" placeholder=\"Notes\"><%if(bookmark){ %><%= bookmark.get('note') %><% } %></textarea>\n            <div>\n              <a href=\"#\" class=\"opt-save-edit-bkmrk-note\">Save</a>\n              <a href=\"#\" class=\"opt-cancel-edit-bkmrk-note\">Cancel</a>      \n            </div>\n          </div>      \n        </div>      \n      </div>   \n    </div>\n    <div class=\"tab-pane\" id=\"lists\">\n      <div class=\"bkmrk-lists\"></div>\n    </div>\n    <div class=\"tab-pane\" id=\"delete\">\n      <div class=\"move-to-trash-alert alert alert-block\">  \n        <p>Are you sure that you want to move the bookmark to trash?</p>\n        <a class=\"opt-move-to-trash-yes\" href=\"#\">Yes, move it!</a>\n      </div>\n    </div>\n  </div>\n</div>",
+"templates/later/later": "<div class=\"selector\" data-section=\"later\" unselectable='on' onselectstart='return false;' onmousedown='return false;'>\n\t<i class=\"icon-time selector-icon\"/>\n\t<span class=\"selector-label\">Later</span>\n</div>\n<div class=\"listboard\">\n\t<div class=\"navbar sub-bar\">\n\t\t<div class=\"btn-group pull-left listboard-selector\">\n\t\t\t<a class=\"btn dropdown-toggle\" data-toggle=\"dropdown\" href=\"#\">\n\t\t\t\t<%= listboard_label %>\n\t\t\t\t<span class=\"caret\"></span>\n\t\t\t</a>\n\t\t\t<ul class=\"dropdown-menu\">\n\t\t\t\t <li><a href=\"javascript: void(0)\" class=\"js-create-listboard\"><i class=\"icon-none\">Create New</i></a></li>\n\t\t\t</ul>\n\t\t</div>\n\t\t<div class=\"navbar-inner\">    \t\t\n\t\t\t<ul class=\"nav\">\n\t\t\t  <li>\n\t\t\t    <a class=\"add-container btn\" href=\"#\" title=\"Add container\">\n\t\t\t        <i class=\"icon-plus\"></i>\n\t\t\t    </a>\n\t\t\t  </li>\n\t\t\t</ul>\n\t\t</div>\n\t</div>\n\t<div class=\"containers clearfix\">\n\t\t<div class=\"containers-inner clearfix\"></div>\n\t</div>\n</div>  "
 },{},{});

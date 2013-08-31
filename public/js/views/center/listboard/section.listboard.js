@@ -13,7 +13,8 @@ var SectionListboard = AppView.extend({
     tagName: 'section',
     initializeView: function (options) {          
         this.events = _.merge(this.events || {}, {
-            'click .selector': 'clickedSelector',
+            'click .selector-label': 'clickedSelector',            
+            'click .selector-icon': 'clickedSelector',
             'click .add-container': 'addContainer'
         });
         // child view should set this.model to listboard
@@ -73,11 +74,14 @@ var SectionListboard = AppView.extend({
         });
     },
 
-    expandSection: function(space){
-        var containerWidth = space - config.SECTION_COLLAPSED_WIDTH;
+    expandSection: function(space){        
         this.$el.width(space);
 
+        var containerWidth = space - config.SECTION_COLLAPSED_WIDTH;
         this.$('.containers').width(containerWidth);
+
+        var containerWidth = this.containersViews.length * (config.CONTAINER_WIDTH + config.CONTAINER_HORIZONTAL_MARGIN);
+        this.$('.containers-inner').width(containerWidth);
     },
 
     calculateHeight: function (height) {

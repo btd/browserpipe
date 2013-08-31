@@ -1,5 +1,5 @@
 <div class="selector" data-section="now" unselectable='on' onselectstart='return false;' onmousedown='return false;'>
-	<i class="icon-globe"/>
+	<i class="icon-globe selector-icon"/>
 	<span class="selector-label">Now</span>
 </div>
 <div class="listboard">
