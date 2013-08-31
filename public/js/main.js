@@ -1,5 +1,5 @@
-var App = require('app');
+var Router = require('router');
 
-App.initialize();
+Router.initialize();
 
 //require.stats.sendTo("http://localhost:8081");

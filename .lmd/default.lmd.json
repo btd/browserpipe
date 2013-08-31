@@ -29,7 +29,6 @@
         "underscore" : "@lodash",
 
         "main" : "js/main.js",
-        "app": "js/app.js",
         "router": "js/router.js",
         "util" : "js/util.js",
         "config": "js/config.js",

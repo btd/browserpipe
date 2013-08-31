@@ -1,3 +1,4 @@
+//= require ../bower_components/jquery/jquery.js
 
 $(function() {
     var $input1 = $('input[name=invite_email]');
