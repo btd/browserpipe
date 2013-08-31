@@ -54,7 +54,7 @@ lint:
 
 
 jshint-jenkins:
-	./node_modules/.bin/jshint --show-non-errors --reporter=checkstyle app config public/js
+	./node_modules/.bin/jshint --reporter=checkstyle app config public/js || exit 0
 
 install:
 	bower install
