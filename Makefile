@@ -50,7 +50,11 @@ start-prod: clean
 	@NODE_ENV=production ./node_modules/.bin/nodemon --watch app --watch config server.js
 
 lint:
-	./node_modules/.bin/jshint app config public/js
+	./node_modules/.bin/jshint --show-non-errors app config public/js
+
+
+jshint-jenkins:
+	./node_modules/.bin/jshint --show-non-errors --reporter=checkstyle app config public/js
 
 install:
 	bower install
