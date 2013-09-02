@@ -9,29 +9,121 @@ var AppView = require('views/view');
 
 var Container = require('models/container');
 
+var ListboardDialog = require('views/dialogs/edit.listboard');
+
+var listboardSelectItemTemplate = _.template(require('templates/section/listboard.select.item'));
+
 var SectionListboard = AppView.extend({   
     tagName: 'section',
     initializeView: function (options) {          
         this.events = _.merge(this.events || {}, {
             'click .selector-label': 'clickedSelector',            
             'click .selector-icon': 'clickedSelector',
-            'click .add-container': 'addContainer'
+            'click .add-container': 'addContainer',
+            'click .js-create-listboard' : 'createNewListboard',
+            'click .js-listboard-select-item' : 'selectCurrentListboard',
+            'click .edit-container' : 'editCurrentListboard'
         });
-        // child view should set this.model to listboard
-        // this.template should be set for section template TODO combine them to one
+
+        if(!this.collection) throw "child view should set this.collection";
+        if(!this.template) throw "child view should set this.template"; //TODO combine them to one
+
         // TODO compile all templates
         this.containersViews = [];
+
+        this.listboardEditorModal = (new ListboardDialog()).render();
+        this.listboardEditorModal.collection = this.collection;
+
+        this.collection.on('currentListboardChange', function(listboard) {
+            this.model = listboard;
+
+            this.clear().renderListboard();
+        }, this);
+
+        this.collection.on('add', function(listboard) {
+            this.addListboardSelectorItem(listboard);
+        }, this);
+
+        this.collection.on('change:label', function(listboard) {
+           if(this.model.id === listboard.id) {
+               //update label
+               this.renderLabel(this.model);
+           }
+
+            this.$('.js-selector-listboards .js-listboard-select-item[data-id="' + listboard.id + '"]').html(listboard.get('label'));
+        }, this);
+
+        this.collection.on('remove', function(listboard) {
+            if(this.model.id === listboard.id) {
+                // current listboard deleted need switch to next
+                this.collection.setCurrentListboard(this.collection.at(0));
+            }
+
+            this.$('.js-selector-listboards .js-listboard-select-item[data-id="' + listboard.id + '"]').remove();
+        }, this);
+
+        if(this.collection.length > 0)
+            this.model = this.collection.at(0);
+    },
+
+    selectCurrentListboard: function(evt) {
+        var listboardId = $(evt.currentTarget).data('id');
+
+        if(this.model && this.model.id !== listboardId) {
+            this.collection.setCurrentListboard(listboardId);
+        }
+    },
+
+    editCurrentListboard: function() {
+        this.listboardEditorModal.model = this.model;
+        this.listboardEditorModal.show();
+    },
+
+    createNewListboard: function() {
+        this.listboardEditorModal.model = null;
+        this.listboardEditorModal.show();
     },
 
     // createContainerView  defined in child - create model specified type TODO maybe enough one model? with subtype
 
-    renderView: function () {     
-        var compiledTemplate = _.template(this.template, {
-            listboard_label: this.model.get('label')
-        });
-        this.$el.html(compiledTemplate);
+    renderView: function () {
+        this.$el.html(_.template(this.template, {}));
 
-        this.model.containers.map(function (container) {
+        if(this.collection.length > 0) {
+            this.collection.forEach(this.addListboardSelectorItem, this);
+        }
+
+        this.renderListboard();
+
+        return this;
+    },
+
+    addListboardSelectorItem: function(listboard) {
+        var alreadyRenderedItems = this.$('.js-selector-listboards .js-selector-item'),
+            renderedItem = $(listboardSelectItemTemplate({ listboard: listboard }));
+
+        if(alreadyRenderedItems.length) { // > 0
+            alreadyRenderedItems.last().after(renderedItem);
+        } else { // = 0
+            this.$('.js-selector-listboards').prepend(renderedItem);
+        }
+    },
+
+    clear: function() {
+        this.$('.containers-inner').empty();
+        return this;
+    },
+
+    renderLabel: function(listboard) {
+        // update label in selector
+        listboard && this.$('.js-current-listboard-label').html(this.model.get('label'));
+    },
+
+    renderListboard: function() {
+        this.renderLabel(this.model);
+
+        //render containers
+        this.model && this.model.containers.forEach(function (container) {
             this.addContainerView(this.createContainerView(container));
         }, this);
 
@@ -41,7 +133,7 @@ var SectionListboard = AppView.extend({
     addContainer: function(){
         var that = this;
 
-        this.model.addContainer(new Container({ type: 2, filter: 'Lists', title: 'New Container' }), {
+        this.model && this.model.addContainer(new Container({ type: 2, filter: 'Lists', title: 'New Container' }), {
             success: function (container) {
                 var cv = that.addContainerView(that.createContainerView(container));
                 that.scrollToContainer(cv);
@@ -90,7 +182,7 @@ var SectionListboard = AppView.extend({
         var containerWidth = space - config.SECTION_COLLAPSED_WIDTH;
         this.$('.containers').width(containerWidth);
 
-        var containerWidth = this.containersViews.length * config.CONTAINER_WIDTH;
+        containerWidth = this.containersViews.length * config.CONTAINER_WIDTH;
         this.$('.containers-inner').width(containerWidth);
     },
 

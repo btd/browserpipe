@@ -11,9 +11,9 @@ module.exports = function(grunt) {
         watch: {
             publicJs: {
                 files: ['public/js/**/*.js', 'public/templates/**/*.text', '!public/js/apps/*'],
-                tasks: ['lmd'],
+                tasks: ['lmd', 'develop'],
                 options: {
-                    interrupt: true
+                    //interrupt: true
                     //spawn: false
                 }
             },
@@ -21,7 +21,7 @@ module.exports = function(grunt) {
                 files: ['app/**/*.js', 'config/**/*.js', 'app/**/*.jade'],
                 tasks: ['develop'],
                 options: {
-                    interrupt: true
+                    //interrupt: true
                     //spawn: false
                 }
             }
