@@ -1,11 +1,13 @@
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var config = require('config');
+
 var _state = require('models/state');
+
+
 var SectionListboard = require('views/center/listboard/section.listboard');
 var FutureContainer = require('views/center/container/future.container');
-var template = require('templates/future/future');
+var template = require('templates/section/future');
 
 var Future = SectionListboard.extend({
     attributes: {
@@ -13,12 +15,11 @@ var Future = SectionListboard.extend({
     },
 
     initializeView: function (options) {
-        SectionListboard.prototype.initializeView.call(this, options);
+        this.collection = _state.futureListboards;
 
         this.template = template;
 
-        if(_state.futureListboards.length > 0)
-            this.model = _state.futureListboards.at(0);
+        SectionListboard.prototype.initializeView.call(this, options);
     },
 
     createContainerView: function(container) {

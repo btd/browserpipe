@@ -1,3 +1,5 @@
+/* jshint node: true */
+
 var _ = require('lodash'),
     q = require('q'),
     mongoose = require('mongoose'),
@@ -5,7 +7,7 @@ var _ = require('lodash'),
     List = mongoose.model('List');
 
 //Login form
-exports.login = function (req, res, err) {    
+exports.login = function (req, res) {
     var errors = _.map(req.flash().error, function(error) { return { msg: error}});
     res.render('users/login', {
         title: 'Login',

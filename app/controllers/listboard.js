@@ -1,7 +1,8 @@
+/* jshint node: true */
+
 var _ = require('lodash'),
     q = require('q'),
     mongoose = require('mongoose'),
-    List = mongoose.model('List'),
     Item = mongoose.model('Item'),
     responses = require('../util/responses.js'),
     errors = require('../util/errors.js');

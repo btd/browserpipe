@@ -1,4 +1,4 @@
-/*var $ = require('jquery');
+var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var _state = require('models/state');
@@ -13,7 +13,6 @@ var EditListboard = AppView.extend({
     },
     events: {
         "shown": "shown",
-        "hidden": "hidden",
         "click .opt-save": "save",
         "click .opt-cancel": "close",
         "click .opt-move-to-trash": "moveToTrash",
@@ -25,25 +24,32 @@ var EditListboard = AppView.extend({
     initializeView: function (options) {
     },
     renderView: function () {
-        var title = "Create listboard";
-        var showTrash = false;
-        var optSaveLabel = "Create";
-        if (this.model) {
-            title = "Edit listboard";
-            showTrash = true;
-            optSaveLabel = "Save changes";
-        }
-        var compiledTemplate = _.template(template, {
-            listboard: this.model,
-            title: title,
-            showTrash: showTrash,
-            optSaveLabel: optSaveLabel
-        });
-        this.$el.html(compiledTemplate).appendTo('#dialogs').modal('show');
+        var compiledTemplate = _.template(template, {});
+        this.$el.html(compiledTemplate).appendTo('#dialogs');
         return this;
     },
-    postRender: function () {
+    show: function() {
+        var title = "Create listboard",
+            labelValue = "",
+            saveLabel = "Create",
+            showTrashBlock = false;
 
+        if(this.model) {
+            title = "Edit listboard";
+            labelValue = this.model.get('label');
+            saveLabel = "Save";
+            showTrashBlock = true;
+        }
+
+        this.$('.js-dialog-title').html(title);
+        this.$('[name=dash-label]').val(labelValue);
+        this.$(".opt-save").html(saveLabel);
+
+        this.moveToTrashCanceled();
+        var trashBlock = this.$('.js-dialog-edit-listboard-trash');
+        showTrashBlock ? trashBlock.show() : trashBlock.hide();
+
+        this.$el.modal('show');
     },
     save: function () {
         var self = this;
@@ -52,31 +58,33 @@ var EditListboard = AppView.extend({
         this.validateFields(label);
         if (!this.hasErrors())
             if (this.model)
-                this.model.save({label: label}, {wait: true, success: function () {
-                    self.close();
-                }});
-            else
-                this.collection.create({label: label}, {wait: true, success: function (listboard) {
-                    self.collection.setCurrentListboard(listboard.get('_id'));
-                    self.close();
-                    _state.listboards.setCurrentListboard(listboard);
-                }})
+                this.model.save({label: label}, {
+                    success: function () {
+                        self.close();
+                    }
+                });
+            else {
+
+                this.collection.create({ label: label }, {
+                    success: function (listboard) {
+                        self.collection.setCurrentListboard(listboard.get('_id'));
+                        self.close();
+                    }
+                });
+            }
     },
     cleanErrors: function () {
-        this.unSetAllErrorFields(this.$("#dash-label"));
+        this.unSetAllErrorFields(this.$("[name=dash-label]"));
     },
     validateFields: function (label) {
-        if (label == "")
-            this.setErrorField(this.$("#dash-label"), this.$("#dash-label-blank"));
+        if (label === "")
+            this.setErrorField(this.$("[name=dash-label]"), this.$("[name=dash-label] + .help-inline"));
     },
     close: function () {
         this.$el.modal('hide');
     },
     shown: function () {
         this.$('[name=dash-label]').focus();
-    },
-    hidden: function () {
-        this.dispose();
     },
     moveToTrash: function () {
         this.$('.move-to-trash-alert').slideDown();
@@ -98,10 +106,9 @@ var EditListboard = AppView.extend({
             event.preventDefault();
             //If enter inside form, we submit it
             if ($(event.target).parents('.form-horizontal').length > 0) {
-                $(".opt-save").click();
+                this.$(".opt-save").click();
             }
         }
     }
 });
 module.exports = EditListboard;
-*/

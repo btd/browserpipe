@@ -18,7 +18,8 @@ module.exports = List = AppModel.extend({
                 //Updates children
                 //TODO: we should not send so many updates to the server, mongodb must do a bunch update
                 var children = this.children.models;
-                for (index in children)
+
+                for (var index in children)
                     children[index].save({'path': newFilter});
                 //Triggers filter changed
                 this.trigger('filterChanged', newFilter, oldFilter);

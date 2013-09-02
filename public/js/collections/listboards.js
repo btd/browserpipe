@@ -1,7 +1,8 @@
 var Listboard = require('models/listboard'),
     Backbone = require('backbone');
 
-module.exports = ListboardCollection = Backbone.Collection.extend({
+
+var ListboardCollection = Backbone.Collection.extend({
     model: Listboard,
     url: "/listboards",
     initialize: function (models) {
@@ -43,3 +44,19 @@ module.exports = ListboardCollection = Backbone.Collection.extend({
         }
     }
 });
+
+var extendedWithTypeCollection = function(Collection, Model, t) {
+    return Collection.extend({
+        model: Model.extend({
+            defaults: {
+                type: t
+            }
+        })
+    })
+};
+
+ListboardCollection.Future = extendedWithTypeCollection(ListboardCollection, Listboard, 2);
+ListboardCollection.Later = extendedWithTypeCollection(ListboardCollection, Listboard, 1);
+
+module.exports = ListboardCollection;
+

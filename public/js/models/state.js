@@ -25,16 +25,16 @@ var State = Backbone.Model.extend({
         this.loadItems();
     },
     loadNowListboards: function () {
-        this.nowListboards = new Listboards(initialOptions.nowListboards)
+        this.nowListboards = new Listboards(initialOptions.nowListboards);
     },
     loadLaterListboards: function () {
-        this.laterListboards = new Listboards(initialOptions.laterListboards)
+        this.laterListboards = new (Listboards.Later)(initialOptions.laterListboards);
     },
     loadFutureListboards: function () {
-        this.futureListboards = new Listboards(initialOptions.futureListboards)
+        this.futureListboards = new (Listboards.Future)(initialOptions.futureListboards);
     },
     loadItemsByContainer: function(container) {
-        var self = this;                       
+
         _.map(initialOptions.items, function(item){            
             if(_.contains(item.containers,container.get('_id')))
                 container.addItem(item);
@@ -77,9 +77,9 @@ var State = Backbone.Model.extend({
     },    
     loadItems: function () {
         var self = this;
-        for (index in initialOptions.items) {
+        for (var index in initialOptions.items) {
             var item = initialOptions.items[index];
-            _.map(item.lists, function (filter) {
+            _.each(item.lists, function (filter) {
                 var list = self.getListByFilter(filter);
                 if (list) {
                     if (!list.items)

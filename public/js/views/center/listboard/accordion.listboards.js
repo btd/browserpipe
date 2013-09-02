@@ -22,7 +22,8 @@ var AccordionListboards = AppView.extend({
     initializeView: function (options) {        
         this.nowView = new Now();
         this.laterView = new Later();
-        this.futureView = new Future();  
+        this.futureView = new Future();
+
         this.nowView.on('clickedSelectorLink', function(){
             this.expandSectionFullBySectionName('now');
         }, this);
@@ -34,11 +35,12 @@ var AccordionListboards = AppView.extend({
         }, this);
     },
     renderView: function () {              
-        $('#main-container').empty();
-        $('#main-container').append(this.$el);
+        $('#main-container').empty().append(this.$el);
+
         $(this.el).append(this.nowView.render().el);
         $(this.el).append(this.laterView.render().el);
-        $(this.el).append(this.futureView.render().el);       
+        $(this.el).append(this.futureView.render().el);
+
         this.initializeSectionsExpantion();
         return this;
     },    

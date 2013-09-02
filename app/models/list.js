@@ -4,7 +4,7 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     validation = require('./validation'),
     _ = require('lodash'),
-    q = require('q')    
+    q = require('q')
 
 var ListSchema = new Schema({
     //Generic fields
@@ -18,7 +18,7 @@ var ListSchema = new Schema({
     lastSyncDate: Date,
     closedDate: Date
 
-    
+
 });
 
 ListSchema.plugin(require('../util/mongoose-timestamp'));
@@ -69,41 +69,41 @@ ListSchema.methods.removeFull = function () {
     var Item = mongoose.model('Item');
     var User = mongoose.model('User');
     return q.all([
-            List.removeChildrenByPath(this.user, this.fullPath),
-            User.removeContainersByFilter(this.user, this.fullPath),
-            Item.removeAllByFilters(this.user, [this.fullPath]),
-            this.removeWithPromise()
-        ]);
+        List.removeChildrenByPath(this.user, this.fullPath),
+        User.removeContainersByFilter(this.user, this.fullPath),
+        Item.removeAllByFilters(this.user, [this.fullPath]),
+        this.removeWithPromise()
+    ]);
 }
 
 
 /* Not used
-ListSchema.statics.getListAndChildrenByPath = function (user, parentPath, path, success, error) {
-    this
-        .find({user: user, path: { $in: [path, parentPath] } })
-        //.populate('user', 'label', 'path')
-        .sort({'path': 1}) // sort by date
-        // .limit(perPage)
-        // .skip(perPage * page)
-        .exec(function (err, lists) {
-            // TODO manage errors propertly
-            if (err) error(err)
-            else success(lists)
-        })
-}
-ListSchema.statics.getAllDescendantByPath = function (user, path, success, error) {
-    this
-        .find({user: user, path: new RegExp("^" + path) })
-        //.populate('user', 'label', 'path')
-        .sort({'path': 1}) // sort by date
-        // .limit(perPage)
-        // .skip(perPage * page)
-        .exec(function (err, lists) {
-            // TODO manage errors propertly
-            if (err) error(err)
-            else success(lists)
-        })
-}*/
+ ListSchema.statics.getListAndChildrenByPath = function (user, parentPath, path, success, error) {
+ this
+ .find({user: user, path: { $in: [path, parentPath] } })
+ //.populate('user', 'label', 'path')
+ .sort({'path': 1}) // sort by date
+ // .limit(perPage)
+ // .skip(perPage * page)
+ .exec(function (err, lists) {
+ // TODO manage errors propertly
+ if (err) error(err)
+ else success(lists)
+ })
+ }
+ ListSchema.statics.getAllDescendantByPath = function (user, path, success, error) {
+ this
+ .find({user: user, path: new RegExp("^" + path) })
+ //.populate('user', 'label', 'path')
+ .sort({'path': 1}) // sort by date
+ // .limit(perPage)
+ // .skip(perPage * page)
+ .exec(function (err, lists) {
+ // TODO manage errors propertly
+ if (err) error(err)
+ else success(lists)
+ })
+ }*/
 
 var qfindOne = function (obj) {
     return List.findOne(obj).execWithPromise();
