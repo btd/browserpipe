@@ -1,6 +1,6 @@
+/* jshint node: true */
+
 var _ = require('lodash'),
-    q = require('q'),
-    mongoose = require('mongoose'),
     responses = require('../util/responses.js'),
     errors = require('../util/errors.js');    
 
@@ -35,7 +35,6 @@ exports.update = function (req, res) {
 
 //Delete container
 exports.destroy = function (req, res) {
-    var containerId = req.params.containerId
-    var container = req.listboard.containers.pull({ _id: containerId });
+    var containerId = req.params.containerId;
     saveContainer(req, res, containerId);
 }

@@ -1,6 +1,6 @@
-var _ = require('lodash'),
-    q = require('q'),
-    mongoose = require('mongoose'),
+/* jshint node: true */
+
+var mongoose = require('mongoose'),
     Invitation = mongoose.model('Invitation'),
     responses = require('../util/responses.js'),
     errors = require('../util/errors.js');

@@ -10,7 +10,9 @@ var ItemSchema = new Schema({
     lists: [
         {type: String, trim: true}
     ],
-    containers: [ {type: Schema.ObjectId, ref: 'Container'} ],
+    containers: [
+        {type: Schema.ObjectId, ref: 'Container'}
+    ],
     user: {type: Schema.ObjectId, ref: 'User'},
     favicon: {type: String, trim: true},
     title: {type: String, trim: true},
@@ -18,10 +20,10 @@ var ItemSchema = new Schema({
     note: {type: String, trim: true},
 
     //For 0 type (associated with a tab)
-    externalId: {type: String, trim: true},    
+    externalId: {type: String, trim: true},
     active: {type: Boolean, default: true},
     closedDate: Date
-    
+
 });
 
 ItemSchema.plugin(require('../util/mongoose-timestamp'));

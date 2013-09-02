@@ -1,5 +1,6 @@
+/* jshint node: true */
+
 var _ = require('lodash'),
-    q = require('q'),
     mongoose = require('mongoose'),
     Item = mongoose.model('Item'),
     responses = require('../util/responses.js'),
@@ -7,8 +8,8 @@ var _ = require('lodash'),
 
 //Create item
 exports.create = function (req, res) {
-    var item = new Item(_.pick(req.body, 'lists', 'title', 'url', 'note'))
-    item.user = req.user
+    var item = new Item(_.pick(req.body, 'lists', 'title', 'url', 'note'));
+    item.user = req.user;
     item.saveWithPromise()
         .then(responses.sendModelId(res, item._id))
         .fail(errors.ifErrorSendBadRequest(res))
@@ -46,7 +47,7 @@ exports.item = function (req, res, next, id) {
 //Delete item
 exports.destroy = function (req, res) {
     var item = req.currentItem
-    item.remove(function (err) {
+    item.remove(function () {
         res.json({ _id: item._id })
     })
 }

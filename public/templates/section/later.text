@@ -6,19 +6,26 @@
 	<div class="navbar sub-bar">
 		<div class="btn-group pull-left listboard-selector">
 			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-				<%= listboard_label %>
+				<span class="js-current-listboard-label"></span>
 				<span class="caret"></span>
 			</a>
-			<ul class="dropdown-menu">
-				 <li><a href="javascript: void(0)" class="js-create-listboard"><i class="icon-none">Create New</i></a></li>
+			<ul class="dropdown-menu js-selector-listboards">
+			    <li class="divider"></li>
+				<li><a href="javascript: void(0)" class="js-create-listboard"><i class="icon-plus"></i> Create New</a></li>
 			</ul>
 		</div>
-		<div class="navbar-inner">    		
+		<div class="navbar-inner">
 			<ul class="nav">
 			  <li>
-			    <a class="add-container btn" href="#" title="Add container">
+			    <a class="add-container btn" href="#" title="Add container" data-toggle="tooltip">
 			        <i class="icon-plus"></i>
 			    </a>
+
+			  </li>
+			  <li>
+			    <a class="edit-container btn" href="#" title="Edit current listboard" data-toggle="tooltip">
+                  <i class="icon-pencil"></i>
+              </a>
 			  </li>
 			</ul>
 		</div>
