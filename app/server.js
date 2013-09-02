@@ -32,5 +32,12 @@ require('../config/express')(app, config, passport);
 // Bootstrap routes
 require('../config/routes')(app, passport);
 
-module.exports = app;
+// Create http server
+var http = require('http')
+var server = http.createServer(app)
+
+// Configure socket.io
+require('../config/socket.io')(server);
+
+module.exports = server;
 

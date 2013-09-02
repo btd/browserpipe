@@ -27,6 +27,8 @@
             "exports": "jQuery"
         },
         "underscore" : "@lodash",
+        
+        "socket.io": "bower_components/socket.io-client/dist/socket.io.js",
 
         "main" : "js/main.js",
         "router": "js/router.js",

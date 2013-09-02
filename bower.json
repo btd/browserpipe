@@ -6,7 +6,8 @@
     "backbone": "~1.0.0",
     "jquery": "~2.0.2",
     "bootstrap": "~2.3.2",
-    "jquery-ui": "~1.10.3"
+    "jquery-ui": "~1.10.3",
+    "socket.io-client" : "0.9.9"
   },
   "resolutions": {
     "jquery": "~2.0.2"

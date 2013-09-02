@@ -8,7 +8,8 @@ var _state = require('models/state'),
     Help = require('views/center/help'),
     Welcome = require('views/center/welcome'),
     AccordionListboards = require('views/center/listboard/accordion.listboards'),
-    Backbone = require('backbone');
+    Backbone = require('backbone'),
+    io = require('socket.io');
 
 var AppRouter = Backbone.Router.extend({
     views: {},
@@ -77,6 +78,15 @@ var AppRouter = Backbone.Router.extend({
         //Top bar account nav
         this.accountNav = new AccountNav();
         this.accountNav.render();
+
+
+        var socket = io.connect('http://localhost:4000');
+        socket.on("pong",function(data){
+            console.log(data.txt+"<br>");
+        });
+        
+        socket.emit("ping",{txt:"this is a message from client" });
+
     }
 });
 
