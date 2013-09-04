@@ -7,6 +7,7 @@ var ContainerItem = require('views/center/container/item/item');
 var NowContainer = Container.extend({
     initializeView: function (options) {
     	Container.prototype.initializeView.call(this, options);
+        this.model.getItems().on('add', this.renderItem, this);
     },
     renderView: function () {
         this            

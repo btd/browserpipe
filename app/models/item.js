@@ -24,6 +24,9 @@ var ItemSchema = new Schema({
     active: {type: Boolean, default: true},
     closedDate: Date
 
+},{
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true }
 });
 
 ItemSchema.plugin(require('../util/mongoose-timestamp'));
@@ -31,6 +34,12 @@ ItemSchema.plugin(require('../util/mongoose-timestamp'));
 ItemSchema.statics.findByContainer = function (user, containerId) {
     return this
         .find({user: user, containers: containerId}, '_id type containers lists title favicon url note externalId active closedDate')
+        .execWithPromise();
+}
+
+ItemSchema.statics.findByExternalId = function (user, externalId) {
+    return this
+        .findOne({user: user, externalId: externalId}, '_id type containers lists title favicon url note externalId active closedDate')
         .execWithPromise();
 }
 
@@ -52,6 +61,14 @@ ItemSchema.statics.removeAllByFilters = function (user, filters) {
         .remove({user: user, lists: {$in: filters}})
         .execWithPromise();
 }
+
+ItemSchema.virtual('cid').get(function() {
+  return this._cid;
+});
+
+ItemSchema.virtual('cid').set(function(cid) {
+  return this._cid = cid;
+});
 
 
 module.exports = Item = mongoose.model('Item', ItemSchema);

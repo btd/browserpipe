@@ -24,6 +24,12 @@ var Future = SectionListboard.extend({
 
     createContainerView: function(container) {
         return new FutureContainer({model: container});
+    },
+
+    addContainer: function(){
+        this.model && this.model.addContainer(
+            new Container({ type: 2, filter: 'Lists', title: '' })
+        );
     }
 });
 module.exports = Future;

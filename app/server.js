@@ -27,17 +27,10 @@ require('../config/passport')(passport, config);
 var app = express();
 
 // Bootstrap express settings
-require('../config/express')(app, config, passport);
+var server = require('../config/express')(app, config, passport);
 
 // Bootstrap routes
 require('../config/routes')(app, passport);
-
-// Create http server
-var http = require('http')
-var server = http.createServer(app)
-
-// Configure socket.io
-require('../config/socket.io')(server);
 
 module.exports = server;
 

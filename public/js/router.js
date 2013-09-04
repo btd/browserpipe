@@ -79,13 +79,14 @@ var AppRouter = Backbone.Router.extend({
         this.accountNav = new AccountNav();
         this.accountNav.render();
 
+        //Saves reference to the socket
+        var url = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
+        this.socket = io.connect(url);
 
-        var socket = io.connect('http://localhost:4000');
-        socket.on("pong",function(data){
-            console.log(data.txt+"<br>");
-        });
-        
-        socket.emit("ping",{txt:"this is a message from client" });
+        //Load model events
+        require('events/listboard')(this.socket);
+        require('events/container')(this.socket);
+        require('events/item')(this.socket);
 
     }
 });

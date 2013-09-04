@@ -8,7 +8,7 @@ var _ = require('lodash'),
 
 //Create item
 exports.create = function (req, res) {
-    var item = new Item(_.pick(req.body, 'lists', 'title', 'url', 'note'));
+    var item = new Item(_.pick(req.body, 'lists', 'title', 'url', 'note', 'cid'));
     item.user = req.user;
     item.saveWithPromise()
         .then(responses.sendModelId(res, item._id))

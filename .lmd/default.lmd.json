@@ -35,7 +35,7 @@
         "util" : "js/util.js",
         "config": "js/config.js",
 
-        "<%= dir[0] %>/<%= file %>": "js/{collections,models}/**/*.js",
+        "<%= dir[0] %>/<%= file %>": "js/{collections,models,events}/**/*.js",
 
         "views/<%= file %>": "js/views/*.js",
         "views/<%= dir[0] %>/<%= file %>": "js/views/*/*.js",

@@ -114,6 +114,6 @@ var FutureContainer = Container.extend({
     },
     scrollToAddList: function () {        
         this.$('.box').animate({scrollTop: this.$('.add-list').offset().left + 60}, 150);
-    },
+    }
 });
 module.exports = FutureContainer;

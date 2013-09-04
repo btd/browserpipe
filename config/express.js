@@ -77,6 +77,17 @@ module.exports = function (app, config, passport) {
      // view cache is enabled by default in production mode
      }) */
 
+    // Create http server
+    var http = require('http')
+    var server = http.createServer(app)
+
+    // Configure socket.io
+    var sio = require('../config/socket.io');
+    //Initialize socket io
+    sio.init(server);
+    //Add socket.io middleware
+    app.use(sio.socketMiddleware());
+
     // routes should be at the last
     app.use(app.router)
 
@@ -120,5 +131,6 @@ module.exports = function (app, config, passport) {
 
     })
 
+    return server;
 
 }
