@@ -99,13 +99,30 @@ var State = Backbone.Model.extend({
         //TODO: load items
         return [];
     },
-    addItemToLists: function (item) {
-        var self = this;
-        _.map(item.get('lists'), function (filter) {
-            var list = self.getListByFilter(filter);
-            if (list)
-                list.addItem(item);
-        });
+    getListboard: function(listboardType, listboardId) {
+        switch(listboardType){
+            case 0: return this.nowListboards.get(listboardId);
+            case 1: return this.laterListboards.get(listboardId);
+            case 2: return this.futureListboards.get(listboardId);
+        }            
+    },
+    addItemToContainers: function (listboardType, listboardId, item) {
+        var listboard = this.getListboard(listboardType, listboardId);
+        if(listboard)
+            _.map(item.get('containers'), function (containerId) {
+                var container = listboard.containers.get(containerId);
+                if(container && !container.items.get(item.cid))
+                    container.addItem(item);
+            });            
+    },
+    removeItemFromContainers: function (listboardType, listboardId, containerId, itemId) {
+        var listboard = this.getListboard(listboardType, listboardId);
+        if(listboard){
+            var container = listboard.containers.get(containerId);
+            if(container && container.items.get(itemId))
+                container.removeItem(itemId);
+        }
+
     },
     createListIfNew: function (filter) {
         var self = this;

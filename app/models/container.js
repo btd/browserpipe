@@ -1,6 +1,4 @@
-var Schema = require('mongoose').Schema,
-    validation = require('./validation'),    
-    q = require('q');
+var Schema = require('mongoose').Schema    
 
 var ContainerSchema = new Schema({
     type: {type: Number, required: true}, //0: now, 1: later, 2: future
@@ -10,11 +8,23 @@ var ContainerSchema = new Schema({
     externalId: {type: String, trim: true},
     lastSyncDate: Date,
     closedDate: Date,
+    active: {type: Boolean, default: true},
 
     //For 2 container (future containers)
     filter: {type: String, trim: true}
+},{
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true }
 });
 
 ContainerSchema.plugin(require('../util/mongoose-timestamp'));
+
+ContainerSchema.virtual('cid').get(function() {
+  return this._cid;
+});
+
+ContainerSchema.virtual('cid').set(function(cid) {
+  return this._cid = cid;
+});
 
 module.exports = ContainerSchema;

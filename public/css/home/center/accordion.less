@@ -109,21 +109,26 @@
         }
       }
     }*/
+
+    .listboard-selector {
+     .dropdown-menu {
+        overflow-y: auto;
+        max-height: 200px;
+      }  
+    }
+
     .btn {
       margin-right: 4px;
       .border-radius(0);
       .box-shadow(none);
-
-
       background: lighten(@grey1, 20%);
       border: 0;
+      font-family: Arial, Helvetica, sans-serif;
 
       &:hover {
         background-position: 0 0;
         background: @grey1;
       }
-
-      font-family: Arial, Helvetica, sans-serif;
     }
 
     .navbar-inner {   

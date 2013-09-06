@@ -16,11 +16,18 @@ exports.home = function (req, res) {
             .then(function (lists) {
                 //We only load the ones from opened containers
                 var listboards = _.union(nowListboards, laterListboards, futureListboards);
+                //Remove non active containers
+                 _(listboards).map(function (listboard) {
+                    listboard.containers = listboard.containers.filter(function(cont) {
+                        return cont.active;
+                    })
+                });                
+                //Load container ids
                 var containerIds = _(listboards).map(function (listboard) {
                     return _.map(listboard.containers, '_id');
                 }).flatten().value();
 
-                return Item.findAllByContainers(
+                return Item.findAllActiveByContainers(
                         req.user,
                         containerIds
                     ).then(function (items) {

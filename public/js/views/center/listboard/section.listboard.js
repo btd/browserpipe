@@ -36,7 +36,7 @@ var SectionListboard = AppView.extend({
 
         this.collection.on('currentListboardChange', function(listboard) {
             this.model = listboard;
-
+            this.loadModelEvents();
             this.clear().renderListboard();
         }, this);
 
@@ -62,8 +62,15 @@ var SectionListboard = AppView.extend({
             this.$('.js-selector-listboards .js-listboard-select-item[data-id="' + listboard.id + '"]').remove();
         }, this);
 
-        if(this.collection.length > 0)
+        if(this.collection.length > 0) {
             this.model = this.collection.at(0);
+            this.loadModelEvents();
+        }
+    },
+
+    loadModelEvents: function(){
+        this.model.containers.on('add', this.containerAdded, this);            
+        this.model.containers.on('remove', this.containerRemoved, this);
     },
 
     selectCurrentListboard: function(evt) {
@@ -128,17 +135,11 @@ var SectionListboard = AppView.extend({
         }, this);
 
         return this;
-    },
+    },    
 
-    addContainer: function(){
-        var that = this;
-
-        this.model && this.model.addContainer(new Container({ type: 2, filter: 'Lists', title: 'New Container' }), {
-            success: function (container) {
-                var cv = that.addContainerView(that.createContainerView(container));
-                that.scrollToContainer(cv);
-            }
-        });
+    containerAdded: function (container) {
+        var cv = this.addContainerView(this.createContainerView(container));
+        this.scrollToContainer(cv);
     },
 
     addContainerView: function (containerView) {
@@ -163,17 +164,19 @@ var SectionListboard = AppView.extend({
     },
 
     closeContainerView: function(containerView) {
-        var self = this;
-        this.model.removeContainer(containerView.model, {
-            success: function () {
-                self.containersViews = _.without(self.containersViews, _.findWhere(self.containersViews, { cid: containerView.cid }));
-                containerView.dispose();
+        this.model.removeContainer(containerView.model);
+    },
 
-                //Reduce the container if necessary
-                var width = self.$('.containers-inner').width() - config.CONTAINER_WIDTH;
-                self.$('.containers-inner').width(width);
-            }
-        });
+    containerRemoved: function(container){
+        var containerView = _.find(this.containersViews,  function(cv){ return cv.model.id === container.id; });
+        if(containerView) {
+            this.containersViews = _.without(this.containersViews, containerView);
+            containerView.dispose();           
+
+            //Reduce the container if necessary
+            var width = this.$('.containers-inner').width() - config.CONTAINER_WIDTH;
+            this.$('.containers-inner').width(width);
+        }
     },
 
     expandSection: function(space){        

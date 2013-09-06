@@ -32,12 +32,12 @@ chrome.windows.getAll({populate : true}, function (windows) {
 	var result = {		
 		windows: []
 	}    
-    for(var i=0;i<2/*windows.length*/;i++) {
+    for(var i=0;i< windows.length; i++) {
     	var win = {
     		externalId: windows[i].id,
     		tabs: []
     	}
-    	for(var j=0;j< windows[i].tabs.length;j++) {
+    	for(var j=0; j< windows[i].tabs.length; j++) {
     		var tab = {
     			externalId: windows[i].tabs[j].id,
     			url: encodeURIComponent(windows[i].tabs[j].url),
@@ -50,8 +50,8 @@ chrome.windows.getAll({populate : true}, function (windows) {
     }
     $.post(config.apiUpdateTabsURL, result)
 	.done(function(data) {
-	  console("Ok: " + data);
+	  console.log(data);
 	}).fail(function(error) {
-	  console("Error: " + error);
+	  console.log(error);
 	});
 });

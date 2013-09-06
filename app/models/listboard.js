@@ -12,6 +12,9 @@ var ListboardSchema = new Schema({
 
     //For 0 container (associated with a browser)
     lastSyncDate: Date
+},{
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true }
 });
 
 ListboardSchema.plugin(require('../util/mongoose-timestamp'));
@@ -27,7 +30,8 @@ ListboardSchema.methods.addContainer = function (cont) {
         title: cont.title,
         filter: cont.filter,
         externalId: cont.externalId,
-        active: cont.active
+        active: cont.active,
+        cid: cont.cid
     });
     return this;
 };
@@ -35,6 +39,16 @@ ListboardSchema.methods.addContainer = function (cont) {
 ListboardSchema.methods.last = function () {
     return _.last(this.containers);
 };
+
+ListboardSchema.methods.getActiveContainerByExternalId = function (externalId) {
+    var result = _.filter(this.containers, function(cont){ return cont.externalId === externalId && cont.active; });
+    if(result.length == 1)
+        return result[0];
+    else if(result.length === 0)
+        return null
+    else if(result.length > 1)
+        throw "Cannot be two containers with same external id on a listboard"
+}
 
 ListboardSchema.methods.getContainerByExternalId = function (externalId) {
     var result = _.filter(this.containers, function(cont){ return cont.externalId === externalId; });
@@ -45,5 +59,13 @@ ListboardSchema.methods.getContainerByExternalId = function (externalId) {
     else if(result.length > 1)
         throw "Cannot be two containers with same external id on a listboard"
 }
+
+ListboardSchema.virtual('cid').get(function() {
+  return this._cid;
+});
+
+ListboardSchema.virtual('cid').set(function(cid) {
+  return this._cid = cid;
+});
 
 module.exports = ListboardSchema;

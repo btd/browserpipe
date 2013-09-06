@@ -1,5 +1,4 @@
 var $ = require('jquery');
-var Jquer = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var config = require('config');

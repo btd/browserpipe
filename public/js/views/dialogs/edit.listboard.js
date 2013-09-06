@@ -64,9 +64,8 @@ var EditListboard = AppView.extend({
                     }
                 });
             else {
-
                 this.collection.create({ label: label }, {
-                    success: function (listboard) {
+                    success: function (listboard) {                        
                         self.collection.setCurrentListboard(listboard.get('_id'));
                         self.close();
                     }

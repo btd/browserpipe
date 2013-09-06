@@ -3,7 +3,6 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var _state = require('models/state');
 var Container = require('views/center/container/container');
-var ContainerItem = require('views/center/container/item/item');
 var ContainerChildList = require('views/center/container/list/child.list');
 var ListsTemplate = require('templates/containers/lists');
 
@@ -11,9 +10,9 @@ var FutureContainer = Container.extend({
     initializeView: function (options) {
     	Container.prototype.initializeView.call(this, options);
         this.events['click .container-list-icon'] = 'navigateToParentList';        
-        this.events['click .add-list-icon'] = 'addList',
-        this.events['click .add-list-save'] = 'saveAddList',
-        this.events['click .add-list-cancel'] = 'cancelAddList'
+        this.events['click .add-list-icon'] = 'addList';
+        this.events['click .add-list-save'] = 'saveAddList';
+        this.events['click .add-list-cancel'] = 'cancelAddList';
     },
     renderView: function () {
         this            
@@ -22,19 +21,6 @@ var FutureContainer = Container.extend({
             .renderChildsLists()
             .renderItems();
         return this;
-    },
-    renderItems: function () {
-        $('.box', this.el).append('<ul class="items"></ul>');
-        var items = this.model.getItems();
-        for (var index in items.models) {
-            this.renderItem(items.at(index));
-        }
-        return this;
-    },
-    renderItem: function (item) {
-        var $items = this.$('.items');
-        var containerItem = new ContainerItem({model: item});
-        $items.append(containerItem.render().el);
     },
     renderChildsLists: function () {        
         var compiledTemplate = _.template(ListsTemplate, { collapsed: this.collapsed });
@@ -114,6 +100,6 @@ var FutureContainer = Container.extend({
     },
     scrollToAddList: function () {        
         this.$('.box').animate({scrollTop: this.$('.add-list').offset().left + 60}, 150);
-    },
+    }
 });
 module.exports = FutureContainer;

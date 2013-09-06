@@ -9,6 +9,9 @@ module.exports = Listboard = AppModel.extend({
         //because we load it with json
         this.unset('containers');
 
+        //forces the cid to be sent to the server
+        this.set('cid', this.cid);
+
         this.containers = new Containers(options.containers);        
         this.containers.url = this.url() + this.containers.url;
     },

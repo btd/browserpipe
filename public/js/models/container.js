@@ -2,6 +2,10 @@ var AppModel = require('models/model');
 
 module.exports = Container = AppModel.extend({
     initialize: function (spec) {
+        
+        //forces the cid to be sent to the server
+        this.set('cid', this.cid);
+
         this.loadItems();
         if(this.get('type') === 2) {
             var _state = require('models/state');
@@ -32,6 +36,10 @@ module.exports = Container = AppModel.extend({
     },
     addItem: function (item) {
         var items = this.getItems();
-        this.items.add(item);
+        items.add(item);
+    },
+    removeItem: function (itemId) {
+        var items = this.getItems();
+        items.remove(itemId);
     }
 });
