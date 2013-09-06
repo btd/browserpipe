@@ -83,8 +83,14 @@ module.exports = function (app, config, passport) {
 
     // Configure socket.io
     var sio = require('../config/socket.io');
+    
+    if(config.env === 'test') {
+        sio.set('log level', 1);
+    }
     //Initialize socket io
     sio.init(server);
+    
+    
     //Add socket.io middleware
     app.use(sio.socketMiddleware());
 
