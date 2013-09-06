@@ -40,7 +40,7 @@ module.exports = function (socket) {
 	socket.on('delete.container', function (data) {
 	    var listboard = _state.getListboard(data.listboardType, data.listboardId);
 	    if(listboard) {
-	    	var container = listboard.containers.get(data.container._id);
+	    	var container = listboard.containers.get(data.containerId);
 	    	if(container)
 	    		listboard.containers.remove(container);
 	    }	    	
@@ -49,9 +49,8 @@ module.exports = function (socket) {
 	socket.on('bulk.delete.container', function (data) {
 		var listboard = _state.getListboard(data.listboardType, data.listboardId);
 		if(listboard)
-			for(var index in data.containers){
-				var container = data.containers[index];			    
-		    	var cont = listboard.containers.get(container._id);
+			for(var index in data.containerIds){				
+		    	var cont = listboard.containers.get(data.containerIds[index]);
 		    	if(cont)
 		    		listboard.containers.remove(cont);
 		    }	    	

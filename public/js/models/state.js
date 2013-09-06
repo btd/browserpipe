@@ -115,6 +115,15 @@ var State = Backbone.Model.extend({
                     container.addItem(item);
             });            
     },
+    removeItemFromContainers: function (listboardType, listboardId, containerId, itemId) {
+        var listboard = this.getListboard(listboardType, listboardId);
+        if(listboard){
+            var container = listboard.containers.get(containerId);
+            if(container && container.items.get(itemId))
+                container.removeItem(itemId);
+        }
+
+    },
     createListIfNew: function (filter) {
         var self = this;
         if (filter != 'Lists' && filter.substring(0, 5) != "Lists/")

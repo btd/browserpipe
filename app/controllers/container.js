@@ -73,7 +73,7 @@ exports.destroy = function (req, res) {
             data: { 
                 listboardType: container.type,
                 listboardId: req.listboard._id,
-                container: container
+                containerId: containerId
             }   
         }
         saveContainer(req, res, containerId, delta);

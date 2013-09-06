@@ -36,6 +36,10 @@ module.exports = Container = AppModel.extend({
     },
     addItem: function (item) {
         var items = this.getItems();
-        this.items.add(item);
+        items.add(item);
+    },
+    removeItem: function (itemId) {
+        var items = this.getItems();
+        items.remove(itemId);
     }
 });

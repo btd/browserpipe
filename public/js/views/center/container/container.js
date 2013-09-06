@@ -5,16 +5,18 @@ var config = require('config');
 var _state = require('models/state');
 var AppView = require('views/view');
 var ContainerHeader = require('views/center/container/header/header');
+var ContainerItem = require('views/center/container/item/item');
 
 var Container = AppView.extend({
     tagName: 'div',
     events: {
         "click": "selectContainer",
-        "click .close-container" : "close",
-        /*"mouseenter": "showOptionsToggle",
-        "mouseleave": "hideOptionsToggle"*/
+        "click .close-container" : "close"
     },
     initializeView: function (options) {
+        this.containerItemViews = [];
+        this.model.getItems().on('add', this.itemAdded, this);
+        this.model.getItems().on('remove', this.itemRemoved, this);
     },
     attributes: function () {
         return {
@@ -29,7 +31,8 @@ var Container = AppView.extend({
     renderView: function () {
         this            
             .renderHeader()
-            .renderBox();
+            .renderBox()
+            .renderItems();
         return this;
     },
     renderHeader: function () {
@@ -40,6 +43,30 @@ var Container = AppView.extend({
     renderBox: function () {
         $(this.el).append('<div class="box"></div>');
         return this;
+    },
+    renderItems: function () {
+        $('.box', this.el).append('<ul class="items"></ul>');
+        var items = this.model.getItems();
+        for (index in items.models) {
+            this.renderItem(items.at(index));
+        };
+        return this;
+    },
+    renderItem: function (item) {
+        var $items = this.$('.items');
+        var containerItem = new ContainerItem({model: item});
+        this.containerItemViews.push(containerItem);
+        $items.append(containerItem.render().el);
+    },
+    itemAdded: function(item) {
+        this.renderItem(item);
+    },
+    itemRemoved: function(item){
+        var containerItemView = _.find(this.containerItemViews,  function(cv){ return cv.model.id === item.id; });
+        if(containerItemView) {
+            this.containersViews = _.without(this.containerItemViews, containerItemView);
+            containerItemView.dispose();           
+        }
     },
     postRender: function () {
         this.addEvents(this.events);

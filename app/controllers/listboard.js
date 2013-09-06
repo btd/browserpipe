@@ -85,7 +85,7 @@ exports.destroy = function (req, res) {
     saveListboard(req, res, listboard, delta);    
 }
 
-var fillAndSendSyncContainersDelta = function(req, nowListboard, type, externalIds) {    
+var fillAndSendCreateContainersDelta = function(req, nowListboard, type, externalIds) {    
     return function(){        
         if(externalIds.length > 0) {
             var containers = _.map(externalIds, function(externalId){                 
@@ -102,11 +102,53 @@ var fillAndSendSyncContainersDelta = function(req, nowListboard, type, externalI
     }
 }
 
-var fillAndSendSyncItemsDelta = function(req, nowListboard, type, externalIds) {
-    return function(){                
+var fillAndSendDeleteContainersDelta = function(req, nowListboard, type, externalIds) {    
+    return function(){        
         if(externalIds.length > 0) {
+            var containerIds = _.map(externalIds, function(externalId){                 
+                return nowListboard.getContainerByExternalId(externalId)._id;
+            });            
+            req.sockets.forEach(function(s) {
+                s.emit(type, { 
+                    listboardType: 0,
+                    listboardId: nowListboard._id,
+                    containerIds: _.compact(containerIds) 
+                });
+            });
+        }
+    }
+}
+
+var fillAndSendCreateItemsDelta = function(req, nowListboard, type, externalIds) {
+    return function(){                
+        if(externalIds.length > 0) {            
             q.all(_.map(externalIds, function(externalId){ 
-                return Item.findByExternalId(req.user, externalId)
+                return Item.getByExternalId(req.user, externalId);
+            })).spread(function () { 
+                var items = arguments;
+                req.sockets.forEach(function(s) {
+                    s.emit(type, { 
+                        listboardType: 0,
+                        listboardId: nowListboard._id,
+                        items: _.compact(items) 
+                    });
+                });
+            }).done();
+        }
+    }
+}
+
+var fillAndSendDeleteItemsDelta = function(req, nowListboard, type, externalIdsAndContainerId) {
+    return function(){                
+        if(externalIdsAndContainerId.length > 0) {
+            q.all(_.map(externalIdsAndContainerId, function(externalIdAndContainerId){ 
+                return Item.getByExternalId(req.user, externalIdAndContainerId.externalId)
+                            .then(function(item) {
+                                return {
+                                    _id: item._id,
+                                    containerId: externalIdAndContainerId.containerId
+                                }
+                            });
             })).spread(function () { 
                 var items = arguments;
                 req.sockets.forEach(function(s) {
@@ -138,7 +180,7 @@ exports.sync = function (req, res) {
     var createdContainersExternalIds = [];
     var deletedContainersExternalIds = [];
     var createdItemsExternalIds = [];
-    var deletedItemsExternalIds = [];
+    var deletedItemsExternalIdsAndContainerId = [];
     
     //Create the new ones
     var containersExternalIds = _.map(nowListboard.containers, function(cont){ return cont.externalId});
@@ -156,8 +198,9 @@ exports.sync = function (req, res) {
     });      
 
     //Deactivate the closed containers
+    var activeNowContainers = nowListboard.containers.filter( function(cont) { return cont.active  });
     var windowsExternalIds = _.map(windows, function(win){ return win.externalId});
-    _.map(nowListboard.containers, function (cont) {        
+    _.map(activeNowContainers, function (cont) {        
         if(_.indexOf(windowsExternalIds, cont.externalId) == -1){ 
             cont.active = false;
             cont.closedDate = syncDate;   
@@ -174,10 +217,10 @@ exports.sync = function (req, res) {
             var result = _.map(windows, function (win) {
                 
                 //We get the container that already exists
-                var container = nowListboard.getContainerByExternalId(win.externalId);
+                var container = nowListboard.getActiveContainerByExternalId(win.externalId);
                 if(container){                    
 
-                    return Item.findByContainer(user, container._id).then(function(items){
+                    return Item.findActiveByContainer(user, container._id).then(function(items){
                         var promises = [];
 
                         //Create the new items
@@ -205,7 +248,10 @@ exports.sync = function (req, res) {
                                 item.closedDate = syncDate;          
                                 var promise = item.saveWithPromise();
                                 promises.push(promise);
-                                deletedItemsExternalIds.push(item.externalId);
+                                deletedItemsExternalIdsAndContainerId.push({
+                                    externalId: item.externalId,
+                                    containerId: container._id
+                                });
                             }
                         });    
 
@@ -218,9 +264,9 @@ exports.sync = function (req, res) {
         })
         .then(responses.sendModelId(res, nowListboard))
         .fail(errors.ifErrorSendInternalServer(res))
-        .then(fillAndSendSyncContainersDelta(req, nowListboard, 'bulk.create.container', createdContainersExternalIds))
-        .then(fillAndSendSyncContainersDelta(req, nowListboard, 'bulk.delete.container', deletedContainersExternalIds))
-        .then(fillAndSendSyncItemsDelta(req, nowListboard, 'bulk.create.item', createdItemsExternalIds))
-        .then(fillAndSendSyncItemsDelta(req, nowListboard, 'bulk.delete.item', deletedItemsExternalIds))
+        .then(fillAndSendCreateContainersDelta(req, nowListboard, 'bulk.create.container', createdContainersExternalIds))
+        .then(fillAndSendDeleteContainersDelta(req, nowListboard, 'bulk.delete.container', deletedContainersExternalIds))
+        .then(fillAndSendCreateItemsDelta(req, nowListboard, 'bulk.create.item', createdItemsExternalIds))
+        .then(fillAndSendDeleteItemsDelta(req, nowListboard, 'bulk.delete.item', deletedItemsExternalIdsAndContainerId))
         .done();    
 }
