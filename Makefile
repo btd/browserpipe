@@ -1,4 +1,3 @@
-
 MOCHA_OPTS= ./test
 REPORTER = spec
 
@@ -23,7 +22,7 @@ test-jenkins-xunit:
 		--recursive \
 		--check-leaks \
 		--reporter xunit \
-		$(MOCHA_OPTS)
+		$(MOCHA_OPTS) 1> results/xunit.xml
 
 test-jenkins-cov:
 	@NODE_ENV=test ./node_modules/.bin/istanbul cover --report cobertura --dir ./results ./node_modules/.bin/_mocha -- \
