@@ -11,6 +11,9 @@ var config = {
         mincer: {
             url: '/public',
             roots: './public'
+        },
+        'socket-io': {
+            'log level': 1
         }
     },
     development: {
@@ -29,7 +32,8 @@ var config = {
         mincer: {
             url: '/public',
             roots: './public'
-        }
+        },
+        'socket-io': {}
     },
     staging: {
         db: {
@@ -41,7 +45,8 @@ var config = {
             preprocess: ['img/index/**', 'font/**', 'css/index.css', 'js/apps/index.js'],
             manifest: path.join(__dirname, '..', 'compiled-assets')
         },
-        precompiledAssets: ['img/index/**', 'font/**', 'css/index.css', 'js/apps/index.js']
+        precompiledAssets: ['img/index/**', 'font/**', 'css/index.css', 'js/apps/index.js'],
+        'socket-io': {}
     },
     production: {
         db: {
@@ -53,7 +58,8 @@ var config = {
             preprocess: ['img/index/**', 'font/**', 'css/index.css', 'js/apps/index.js'],
             manifest: path.join(__dirname, '..', 'compiled-assets')
         },
-        precompiledAssets: ['img/index/**', 'font/**', 'css/index.css', 'js/apps/index.js']
+        precompiledAssets: ['img/index/**', 'font/**', 'css/index.css', 'js/apps/index.js'],
+        'socket-io': {}
     }
 };
 

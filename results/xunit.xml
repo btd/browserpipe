@@ -1,0 +1,30 @@
+<testsuite name="Mocha Tests" tests="28" failures="0" errors="0" skipped="0" timestamp="Fri, 06 Sep 2013 16:48:25 GMT" time="4.615">
+<testcase classname="list controller create" name="should return 200 and create a root list with POST on /lists when authenticated and send good data" time="0.252"/>
+<testcase classname="list controller create" name="should return 200 and create list of level1 if the parent exits with POST on /lists when authenticated and send good data" time="0.197"/>
+<testcase classname="list controller create" name="should return 200 and create list of level2 if the parent exits with POST on /lists when authenticated and send good data" time="0.21"/>
+<testcase classname="list controller create" name="should return 401 with POST on /lists when not authenticated" time="0.005"/>
+<testcase classname="list controller create" name="should return 400 when creating a list which parent does not exit" time="0.203"/>
+<testcase classname="list controller delete" name="should delete list and return 200 when authenticated and list found" time="0.203"/>
+<testcase classname="list controller delete" name="should delete list, child lists and return 200 when authenticated and list found" time="0.216"/>
+<testcase classname="list controller delete" name="should return 401 with DELETE on /list/:listId when not authenticated" time="0.194"/>
+<testcase classname="list controller delete" name="should return 404 with DELETE on /list/:listId when  authenticated but list does not exists" time="0.188"/>
+<testcase classname="list controller update" name="should update label and return 200 when authenticated and list found" time="0.199"/>
+<testcase classname="list controller update" name="should return 401 when updating list and not authenticated" time="0.209"/>
+<testcase classname="list controller update" name="should return 404 when updating a list that does not exist" time="0.22"/>
+<testcase classname="list controller update" name="should return 403 when updating list and not have not permission to do it" time="0.383"/>
+<testcase classname="listboard controller create" name="should return 200 and create listboard with POST on /listboards when authenticated and send good data" time="0.206"/>
+<testcase classname="listboard controller create" name="should return 401 with POST on /listboards when not authenticated" time="0.004"/>
+<testcase classname="listboard controller create" name="should return 400 with POST on /listboards when authenticated but bad data" time="0.217"/>
+<testcase classname="listboard controller delete" name="should return 200 with DELETE on /listboards/:listboardId when authenticated" time="0.204"/>
+<testcase classname="listboard controller delete" name="should return 401 with DELETE on /listboards/:listboardId when not authenticated" time="0.004"/>
+<testcase classname="listboard controller delete" name="should return 404 with DELETE on /listboards/:listboardId when  authenticated but listboard does not exists" time="0.195"/>
+<testcase classname="listboard controller update" name="should return 200 and update listboard with POST on /listboards/:listboardId when authenticated and send good data" time="0.215"/>
+<testcase classname="listboard controller update" name="should return 401 with PUT on /listboards/:listboardId when not authenticated" time="0.004"/>
+<testcase classname="listboard controller update" name="should return 400 with PUT on /listboards/:listboardId when authenticated but bad data" time="0.229"/>
+<testcase classname="user controller create" name="should create user with POST on /users when send good data" time="0.179"/>
+<testcase classname="user model" name="should not allow save empty name" time="0.083"/>
+<testcase classname="user model" name="should allow do not set name" time="0.084"/>
+<testcase classname="user model" name="should not allow create users with the same email" time="0.176"/>
+<testcase classname="user model" name="should not allow create users with empty or missing password" time="0.001"/>
+<testcase classname="user model" name="should not allow create users with bad email" time="0.082"/>
+</testsuite>
