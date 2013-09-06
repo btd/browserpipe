@@ -109,6 +109,12 @@ module.exports = function() {
 				}
 			}));
 
+            var that = this;
+
+            this.sio.configure('test', function(){
+                that.sio.set('log level', 1);
+            });
+
 			this.sio.sockets.on("connection", function(socket) {				
 				//console.log("user connected: ", socket.handshake.user.name);
 			});			

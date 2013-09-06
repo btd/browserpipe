@@ -84,9 +84,7 @@ module.exports = function (app, config, passport) {
     // Configure socket.io
     var sio = require('../config/socket.io');
     
-    sio.sio.configure('test', function(){
-      sio.sio.set('log level', 1);
-    });
+
     //Initialize socket io
     sio.init(server);
     
