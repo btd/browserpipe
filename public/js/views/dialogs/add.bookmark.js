@@ -1,4 +1,4 @@
-/*var $ = require('jquery');
+var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var util = require('util');
@@ -8,6 +8,7 @@ var Item = require('models/item');
 var AppView = require('views/view');
 var ListsEditor = require('views/lists.editor/editor');
 var template = require('templates/dialogs/add.bookmark');
+
 var AddBookmark = AppView.extend({
     attributes: function () {
         return {
@@ -101,4 +102,3 @@ var AddBookmark = AppView.extend({
     }
 });
 module.exports = AddBookmark;
-*/

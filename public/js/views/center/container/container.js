@@ -6,6 +6,7 @@ var _state = require('models/state');
 var AppView = require('views/view');
 var ContainerHeader = require('views/center/container/header/header');
 var ContainerItem = require('views/center/container/item/item');
+var template = require('templates/containers/container');
 
 var Container = AppView.extend({
     tagName: 'div',
@@ -28,24 +29,24 @@ var Container = AppView.extend({
     clean: function () {
         $(this.el).empty();
     },
+    renderContainer: function() {
+        var compiledTemplate = _.template(template, {});
+        $(this.el).html(compiledTemplate);
+        return this;
+    },
     renderView: function () {
-        this            
+        this         
+            .renderContainer()   
             .renderHeader()
-            .renderBox()
             .renderItems();
         return this;
     },
     renderHeader: function () {
         this.header = new ContainerHeader({ model: this.model });
-        $(this.el).append(this.header.render().el);
-        return this;
-    },
-    renderBox: function () {
-        $(this.el).append('<div class="box"></div>');
+        this.$('.header').append(this.header.render().el);
         return this;
     },
     renderItems: function () {
-        $('.box', this.el).append('<ul class="items"></ul>');
         var items = this.model.getItems();
         for (index in items.models) {
             this.renderItem(items.at(index));

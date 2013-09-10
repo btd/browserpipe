@@ -5,6 +5,7 @@ var _state = require('models/state');
 var Container = require('views/center/container/container');
 var ContainerChildList = require('views/center/container/list/child.list');
 var ListsTemplate = require('templates/containers/lists');
+var AddBookmark = require('views/dialogs/add.bookmark');
 
 var FutureContainer = Container.extend({
     initializeView: function (options) {
@@ -13,11 +14,12 @@ var FutureContainer = Container.extend({
         this.events['click .add-list-icon'] = 'addList';
         this.events['click .add-list-save'] = 'saveAddList';
         this.events['click .add-list-cancel'] = 'cancelAddList';
+        this.events['click .opt-add-bkmrk'] = 'addBkmrk';
     },
     renderView: function () {
-        this            
-            .renderHeader()
-            .renderBox()
+        this       
+            .renderContainer()     
+            .renderHeader()            
             .renderChildsLists()
             .renderItems();
         return this;
@@ -100,6 +102,10 @@ var FutureContainer = Container.extend({
     },
     scrollToAddList: function () {        
         this.$('.box').animate({scrollTop: this.$('.add-list').offset().left + 60}, 150);
+    },
+    addBkmrk: function () {
+        var addBookmark = new AddBookmark({list: this.model.list});
+        addBookmark.render();
     }
 });
 module.exports = FutureContainer;
