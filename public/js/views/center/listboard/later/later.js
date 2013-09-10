@@ -26,11 +26,11 @@ var Later = SectionListboard.extend({
         SectionListboard.prototype.initializeView.call(this, options);
     },
 
-    createContainerView: function(container) {
+    createContainerView: function (container) {
         return new LaterContainer({ model: container });
     },
 
-    addContainer: function(){
+    addContainer: function () {
         this.model && this.model.addContainer(
             new Container({ type: 1, filter: '', title: 'New Container' })
         );

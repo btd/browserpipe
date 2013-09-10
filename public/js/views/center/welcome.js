@@ -20,7 +20,7 @@ var Welcome = AppView.extend({
     },
     initializeView: function (options) {
     },
-    renderView: function () {        
+    renderView: function () {
         var compiledTemplate = _.template(template, {
         });
         this.$el.html(compiledTemplate);
@@ -28,10 +28,10 @@ var Welcome = AppView.extend({
         $('#main-container').append(this.$el);
         return this;
     },
-    installExtension: function(e){
+    installExtension: function (e) {
 
     },
-    navigateToHome: function(e){
+    navigateToHome: function (e) {
         var $target = $(e.currentTarget);
         e.preventDefault();
         Backbone.history.navigate($target.attr('href'), {trigger: true});

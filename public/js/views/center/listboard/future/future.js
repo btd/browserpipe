@@ -22,11 +22,11 @@ var Future = SectionListboard.extend({
         SectionListboard.prototype.initializeView.call(this, options);
     },
 
-    createContainerView: function(container) {
+    createContainerView: function (container) {
         return new FutureContainer({model: container});
     },
 
-    addContainer: function(){
+    addContainer: function () {
         this.model && this.model.addContainer(
             new Container({ type: 2, filter: 'Lists', title: '' })
         );

@@ -11,7 +11,7 @@ var Container = AppView.extend({
     tagName: 'div',
     events: {
         "click": "selectContainer",
-        "click .close-container" : "close"
+        "click .close-container": "close"
     },
     initializeView: function (options) {
         this.containerItemViews = [];
@@ -29,7 +29,7 @@ var Container = AppView.extend({
         $(this.el).empty();
     },
     renderView: function () {
-        this            
+        this
             .renderHeader()
             .renderBox()
             .renderItems();
@@ -47,9 +47,9 @@ var Container = AppView.extend({
     renderItems: function () {
         $('.box', this.el).append('<ul class="items"></ul>');
         var items = this.model.getItems();
-        for (index in items.models) {
+        for (var index in items.models) {
             this.renderItem(items.at(index));
-        };
+        }
         return this;
     },
     renderItem: function (item) {
@@ -58,14 +58,16 @@ var Container = AppView.extend({
         this.containerItemViews.push(containerItem);
         $items.append(containerItem.render().el);
     },
-    itemAdded: function(item) {
+    itemAdded: function (item) {
         this.renderItem(item);
     },
-    itemRemoved: function(item){
-        var containerItemView = _.find(this.containerItemViews,  function(cv){ return cv.model.id === item.id; });
-        if(containerItemView) {
+    itemRemoved: function (item) {
+        var containerItemView = _.find(this.containerItemViews, function (cv) {
+            return cv.model.id === item.id;
+        });
+        if (containerItemView) {
             this.containersViews = _.without(this.containerItemViews, containerItemView);
-            containerItemView.dispose();           
+            containerItemView.dispose();
         }
     },
     postRender: function () {
@@ -74,11 +76,11 @@ var Container = AppView.extend({
     },
     calculateHeight: function (height) {
         //TODO: check why is needed to rest 30
-        var value = height - 60 -(config.CONTAINER_VERTICAL_MARGIN * 2);
+        var value = height - 60 - (config.CONTAINER_VERTICAL_MARGIN * 2);
         $(".box", this.el).css("max-height", value);
     },
-    close: function(){
-        this.trigger("close", this);        
+    close: function () {
+        this.trigger("close", this);
     }
 
 });

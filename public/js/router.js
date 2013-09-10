@@ -92,7 +92,7 @@ var AppRouter = Backbone.Router.extend({
 });
 
 module.exports.initialize = function () {
-    var app_router = new AppRouter;
+    var app_router = new AppRouter();
     //Start monitoring all hashchange events for history
     Backbone.history.start({pushState: true});
     return app_router;

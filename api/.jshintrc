@@ -1,4 +1,5 @@
 {
+    "node": true,
     "asi": true,
     "smarttabs": true,
     "expr": true

@@ -1,0 +1,32 @@
+!!! 5
+html(lang='en')
+    head
+        meta(charset='utf-8')
+        meta(name='viewport', content='width=device-width, initial-scale=1.0')
+        meta(name='description', content='')
+        meta(name='author', content='')
+        title Authorization
+        // Bootstrap core CSS
+        link(href='/css/api/bootstrap.css', rel='stylesheet')
+        // Custom styles for this template
+        link(href='/css/api/signin.css', rel='stylesheet')
+        // HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries
+        //if lt IE 9
+            script(src='/bower_components/bootstrap/assets/js/html5shiv.js')
+            script(src='/bower_components/bootstrap/assets/js/respond.min.js')
+    body
+        .container
+            .row
+                .col-xs-12.col-sm-6.col-md-6.col-md-offset-4.col-sm-offset-4
+                    h1 Hi!
+                    p Application '#{app.name}' would like to get access to your account.
+
+                    form.form-signin(method='POST', action='/oauth2/auth/requestAccessAuth')
+                        input(type='hidden', name='_csrf', value='#{_csrf}')
+
+                        div.btn-group
+                            input.btn-signin.btn.btn-lg.btn-primary(type='submit', name='result', value='Yes')
+                            input.btn-cancel.btn.btn-lg.btn-default(type='submit', name='result', value='No')
+
+
+

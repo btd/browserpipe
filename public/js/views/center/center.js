@@ -5,7 +5,7 @@ var config = require('config');
 var _state = require('models/state');
 var AppView = require('views/view');
 
-var Center = AppView.extend({  
+var Center = AppView.extend({
     calculateHeight: function () {
         //Calculates the height of the listboard
         var wheight = $(window).height();
@@ -21,7 +21,7 @@ var Center = AppView.extend({
         this.$el.height(height);
     },
     postRender: function () {
-        var self = this;        
+        var self = this;
         this.calculateHeight();
         //If window size changes, height is recalculated
         $(window).resize(function () {

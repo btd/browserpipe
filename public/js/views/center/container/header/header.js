@@ -5,10 +5,10 @@ var AppView = require('views/view');
 var template = require('templates/containers/header');
 var ContainerHeader = AppView.extend({
     tagName: 'div',
-    events: {        
+    events: {
         'click .title': 'editTitle',
-        'click .edit-title-save':  'saveEditTitle',
-        'click .edit-title-cancel':  'cancelEditTitle'
+        'click .edit-title-save': 'saveEditTitle',
+        'click .edit-title-cancel': 'cancelEditTitle'
     },
     attributes: function () {
         return {
@@ -28,27 +28,27 @@ var ContainerHeader = AppView.extend({
         $(this.el).html(compiledTemplate);
         return this;
     },
-    editTitle: function(){
+    editTitle: function () {
         this.$('.title').hide();
         this.$('.edit-title').show();
         this.$('.edit-title input').focus();
     },
-    saveEditTitle: function(){
+    saveEditTitle: function () {
         var self = this;
         var title = this.$('.edit-title input').val();
         this.model.save({
             title: title
-        },{
+        }, {
             success: function () {
                 self.render();
                 self.hideEditTitle();
             }
         });
     },
-    cancelEditTitle: function(){                
+    cancelEditTitle: function () {
         this.hideEditTitle();
     },
-    hideEditTitle: function() {
+    hideEditTitle: function () {
         this.$('.edit-title').hide();
         this.$('.title').show();
     }

@@ -1,0 +1,29 @@
+!!! 5
+html(lang='en')
+    head
+        meta(charset='utf-8')
+        meta(name='viewport', content='width=device-width, initial-scale=1.0')
+        meta(name='description', content='')
+        meta(name='author', content='')
+        title Authorization
+        // Bootstrap core CSS
+        link(href='/css/api/bootstrap.css', rel='stylesheet')
+        // Custom styles for this template
+        link(href='/css/api/signin.css', rel='stylesheet')
+        // HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries
+        //if lt IE 9
+            script(src='/bower_components/bootstrap/assets/js/html5shiv.js')
+            script(src='/bower_components/bootstrap/assets/js/respond.min.js')
+    body
+        .container
+            form#form-signin.form-signin(method='POST', action='/oauth2/auth/loginAuth')
+                h2.form-signin-heading Please sign in
+                input.form-control(type='text', placeholder='Username', name='username', autofocus='autofocus')
+                input.form-control(type='password', name='password', placeholder='Password')
+                input(type='hidden', name='_csrf', value='#{_csrf}')
+                if(error === 'invalid_user')
+                    div.alert.alert-danger
+                        strong= error
+                        |  There is no such user
+
+                button.btn-signin.btn.btn-lg.btn-primary.btn-block Sign in

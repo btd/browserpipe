@@ -8,9 +8,9 @@ var Sections = AppView.extend({
     events: {
         "click .nav-option": "navigateTo"
     },
-    initializeView: function () {        
+    initializeView: function () {
     },
-    navigateTo: function (e) {        
+    navigateTo: function (e) {
         var $target = $('a', e.currentTarget);
         e.preventDefault();
         var section = $target.attr('href');
