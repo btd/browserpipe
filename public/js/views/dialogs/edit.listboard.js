@@ -28,13 +28,13 @@ var EditListboard = AppView.extend({
         this.$el.html(compiledTemplate).appendTo('#dialogs');
         return this;
     },
-    show: function() {
+    show: function () {
         var title = "Create listboard",
             labelValue = "",
             saveLabel = "Create",
             showTrashBlock = false;
 
-        if(this.model) {
+        if (this.model) {
             title = "Edit listboard";
             labelValue = this.model.get('label');
             saveLabel = "Save";
@@ -65,7 +65,7 @@ var EditListboard = AppView.extend({
                 });
             else {
                 this.collection.create({ label: label }, {
-                    success: function (listboard) {                        
+                    success: function (listboard) {
                         self.collection.setCurrentListboard(listboard.get('_id'));
                         self.close();
                     }
@@ -91,9 +91,9 @@ var EditListboard = AppView.extend({
     moveToTrashCanceled: function () {
         this.$('.move-to-trash-alert').hide();
     },
-    moveToTrashConfirmed: function() {
+    moveToTrashConfirmed: function () {
         var self = this;
-        this.model.destroy({ success: function(model, response) {
+        this.model.destroy({ success: function (model, response) {
             self.close();
         }});
     },

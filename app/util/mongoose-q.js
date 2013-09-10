@@ -2,6 +2,8 @@ var mongoose = require('mongoose'),
     Q = require('q'),
     _ = require('lodash');
 
+var ModelStaticMethods = ['remove'];
+
 var QueryMethogs = ['exec'];
 var ModelMethods = ['save', 'remove'];
 
@@ -25,6 +27,8 @@ var patchMethods = function(proto, methods) {
 
 patchMethods(mongoose.Query.prototype, QueryMethogs);
 patchMethods(mongoose.Model.prototype, ModelMethods);
+
+patchMethods(mongoose.Model, ModelStaticMethods);
 
 
 module.exports = mongoose;

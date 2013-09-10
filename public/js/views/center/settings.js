@@ -4,7 +4,7 @@ var Backbone = require('backbone');
 var Center = require('views/center/center');
 var template = require('templates/settings/settings');
 
-var Settings = Center.extend({    
+var Settings = Center.extend({
     tagName: 'div',
     attributes: function () {
         return {
@@ -14,10 +14,10 @@ var Settings = Center.extend({
     },
     initializeView: function (options) {
     },
-    renderView: function () {        
+    renderView: function () {
         var compiledTemplate = _.template(template, {
         });
-        this.$el.html(compiledTemplate);        
+        this.$el.html(compiledTemplate);
         $('#main-container').append(this.$el);
         return this;
     }

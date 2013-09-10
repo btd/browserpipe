@@ -1,0 +1,17 @@
+var mongoose = require('mongoose'),
+    Schema = mongoose.Schema;
+
+var AccessTokenSchema = new Schema({
+    application: { type: Schema.ObjectId, ref: 'Application', required: true},
+    value: { type: String, required: true, trim: true },
+    user: { type: Schema.ObjectId, ref: 'User', required: true}
+});
+
+AccessTokenSchema.plugin(require('../util/mongoose-timestamp'));
+
+AccessTokenSchema.statics.byUserAndApplication = function(user, application) {
+    return AccessToken.findOne({user: user, application: application}).execWithPromise();
+};
+
+module.exports = AccessToken = mongoose.model('AccessToken', AccessTokenSchema);
+

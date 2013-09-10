@@ -8,14 +8,14 @@ var AccountNav = AppView.extend({
     events: {
         "click .dropdown-menu a": "navigateToSection"
     },
-    initializeView: function () {        
+    initializeView: function () {
     },
-    navigateToSection: function (e) {        
+    navigateToSection: function (e) {
         var $target = $(e.currentTarget);
         var url = $target.attr('href');
-        if(url != "/logout") {
-        	e.preventDefault();        
-        	Backbone.history.navigate(url, {trigger: true});
+        if (url != "/logout") {
+            e.preventDefault();
+            Backbone.history.navigate(url, {trigger: true});
         }
     }
 });

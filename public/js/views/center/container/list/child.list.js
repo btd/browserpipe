@@ -29,13 +29,13 @@ var ContainerChildList = AppView.extend({
         e.stopPropagation();
         this.trigger("navigateToList", this.model);
     },
-    showRemoveChildListIcon: function() {
+    showRemoveChildListIcon: function () {
         this.$('.remove-child-list').show();
     },
-    hideRemoveChildListIcon: function() {
+    hideRemoveChildListIcon: function () {
         this.$('.remove-child-list').hide();
     },
-    removeChildList: function(e) {
+    removeChildList: function (e) {
         e.stopPropagation();
         this.trigger('childRemoved', this);
     }
