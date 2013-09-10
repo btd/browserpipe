@@ -9,8 +9,8 @@ var AddBookmark = require('views/dialogs/add.bookmark');
 
 var FutureContainer = Container.extend({
     initializeView: function (options) {
-    	Container.prototype.initializeView.call(this, options);
-        this.events['click .container-list-icon'] = 'navigateToParentList';        
+        Container.prototype.initializeView.call(this, options);
+        this.events['click .container-list-icon'] = 'navigateToParentList';
         this.events['click .add-list-icon'] = 'addList';
         this.events['click .add-list-save'] = 'saveAddList';
         this.events['click .add-list-cancel'] = 'cancelAddList';
@@ -24,7 +24,7 @@ var FutureContainer = Container.extend({
             .renderItems();
         return this;
     },
-    renderChildsLists: function () {        
+    renderChildsLists: function () {
         var compiledTemplate = _.template(ListsTemplate, { collapsed: this.collapsed });
         $('.box', this.el).append(compiledTemplate);
         //Render childs lists
@@ -41,13 +41,13 @@ var FutureContainer = Container.extend({
         this.listenTo(cct, 'navigateToList', this.navigateToList);
         this.listenTo(cct, 'childRemoved', this.childRemoved, this);
     },
-    childRemoved: function(childView) {
+    childRemoved: function (childView) {
         this.model.list.removeChildren(childView.model, {
-            wait: true, 
-            success: function () {                
+            wait: true,
+            success: function () {
                 childView.dispose();
             }
-        });  
+        });
     },
     listenListEvents: function () {
         //If an item is added, we render it
@@ -69,38 +69,38 @@ var FutureContainer = Container.extend({
         //Clears content
         this.clean();
         //Render the view again
-        this.render();        
+        this.render();
     },
     navigateToParentList: function () {
         var parent = _state.getListByFilter(this.model.list.get('path'));
         if (parent)
             this.navigateToList(parent);
     },
-    addList: function(){        
+    addList: function () {
         this.$('.add-list').show();
         this.$('.add-list input').focus();
         this.scrollToAddList();
     },
-    saveAddList: function(){
+    saveAddList: function () {
         var self = this;
         var label = this.$('.add-list input').val();
         this.model.list.children.createList({
             label: label,
             path: this.model.list.getFilter()
         }).then(function (list) {
-            _state.addList(list);
-            self.renderChildList(list);
-            self.hideAddList();
-            self.$('.add-list input').val('')
-        });
+                _state.addList(list);
+                self.renderChildList(list);
+                self.hideAddList();
+                self.$('.add-list input').val('')
+            });
     },
-    cancelAddList: function(){                
+    cancelAddList: function () {
         this.hideAddList();
     },
-    hideAddList: function() {
+    hideAddList: function () {
         this.$('.add-list').hide();
     },
-    scrollToAddList: function () {        
+    scrollToAddList: function () {
         this.$('.box').animate({scrollTop: this.$('.add-list').offset().left + 60}, 150);
     },
     addBkmrk: function () {

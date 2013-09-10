@@ -21,7 +21,7 @@ var UserSchema = new Schema({
     password: {type: String, set: function (password) {
         //do not allow user to set empty password
         return _.isEmpty(password) ? undefined : bcrypt.hashSync(password, bcryptRounds);
-    }, required: true},    
+    }, required: true},
     nowListboards: [ ListboardSchema ],
     laterListboards: [ ListboardSchema ],
     futureListboards: [ ListboardSchema ]
@@ -33,40 +33,40 @@ UserSchema.methods.authenticate = function (password) {
     return bcrypt.compareSync(password, this.password);
 };
 
-UserSchema.methods.addListboard = function(rawListboard) {    
-    switch(rawListboard.type) {
-        case 0 : 
-            this.nowListboards.push(rawListboard); 
+UserSchema.methods.addListboard = function (rawListboard) {
+    switch (rawListboard.type) {
+        case 0 :
+            this.nowListboards.push(rawListboard);
             return _.last(this.nowListboards);
-        case 1 : 
+        case 1 :
             this.laterListboards.push(rawListboard);
             return _.last(this.laterListboards);
-        case 2 : 
+        case 2 :
             this.futureListboards.push(rawListboard);
             return _.last(this.futureListboards);
-    }        
+    }
     //TODO: how are we going to handle and log errors?
     throw new Error('Invalid listboard type');
 }
 
-UserSchema.methods.addNowListboard = function(rawListboard) {    
+UserSchema.methods.addNowListboard = function (rawListboard) {
     this.nowListboards.push(rawListboard);
     return _.last(this.nowListboards);
 };
 
-UserSchema.methods.addLaterListboard = function(rawListboard) {    
+UserSchema.methods.addLaterListboard = function (rawListboard) {
     this.laterListboards.push(rawListboard);
     return _.last(this.laterListboards);
 };
 
-UserSchema.methods.addFutureListboard = function(rawListboard) {    
+UserSchema.methods.addFutureListboard = function (rawListboard) {
     this.futureListboards.push(rawListboard);
     return _.last(this.futureListboards);
 };
 
 UserSchema.statics.removeContainersByFilter = function (user, filter) {
     return this
-        .update({_id: user, 'listboards.containers.filter': filter}, {$pull: {'listboards.$.containers': {filter: filter}}} )
+        .update({_id: user, 'listboards.containers.filter': filter}, {$pull: {'listboards.$.containers': {filter: filter}}})
         .execWithPromise();
 }
 

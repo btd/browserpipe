@@ -18,7 +18,7 @@ var Now = SectionListboard.extend({
 
         SectionListboard.prototype.initializeView.call(this, options);
     },
-    createContainerView: function(container) {
+    createContainerView: function (container) {
         return new NowContainer({model: container});
     }
 });

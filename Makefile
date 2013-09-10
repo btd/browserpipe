@@ -49,7 +49,7 @@ start-prod: clean
 	@NODE_ENV=production ./node_modules/.bin/nodemon --watch app --watch config server.js
 
 lint:
-	./node_modules/.bin/jshint --show-non-errors app config public/js
+	./node_modules/.bin/jshint --show-non-errors app config public/js api
 
 
 jshint-jenkins:
