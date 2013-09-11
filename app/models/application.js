@@ -12,4 +12,8 @@ ApplicationSchema.statics.byClientId = function (client_id) {
     return Application.findOne({ client_id: client_id}).execWithPromise();
 };
 
+ApplicationSchema.statics.by = function(findQuery) {
+    return Application.findOne(findQuery).execWithPromise();
+};
+
 module.exports = Application = mongoose.model('Application', ApplicationSchema);
