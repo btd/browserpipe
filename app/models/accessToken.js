@@ -13,5 +13,9 @@ AccessTokenSchema.statics.byUserAndApplication = function(user, application) {
     return AccessToken.findOne({user: user, application: application}).execWithPromise();
 };
 
+AccessTokenSchema.statics.by = function(findQuery) {
+    return AccessToken.findOne(findQuery).execWithPromise();
+};
+
 module.exports = AccessToken = mongoose.model('AccessToken', AccessTokenSchema);
 
