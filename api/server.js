@@ -16,20 +16,15 @@ mongoose.connect(config.db.uri);
 
 
 //TODO remove later
-var Application = require('../app/models/application'),
-    generateRandomString = require('../app/util/security').generateRandomString;
+var Application = require('../app/models/application');
 
 Application.by({ name: 'Chrome Extension' })
     .then(function (application) {
         if(!application) {
-            generateRandomString()
-                .then(function(client_id) {
-
-                    //TODO there we need to specify redirect_uri it is required by spec
-                    (new Application({ name: 'Chrome Extension', client_id: client_id })).save(function() {
-                        console.log('Add temp application with client_id:' + client_id );
-                    });
-                });
+            application = new Application({ name: 'Chrome Extension', redirect_uri: 'http://localhost' });
+            application.save(function(err) {
+                console.log('Add temp application with client_id: ' + application.client_id + ' client_secret: ' + application.client_secret );
+            });
         }
     })
 

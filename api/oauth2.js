@@ -49,11 +49,6 @@ var nonEmptyString = function(value) {
     return value != null && _.isString(value) && value.length > 0;
 };
 
-var validUrl = function(value) {
-    var parsedUrl = url.parse(value);
-    return !!(parsedUrl && parsedUrl.protocol && parsedUrl.protocol.match(/https?:/));
-};
-
 var isCode = function(a) {
     return a === 'code';
 };
@@ -70,7 +65,7 @@ var and = function(funcs) {
 };
 
 var validateAuthorizationParams = _.pairs({
-    'redirect_uri': [nonEmptyString, validUrl],
+    'redirect_uri': [nonEmptyString, Application.redirectableUri],
     'client_id': [nonEmptyString],
     'response_type': [isCode],
     'state': [nonEmptyString]
@@ -93,13 +88,29 @@ module.exports = function(app) {
                     param: invalidParam[0]
                 });
             } else {
-                req.session.oauth2 = {
-                    state: req.query.state,
-                    redirect_uri: req.query.redirect_uri,
-                    client_id: req.query.client_id
-                };
+                Application.by({ client_id: req.query.client_id })
+                    .then(function(application) {
+                        if(application && application.hasRedirectUri(req.query.redirect_uri)) {
 
-                res.redirect('./login');
+                            req.session.oauth2 = {
+                                state: req.query.state,
+                                redirect_uri: req.query.redirect_uri,
+                                client_id: req.query.client_id
+                            };
+
+                            res.redirect('./login');
+
+                        } else {
+                            res.status(400).render('error', {
+                                param: 'client_id'
+                            });
+                        }
+                    })
+                    .fail(function(err) {
+                        res.status(400).render('error', {
+                            param: 'client_id'
+                        });
+                    });
             }
         });
 
@@ -129,8 +140,6 @@ module.exports = function(app) {
                     .fail(function() {
                         return res.redirect('../login?error=invalid_user');
                     });
-
-                //TODO if app already authorized redirect immediate
             } else {
                 res.redirect('../login?error=invalid_user');//TODO something else ?
             }
@@ -154,8 +163,6 @@ module.exports = function(app) {
                 });
         });
 
-
-        //TODO i thought that promise will help remove piramide of doom
         app.post('/requestAccessAuth', csrf, oauthSession, authorized, function(req, res) {
             if(req.is('application/x-www-form-urlencoded') &&
                 req.body) {
@@ -238,38 +245,46 @@ module.exports = function(app) {
             req.body.grant_type === 'authorization_code' &&
             nonEmptyString(req.body.code) &&
             nonEmptyString(req.body.redirect_uri) &&
-            nonEmptyString(req.body.client_id)) {
+            nonEmptyString(req.body.client_id) &&
+            nonEmptyString(req.body.client_secret)) {
 
-            Application.byClientId(req.body.client_id)
+
+
+            Application.by({ client_id: req.body.client_id, client_secret: req.body.client_secret })
                 .then(function(application) {
 
-                    AuthCode.by({ application: application, redirect_uri: req.body.redirect_uri, value: req.body.code})
-                        .then(function(authCode) {
+                    if(application && application.hasRedirectUri(req.body.redirect_uri)) {
 
-                            if(authCode && !authCode.expired()) {
+                        AuthCode.by({ application: application, redirect_uri: req.body.redirect_uri, value: req.body.code})
+                            .then(function(authCode) {
 
-                                AccessToken.byUserAndApplication(authCode.user, application)
-                                    .then(function(accessToken) {
-                                        if(accessToken) {
+                                if(authCode && !authCode.expired()) {
 
-                                            sendAccessTokenResponse(accessToken.value, res);
-                                            authCode.remove();//TODO should we care about deletion?
-                                        } else {
-                                            //by idea this should not be possible, but in any case
-                                            generateAccessTokenAndSend(authCode, res);
-                                        }
-                                    })
-                                    .fail(function(err) {
-                                        error.sendError(res, new error.ServerError(err.message));
-                                    });
+                                    AccessToken.byUserAndApplication(authCode.user, application)
+                                        .then(function(accessToken) {
+                                            if(accessToken) {
 
-                            } else {
-                                error.sendError(res, new error.AccessDenied());
-                            }
+                                                sendAccessTokenResponse(accessToken.value, res);
+                                                authCode.remove();//TODO should we care about deletion?
+                                            } else {
+                                                //by idea this should not be possible, but in any case
+                                                generateAccessTokenAndSend(authCode, res);
+                                            }
+                                        })
+                                        .fail(function(err) {
+                                            error.sendError(res, new error.ServerError(err.message));
+                                        });
 
-                        }).fail(function(err) {
-                            error.sendError(res, new error.ServerError(err.message));
-                        });
+                                } else {
+                                    error.sendError(res, new error.AccessDenied());
+                                }
+
+                            }).fail(function(err) {
+                                error.sendError(res, new error.ServerError(err.message));
+                            });
+                    } else {
+                        error.sendError(res, new error.AccessDenied());
+                    }
                 }).fail(function(err) {
                     error.sendError(res, new error.ServerError(err.message));
                 });

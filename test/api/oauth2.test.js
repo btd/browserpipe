@@ -14,7 +14,12 @@ var app = require('../../api/express');
 
 var goodUser = { email: 'a@a.com', password: '123', name: 'User' };
 
-var oauthApp = { name: 'App', client_id: '27a377fae4f372d7321124e34db437cebe44596c3409c882dc2ceb15662adf8d6821c86f7888c712db120cc1f06a39509116eb0f23340252a1679c6b95f30da0' };
+var oauthApp = {
+    name: 'App',
+    client_id: '27a377fae4f372d7321124e34db437cebe44596c3409c882dc2ceb15662adf8d6821c86f7888c712db120cc1f06a39509116eb0f23340252a1679c6b95f30da0',
+    client_secret: 'afcb15d10d70f12621b5bb543c3c9483073e24d89b7c0b810ec58afca35367581206b867735a6040d20515078cc9e785e139d73e96b524bbf2ba023e7c360941',
+    redirect_uri: [ 'http://a' ]
+};
 
 require('../../api/oauth2')(app);
 
@@ -54,7 +59,8 @@ describe('OAuth2', function () {
 
         it('should warn user with error page when no at least one parameter missing', function (done) {
             request(app)
-                .get('/oauth2/auth?response_type=code&client_id=aaa&state=aaaa')
+                .get('/oauth2/auth')
+                .query({ response_type: 'code', client_id: 'aaa', state: 'aaaa' })
                 .expect('Content-Type', /html/)
                 .expect(/error.*redirect_uri/ig)
                 .end(done);
@@ -62,7 +68,8 @@ describe('OAuth2', function () {
 
         it('should warn user with error page when no at least one parameter empty', function (done) {
             request(app)
-                .get('/oauth2/auth?response_type=code&client_id=aaa&state=aaaa&redirect_uri=')
+                .get('/oauth2/auth')
+                .query({ response_type: 'code', client_id: 'aaa', state: 'aaaa', redirect_uri: '' })
                 .expect('Content-Type', /html/)
                 .expect(/error.*redirect_uri/ig)
                 .end(done);
@@ -70,15 +77,8 @@ describe('OAuth2', function () {
 
         it('should warn user with error page when response_code not a "code"', function (done) {
             request(app)
-                .get('/oauth2/auth?response_type=code1&client_id=aaa&state=aaaa&redirect_uri=http://a')
-                .expect('Content-Type', /html/)
-                .expect(/error.*response_type/ig)
-                .end(done);
-        });
-
-        it('should warn user with error page when response_code not a "code"', function (done) {
-            request(app)
-                .get('/oauth2/auth?response_type=code1&client_id=aaa&state=aaaa&redirect_uri=http://a')
+                .get('/oauth2/auth')
+                .query({ response_type: 'code1', client_id: 'aaa', state: 'aaaa', redirect_uri: 'http://a' })
                 .expect('Content-Type', /html/)
                 .expect(/error.*response_type/ig)
                 .end(done);
@@ -86,16 +86,35 @@ describe('OAuth2', function () {
 
         it('should warn user with error page when redirect_uri not a redirectable', function (done) {
             request(app)
-                .get('/oauth2/auth?response_type=code1&client_id=aaa&state=aaaa&redirect_uri=file:C://')
+                .get('/oauth2/auth')
+                .query({ response_type: 'code', client_id: 'aaa', state: 'aaaa', redirect_uri: 'file:C://' })
                 .expect('Content-Type', /html/)
                 .expect(/error.*redirect_uri/ig)
                 .end(done);
         });
 
-        it('should show login form if all 4 parameters filled correctly', function (done) {
+        it('should show login form if all 4 parameters filled correctly and such app exists and have such redirect_uri', function (done) {
             request(app)
                 .get('/oauth2/auth')
-                .query({ response_type: 'code', client_id: 'aaa', state: 'aaaa', redirect_uri: 'http://a' })
+                .query({ response_type: 'code', client_id: oauthApp.client_id, state: 'aaaa', redirect_uri: 'http://a' })
+                .expect('Location', /\/oauth2\/auth\/(\.\/)?login/)
+                .expect(302)
+                .end(done);
+        });
+
+        it('should show error paget if all 4 parameters filled correctly and such app exists but do not have such redirect_uri', function (done) {
+            request(app)
+                .get('/oauth2/auth')
+                .query({ response_type: 'code', client_id: oauthApp.client_id, state: 'aaaa', redirect_uri: 'http://b' })
+                .expect('Content-Type', /html/)
+                .expect(/error.*client_id/ig)
+                .end(done);
+        });
+
+        it('should show login form if all 4 parameters filled correctly and such app exists and have such redirect_uri even with query part', function (done) {
+            request(app)
+                .get('/oauth2/auth')
+                .query({ response_type: 'code', client_id: oauthApp.client_id, state: 'aaaa', redirect_uri: 'http://a?a=a' })
                 .expect('Location', /\/oauth2\/auth\/(\.\/)?login/)
                 .expect(302)
                 .end(done);
@@ -114,7 +133,8 @@ describe('OAuth2', function () {
         it('should show sign in page if user come in after redirect from /oauth2/auth', function (done) {
 
             request(app)
-                .get('/oauth2/auth?response_type=code&client_id=aaa&state=aaaa&redirect_uri=http://a')
+                .get('/oauth2/auth')
+                .query({ response_type: 'code', client_id: oauthApp.client_id, state: 'aaaa', redirect_uri: 'http://a?a=a' })
                 .end(function (err, res) {
                     if (err) return done(err);
 
@@ -132,7 +152,8 @@ describe('OAuth2', function () {
 
         it('should have csrf field', function (done) {
             request(app)
-                .get('/oauth2/auth?response_type=code&client_id=aaa&state=aaaa&redirect_uri=http://a')
+                .get('/oauth2/auth')
+                .query({ response_type: 'code', client_id: oauthApp.client_id, state: 'aaaa', redirect_uri: 'http://a?a=a' })
                 .end(function (err, res) {
                     if (err) return done(err);
 
@@ -180,7 +201,8 @@ describe('OAuth2', function () {
 
         it('should allow to post only user that visit 2 previous url (cookie and csrf protection)', function (done) {
             request(app)
-                .get('/oauth2/auth?response_type=code&client_id=aaa&state=aaaa&redirect_uri=http://a')
+                .get('/oauth2/auth')
+                .query({ response_type: 'code', client_id: oauthApp.client_id, state: 'aaaa', redirect_uri: 'http://a?a=a' })
                 .end(function (err, res) {
                     if (err) return done(err);
 
@@ -248,7 +270,8 @@ describe('OAuth2', function () {
 
         it('should redirect user to next step when all 3 parameters correct', function (done) {
             request(app)
-                .get('/oauth2/auth?response_type=code&client_id=123&state=aaaa&redirect_uri=http://a')
+                .get('/oauth2/auth')
+                .query({ response_type: 'code', client_id: oauthApp.client_id, state: 'aaaa', redirect_uri: 'http://a?a=a' })
                 .end(function (err, res) {
                     var authCookie = new Cookie(res.headers['set-cookie'][0]);
 
@@ -368,36 +391,6 @@ describe('OAuth2', function () {
                 });
         });
 
-        it('should redirect with error if such client does not exist', function (done) {
-            request(app)
-                .get('/oauth2/auth?response_type=code&client_id=aaa&state=aaaa&redirect_uri=http://a')
-                .end(function (err, res) {
-                    var authCookie = new Cookie(res.headers['set-cookie'][0]);
-
-                    request(app)
-                        .get('/oauth2/auth/login')
-                        .set('Cookie', authCookie.name + '=' + authCookie.value)
-                        .end(function (err, res) {
-
-                            jsdom.env(res.text, function (err, window) {
-                                var csrf = window.document.querySelectorAll('#form-signin input[name=_csrf]')[0].getAttribute('value');
-
-                                request(app)
-                                    .post('/oauth2/auth/loginAuth')
-                                    .type('urlencoded')
-                                    .send({ _csrf: csrf, username: goodUser.email, password: goodUser.password })
-                                    .set('Cookie', authCookie.name + '=' + authCookie.value)
-                                    .end(function (err, res) {
-                                        request(app)
-                                            .get('/oauth2/auth/requestAccess')
-                                            .set('Cookie', authCookie.name + '=' + authCookie.value)
-                                            .expect('Location', 'http://a?error=unauthorized_client&state=aaaa')
-                                            .expect(302, done);
-                                    });
-                            });
-                        });
-                });
-        });
     });
 
     describe('/oauth2/auth/requestAccessAuth', function () {
@@ -525,11 +518,11 @@ describe('OAuth2', function () {
                 })
         });
 
-        it('should allow to post only with all 4 body parameters and grant_type should be authorization_code', function (done) {
+        it('should allow to post only with all 5 body parameters and grant_type should be authorization_code', function (done) {
             request(app)
                 .post('/oauth2/token')
                 .type('form')
-                .send({ grant_type: 'authorization_code', code: '123', client_id: '123', redirect_uri: '123'})
+                .send({ grant_type: 'authorization_code', code: '123', client_id: '123', client_secret: '1234', redirect_uri: '123'})
                 .expect(401, function (err, res) {
                     if (err) return done(err);
 
@@ -540,7 +533,7 @@ describe('OAuth2', function () {
         it('should expect that user got auth code and use the not same parameters, then 401', function (done) {
             request(app)
                 .get('/oauth2/auth')
-                .query({ response_type: 'code', client_id: oauthApp.client_id, state: 'aaaa', redirect_uri: 'http://aaaaa' })
+                .query({ response_type: 'code', client_id: oauthApp.client_id, state: 'aaaa', redirect_uri: 'http://a' })
                 .end(function (err, res) {
                     var authCookie = new Cookie(res.headers['set-cookie'][0]);
 
@@ -578,7 +571,7 @@ describe('OAuth2', function () {
                                                                     request(app)
                                                                         .post('/oauth2/token')
                                                                         .type('form')
-                                                                        .send({ grant_type: 'authorization_code', code: code, client_id: '123', redirect_uri: '123'})
+                                                                        .send({ grant_type: 'authorization_code', code: code, client_id: '123', client_secret: oauthApp.client_secret,  redirect_uri: '123'})
                                                                         .expect(401, done);
 
                                                                 });
@@ -636,7 +629,7 @@ describe('OAuth2', function () {
                                                                     request(app)
                                                                         .post('/oauth2/token')
                                                                         .type('form')
-                                                                        .send({ grant_type: 'authorization_code', code: code, client_id: oauthApp.client_id, redirect_uri: 'http://a'})
+                                                                        .send({ grant_type: 'authorization_code', code: code, client_id: oauthApp.client_id, client_secret: oauthApp.client_secret,  redirect_uri: 'http://a'})
                                                                         .expect(200, done);
 
                                                                 });
