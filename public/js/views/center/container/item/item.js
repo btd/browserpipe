@@ -2,8 +2,9 @@ var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var AppView = require('views/view');
-var ViewBookmark = require('views/dialogs/view.bookmark');
+var ViewURL = require('views/dialogs/view.url');
 var mainTemplate = require('templates/items/container.item.simple');
+
 var ContainerItem = AppView.extend({
     name: 'ContainerItem',
     tagName: 'li',
@@ -27,8 +28,8 @@ var ContainerItem = AppView.extend({
     postRender: function () {
     },
     open: function () {
-        var viewBookmark = new ViewBookmark({model: this.model});
-        viewBookmark.render();
+        var viewURL = new ViewURL({model: this.model});
+        viewURL.render();
     },
     stopPropagation: function (e) {
         e.stopPropagation();

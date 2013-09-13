@@ -1,4 +1,4 @@
-var $ = require('jquery');
+/*var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var util = require('util');
@@ -7,7 +7,7 @@ var _state = require('models/state');
 var Item = require('models/item');
 var AppView = require('views/view');
 var ListsEditor = require('views/lists.editor/editor');
-var template = require('templates/dialogs/add.bookmark');
+var template = require('templates/dialogs/add.url');
 
 var AddBookmark = AppView.extend({
     attributes: function () {
@@ -29,12 +29,12 @@ var AddBookmark = AppView.extend({
     },
     renderView: function () {
         var compiledTemplate = _.template(template, {
-            bookmark: this.model
+            item: this.model
         });
         this.$el.html(compiledTemplate).appendTo('#dialogs');
         //Append the lists
         this.listsView = new ListsEditor({collection: new Lists(this.list)})
-        this.$('.bkmrk-lists').html(this.listsView.render().el);
+        this.$('.item-lists').html(this.listsView.render().el);
         //Show the dialog
         this.$el.modal('show');
         return this;
@@ -45,9 +45,9 @@ var AddBookmark = AppView.extend({
     save: function () {
         var self = this;
         this.cleanErrors();
-        var title = this.$('[name=bkmrk-title]').val();
-        var url = this.$('[name=bkmrk-url]').val();
-        var note = this.$('[name=bkmrk-note]').val();
+        var title = this.$('[name=item-title]').val();
+        var url = this.$('[name=item-url]').val();
+        var note = this.$('[name=item-note]').val();
         var lists = this.listsView.collection.map(function (list) {
             _state.createListIfNew(list.getFilter());
             return list.getFilter();
@@ -64,26 +64,26 @@ var AddBookmark = AppView.extend({
                 title: ($.trim(title) == '' ? url : url),
                 url: url,
                 note: note
-            }, {wait: true, success: function (bookmark) {
-                _state.addItemToLists(bookmark);
+            }, {wait: true, success: function (item) {
+                _state.addItemToLists(item);
                 self.close();
             }})
         }
     },
     cleanErrors: function () {
-        this.unSetAllErrorFields(this.$("#bkmrk-url"));
+        this.unSetAllErrorFields(this.$("#item-url"));
     },
     validateFields: function (url) {
         if (url == "")
-            this.setErrorField(this.$("#bkmrk-url"), this.$("#bkmrk-url-blank"));
+            this.setErrorField(this.$("#item-url"), this.$("#item-url-blank"));
         else if (!util.isValidURL(url))
-            this.setErrorField(this.$("#bkmrk-url"), this.$("#bkmrk-url-invalid"));
+            this.setErrorField(this.$("#item-url"), this.$("#item-url-invalid"));
     },
     close: function () {
         this.$el.modal('hide');
     },
     shown: function () {
-        this.$('[name=bkmrk-url]').focus();
+        this.$('[name=item-url]').focus();
     },
     hidden: function () {
         this.dispose();
@@ -102,3 +102,4 @@ var AddBookmark = AppView.extend({
     }
 });
 module.exports = AddBookmark;
+*/

@@ -5,28 +5,40 @@ var _state = require('models/state');
 var Container = require('views/center/container/container');
 var ContainerChildList = require('views/center/container/list/child.list');
 var ListsTemplate = require('templates/containers/lists');
-var AddBookmark = require('views/dialogs/add.bookmark');
+var AddItem = require('views/center/container/item/item.add');
 
 var FutureContainer = Container.extend({
     initializeView: function (options) {
         Container.prototype.initializeView.call(this, options);
+
+        this.model.list.getItems().on('add', this.itemAdded, this);
+        this.model.list.getItems().on('remove', this.itemRemoved, this);
+
         this.events['click .container-list-icon'] = 'navigateToParentList';
         this.events['click .add-list-icon'] = 'addList';
         this.events['click .add-list-save'] = 'saveAddList';
         this.events['click .add-list-cancel'] = 'cancelAddList';
-        this.events['click .opt-add-bkmrk'] = 'addBkmrk';
     },
     renderView: function () {
         this       
             .renderContainer()     
             .renderHeader()            
             .renderChildsLists()
-            .renderItems();
+            .renderItems()
+            .renderFooter();
+        return this;
+    },
+    getItems: function () {
+        return this.model.list.getItems();
+    },
+    renderFooter: function () {
+        this.footer = new AddItem({ model: this.model });
+        this.$('.footer').append(this.footer.render().el);
         return this;
     },
     renderChildsLists: function () {
         var compiledTemplate = _.template(ListsTemplate, { collapsed: this.collapsed });
-        $('.box', this.el).append(compiledTemplate);
+        $('.box', this.el).prepend(compiledTemplate);
         //Render childs lists
         for (var i = 0, l = this.model.list.children.length; i < l; i++) {
             var childList = this.model.list.children.models[i];
@@ -102,10 +114,6 @@ var FutureContainer = Container.extend({
     },
     scrollToAddList: function () {
         this.$('.box').animate({scrollTop: this.$('.add-list').offset().left + 60}, 150);
-    },
-    addBkmrk: function () {
-        var addBookmark = new AddBookmark({list: this.model.list});
-        addBookmark.render();
     }
 });
 module.exports = FutureContainer;

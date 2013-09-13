@@ -87,7 +87,7 @@ var State = Backbone.Model.extend({
                     list.addItem(item);
                 }
             });
-        }
+        }        
     },
     //TODO: Now all lists are loaded in memory.
     //      It should loads lists from server in an optmized way
@@ -105,6 +105,14 @@ var State = Backbone.Model.extend({
             case 1: return this.laterListboards.get(listboardId);
             case 2: return this.futureListboards.get(listboardId);
         }            
+    },
+    addItemToLists: function (item) {
+        var self = this;
+        _.map(item.get('lists'), function (filter) {
+            var list = self.getListByFilter(filter);
+            if (list)
+                list.addItem(item);
+        });
     },
     addItemToContainers: function (listboardType, listboardId, item) {
         var listboard = this.getListboard(listboardType, listboardId);

@@ -18,7 +18,7 @@ var ListsEditorList = AppView.extend({
     renderView: function () {
         var filter = this.model.getFilter();
         var compiledTemplate = _.template(template, {
-            label: filter.substring(5, filter.length)
+            label: filter.substring(6, filter.length)
         });
         this.$el.html(compiledTemplate);
         return this;

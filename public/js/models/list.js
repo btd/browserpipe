@@ -30,7 +30,7 @@ module.exports = List = AppModel.extend({
         return (this.get('path') === "" ? "" : this.get('path') + "/") + this.get('label');
     },
     isUserList: function () {
-        return this.getFilter().substring(0, 5) === "Lists/";
+        return this.getFilter().substring(0, 6) === "Lists/";
     },
     addChildren: function (children) {
         this.children.add(children);

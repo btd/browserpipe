@@ -55,16 +55,15 @@ ItemSchema.statics.findAllActiveByContainers = function (user, containerIds) {
         .execWithPromise();
 }
 
-ItemSchema.statics.findAllByContainers = function (user, containerIds) {
+ItemSchema.statics.findAllActiveByLists = function (user, filters) {
     return this
-        .find({user: user, containers: {$in: containerIds}}, '_id type containers lists title favicon url note externalId active closedDate')
+        .find({user: user, lists: {$in: filters}, active: true}, '_id type containers lists title favicon url note externalId active closedDate')
         .execWithPromise();
 }
 
-
-ItemSchema.statics.findAllActiveByFilters = function (user, filters) {
+ItemSchema.statics.findAllByContainers = function (user, containerIds) {
     return this
-        .find({user: user, lists: {$in: filters}, active: true}, '_id type containers lists title favicon url note externalId active closedDate')
+        .find({user: user, containers: {$in: containerIds}}, '_id type containers lists title favicon url note externalId active closedDate')
         .execWithPromise();
 }
 
@@ -72,6 +71,10 @@ ItemSchema.statics.removeAllByFilters = function (user, filters) {
     return this
         .remove({user: user, lists: {$in: filters}})
         .execWithPromise();
+}
+
+ItemSchema.statics.byId = function (id) {
+    return qfindOne({ _id: id});
 }
 
 ItemSchema.virtual('cid').get(function() {
@@ -82,5 +85,8 @@ ItemSchema.virtual('cid').set(function(cid) {
   return this._cid = cid;
 });
 
+var qfindOne = function (obj) {
+    return Item.findOne(obj).execWithPromise();
+};
 
 module.exports = Item = mongoose.model('Item', ItemSchema);

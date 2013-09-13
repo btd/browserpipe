@@ -1,0 +1,16 @@
+<div class="input-append add-item hide">
+	<div class="control-group">    
+      <div class="controls">
+		  <textarea class="item-url" cols="2"></textarea>
+		  <div>
+		  	<span class="help-inline hide item-url-blank">Cannot be blank</span>
+		  	<span class="help-inline hide item-url-invalid">Invalid URL</span>
+		  </div>
+		  <div>
+		  	<button class="btn add-item-save" type="button"><i class="icon-ok save-icon">&nbsp;Add URL</i></button>
+		  	<button class="btn add-item-cancel" type="button"><i class="icon-remove cancel-icon"></i></button>
+		</div>
+	</div>
+  </div>
+</div>
+<a class="opt-add-item">Add URL<a>

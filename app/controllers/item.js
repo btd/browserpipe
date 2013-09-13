@@ -8,7 +8,11 @@ var _ = require('lodash'),
 
 //Create item
 exports.create = function (req, res) {
-    var item = new Item(_.pick(req.body, 'lists', 'title', 'url', 'note', 'cid'));
+    var item = new Item(_.pick(req.body, 'type', 'lists', 'containers', 'title', 'url', 'note', 'cid'));
+
+    if(!item.title)
+        item.title = item.url;
+
     item.user = req.user;
     item.saveWithPromise()
         .then(responses.sendModelId(res, item._id))
@@ -18,8 +22,13 @@ exports.create = function (req, res) {
 
 //Update item
 exports.update = function (req, res) {    
-    var item = req.currentItem;
-    _.merge(item, _.pick(req.body, 'lists', 'title', 'url', 'note'));
+    var item = req.currentItem;        
+    //We mark them so mongoose saves them
+    if(req.body.containers)
+        item.markModified('containers')
+    if(req.body.lists)
+        item.markModified('lists')
+    _.merge(item, _.pick(req.body, 'type', 'lists', 'containers', 'title', 'url', 'note', 'cid'));
     item.saveWithPromise()
         .then(responses.sendModelId(res, item._id))
         .fail(errors.ifErrorSendBadRequest(res))
@@ -36,7 +45,7 @@ exports.item = function (req, res, next, id) {
                 if (item.user !=  req.user._id.toString()) 
                     errors.sendForbidden(res);
             else {
-                req.currentList = item;
+                req.currentItem = item;
                 next()
             }}
         }).fail(function(err) {

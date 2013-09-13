@@ -38,7 +38,8 @@ var Container = AppView.extend({
         this         
             .renderContainer()   
             .renderHeader()
-            .renderItems();
+            .renderItems()
+            .renderFooter();
         return this;
     },
     renderHeader: function () {
@@ -46,8 +47,13 @@ var Container = AppView.extend({
         this.$('.header').append(this.header.render().el);
         return this;
     },
+    renderFooter: function () {
+    },
+    getItems: function () {
+        return this.model.getItems();
+    },
     renderItems: function () {
-        var items = this.model.getItems();
+        var items = this.getItems();
         for (var index in items.models) {
             this.renderItem(items.at(index));
         }

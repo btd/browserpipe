@@ -20,7 +20,7 @@
             left: -150px !important;
         }
     }
-    .header {        
+    .header-inner {        
         .clearfix();   
         min-height: 20px; 
         position: relative;
@@ -88,8 +88,6 @@
     }
     .box {                
         overflow-y: auto; 
-        min-height: 80px;
-        margin-bottom: 6px;
         position: relative;
 
         .add-list-icon {    
@@ -99,18 +97,10 @@
             right: 12px;
             top: -4px;            
         }
-        .add-list {
-            margin: 4px 5px 6px !important;
+        .add-list {       
 
-            .add-list-save {
-                .flatten();
-                .tobutton(@blue, darken(@blue, 6%));
-            }
-            .add-list-cancel {
-                margin-left: 6px;
-                vertical-align: bottom;
-                font-size: 13px;
-                color: @grey4;       
+            input {
+                margin-bottom: 0;
             }
         }
         .lists {
@@ -198,13 +188,25 @@
                 }
             }   
         }
-    }     
-    .opt-add-bkmrk {
-        color: #777;
-        font-size: 12px;
+    }   
+    .footer {
 
-        &:hover {
-            color: #333;
+        .add-item {
+
+            .item-url {
+                width: 228px;
+                margin: 0;
+                resize: vertical;
+            }
+        }        
+        .opt-add-item {
+            color: #777;
+            font-size: 12px;
+
+            &:hover {
+                color: #333;
+                cursor: pointer;
+            }
         }
     }  
 }

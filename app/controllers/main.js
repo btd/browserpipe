@@ -1,6 +1,7 @@
 /* jshint node: true */
 
 var _ = require('lodash'),
+    q = require('q'),
     mongoose = require('mongoose'),
     Item = mongoose.model('Item'),
     List = mongoose.model('List');
@@ -27,11 +28,23 @@ exports.home = function (req, res) {
                     return _.map(listboard.containers, '_id');
                 }).flatten().value();
 
-                return Item.findAllActiveByContainers(
+                var filters = _.map(lists, 'fullPath');
+
+                var itemsByContainersPromise = Item.findAllActiveByContainers(
                         req.user,
                         containerIds
-                    ).then(function (items) {
-                        return [lists, items];
+                    );
+                var itemsByListsPromise = Item.findAllActiveByLists(
+                        req.user,
+                        filters
+                    );
+
+                return q.all([
+                        itemsByContainersPromise,
+                        itemsByListsPromise
+                    ])
+                    .spread(function (itemsByContainers, itemsByLists) {
+                        return [lists, _.union(itemsByContainers, itemsByLists)];
                     });
             }).spread(function (lists, items) {
                 res.render('main/home', {
