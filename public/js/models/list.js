@@ -41,7 +41,7 @@ module.exports = List = AppModel.extend({
     getItems: function () {
         //Check if children are not loaded at init
         if (!this.items) {
-            var _state = require('models/state')
+            var _state = require('models/state');
             var items = _state.getItemsByFilter(this.getFilter());
             this.items = new ItemCollection(items);
         }
@@ -50,5 +50,9 @@ module.exports = List = AppModel.extend({
     addItem: function (item) {
         var items = this.getItems();
         items.add(item);
+    },
+    removeItem: function (itemId) {
+        var items = this.getItems();
+        items.remove(itemId);
     }
 });

@@ -157,8 +157,9 @@
                 background: #FFFFFF;
                 border: 1px solid @grey;
                 margin: 0 0 6px 0;
-                padding: 3px 6px;     
-                font-size: 14x;       
+                padding: 3px 6px 3px 6px;     
+                font-size: 14x; 
+                position: relative;      
                 .box-sizing(border-box);  
 
                 &:hover {
@@ -185,6 +186,16 @@
                         max-height: 200px;
                         max-width: 200px;
                     }
+                }
+                .remove-item {
+                    display: none;
+                    margin: 3px 3px 3px 2px;
+                    .opacity(50);
+
+                    &:hover {
+                        cursor:pointer; 
+                        .opacity(100);
+                    } 
                 }
             }   
         }

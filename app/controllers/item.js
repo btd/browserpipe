@@ -6,6 +6,22 @@ var _ = require('lodash'),
     responses = require('../util/responses.js'),
     errors = require('../util/errors.js');
 
+var saveItem = function(req, res, item, delta){
+    item.saveWithPromise()
+        .then(responses.sendModelId(res, item._id))
+        .fail(errors.ifErrorSendBadRequest(res))
+        .then(updateClients(req, delta))      
+        .done();
+}
+
+var updateClients = function(req, delta) {
+    return function(){
+        req.sockets.forEach(function(s) {
+            s.emit(delta.type, delta.data);
+        });
+    }
+}
+
 //Create item
 exports.create = function (req, res) {
     var item = new Item(_.pick(req.body, 'type', 'lists', 'containers', 'title', 'url', 'note', 'cid'));
@@ -14,25 +30,33 @@ exports.create = function (req, res) {
         item.title = item.url;
 
     item.user = req.user;
-    item.saveWithPromise()
-        .then(responses.sendModelId(res, item._id))
-        .fail(errors.ifErrorSendBadRequest(res))
-        .done();
+
+    var delta = {
+        type: 'create.item',
+        data: item
+    }
+    
+    saveItem(req, res, item, delta);
 }
 
 //Update item
 exports.update = function (req, res) {    
     var item = req.currentItem;        
     //We mark them so mongoose saves them
-    if(req.body.containers)
-        item.markModified('containers')
-    if(req.body.lists)
-        item.markModified('lists')
+    //TODO: add addcontainer/addlist/removecontainer/removelist rest calls to optimize    
+    item.markModified('containers');
+    item.markModified('lists');
     _.merge(item, _.pick(req.body, 'type', 'lists', 'containers', 'title', 'url', 'note', 'cid'));
-    item.saveWithPromise()
-        .then(responses.sendModelId(res, item._id))
-        .fail(errors.ifErrorSendBadRequest(res))
-        .done();
+    //We need to merge array manually, because empty arrays are not merged
+    item.containers = req.body.containers;
+    item.lists = req.body.lists;
+
+    var delta = {
+        type: 'update.item',
+        data: item
+    }
+   
+    saveItem(req, res, item, delta);
 }
 
 //Find item by id
@@ -56,7 +80,15 @@ exports.item = function (req, res, next, id) {
 //Delete item
 exports.destroy = function (req, res) {
     var item = req.currentItem
-    item.remove(function () {
-        res.json({ _id: item._id })
-    })
+
+    var delta = {
+        type: 'delete.item',
+        data: item
+    }
+
+    item.removeWithPromise()
+        .then(responses.sendModelId(res, item._id))
+        .fail(errors.ifErrorSendBadRequest(res))
+        .then(updateClients(req, delta))      
+        .done();
 }

@@ -119,7 +119,7 @@ var fillAndSendDeleteContainersDelta = function(req, nowListboard, type, externa
     }
 }
 
-var fillAndSendCreateItemsDelta = function(req, nowListboard, type, externalIds) {
+var fillAndSendCreateUpdateItemsDelta = function(req, type, externalIds) {
     return function(){                
         if(externalIds.length > 0) {            
             q.all(_.map(externalIds, function(externalId){ 
@@ -127,36 +127,7 @@ var fillAndSendCreateItemsDelta = function(req, nowListboard, type, externalIds)
             })).spread(function () { 
                 var items = arguments;
                 req.sockets.forEach(function(s) {
-                    s.emit(type, { 
-                        listboardType: 0,
-                        listboardId: nowListboard._id,
-                        items: _.compact(items) 
-                    });
-                });
-            }).done();
-        }
-    }
-}
-
-var fillAndSendDeleteItemsDelta = function(req, nowListboard, type, externalIdsAndContainerId) {
-    return function(){                
-        if(externalIdsAndContainerId.length > 0) {
-            q.all(_.map(externalIdsAndContainerId, function(externalIdAndContainerId){ 
-                return Item.getByExternalId(req.user, externalIdAndContainerId.externalId)
-                            .then(function(item) {
-                                return {
-                                    _id: item._id,
-                                    containerId: externalIdAndContainerId.containerId
-                                }
-                            });
-            })).spread(function () { 
-                var items = arguments;
-                req.sockets.forEach(function(s) {
-                    s.emit(type, { 
-                        listboardType: 0,
-                        listboardId: nowListboard._id,
-                        items: _.compact(items) 
-                    });
+                    s.emit(type, _.compact(items) );
                 });
             }).done();
         }
@@ -180,30 +151,31 @@ exports.sync = function (req, res) {
     var createdContainersExternalIds = [];
     var deletedContainersExternalIds = [];
     var createdItemsExternalIds = [];
-    var deletedItemsExternalIdsAndContainerId = [];
+    var updatedtemsExternalIds = [];
     
     //Create the new ones
     var containersExternalIds = _.map(nowListboard.containers, function(cont){ return cont.externalId});
     _.map(windows, function (win) {
         //If there is no container for this window, we create it
         if(_.indexOf(containersExternalIds, win.externalId) == -1){ 
+            
             nowListboard.addContainer({
                 type: 0,
                 title: 'Window',
-                externalId: win.externalId,
-                active: true
+                externalId: win.externalId
             });     
+            
             createdContainersExternalIds.push(win.externalId);
         }
     });      
 
-    //Deactivate the closed containers
-    var activeNowContainers = nowListboard.containers.filter( function(cont) { return cont.active  });
+    //Deactivate the closed containers    
     var windowsExternalIds = _.map(windows, function(win){ return win.externalId});
-    _.map(activeNowContainers, function (cont) {        
+    _.map(nowListboard.containers, function (cont) {        
         if(_.indexOf(windowsExternalIds, cont.externalId) == -1){ 
-            cont.active = false;
-            cont.closedDate = syncDate;   
+            
+            nowListboard.removeContainer(cont);
+            
             deletedContainersExternalIds.push(cont.externalId);
         }
     });    
@@ -217,10 +189,10 @@ exports.sync = function (req, res) {
             var result = _.map(windows, function (win) {
                 
                 //We get the container that already exists
-                var container = nowListboard.getActiveContainerByExternalId(win.externalId);
+                var container = nowListboard.getContainerByExternalId(win.externalId);
                 if(container){                    
 
-                    return Item.findActiveByContainer(user, container._id).then(function(items){
+                    return Item.findByContainer(user, container._id).then(function(items){
                         var promises = [];
 
                         //Create the new items
@@ -228,13 +200,14 @@ exports.sync = function (req, res) {
                         _.map(win.tabs, function (tab) {    
                             //If it does not contain an item for this tab, we create it
                             if(_.indexOf(itemsExternalIds, tab.externalId) == -1){ 
+                                
                                 var item = new Item(_.pick(tab, 'externalId', 'title', 'url', 'favicon'));
                                 item.type = 0;
                                 item.user = user._id;
-                                item.containers = [container._id];
-                                item.active = true;                            
+                                item.containers = [container._id];          
                                 var promise = item.saveWithPromise();
                                 promises.push(promise);
+                                
                                 createdItemsExternalIds.push(item.externalId);
                             }
                         });     
@@ -243,15 +216,13 @@ exports.sync = function (req, res) {
                         var tabsExternalIds = _.map(win.tabs, function(tab){ return tab.externalId});                    
                         _.map(items, function (item) {    
                             //If there is no tab for that item, we deactivate it
-                            if(_.indexOf(tabsExternalIds, item.externalId) == -1){ 
-                                item.active = false;
-                                item.closedDate = syncDate;          
+                            if(_.indexOf(tabsExternalIds, item.externalId) == -1) { 
+                                
+                                item.containers.remove(container._id);
                                 var promise = item.saveWithPromise();
                                 promises.push(promise);
-                                deletedItemsExternalIdsAndContainerId.push({
-                                    externalId: item.externalId,
-                                    containerId: container._id
-                                });
+                                
+                                updatedtemsExternalIds.push(item.externalId);
                             }
                         });    
 
@@ -266,7 +237,7 @@ exports.sync = function (req, res) {
         .fail(errors.ifErrorSendInternalServer(res))
         .then(fillAndSendCreateContainersDelta(req, nowListboard, 'bulk.create.container', createdContainersExternalIds))
         .then(fillAndSendDeleteContainersDelta(req, nowListboard, 'bulk.delete.container', deletedContainersExternalIds))
-        .then(fillAndSendCreateItemsDelta(req, nowListboard, 'bulk.create.item', createdItemsExternalIds))
-        .then(fillAndSendDeleteItemsDelta(req, nowListboard, 'bulk.delete.item', deletedItemsExternalIdsAndContainerId))
+        .then(fillAndSendCreateUpdateItemsDelta(req, 'bulk.create.item', createdItemsExternalIds))
+        .then(fillAndSendCreateUpdateItemsDelta(req, 'bulk.update.item', updatedtemsExternalIds))
         .done();    
 }

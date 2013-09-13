@@ -61,9 +61,21 @@ var Container = AppView.extend({
     },
     renderItem: function (item) {
         var $items = this.$('.items');
-        var containerItem = new ContainerItem({model: item});
-        this.containerItemViews.push(containerItem);
-        $items.append(containerItem.render().el);
+        var containerItemView = new ContainerItem({model: item});
+        this.containerItemViews.push(containerItemView);
+        this.listenToItemEvents(containerItemView);        
+        $items.append(containerItemView.render().el);
+    },
+    listenToItemEvents: function (containerItemView) {
+        this.listenTo(containerItemView, "itemRemoved", this.removeItem, this);
+    },
+    removeItem: function(itemView) { //overrided by future container        
+        var self = this;
+        itemView.model.save({
+            containers: _.without(itemView.model.get('containers'), this.model.id)
+        }, {wait: true, success: function (item) {
+            self.itemRemoved(item);
+        }})        
     },
     itemAdded: function (item) {
         this.renderItem(item);

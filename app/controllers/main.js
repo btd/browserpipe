@@ -16,13 +16,7 @@ exports.home = function (req, res) {
         List.getAll(req.user)
             .then(function (lists) {
                 //We only load the ones from opened containers
-                var listboards = _.union(nowListboards, laterListboards, futureListboards);
-                //Remove non active containers
-                 _(listboards).map(function (listboard) {
-                    listboard.containers = listboard.containers.filter(function(cont) {
-                        return cont.active;
-                    })
-                });                
+                var listboards = _.union(nowListboards, laterListboards, futureListboards);                
                 //Load container ids
                 var containerIds = _(listboards).map(function (listboard) {
                     return _.map(listboard.containers, '_id');
@@ -30,11 +24,11 @@ exports.home = function (req, res) {
 
                 var filters = _.map(lists, 'fullPath');
 
-                var itemsByContainersPromise = Item.findAllActiveByContainers(
+                var itemsByContainersPromise = Item.findAllByContainers(
                         req.user,
                         containerIds
                     );
-                var itemsByListsPromise = Item.findAllActiveByLists(
+                var itemsByListsPromise = Item.findAllByLists(
                         req.user,
                         filters
                     );

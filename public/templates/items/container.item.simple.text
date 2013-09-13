@@ -1,3 +1,4 @@
+<i class="icon-remove remove-item" title="Close"></i>
 <img class="favicon" src="<%= item.get('favicon') %>" alt="Favicon" />
-<a target="_blank" href="<%= item.get('url') %>"><%= $.trim(item.get('title')) != "" ?  item.get('title') : item.get('url') %></a>
+<a class="title" target="_blank" href="<%= item.get('url') %>"><%= $.trim(item.get('title')) != "" ?  item.get('title') : item.get('url') %></a>
 <div class="description"><%= item.get('note') %></div>

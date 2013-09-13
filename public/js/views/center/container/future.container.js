@@ -31,6 +31,14 @@ var FutureContainer = Container.extend({
     getItems: function () {
         return this.model.list.getItems();
     },
+    removeItem: function(itemView) { //overrided by future container        
+        var self = this;
+        itemView.model.save({
+            lists: _.without(itemView.model.get('lists'), this.model.list.getFilter())
+        }, {wait: true, success: function (item) {
+            self.removeItemView(itemView);
+        }})        
+    },
     renderFooter: function () {
         this.footer = new AddItem({ model: this.model });
         this.$('.footer').append(this.footer.render().el);
@@ -58,6 +66,14 @@ var FutureContainer = Container.extend({
             wait: true,
             success: function () {
                 childView.dispose();
+            }
+        });
+    },
+    removeItemView: function (itemView) {
+        this.model.list.removeItem(itemView.model, {
+            wait: true,
+            success: function () {
+                itemView.dispose();
             }
         });
     },

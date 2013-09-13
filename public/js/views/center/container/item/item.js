@@ -10,7 +10,10 @@ var ContainerItem = AppView.extend({
     tagName: 'li',
     events: {
         "click": "open",
-        "click a": "stopPropagation"
+        "click a": "stopPropagation",
+        "click .remove-item": "removeItemClicked",
+        "mouseenter": "mouseOverItem",
+        "mouseleave": "mouseLeaveItem"
     },
     attributes: function () {
         return {
@@ -19,6 +22,13 @@ var ContainerItem = AppView.extend({
         }
     },
     initializeView: function () {
+        var self = this;
+        this.listenTo(this.model, 'change:title', function () {
+            self.$('.title').html(self.model.get('title'));
+        });
+        this.listenTo(this.model, 'change:note', function () {
+            self.$('.description').html(self.model.get('note'));
+        });
     },
     renderView: function () {
         var compiledTemplate = _.template(mainTemplate, {item: this.model});
@@ -31,8 +41,20 @@ var ContainerItem = AppView.extend({
         var viewURL = new ViewURL({model: this.model});
         viewURL.render();
     },
+    removeItemClicked: function(e) {
+        e.stopPropagation();
+        this.trigger('itemRemoved', this);
+    },
     stopPropagation: function (e) {
         e.stopPropagation();
+    },
+    mouseOverItem: function(e) {
+        this.$('.remove-item').show();
+        this.$('.favicon').hide();        
+    },
+    mouseLeaveItem: function(e) {        
+        this.$('.favicon').show();        
+        this.$('.remove-item').hide();
     }
 });
 module.exports = ContainerItem;

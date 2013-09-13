@@ -30,25 +30,19 @@ ListboardSchema.methods.addContainer = function (cont) {
         title: cont.title,
         filter: cont.filter,
         externalId: cont.externalId,
-        active: cont.active,
         cid: cont.cid
     });
+    return this;
+};
+
+ListboardSchema.methods.removeContainer = function (cont) {
+    this.containers.remove(cont);
     return this;
 };
 
 ListboardSchema.methods.last = function () {
     return _.last(this.containers);
 };
-
-ListboardSchema.methods.getActiveContainerByExternalId = function (externalId) {
-    var result = _.filter(this.containers, function(cont){ return cont.externalId === externalId && cont.active; });
-    if(result.length == 1)
-        return result[0];
-    else if(result.length === 0)
-        return null
-    else if(result.length > 1)
-        throw "Cannot be two containers with same external id on a listboard"
-}
 
 ListboardSchema.methods.getContainerByExternalId = function (externalId) {
     var result = _.filter(this.containers, function(cont){ return cont.externalId === externalId; });
