@@ -5,26 +5,48 @@ var _state = require('models/state');
 var Container = require('views/center/container/container');
 var ContainerChildList = require('views/center/container/list/child.list');
 var ListsTemplate = require('templates/containers/lists');
+var AddItem = require('views/center/container/item/item.add');
 
 var FutureContainer = Container.extend({
     initializeView: function (options) {
         Container.prototype.initializeView.call(this, options);
+
+        this.model.list.getItems().on('add', this.itemAdded, this);
+        this.model.list.getItems().on('remove', this.itemRemoved, this);
+
         this.events['click .container-list-icon'] = 'navigateToParentList';
         this.events['click .add-list-icon'] = 'addList';
         this.events['click .add-list-save'] = 'saveAddList';
         this.events['click .add-list-cancel'] = 'cancelAddList';
     },
     renderView: function () {
-        this
-            .renderHeader()
-            .renderBox()
+        this       
+            .renderContainer()     
+            .renderHeader()            
             .renderChildsLists()
-            .renderItems();
+            .renderItems()
+            .renderFooter();
+        return this;
+    },
+    getItems: function () {
+        return this.model.list.getItems();
+    },
+    removeItem: function(itemView) { //overrided by future container        
+        var self = this;
+        itemView.model.save({
+            lists: _.without(itemView.model.get('lists'), this.model.list.getFilter())
+        }, {wait: true, success: function (item) {
+            self.removeItemView(itemView);
+        }})        
+    },
+    renderFooter: function () {
+        this.footer = new AddItem({ model: this.model });
+        this.$('.footer').append(this.footer.render().el);
         return this;
     },
     renderChildsLists: function () {
         var compiledTemplate = _.template(ListsTemplate, { collapsed: this.collapsed });
-        $('.box', this.el).append(compiledTemplate);
+        $('.box', this.el).prepend(compiledTemplate);
         //Render childs lists
         for (var i = 0, l = this.model.list.children.length; i < l; i++) {
             var childList = this.model.list.children.models[i];
@@ -44,6 +66,14 @@ var FutureContainer = Container.extend({
             wait: true,
             success: function () {
                 childView.dispose();
+            }
+        });
+    },
+    removeItemView: function (itemView) {
+        this.model.list.removeItem(itemView.model, {
+            wait: true,
+            success: function () {
+                itemView.dispose();
             }
         });
     },

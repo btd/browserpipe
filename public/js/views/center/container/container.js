@@ -6,6 +6,7 @@ var _state = require('models/state');
 var AppView = require('views/view');
 var ContainerHeader = require('views/center/container/header/header');
 var ContainerItem = require('views/center/container/item/item');
+var template = require('templates/containers/container');
 
 var Container = AppView.extend({
     tagName: 'div',
@@ -28,25 +29,31 @@ var Container = AppView.extend({
     clean: function () {
         $(this.el).empty();
     },
+    renderContainer: function() {
+        var compiledTemplate = _.template(template, {});
+        $(this.el).html(compiledTemplate);
+        return this;
+    },
     renderView: function () {
-        this
+        this         
+            .renderContainer()   
             .renderHeader()
-            .renderBox()
-            .renderItems();
+            .renderItems()
+            .renderFooter();
         return this;
     },
     renderHeader: function () {
         this.header = new ContainerHeader({ model: this.model });
-        $(this.el).append(this.header.render().el);
+        this.$('.header').append(this.header.render().el);
         return this;
     },
-    renderBox: function () {
-        $(this.el).append('<div class="box"></div>');
-        return this;
+    renderFooter: function () {
+    },
+    getItems: function () {
+        return this.model.getItems();
     },
     renderItems: function () {
-        $('.box', this.el).append('<ul class="items"></ul>');
-        var items = this.model.getItems();
+        var items = this.getItems();
         for (var index in items.models) {
             this.renderItem(items.at(index));
         }
@@ -54,9 +61,21 @@ var Container = AppView.extend({
     },
     renderItem: function (item) {
         var $items = this.$('.items');
-        var containerItem = new ContainerItem({model: item});
-        this.containerItemViews.push(containerItem);
-        $items.append(containerItem.render().el);
+        var containerItemView = new ContainerItem({model: item});
+        this.containerItemViews.push(containerItemView);
+        this.listenToItemEvents(containerItemView);        
+        $items.append(containerItemView.render().el);
+    },
+    listenToItemEvents: function (containerItemView) {
+        this.listenTo(containerItemView, "itemRemoved", this.removeItem, this);
+    },
+    removeItem: function(itemView) { //overrided by future container        
+        var self = this;
+        itemView.model.save({
+            containers: _.without(itemView.model.get('containers'), this.model.id)
+        }, {wait: true, success: function (item) {
+            self.itemRemoved(item);
+        }})        
     },
     itemAdded: function (item) {
         this.renderItem(item);

@@ -12,7 +12,7 @@ var ContainerHeader = AppView.extend({
     },
     attributes: function () {
         return {
-            class: 'header'
+            class: 'header-inner'
         }
     },
     initializeView: function () {

@@ -6,9 +6,6 @@ var ContainerSchema = new Schema({
     
     //For 0 container (associated with a window)
     externalId: {type: String, trim: true},
-    lastSyncDate: Date,
-    closedDate: Date,
-    active: {type: Boolean, default: true},
 
     //For 2 container (future containers)
     filter: {type: String, trim: true}

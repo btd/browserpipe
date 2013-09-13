@@ -5,6 +5,10 @@ module.exports = AppModel.extend({
     initialize: function (options) {
         //forces the cid to be sent to the server
         this.set('cid', this.cid);
+
+        //when an item is created we add it to the _state list
+        var _state = require('models/state');
+        _state.items.add(this);
     },
     getLists: function () {
         return _.map(this.get('lists'), function (filter) {

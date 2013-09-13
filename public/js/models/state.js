@@ -7,6 +7,7 @@ var Backbone = require('backbone'),
 
 var State = Backbone.Model.extend({
     lists: {},
+    items: new ItemCollection(),
     loadInitialData: function () {
 
         //Loads Lists
@@ -87,7 +88,7 @@ var State = Backbone.Model.extend({
                     list.addItem(item);
                 }
             });
-        }
+        }        
     },
     //TODO: Now all lists are loaded in memory.
     //      It should loads lists from server in an optmized way
@@ -106,23 +107,60 @@ var State = Backbone.Model.extend({
             case 2: return this.futureListboards.get(listboardId);
         }            
     },
-    addItemToContainers: function (listboardType, listboardId, item) {
-        var listboard = this.getListboard(listboardType, listboardId);
-        if(listboard)
-            _.map(item.get('containers'), function (containerId) {
-                var container = listboard.containers.get(containerId);
-                if(container && !container.items.get(item.cid))
-                    container.addItem(item);
-            });            
+    addItemToLists: function (item) {
+        var self = this;
+        _.map(item.get('lists'), function (filter) {
+            var list = self.getListByFilter(filter);
+            if (list)
+                list.addItem(item);
+        });
     },
-    removeItemFromContainers: function (listboardType, listboardId, containerId, itemId) {
+    addItemToContainers: function (item) {
+        var containers = this.getContainersByIds(item.get('containers'));
+        _.map(containers, function (container) {
+            if(!container.items.get(item.cid))
+                container.addItem(item);
+        });                
+    },
+    getItemById: function (id) {
+        return this.items.get(id);
+    },
+    getContainersByIds: function(containerIds) {
+        var self = this;
+        var listboards = _.union(
+            this.nowListboards.models, 
+            this.laterListboards.models, 
+            this.futureListboards.models
+        );   
+        return _.chain(listboards)        
+            .map(function (listboard) {
+                return  self.getContainersByIdsAndListboard(containerIds, listboard);
+            })
+            .flatten()
+            .compact()
+            .value();
+    },
+    getContainersByIdsAndListboard: function(containerIds, listboard) {
+        return _.map(containerIds, function (containerId) {
+            var container = listboard.containers.get(containerId);
+            if(container)
+                return container;
+        });
+    },
+    getItemFromContainers: function (listboardType, listboardId, containerId, itemId) {
         var listboard = this.getListboard(listboardType, listboardId);
         if(listboard){
             var container = listboard.containers.get(containerId);
             if(container && container.items.get(itemId))
-                container.removeItem(itemId);
+                return container.items.get(itemId);
         }
-
+        return null;
+    },
+    removeItemFromContainers: function (item) {
+        var containers = this.getContainersByIds(item.containers);
+        _.map(containers, function (container) {
+            container.removeItem(itemId);
+        }); 
     },
     createListIfNew: function (filter) {
         var self = this;

@@ -23,7 +23,7 @@
  if (filter == "Trash")
  query = "#"
  else
- query = "#" + filter.substring(5);
+ query = "#" + filter.substring(6);
  break;
  case 2: //Search
  //Removes "Search/"

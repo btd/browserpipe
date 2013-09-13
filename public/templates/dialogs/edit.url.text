@@ -18,7 +18,7 @@
       <a class="opt-button opt-move-to-trash pull-left" href="#" title="Delete listboard"><img src="/img/bin.png" alt="Move to trash"></a>  
       <div class="move-to-trash-alert alert alert-block pull-left" style="display:none;">  
         <p>Are you sure that you want to delete the listboard?</p>     
-        <p><small>Note: Lists and bookmarks will remain on the list tree</small></p>    
+        <p><small>Note: Lists and urls will remain on the list tree</small></p>    
         <p>   
           <a class="opt-move-to-trash-yes" href="#">Delete it</a><a class="opt-move-to-trash-no opt-margin-left" href="#">No, abort!</a>
           <a href="#" class="tooltip" data-toggle="tooltip" title="">help</a>

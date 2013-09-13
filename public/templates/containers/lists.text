@@ -1,8 +1,14 @@
 <a href="#" class="add-list-icon">&nbsp;Add list</a>
 <ul class="lists <% if(collapsed) { %>collapsed<% } %>">	
 </ul>
-<div class="add-list hide">
-	<input type="text" value=""/>
-	<a href="#" class="add-list-save">Add</a>
-	<a href="#" class="add-list-cancel">cancel</a>
+<div class="input-append add-list hide">
+	<div class="control-group">    
+    	<div class="controls">
+			<input type="text" value=""/>
+			<div>
+			  	<button class="btn add-list-save" type="button"><i class="icon-ok save-icon">&nbsp;Add list</i></button>
+			  	<button class="btn add-list-cancel" type="button"><i class="icon-remove cancel-icon"></i></button>
+			</div>
+		</div>
+	</div>
 </div>
