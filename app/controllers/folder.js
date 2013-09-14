@@ -25,14 +25,8 @@ var updateClients = function(req, delta) {
 //Create folder
 exports.create = function (req, res) {
     findByFullPath(req.body.path, function() {
-        console.log(req.body.cid)
         var folder = new Folder(_.pick(req.body, 'label', 'path', 'cid'));
         folder.user = req.user;
-
-        console.log(folder)
-        folder.set('cid', req.body.cid);
-        console.log(folder)
-
         var delta = {
             type: 'create.folder',
             data: folder
