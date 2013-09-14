@@ -20,8 +20,8 @@ var ListboardSchema = new Schema({
 ListboardSchema.plugin(require('../util/mongoose-timestamp'));
 
 
-ListboardSchema.methods.addContainerByList = function (list) {
-    return this.addContainer({ type: this.type, title: list.label, filter: list.fullPath });
+ListboardSchema.methods.addContainerByFolder = function (folder) {
+    return this.addContainer({ type: this.type, title: folder.label, filter: folder.fullPath });
 };
 
 ListboardSchema.methods.addContainer = function (cont) {
@@ -59,7 +59,7 @@ ListboardSchema.virtual('cid').get(function() {
 });
 
 ListboardSchema.virtual('cid').set(function(cid) {
-  return this._cid = cid;
+  this._cid = cid;
 });
 
 module.exports = ListboardSchema;

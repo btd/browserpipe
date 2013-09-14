@@ -3,38 +3,41 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var _state = require('models/state');
 var Container = require('views/center/container/container');
-var ContainerChildList = require('views/center/container/list/child.list');
-var ListsTemplate = require('templates/containers/lists');
+var ContainerChildFolder = require('views/center/container/folder/child.folder');
+var FoldersTemplate = require('templates/containers/folders');
 var AddItem = require('views/center/container/item/item.add');
 
 var FutureContainer = Container.extend({
     initializeView: function (options) {
         Container.prototype.initializeView.call(this, options);
 
-        this.model.list.getItems().on('add', this.itemAdded, this);
-        this.model.list.getItems().on('remove', this.itemRemoved, this);
+        this.childFolderViews = [];
 
-        this.events['click .container-list-icon'] = 'navigateToParentList';
-        this.events['click .add-list-icon'] = 'addList';
-        this.events['click .add-list-save'] = 'saveAddList';
-        this.events['click .add-list-cancel'] = 'cancelAddList';
+        this.listenFolderEvents();
+
+        this.model.on('change:filter', this.filterChanged, this)
+
+        this.events['click .container-folder-icon'] = 'navigateToParentFolder';
+        this.events['click .add-folder-icon'] = 'addFolder';
+        this.events['click .add-folder-save'] = 'saveAddFolder';
+        this.events['click .add-folder-cancel'] = 'cancelAddFolder';
     },
     renderView: function () {
         this       
             .renderContainer()     
             .renderHeader()            
-            .renderChildsLists()
+            .renderChildsFolders()
             .renderItems()
             .renderFooter();
         return this;
     },
     getItems: function () {
-        return this.model.list.getItems();
+        return this.model.folder.getItems();
     },
     removeItem: function(itemView) { //overrided by future container        
         var self = this;
         itemView.model.save({
-            lists: _.without(itemView.model.get('lists'), this.model.list.getFilter())
+            folders: _.without(itemView.model.get('folders'), this.model.folder.getFilter())
         }, {wait: true, success: function (item) {
             self.removeItemView(itemView);
         }})        
@@ -44,92 +47,103 @@ var FutureContainer = Container.extend({
         this.$('.footer').append(this.footer.render().el);
         return this;
     },
-    renderChildsLists: function () {
-        var compiledTemplate = _.template(ListsTemplate, { collapsed: this.collapsed });
+    renderChildsFolders: function () {
+        var compiledTemplate = _.template(FoldersTemplate, { collapsed: this.collapsed });
         $('.box', this.el).prepend(compiledTemplate);
-        //Render childs lists
-        for (var i = 0, l = this.model.list.children.length; i < l; i++) {
-            var childList = this.model.list.children.models[i];
-            this.renderChildList(childList);
+        //Render childs folders
+        for (var i = 0, l = this.model.folder.children.length; i < l; i++) {
+            var childFolder = this.model.folder.children.models[i];
+            this.renderChildFolderView(childFolder);
         }
         return this;
     },
-    renderChildList: function (childList) {
-        var $lists = this.$('.lists');
-        var cct = new ContainerChildList({model: childList});
-        $lists.append(cct.render().el);
-        this.listenTo(cct, 'navigateToList', this.navigateToList);
-        this.listenTo(cct, 'childRemoved', this.childRemoved, this);
+    renderChildFolderView: function (childFolder) {
+        var $folders = this.$('.folders');
+        var cct = new ContainerChildFolder({model: childFolder});
+        $folders.append(cct.render().el);
+        this.listenTo(cct, 'navigateToFolder', this.navigateToFolder);                
+        this.childFolderViews.push(cct);
     },
-    childRemoved: function (childView) {
-        this.model.list.removeChildren(childView.model, {
-            wait: true,
-            success: function () {
-                childView.dispose();
-            }
+    removeChildFolderView: function (folder) {
+        var childFolderView = _.find(this.childFolderViews, function (cfv) {
+            return cfv.model.id === folder.id;
         });
+        if (childFolderView){     
+            this.childFolderViews = _.without(this.childFolderViews, childFolderView);
+            childFolderView.dispose();
+        }
     },
     removeItemView: function (itemView) {
-        this.model.list.removeItem(itemView.model, {
+        this.model.folder.removeItem(itemView.model, {
             wait: true,
             success: function () {
                 itemView.dispose();
             }
         });
     },
-    listenListEvents: function () {
-        //If an item is added, we render it
-        this.listenTo(this.model.list.children, 'add', this.renderChildList);
-        //If an item is added, we render it
-        this.listenTo(this.model.list.getItems(), 'add', this.renderItem);
+    listenFolderEvents: function () {
+        //If a child folder is add or removed is added, we render it
+        this.listenTo(this.model.folder.children, 'add', this.renderChildFolderView);
+        this.listenTo(this.model.folder.children, 'remove', this.removeChildFolderView);
+        //If an item is added or removed, we render it
+        this.listenTo(this.model.folder.getItems(), 'add', this.itemAdded);
+        this.listenTo(this.model.folder.getItems(), 'remove', this.itemRemoved);
+        
     },
-    navigateToList: function (list) {
-        //Unbind old list events
-        this.stopListening(this.model.list.children);
-        this.stopListening(this.model.list.getItems());
-        //Sets the new list
-        this.model.set('title', list.get('label'));
-        this.model.set('filter', list.getFilter());
-        this.model.save();
-        this.model.list = list;
-        //Listen to new list events
-        this.listenListEvents();
-        //Clears content
-        this.clean();
-        //Render the view again
-        this.render();
+    filterChanged: function(){              
+        var folder = _state.getFolderByFilter(this.model.get('filter'));
+        if(folder) {
+            this.model.folder = folder;
+            //Listen to new folder events
+            this.listenFolderEvents();
+            //Clears content
+            this.clean();
+            //Render the view again
+            this.render();
+        }
     },
-    navigateToParentList: function () {
-        var parent = _state.getListByFilter(this.model.list.get('path'));
+    navigateToFolder: function (folder) {
+        //Unbind old folder events and item events
+        this.stopListening(this.model.folder.children);
+        this.stopListening(this.model.folder.getItems());
+        //Sets the new folder
+        this.model.save({
+            title: folder.get('label'),
+            filter: folder.getFilter()
+        });        
+    },
+    navigateToParentFolder: function () {
+        var parent = _state.getFolderByFilter(this.model.folder.get('path'));
         if (parent)
-            this.navigateToList(parent);
+            this.navigateToFolder(parent);
     },
-    addList: function () {
-        this.$('.add-list').show();
-        this.$('.add-list input').focus();
-        this.scrollToAddList();
+    addFolder: function () {
+        this.$('.add-folder').show();
+        this.$('.add-folder input').focus();
+        this.scrollToAddFolder();
     },
-    saveAddList: function () {
+    saveAddFolder: function () {
         var self = this;
-        var label = this.$('.add-list input').val();
-        this.model.list.children.createList({
-            label: label,
-            path: this.model.list.getFilter()
-        }).then(function (list) {
-                _state.addList(list);
-                self.renderChildList(list);
-                self.hideAddList();
-                self.$('.add-list input').val('')
-            });
+        var label = $.trim(this.$('.add-folder input').val());
+        if (label !== "") {
+            this.model.folder.children.createFolder({
+                label: label,
+                path: this.model.folder.getFilter()
+            }).then(function (folder) {
+                    _state.addFolder(folder);
+                    self.hideAddFolder();
+                    self.$('.add-folder input').val('')
+                });
+        }
     },
-    cancelAddList: function () {
-        this.hideAddList();
+    cancelAddFolder: function () {
+        this.hideAddFolder();
     },
-    hideAddList: function () {
-        this.$('.add-list').hide();
+    hideAddFolder: function () {
+        this.$('.add-folder').hide();
     },
-    scrollToAddList: function () {
-        this.$('.box').animate({scrollTop: this.$('.add-list').offset().left + 60}, 150);
+    scrollToAddFolder: function () {
+        this.$('.box').animate({scrollTop: this.$('.add-folder').offset().left + 60}, 150);
     }
 });
 module.exports = FutureContainer;

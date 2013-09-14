@@ -7,7 +7,7 @@ var app = require('../../../app/server');
 
 describe('listboard controller delete', function () {
     beforeEach(function (done) {
-        helper.dropCollections(['users', 'lists'], done);
+        helper.dropCollections(['users', 'folders'], done);
     });
 
     it('should return 200 with DELETE on /listboards/:listboardId when authenticated', function(done) {

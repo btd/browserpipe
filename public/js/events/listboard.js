@@ -13,32 +13,32 @@ module.exports = function (socket) {
         }
     }
 
-    var updateDifferences = function (collection, listboard, listboardUpdate) {
+    var updateDifferences = function (listboard, listboardUpdate) {
         _.each(_.keys(listboardUpdate), function (key) {
             if (listboard.get(key) !== listboardUpdate[key]) {
                 listboard.set(key, listboardUpdate[key]);
-                //Events is not fired automatically
-                collection.trigger('change:' + key, listboard);
             }
         });
     }
 
-    socket.on('create.listboard', function (listboard) {
-        var collection = getListboardCollection(listboard);
-        if (!collection.get(listboard.cid))
-            collection.add(listboard);
+    socket.on('create.listboard', function (newListboard) {
+        var collection = getListboardCollection(newListboard);
+        var listboard = collection.get(newListboard.cid);
+        if (!listboard)
+            collection.add(newListboard);
     });
 
     socket.on('update.listboard', function (listboardUpdate) {
-        var listboard = _state.getListboard(listboard.type, listboard._id);
+        var listboard = _state.getListboard(listboardUpdate.type, listboardUpdate._id);
         if (listboard)
-            updateDifferences(collection, listboard, listboardUpdate);
+            updateDifferences(listboard, listboardUpdate);
     });
 
-    socket.on('delete.listboard', function (listboard) {
-        listboard = _state.getListboard(listboard.type, listboard._id);
+    //TODO: Not implemented yet the delete of listboards
+    /*socket.on('delete.listboard', function (listboardUpdate) {
+        listboard = _state.getListboard(listboardUpdate.type, listboardUpdate._id);
         if (listboard)
             listboard.destroy();
-    });
+    });*/
 };
 

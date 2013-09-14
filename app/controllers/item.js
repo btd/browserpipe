@@ -24,7 +24,7 @@ var updateClients = function(req, delta) {
 
 //Create item
 exports.create = function (req, res) {
-    var item = new Item(_.pick(req.body, 'type', 'lists', 'containers', 'title', 'url', 'note', 'cid'));
+    var item = new Item(_.pick(req.body, 'type', 'folders', 'containers', 'title', 'url', 'note', 'cid'));
 
     if(!item.title)
         item.title = item.url;
@@ -43,13 +43,13 @@ exports.create = function (req, res) {
 exports.update = function (req, res) {    
     var item = req.currentItem;        
     //We mark them so mongoose saves them
-    //TODO: add addcontainer/addlist/removecontainer/removelist rest calls to optimize    
+    //TODO: add addcontainer/addfolder/removecontainer/removefolder rest calls to optimize    
     item.markModified('containers');
-    item.markModified('lists');
-    _.merge(item, _.pick(req.body, 'type', 'lists', 'containers', 'title', 'url', 'note', 'cid'));
+    item.markModified('folders');
+    _.merge(item, _.pick(req.body, 'type', 'folders', 'containers', 'title', 'url', 'note', 'cid'));
     //We need to merge array manually, because empty arrays are not merged
     item.containers = req.body.containers;
-    item.lists = req.body.lists;
+    item.folders = req.body.folders;
 
     var delta = {
         type: 'update.item',

@@ -4,7 +4,7 @@ var _ = require('lodash'),
     q = require('q'),
     mongoose = require('mongoose'),
     Item = mongoose.model('Item'),
-    List = mongoose.model('List');
+    Folder = mongoose.model('Folder');
 
 //Home
 exports.home = function (req, res) {
@@ -13,8 +13,8 @@ exports.home = function (req, res) {
         var nowListboards = req.user.nowListboards;
         var laterListboards = req.user.laterListboards;
         var futureListboards = req.user.futureListboards;
-        List.getAll(req.user)
-            .then(function (lists) {
+        Folder.getAll(req.user)
+            .then(function (folders) {
                 //We only load the ones from opened containers
                 var listboards = _.union(nowListboards, laterListboards, futureListboards);                
                 //Load container ids
@@ -22,32 +22,32 @@ exports.home = function (req, res) {
                     return _.map(listboard.containers, '_id');
                 }).flatten().value();
 
-                var filters = _.map(lists, 'fullPath');
+                var filters = _.map(folders, 'fullPath');
 
                 var itemsByContainersPromise = Item.findAllByContainers(
                         req.user,
                         containerIds
                     );
-                var itemsByListsPromise = Item.findAllByLists(
+                var itemsByFoldersPromise = Item.findAllByFolders(
                         req.user,
                         filters
                     );
 
                 return q.all([
                         itemsByContainersPromise,
-                        itemsByListsPromise
+                        itemsByFoldersPromise
                     ])
-                    .spread(function (itemsByContainers, itemsByLists) {
-                        return [lists, _.union(itemsByContainers, itemsByLists)];
+                    .spread(function (itemsByContainers, itemsByFolders) {
+                        return [folders, _.union(itemsByContainers, itemsByFolders)];
                     });
-            }).spread(function (lists, items) {
+            }).spread(function (folders, items) {
                 res.render('main/home', {
                     user: req.user,
                     nowListboards: nowListboards,
                     laterListboards: laterListboards,
                     futureListboards: futureListboards,
                     items: items,
-                    lists: lists
+                    folders: folders
                 });
             }).fail(function (err) {
                 console.log(err)

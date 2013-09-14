@@ -6,15 +6,15 @@ module.exports = AppModel.extend({
         //forces the cid to be sent to the server
         this.set('cid', this.cid);
 
-        //when an item is created we add it to the _state list
+        //when an item is created we add it to the _state folder
         var _state = require('models/state');
         _state.items.add(this);
     },
-    getLists: function () {
-        return _.map(this.get('lists'), function (filter) {
+    getFolders: function () {
+        return _.map(this.get('folders'), function (filter) {
             //We have to declare it here because of circle reference between Item and State
             var _state = require('models/state');
-            return _state.getListByFilter(filter);
+            return _state.getFolderByFilter(filter);
         })
     }
 });

@@ -1,4 +1,9 @@
-<% if(container.get('type')===2 && container.get('filter')!='Lists'){ %><i class="icon-arrow-up container-list-icon" title="Navigate lists up"></i><% } %>
+<% if(container.get('type')===2){ %>
+	<a href="#" class="add-folder-icon">&nbsp;Add folder</a>
+	<% if(container.get('filter')!='Folders'){ %>
+		<i class="icon-arrow-up container-folder-icon" title="Navigate folders up"></i>	
+	<% } %>
+<% } %>
 <i class="icon-remove close-container" title="Close"></i>
 <span class="title"><% if($.trim(container.get('title')) === '') { %><i>Unnamed</i><% } else { %><%= container.get('title')%><% } %></span>
 <div class="input-append edit-title hide">

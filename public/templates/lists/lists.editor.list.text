@@ -1,2 +1,0 @@
-<span class="editor-list-label"><%= label %></span>
-<a class="close" href="#">&times;</a>

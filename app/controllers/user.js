@@ -4,7 +4,7 @@ var _ = require('lodash'),
     q = require('q'),
     mongoose = require('mongoose'),
     User = mongoose.model('User'),
-    List = mongoose.model('List');
+    Folder = mongoose.model('Folder');
 
 //Login form
 exports.login = function (req, res) {
@@ -59,22 +59,22 @@ exports.create = function (req, res) {
     user.provider = 'local' //for passport
     
     //Creates initial data
-    //Root lists
-    var listsList = new List({ label: 'Lists', user: user });
-    var trashList = new List({ label: 'Trash', user: user });
-    var importsList = new List({ label: 'Imports', user: user });
+    //Root folders
+    var foldersFolder = new Folder({ label: 'Folders', user: user });
+    var trashFolder = new Folder({ label: 'Trash', user: user });
+    var importsFolder = new Folder({ label: 'Imports', user: user });
 
-    //Create lists
-    var readLaterList = listsList.createChildList("Read Later");
-    var coolSitesList = listsList.createChildList("Cool Sites");
+    //Create folders
+    var readLaterFolder = foldersFolder.createChildFolder("Read Later");
+    var coolSitesFolder = foldersFolder.createChildFolder("Cool Sites");
 
     //Creates the future listboard
     user.addLaterListboard({ type: 1, label: 'My later listboard'})
 
     //Create a later listboard
     user.addFutureListboard({ type: 2, label: 'My future  listboard'})
-        .addContainerByList(readLaterList)
-        .addContainerByList(coolSitesList);
+        .addContainerByFolder(readLaterFolder)
+        .addContainerByFolder(coolSitesFolder);
    
     //TODO: THIS IS TEMPORAL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     //CREATES A NOW LISTBOARD
@@ -86,11 +86,11 @@ exports.create = function (req, res) {
     user.saveWithPromise()
         .then(function() {
             q.all([
-                    listsList.saveWithPromise(),
-                    trashList.saveWithPromise(),
-                    importsList.saveWithPromise(),
-                    readLaterList.saveWithPromise(),
-                    coolSitesList.saveWithPromise(),                    
+                    foldersFolder.saveWithPromise(),
+                    trashFolder.saveWithPromise(),
+                    importsFolder.saveWithPromise(),
+                    readLaterFolder.saveWithPromise(),
+                    coolSitesFolder.saveWithPromise(),                    
                 ])
                 .spread(function () {
                     res.format({

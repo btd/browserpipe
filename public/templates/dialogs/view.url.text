@@ -23,7 +23,7 @@
 <div class="modal-body">
   <ul class="nav nav-tabs">    
     <!-- <li><a href="#delete" data-toggle="tab">Delete</a></li> -->
-    <li><a href="#lists" data-toggle="tab">Lists</a></li>
+    <li><a href="#folders" data-toggle="tab">Folders</a></li>
     <li><a href="#general" data-toggle="tab">General</a></li>
   </ul>
   <div class="tab-content">
@@ -43,8 +43,8 @@
         </div>      
       </div>   
     </div>
-    <div class="tab-pane" id="lists">
-      <div class="item-lists"></div>
+    <div class="tab-pane" id="folders">
+      <div class="item-folders"></div>
     </div>
     <!-- <div class="tab-pane" id="delete">
       <div class="move-to-trash-alert alert alert-block">  

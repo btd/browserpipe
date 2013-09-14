@@ -21,7 +21,7 @@ ContainerSchema.virtual('cid').get(function() {
 });
 
 ContainerSchema.virtual('cid').set(function(cid) {
-  return this._cid = cid;
+  this._cid = cid;
 });
 
 module.exports = ContainerSchema;

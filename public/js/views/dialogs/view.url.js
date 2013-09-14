@@ -1,10 +1,10 @@
 var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
-var Lists = require('collections/lists');
+var Folders = require('collections/folders');
 var _state = require('models/state');
 var AppView = require('views/view');
-var ListsEditor = require('views/lists.editor/editor');
+var FoldersEditor = require('views/folders.editor/editor');
 var template = require('templates/dialogs/view.url');
 
 var ViewURL = AppView.extend({
@@ -32,12 +32,12 @@ var ViewURL = AppView.extend({
             item: this.model
         });
         this.$el.html(compiledTemplate).appendTo('#dialogs');
-        //Append the lists
-        var lists = this.model.getLists();
-        this.listsView = new ListsEditor({collection: new Lists(lists)})
-        this.listenTo(this.listsView, 'listAdded', this.addList);
-        this.listenTo(this.listsView, 'listRemoved', this.updateLists);
-        this.$('.item-lists').html(this.listsView.render().el);
+        //Append the folders
+        var folders = this.model.getFolders();
+        this.foldersView = new FoldersEditor({collection: new Folders(folders)})
+        this.listenTo(this.foldersView, 'folderAdded', this.addFolder);
+        this.listenTo(this.foldersView, 'folderRemoved', this.updateFolders);
+        this.$('.item-folders').html(this.foldersView.render().el);
         //Show dialog
         this.$el.modal('show');
         return this;
@@ -45,13 +45,13 @@ var ViewURL = AppView.extend({
     postRender: function () {
 
     },    
-    addList: function (list) {
-        _state.createListIfNew(list.getFilter());
-        var lists =  _.compact(_.uniq(this.listsView.collection.map(function (list) {
-            return list.getFilter();
+    addFolder: function (folder) {
+        _state.createFolderIfNew(folder.getFilter());
+        var folders =  _.compact(_.uniq(this.foldersView.collection.map(function (folder) {
+            return folder.getFilter();
         })));  //no blanks and non repeated
         this.model.save({
-            lists: lists
+            folders: folders
         })
     },
     close: function () {

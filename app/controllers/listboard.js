@@ -42,8 +42,7 @@ exports.create = function (req, res) {
     //You can only create later or future listboards  
     if(req.body.type === 1 || req.body.type === 2) {
         var listboard = req.user.addListboard(_.pick(req.body, 'label', 'type', 'cid'));
-        //We add it to avoid duplicate creation by socket.io        
-        //listboard.set('cid', req.body.cid);
+                
         var delta = {
             type: 'create.listboard',
             data: listboard

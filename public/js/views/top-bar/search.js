@@ -16,10 +16,10 @@
  var $box = this.$('#search-box');
  var query = ""
  if (container) {
- var filter = container.list.getFilter();
+ var filter = container.folder.getFilter();
  switch (container.get('type')) {
- case 1: //List
- //Replaces "Lists/" with "#""
+ case 1: //Folder
+ //Replaces "Folders/" with "#""
  if (filter == "Trash")
  query = "#"
  else
@@ -57,34 +57,34 @@
  search: function (e) {
  e.preventDefault();
  var query = $.trim(this.$('#search-box').val());
- //If search valid, creates a list for the search and adds a container
+ //If search valid, creates a folder for the search and adds a container
  if (query != "") {
  //TODO: perform the real search
- var list = _state.getListByFilter("Search/" + query);
- if (list)
- this.createContainer(list);
+ var folder = _state.getFolderByFilter("Search/" + query);
+ if (folder)
+ this.createContainer(folder);
  else
- this.createListAndContainer(query);
+ this.createFolderAndContainer(query);
  }
  },
- createListAndContainer: function (query) {
+ createFolderAndContainer: function (query) {
  var self = this;
- var parentList = _state.getListByFilter("Search");
- parentList.children.createList({
+ var parentFolder = _state.getFolderByFilter("Search");
+ parentFolder.children.createFolder({
  label: query,
- path: parentList.getFilter()
- }, {wait: true, success: function (list) {
- self.trigger("listAdded", list);
+ path: parentFolder.getFilter()
+ }, {wait: true, success: function (folder) {
+ self.trigger("folderAdded", folder);
  //We have to call it to make sure it is set before creating the container
- _state.addList(list);
- self.createContainer(list);
+ _state.addFolder(folder);
+ self.createContainer(folder);
  }})
  },
- createContainer: function (list) {
+ createContainer: function (folder) {
  var container = _state.listboards.getCurrentListboard().addContainer({
- "filter": list.getFilter(),
+ "filter": folder.getFilter(),
  "order": 0, //TODO: manage order
- "title": list.get('label'),
+ "title": folder.get('label'),
  "type": 2
  }, {wait: true, success: function (container) {
  _state.listboards.setCurrentContainer(container.get('_id'));
