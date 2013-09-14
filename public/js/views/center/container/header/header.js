@@ -21,7 +21,7 @@ var ContainerHeader = AppView.extend({
         //Renders title if it changes
         var self = this;
         this.listenTo(this.model, 'change:title', function () {
-            self.$('.title').html(self.model.get('title'));
+            self.render();
         });
     },
     renderView: function () {

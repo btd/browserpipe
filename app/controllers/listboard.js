@@ -160,7 +160,6 @@ exports.sync = function (req, res) {
             
             nowListboard.addContainer({
                 type: 0,
-                title: 'Window',
                 externalId: win.externalId
             });     
             
