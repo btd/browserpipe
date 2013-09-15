@@ -46,7 +46,7 @@ var authorized = function(req, res, next) {
 };
 
 var nonEmptyString = function(value) {
-    return value !== null && _.isString(value) && value.length > 0;
+    return value != null && _.isString(value) && value.length > 0;
 };
 
 var isCode = function(a) {
