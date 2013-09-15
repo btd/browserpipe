@@ -45,10 +45,10 @@ function authUserInternal(app, done, callback, user) {
         });
 }   
 
-module.exports.createList = function(app, list, done, cookie, callback) {
+module.exports.createFolder = function(app, folder, done, cookie, callback) {
     request(app)
-        .post('/lists')
-        .send(list)
+        .post('/folders')
+        .send(folder)
         .set('Cookie', cookie)
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
@@ -57,9 +57,9 @@ module.exports.createList = function(app, list, done, cookie, callback) {
             if(err) done(err);
 
             res.body.should.have.property('_id');
-            list._id = res.body._id;
+            folder._id = res.body._id;
 
-            callback(list);
+            callback(folder);
         });
 };
 

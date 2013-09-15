@@ -8,7 +8,8 @@ var ContainerHeader = AppView.extend({
     events: {
         'click .title': 'editTitle',
         'click .edit-title-save': 'saveEditTitle',
-        'click .edit-title-cancel': 'cancelEditTitle'
+        'click .edit-title-cancel': 'cancelEditTitle',
+        "keyup .edit-title input": "keypressed"
     },
     attributes: function () {
         return {
@@ -20,7 +21,7 @@ var ContainerHeader = AppView.extend({
         //Renders title if it changes
         var self = this;
         this.listenTo(this.model, 'change:title', function () {
-            self.$('.title').html(self.model.get('title'));
+            self.render();
         });
     },
     renderView: function () {
@@ -51,6 +52,12 @@ var ContainerHeader = AppView.extend({
     hideEditTitle: function () {
         this.$('.edit-title').hide();
         this.$('.title').show();
+    },
+    keypressed: function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            this.saveEditTitle();
+        }
     }
 });
 module.exports = ContainerHeader;

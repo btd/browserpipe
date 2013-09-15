@@ -2,7 +2,7 @@ var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var util = require('util');
-var Lists = require('collections/lists');
+var Folders = require('collections/folders');
 var _state = require('models/state');
 var Item = require('models/item');
 var AppView = require('views/view');
@@ -33,7 +33,7 @@ var AddItem = AppView.extend({
     },
     save: function () {
         var self = this;
-        var lists = [];
+        var folders = [];
         var containers = []
         var type = this.model.get('type');
         this.cleanErrors();        
@@ -42,20 +42,21 @@ var AddItem = AppView.extend({
         if (!this.hasErrors()) {            
             if(type === 1) //this is for later containers
                 containers.push(this.model.id);
-            else //type = 2 this if for future containers that use contains items by list
-                lists.push(this.model.list.getFilter());
-            //We create the list
+            else //type = 2 this if for future containers that use contains items by folder
+                folders.push(this.model.folder.getFilter());
+            //We create the folder
             var item = new Item();
             item.save({
                 type: type,                
                 url: url,
                 containers: containers,
-                lists: lists //no blanks and non repeated
+                folders: folders //no blanks and non repeated
             }, {wait: true, success: function (item) {
                 if(type === 1)
                     self.model.addItem(item);
                 else
-                    _state.addItemToLists(item);
+                    _state.addItemToFolders(item);
+                self.$('.item-url').val('');
                 self.hideForm();
             }})
         }
@@ -64,7 +65,7 @@ var AddItem = AppView.extend({
         this.unSetAllErrorFields(this.$(".item-url"));
     },
     validateFields: function (url) {
-        if (url == "")
+        if (url === '')
             this.setErrorField(this.$(".item-url"), this.$(".item-url-blank"));
         else if (!util.isValidURL(url))
             this.setErrorField(this.$(".item-url"), this.$(".item-url-invalid"));
@@ -72,7 +73,7 @@ var AddItem = AppView.extend({
     keypressed: function (event) {
         if (event.keyCode === 13) {
             event.preventDefault();
-            $(".add-item-save").click();
+            this.save();
         }
     }
 });

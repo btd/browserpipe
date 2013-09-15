@@ -22,7 +22,7 @@ var SectionListboard = AppView.extend({
             'click .add-container': 'addContainer',
             'click .js-create-listboard': 'createNewListboard',
             'click .js-listboard-select-item': 'selectCurrentListboard',
-            'click .edit-container': 'editCurrentListboard'
+            'click .edit-listboard': 'editCurrentListboard'
         });
 
         if (!this.collection) throw "child view should set this.collection";

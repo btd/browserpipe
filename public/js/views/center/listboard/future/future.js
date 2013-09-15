@@ -28,7 +28,7 @@ var Future = SectionListboard.extend({
 
     addContainer: function () {
         this.model && this.model.addContainer(
-            new Container({ type: 2, filter: 'Lists', title: '' })
+            new Container({ type: 2, filter: 'Folders', title: '' })
         );
     }
 });

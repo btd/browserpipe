@@ -17,7 +17,6 @@ var Later = SectionListboard.extend({
 
     initializeView: function (options) {
 
-
         this.collection = _state.laterListboards;
 
         this.template = template;

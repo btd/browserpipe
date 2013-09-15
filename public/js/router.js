@@ -85,6 +85,7 @@ var AppRouter = Backbone.Router.extend({
 
         //Load model events
         require('events/listboard')(this.socket);
+        require('events/folder')(this.socket);
         require('events/container')(this.socket);
         require('events/item')(this.socket);
 

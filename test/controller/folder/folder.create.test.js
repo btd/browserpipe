@@ -5,21 +5,21 @@ var should = require('should'),
 
 var app = require('../../../app/server');
 
-var rootList = { label: "Development", path: "" }
-var level1List = { label: "Database", path: "Development" }
-var level2List = { label: "MongoDB", path: "Development/Database" }
+var rootFolder = { label: "Development", path: "" }
+var level1Folder = { label: "Database", path: "Development" }
+var level2Folder = { label: "MongoDB", path: "Development/Database" }
 
-describe('list controller create', function () {
+describe('folder controller create', function () {
     beforeEach(function (done) {
-        helper.dropCollections(['users', 'lists'], done);
+        helper.dropCollections(['users', 'folders'], done);
     });
 
-    it('should return 200 and create a root list with POST on /lists when authenticated and send good data', function (done) {
+    it('should return 200 and create a root folder with POST on /folders when authenticated and send good data', function (done) {
         helper.authUser(app, done, function(cookie, userId) {
 
             request(app)
-                .post('/lists')
-                .send(rootList)
+                .post('/folders')
+                .send(rootFolder)
                 .set('Cookie', cookie)
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
@@ -34,14 +34,14 @@ describe('list controller create', function () {
         });
     });
 
-    it('should return 200 and create list of level1 if the parent exits with POST on /lists when authenticated and send good data', function (done) {
+    it('should return 200 and create folder of level1 if the parent exits with POST on /folders when authenticated and send good data', function (done) {
         helper.authUser(app, done, function(cookie, userId) {
 
-            helper.createList(app, rootList, done, cookie, function() {
+            helper.createFolder(app, rootFolder, done, cookie, function() {
 
                 request(app)
-                    .post('/lists')
-                    .send(level1List)
+                    .post('/folders')
+                    .send(level1Folder)
                     .set('Cookie', cookie)
                     .set('Accept', 'application/json')
                     .expect('Content-Type', /json/)
@@ -57,16 +57,16 @@ describe('list controller create', function () {
         });
     });
 
-    it('should return 200 and create list of level2 if the parent exits with POST on /lists when authenticated and send good data', function (done) {
+    it('should return 200 and create folder of level2 if the parent exits with POST on /folders when authenticated and send good data', function (done) {
         helper.authUser(app, done, function(cookie, userId) {
 
-            helper.createList(app, rootList, done, cookie, function() {
+            helper.createFolder(app, rootFolder, done, cookie, function() {
 
-                helper.createList(app, level1List, done, cookie, function() {
+                helper.createFolder(app, level1Folder, done, cookie, function() {
 
                     request(app)
-                        .post('/lists')
-                        .send(level2List)
+                        .post('/folders')
+                        .send(level2Folder)
                         .set('Cookie', cookie)
                         .set('Accept', 'application/json')
                         .expect('Content-Type', /json/)
@@ -83,23 +83,23 @@ describe('list controller create', function () {
         });
     });
 
-    it('should return 401 with POST on /lists when not authenticated', function (done) {
+    it('should return 401 with POST on /folders when not authenticated', function (done) {
 
         request(app)
-            .post('/lists')
-            .send(rootList)
+            .post('/folders')
+            .send(rootFolder)
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
             .expect(401, done);
 
     });
 
-    it('should return 400 when creating a list which parent does not exit', function (done) {
+    it('should return 400 when creating a folder which parent does not exit', function (done) {
         helper.authUser(app, done, function(cookie, userId) {
 
             request(app)
-                .post('/lists')
-                .send(level1List)
+                .post('/folders')
+                .send(level1Folder)
                 .set('Cookie', cookie)
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)

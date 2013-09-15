@@ -16,8 +16,7 @@ var Container = AppView.extend({
     },
     initializeView: function (options) {
         this.containerItemViews = [];
-        this.model.getItems().on('add', this.itemAdded, this);
-        this.model.getItems().on('remove', this.itemRemoved, this);
+        this.listenToItemsEvents();
     },
     attributes: function () {
         return {
@@ -65,6 +64,10 @@ var Container = AppView.extend({
         this.containerItemViews.push(containerItemView);
         this.listenToItemEvents(containerItemView);        
         $items.append(containerItemView.render().el);
+    },
+    listenToItemsEvents: function() {
+        this.listenTo(this.model.getItems(), 'add', this.itemAdded, this);
+        this.listenTo(this.model.getItems(), 'remove', this.itemRemoved, this);
     },
     listenToItemEvents: function (containerItemView) {
         this.listenTo(containerItemView, "itemRemoved", this.removeItem, this);

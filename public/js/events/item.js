@@ -17,7 +17,7 @@ module.exports = function (socket) {
             })
 
         updateContainers(item, itemUpdate);
-        updateLists(item, itemUpdate);
+        updateFolders(item, itemUpdate);
     }
 
     var updateContainers = function (item, itemUpdate) {        
@@ -34,24 +34,24 @@ module.exports = function (socket) {
 
     }
 
-    var updateLists = function (item, itemUpdate) {  
+    var updateFolders = function (item, itemUpdate) {  
 
-        var toRemoveListFilters = _.difference(item.get('lists'), itemUpdate.lists);
-        _.chain(toRemoveListFilters)
+        var toRemoveFolderFilters = _.difference(item.get('folders'), itemUpdate.folders);
+        _.chain(toRemoveFolderFilters)
             .map(function(filter) {
-                return _state.getListByFilter(filter);
+                return _state.getFolderByFilter(filter);
             })
-            .map(function(list) {
-                list.removeItem(item.id)
+            .map(function(folder) {
+                folder.removeItem(item.id)
             })
 
-        var toAddListFilters = _.difference(itemUpdate.lists, item.get('lists'));
-        _.chain(toAddListFilters)
+        var toAddFolderFilters = _.difference(itemUpdate.folders, item.get('folders'));
+        _.chain(toAddFolderFilters)
             .map(function(filter) {
-                return _state.getListByFilter(filter);
+                return _state.getFolderByFilter(filter);
             })
-            .map(function(list) {
-                list.addItem(item.id)
+            .map(function(folder) {
+                folder.addItem(item.id)
             })
 
     }
@@ -59,14 +59,14 @@ module.exports = function (socket) {
     socket.on('create.item', function (data) {
         var item = new Item(data);
         _state.addItemToContainers(item);
-        _state.addItemToLists(item);
+        _state.addItemToFolders(item);
     });
 
     socket.on('bulk.create.item', function (data) {
         for (var index in data) {
             var item = new Item(data[index]);
             _state.addItemToContainers(item);
-            _state.addItemToLists(item);
+            _state.addItemToFolders(item);
         }
     });
 
@@ -81,7 +81,7 @@ module.exports = function (socket) {
             updateDifferences(_state.getItemById(data[index]._id), data[index]);
     });
 
-    //Not used yet, items are not fully deleted, just removed from list and containers
+    //TODO: Not used yet, items are not fully deleted, just removed from folder and containers
     /*socket.on('delete.item', function (data) {
         _state.removeItemFromContainers(data);
     });

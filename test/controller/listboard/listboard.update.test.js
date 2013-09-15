@@ -10,7 +10,7 @@ var testLaterListboard2 = { type: 1, label: "My Later listboard 2" }
 
 describe('listboard controller update', function () {
     beforeEach(function (done) {
-        helper.dropCollections(['users', 'lists'], done);
+        helper.dropCollections(['users', 'folders'], done);
     });
 
     it('should return 200 and update listboard with POST on /listboards/:listboardId when authenticated and send good data', function (done) {

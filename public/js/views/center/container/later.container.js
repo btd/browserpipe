@@ -6,7 +6,7 @@ var AddItem = require('views/center/container/item/item.add');
 
 var LaterContainer = Container.extend({
     initializeView: function (options) {
-    	Container.prototype.initializeView.call(this, options);  
+		Container.prototype.initializeView.call(this, options);
     },
     renderFooter: function () {
         this.footer = new AddItem({ model: this.model });

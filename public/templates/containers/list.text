@@ -1,2 +1,0 @@
-<div class="list-label"><%= label %></div>
-<i class="icon-remove remove-child-list"></i>

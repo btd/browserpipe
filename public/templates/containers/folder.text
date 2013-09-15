@@ -1,0 +1,2 @@
+<div class="folder-label"><%= label %></div>
+<i class="icon-remove remove-child-folder"></i>

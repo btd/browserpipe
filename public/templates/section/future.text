@@ -17,15 +17,15 @@
 		<div class="navbar-inner">
 			<ul class="nav">
 			  <li>
+			    <a class="edit-listboard btn" href="#" title="Edit current listboard" data-toggle="tooltip">
+                  <i class="icon-pencil"></i>
+			    </a>
+			  </li>
+			  <li>
 			    <a class="add-container btn" href="#" title="Open a container" data-toggle="tooltip">
 			        <i class="icon-plus"></i>
 			    </a>
 
-			  </li>
-			  <li>
-			    <a class="edit-container btn" href="#" title="Edit current listboard" data-toggle="tooltip">
-                  <i class="icon-pencil"></i>
-			    </a>
 			  </li>
 			</ul>
 		</div>

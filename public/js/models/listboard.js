@@ -12,7 +12,18 @@ module.exports = Listboard = AppModel.extend({
         //forces the cid to be sent to the server
         this.set('cid', this.cid);
 
-        this.containers = new Containers(options.containers);        
+        this.containers = new Containers(options.containers);                        
+        
+        //When a listboard is just created, the id is set later from the server
+        //We then need to update the container URL        
+        if(this.get('_id'))
+            this.updateContainerURL()
+        else
+            this.listenTo(this, 'change:_id', function () {
+                this.updateContainerURL();
+            }, this);
+    },    
+    updateContainerURL: function() {        
         this.containers.url = this.url() + this.containers.url;
     },
     addContainer: function (container, options) {

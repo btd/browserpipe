@@ -11,7 +11,7 @@ var testLaterListboard = { type: 1, label: "My Later listboard" }
 
 describe('listboard controller create', function () {
     beforeEach(function (done) {
-        helper.dropCollections(['users', 'lists'], done);
+        helper.dropCollections(['users', 'folders'], done);
     });
 
     it('should return 200 and create listboard with POST on /listboards when authenticated and send good data', function (done) {

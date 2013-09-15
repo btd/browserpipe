@@ -2,16 +2,16 @@ var Backbone = require('backbone'),
     Browsers = require('collections/browsers'),
     Listboards = require('collections/listboards'),
     ItemCollection = require('collections/items'),
-    List = require('models/list'),
+    Folder = require('models/folder'),
     _ = require('lodash');
 
 var State = Backbone.Model.extend({
-    lists: {},
+    folders: {},
     items: new ItemCollection(),
     loadInitialData: function () {
 
-        //Loads Lists
-        this.loadLists();
+        //Loads Folders
+        this.loadFolders();
 
         //Loads NowListboards
         this.loadNowListboards();
@@ -41,37 +41,27 @@ var State = Backbone.Model.extend({
                 container.addItem(item);
         });
     },
-    loadLists: function () {
-        //Load children lists
-        var initialLists = initialOptions.lists || [];
-        _.each(initialLists, function (listItem) {
-            var list = new List(listItem);
-            this.lists[list.getFilter()] = list;
-            if (!_.isEmpty(list.get('path'))) {
-                var parentList = this.lists[list.get('path')];
-                parentList.addChildren(list);
-            }
-            this.listFilterChangedEvent(list);
-            this.listDeletedEvent(list);
+    loadFolders: function () {
+        //Load children folders
+        var initialFolders = initialOptions.folders || [];
+        _.each(initialFolders, function (folderItem) {
+            var folder = new Folder(folderItem);
+            this.folders[folder.getFilter()] = folder;
+            if (!_.isEmpty(folder.get('path'))) {
+                var parentFolder = this.folders[folder.get('path')];
+                parentFolder.addChildren(folder);
+            }                        
         }, this);
     },
-    addList: function (list) {
-        this.lists[list.getFilter()] = list;
+    addFolder: function (folder) {
+        if(!this.folders[folder.getFilter()])
+            this.folders[folder.getFilter()] = folder;
     },
-    listFilterChangedEvent: function (list) {
-        //If filter change, it updates the key
-        var self = this;
-        this.listenTo(list, 'filterChanged', function (filter, oldFilter) {
-            delete self.lists[oldFilter]
-            self.lists[filter] = list;
-        });
-    },
-    listDeletedEvent: function (list) {
-        //If the list is deleted, it removes it from lists
-        var self = this;
-        this.listenTo(list, 'deleted', function (list) {
-            delete self.lists[list.getFilter()]
-        });
+    removeFolder: function (folder) {
+        var parent = this.getFolderByFilter(folder.get('path'));
+        if(parent)
+            parent.children.remove(folder);
+        this.folders[folder.getFilter()] = null;
     },
     loadBrowsers: function () {        
         this.browsers = new Browsers(initialOptions.browsers)
@@ -80,21 +70,22 @@ var State = Backbone.Model.extend({
         var self = this;
         for (var index in initialOptions.items) {
             var item = initialOptions.items[index];
-            _.each(item.lists, function (filter) {
-                var list = self.getListByFilter(filter);
-                if (list) {
-                    if (!list.items)
-                        list.items = new ItemCollection();
-                    list.addItem(item);
+            for (var index2 in item.folders) {
+                var filter  = item.folders[index2];
+                var folder = self.getFolderByFilter(filter);
+                if (folder) {
+                    if (!folder.items)
+                        folder.items = new ItemCollection();
+                    folder.addItem(item);
                 }
-            });
+            }
         }        
     },
-    //TODO: Now all lists are loaded in memory.
-    //      It should loads lists from server in an optmized way
+    //TODO: Now all folders are loaded in memory.
+    //      It should loads folders from server in an optmized way
     //      And this method shoud return a promise
-    getListByFilter: function (filter) {
-        return this.lists[filter];
+    getFolderByFilter: function (filter) {
+        return this.folders[filter];
     },
     getItemsByFilter: function (filter) {
         //TODO: load items
@@ -107,12 +98,12 @@ var State = Backbone.Model.extend({
             case 2: return this.futureListboards.get(listboardId);
         }            
     },
-    addItemToLists: function (item) {
+    addItemToFolders: function (item) {
         var self = this;
-        _.map(item.get('lists'), function (filter) {
-            var list = self.getListByFilter(filter);
-            if (list)
-                list.addItem(item);
+        _.map(item.get('folders'), function (filter) {
+            var folder = self.getFolderByFilter(filter);
+            if (folder)
+                folder.addItem(item);
         });
     },
     addItemToContainers: function (item) {
@@ -162,31 +153,31 @@ var State = Backbone.Model.extend({
             container.removeItem(itemId);
         }); 
     },
-    createListIfNew: function (filter) {
+    createFolderIfNew: function (filter) {
         var self = this;
-        if (filter != 'Lists' && filter.substring(0, 5) != "Lists/")
+        if (filter != 'Folders' && filter.substring(0, 5) != "Folders/")
             return null;
         var defer = $.Deferred();
-        var list = this.getListByFilter(filter);
-        if (!list) { //If it does not extists, it creates it
+        var folder = this.getFolderByFilter(filter);
+        if (!folder) { //If it does not extists, it creates it
             var index = filter.lastIndexOf('/'); //It has at least one "/"
             var path = filter.substring(0, index);
             var label = filter.substring(index + 1);
             //Gets or creates the parent
-            this.createListIfNew(path)
+            this.createFolderIfNew(path)
                 .done(function (parent) {
-                    parent.children.createList({
+                    parent.children.createFolder({
                         label: label,
                         path: path
                     })
-                    .done(function (list) {
-                        self.addList(list);
-                        defer.resolve(list);
+                    .done(function (folder) {
+                        self.addFolder(folder);
+                        defer.resolve(folder);
                     });
                 });
         }
-        else  //Resolves with the list if existis
-            defer.resolve(list);
+        else  //Resolves with the folder if existis
+            defer.resolve(folder);
         return defer;
     }
 });

@@ -55,13 +55,13 @@ module.exports = function (app, passport) {
   app.put(    '/listboards/:listboardId/containers/:containerId',  auth.send401IfNotAuthenticated, container.update);
   app.delete( '/listboards/:listboardId/containers/:containerId',  auth.send401IfNotAuthenticated, container.destroy);
 
-  //Lists routes
-  var list = require('../app/controllers/list');
-  app.post( '/lists',             auth.send401IfNotAuthenticated, list.create);
-  app.put(  '/lists/:listId',     auth.send401IfNotAuthenticated, list.update);
-  app.delete('/lists/:listId',    auth.send401IfNotAuthenticated, list.destroy);
+  //Folders routes
+  var folder = require('../app/controllers/folder');
+  app.post( '/folders',             auth.send401IfNotAuthenticated, folder.create);
+  app.put(  '/folders/:folderId',     auth.send401IfNotAuthenticated, folder.update);
+  app.delete('/folders/:folderId',    auth.send401IfNotAuthenticated, folder.destroy);
     
-  app.param('listId', auth.send401IfNotAuthenticated, list.list);
+  app.param('folderId', auth.send401IfNotAuthenticated, folder.folder);
 
   //Items routes
   var item = require('../app/controllers/item');

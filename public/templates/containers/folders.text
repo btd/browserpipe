@@ -1,0 +1,13 @@
+<ul class="folders <% if(collapsed) { %>collapsed<% } %>">	
+</ul>
+<div class="input-append add-folder hide">
+	<div class="control-group">    
+    	<div class="controls">
+			<input type="text" value=""/>
+			<div>
+			  	<button class="btn add-folder-save" type="button"><i class="icon-ok save-icon">&nbsp;Add folder</i></button>
+			  	<button class="btn add-folder-cancel" type="button"><i class="icon-remove cancel-icon"></i></button>
+			</div>
+		</div>
+	</div>
+</div>

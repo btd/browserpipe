@@ -1,2 +1,0 @@
-<input class="input-xlarge editor-list-input" type="text" data-provide="typeahead" name="editor-list-input" placeholder="Press enter to add a list"/>
-<div class="editor-lists"></div>

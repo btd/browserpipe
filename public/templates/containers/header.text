@@ -1,6 +1,24 @@
-<% if(container.get('type')===2 && container.get('filter')!='Lists'){ %><i class="icon-arrow-up container-list-icon" title="Navigate lists up"></i><% } %>
+<% if(container.get('type')===2){ %>
+	<a href="#" class="add-folder-icon">&nbsp;Add folder</a>
+	<% if(container.get('filter')!='Folders'){ %>
+		<i class="icon-arrow-up container-folder-icon" title="Navigate folders up"></i>	
+	<% } %>
+<% } %>
 <i class="icon-remove close-container" title="Close"></i>
-<span class="title"><% if($.trim(container.get('title')) === '') { %><i>Unnamed</i><% } else { %><%= container.get('title')%><% } %></span>
+<span class="title">
+	<% if($.trim(container.get('title')) === '') { %>
+		<% if(container.get('type')===0){ %>
+			<%= container.getItems().length + " Tabs" %>
+		<% } else { %>
+			<i>Unnamed</i>
+		<% } %>
+	<% } else { %>
+		<%= container.get('title')%>
+	<% } %>
+</span>
+<% if(container.get('type')===0 && $.trim(container.get('title')) === ''){ %>
+	<span class="tabs-count"><%= container.getItems().length + " Tabs" %></span>
+<% } %>
 <div class="input-append edit-title hide">
   <input type="text" value="<%= container.get('title') %>"/>
   <button class="btn edit-title-save" type="button"><i class="icon-ok"></i></button>
