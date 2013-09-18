@@ -27,8 +27,9 @@ var Future = SectionListboard.extend({
     },
 
     addContainer: function () {
+        var rootFolder = _state.getFolderByFilter('Folders');
         this.model && this.model.addContainer(
-            new Container({ type: 2, filter: 'Folders', title: '' })
+            new Container({ type: 2, folder: rootFolder.id, title: '' })
         );
     }
 });

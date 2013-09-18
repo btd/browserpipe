@@ -31,7 +31,7 @@ var Later = SectionListboard.extend({
 
     addContainer: function () {
         this.model && this.model.addContainer(
-            new Container({ type: 1, filter: '', title: 'New Container' })
+            new Container({ type: 1, filter: '' })
         );
     }
 });

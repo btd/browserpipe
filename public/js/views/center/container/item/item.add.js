@@ -37,18 +37,19 @@ var AddItem = AppView.extend({
         var containers = []
         var type = this.model.get('type');
         this.cleanErrors();        
-        var url = this.$('.item-url').val();
+        var url = this.$('.item-url').val();        
         this.validateFields(url);
         if (!this.hasErrors()) {            
             if(type === 1) //this is for later containers
                 containers.push(this.model.id);
             else //type = 2 this if for future containers that use contains items by folder
-                folders.push(this.model.folder.getFilter());
+                folders.push(this.model.folder.id);
             //We create the folder
             var item = new Item();
             item.save({
                 type: type,                
                 url: url,
+                title: url,
                 containers: containers,
                 folders: folders //no blanks and non repeated
             }, {wait: true, success: function (item) {

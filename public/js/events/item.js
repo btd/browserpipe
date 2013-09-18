@@ -11,8 +11,7 @@ module.exports = function (socket) {
             })
             .map(function (key) {           
                 if (item.get(key) !== itemUpdate[key]) {
-                    item.set(key, itemUpdate[key]);
-                    item.trigger('change:' + key, item);
+                    item.set(key, itemUpdate[key]);                    
                 }
             })
 
@@ -24,71 +23,77 @@ module.exports = function (socket) {
 
         var toRemoveContainerIds = _.difference(item.get('containers'), itemUpdate.containers);
         _state.getContainersByIds(toRemoveContainerIds).map(function(container) {
-            container.removeItem(item.id)
+            if(container)
+                container.removeItem(item.id)
         })
 
         var toAddContainerIds = _.difference(itemUpdate.containers, item.get('containers'));
         _state.getContainersByIds(toAddContainerIds).map(function(container) {
-            container.addItem(item)
+            if(!container.getItems().get(item.cid))
+                container.addItem(item)
         })      
+
+        if(toRemoveContainerIds.length > 0 || toAddContainerIds.length > 0)
+            item.set('containers', itemUpdate.containers)
 
     }
 
     var updateFolders = function (item, itemUpdate) {  
 
-        var toRemoveFolderFilters = _.difference(item.get('folders'), itemUpdate.folders);
-        _.chain(toRemoveFolderFilters)
-            .map(function(filter) {
-                return _state.getFolderByFilter(filter);
+        var toRemoveFolderIds = _.difference(item.get('folders'), itemUpdate.folders);
+        _.chain(toRemoveFolderIds)
+            .map(function(folderId) {
+                return _state.getFolderById(folderId);
             })
             .map(function(folder) {
-                folder.removeItem(item.id)
+                if(folder)
+                    folder.removeItem(item.id);
             })
 
-        var toAddFolderFilters = _.difference(itemUpdate.folders, item.get('folders'));
-        _.chain(toAddFolderFilters)
-            .map(function(filter) {
-                return _state.getFolderByFilter(filter);
+        var toAddFolderIds = _.difference(itemUpdate.folders, item.get('folders'));
+        _.chain(toAddFolderIds)
+            .map(function(folderId) {
+                return _state.getFolderById(folderId);
             })
-            .map(function(folder) {
-                folder.addItem(item.id)
+            .map(function(folder) {  
+                if(!folder.getItems().get(item.cid))
+                    folder.addItem(item);
             })
 
+        if(toRemoveFolderIds.length > 0 || toAddFolderIds.length > 0)
+            item.set('folders', itemUpdate.folders)
     }
 
-    socket.on('create.item', function (data) {
-        var item = new Item(data);
-        _state.addItemToContainers(item);
-        _state.addItemToFolders(item);
-    });
-
-    socket.on('bulk.create.item', function (data) {
-        for (var index in data) {
-            var item = new Item(data[index]);
+    var createItem = function(data) {
+        if(!_state.getItemByCId(data.cid)) {
+            var item = new Item(data);
             _state.addItemToContainers(item);
             _state.addItemToFolders(item);
         }
+    }
+
+    socket.on('create.item', function (data) {
+        createItem(data);
     });
 
-    socket.on('update.item', function (data) {        
+    socket.on('bulk.create.item', function (data) {
+        for (var index in data)
+            createItem(data[index]);
+    });
+
+    var updateItem = function(data) {
         var item = _state.getItemById(data._id);
         if(item)
             updateDifferences(item, data);
+    }
+
+    socket.on('update.item', function (data) {        
+        updateItem(data);
     });
 
     socket.on('bulk.update.item', function (data) {
         for (var index in data)
-            updateDifferences(_state.getItemById(data[index]._id), data[index]);
-    });
-
-    //TODO: Not used yet, items are not fully deleted, just removed from folder and containers
-    /*socket.on('delete.item', function (data) {
-        _state.removeItemFromContainers(data);
-    });
-
-    socket.on('bulk.delete.item', function (data) {
-        for (var index in data)
-            _state.removeItemFromContainers(data[index]);
-    });*/
+            updateItem(data[index]);
+    });   
 
 };

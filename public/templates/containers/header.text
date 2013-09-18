@@ -1,9 +1,3 @@
-<% if(container.get('type')===2){ %>
-	<a href="#" class="add-folder-icon">&nbsp;Add folder</a>
-	<% if(container.get('filter')!='Folders'){ %>
-		<i class="icon-arrow-up container-folder-icon" title="Navigate folders up"></i>	
-	<% } %>
-<% } %>
 <i class="icon-remove close-container" title="Close"></i>
 <span class="title">
 	<% if($.trim(container.get('title')) === '') { %>

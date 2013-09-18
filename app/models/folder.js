@@ -62,21 +62,11 @@ FolderSchema.statics.findAllByPath = function (user, path) {
         .execWithPromise();
 }
 
-FolderSchema.statics.removeChildrenByPath = function (user, path) {
+FolderSchema.statics.findAllDescendant = function (user, path) {
     return this
-        .remove({user: user, path: new RegExp("^" + path)})
+        .find({user: user, path: new RegExp("^" + path)}, 'user label path')
+        .sort({'path': 1}) 
         .execWithPromise();
-}
-
-FolderSchema.methods.removeFull = function () {
-    var Item = mongoose.model('Item');
-    var User = mongoose.model('User');
-    return q.all([
-        Folder.removeChildrenByPath(this.user, this.fullPath),
-        User.removeContainersByFilter(this.user, this.fullPath),
-        Item.removeAllByFilters(this.user, [this.fullPath]),
-        this.removeWithPromise()
-    ]);
 }
 
 var qfindOne = function (obj) {

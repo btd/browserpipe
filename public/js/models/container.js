@@ -9,7 +9,7 @@ module.exports = Container = AppModel.extend({
         this.loadItems();
         if(this.get('type') === 2) {
             var _state = require('models/state');
-            this.folder = _state.getFolderByFilter(this.get('filter'));
+            this.folder = _state.getFolderById(this.get('folder'));
         }
     },
     loadItems: function () {

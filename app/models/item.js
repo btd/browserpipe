@@ -6,9 +6,9 @@ var mongoose = require('mongoose'),
 
 //There are to types of items: folder-item and note-item
 var ItemSchema = new Schema({
-    type: {type: Number, required: true},//0: bookmark, 1: note
+    type: {type: Number, required: true}, //0: bookmark, 1: note
     folders: [
-        {type: String, trim: true}
+        {type: Schema.ObjectId, ref: 'Folder'}
     ],
     containers: [
         {type: Schema.ObjectId, ref: 'Container'}
@@ -54,15 +54,9 @@ ItemSchema.statics.findAllByContainers = function (user, containerIds) {
         .execWithPromise();
 }
 
-ItemSchema.statics.findAllByFolders = function (user, filters) {
+ItemSchema.statics.findAllByFolders = function (user, folderIds) {
     return this
-        .find({user: user, folders: {$in: filters}}, '_id type containers folders title favicon url note externalId')
-        .execWithPromise();
-}
-
-ItemSchema.statics.removeAllByFilters = function (user, filters) {
-    return this
-        .remove({user: user, folders: {$in: filters}})
+        .find({user: user, folders: {$in: folderIds}}, '_id type containers folders title favicon url note externalId')
         .execWithPromise();
 }
 

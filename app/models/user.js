@@ -64,21 +64,40 @@ UserSchema.methods.addFutureListboard = function (rawListboard) {
     return _.last(this.futureListboards);
 };
 
-UserSchema.statics.removeContainersByFilter = function (user, filter) {
-    return this
-        .update({_id: user, 'listboards.containers.filter': filter}, {$pull: {'listboards.$.containers': {filter: filter}}})
-        .execWithPromise();
-}
+
+UserSchema.methods.getContainersByFolderIds = function (folderIds) {
+    return _.chain(this.futureListboards)
+                .map(function (listboard) { return listboard.containers})
+                .flatten()
+                .filter(function(container) {
+                    return _.contains(folderIds, container.folder.toString()) 
+                })
+                .value();
+};
+
+UserSchema.methods.removeContainersByFolderIds = function (folderIds) {
+    _.map(this.futureListboards, function (listboard) {                     
+        var containersToRemove =  _.chain(listboard.containers)
+            .filter(function(container) {                
+                return _.contains(folderIds, container.folder.toString()) 
+            })
+            .value();
+        _.map(containersToRemove, function(container) {
+            listboard.containers.remove(container);    
+        });
+    });
+    return this.saveWithPromise();
+};
 
 
 // 2 convinient wrappers to do not repeat in code also it populate internal doc
 UserSchema.statics.byId = function (id) {
     return qfindOne({ _id: id});
-}
+};
 
 UserSchema.statics.byEmail = function (email) {
     return qfindOne({ email: email});
-}
+};
 
 UserSchema.pre('save', function (done) {
     var that = this;

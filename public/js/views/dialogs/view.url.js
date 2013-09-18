@@ -36,23 +36,27 @@ var ViewURL = AppView.extend({
         var folders = this.model.getFolders();
         this.foldersView = new FoldersEditor({collection: new Folders(folders)})
         this.listenTo(this.foldersView, 'folderAdded', this.addFolder);
-        this.listenTo(this.foldersView, 'folderRemoved', this.updateFolders);
+        this.listenTo(this.foldersView, 'folderRemoved', this.removeFolder);
         this.$('.item-folders').html(this.foldersView.render().el);
         //Show dialog
         this.$el.modal('show');
         return this;
     },
-    postRender: function () {
-
-    },    
-    addFolder: function (folder) {
-        _state.createFolderIfNew(folder.getFilter());
+    addFolder: function (folder) {        
         var folders =  _.compact(_.uniq(this.foldersView.collection.map(function (folder) {
-            return folder.getFilter();
+            return folder.id;
         })));  //no blanks and non repeated
         this.model.save({
             folders: folders
-        })
+        }, {wait: true, success: function (item) {
+            folder.getItems().add(this.model);
+        }});     
+    },
+    removeFolder: function (folder) {        
+        var folders =  _.without(this.model.get('folders'), folder.id);        
+        this.model.save({
+            folders: folders
+        });
     },
     close: function () {
         this.$el.modal('hide');

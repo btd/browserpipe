@@ -3,6 +3,7 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var _state = require('models/state');
 var Container = require('views/center/container/container');
+var FutureContainerHeader = require('views/center/container/header/future.header');
 var ContainerChildFolder = require('views/center/container/folder/child.folder');
 var FoldersTemplate = require('templates/containers/folders');
 var AddItem = require('views/center/container/item/item.add');
@@ -15,7 +16,7 @@ var FutureContainer = Container.extend({
 
         this.listenFolderEvents();
 
-        this.model.on('change:filter', this.filterChanged, this)
+        this.model.on('change:folder', this.folderChanged, this)
 
         this.events['click .container-folder-icon'] = 'navigateToParentFolder';
         this.events['click .add-folder-icon'] = 'addFolder';
@@ -34,13 +35,18 @@ var FutureContainer = Container.extend({
     getItems: function () {
         return this.model.folder.getItems();
     },
-    removeItem: function(itemView) { //overrided by future container        
+    removeItem: function(itemView) {      
         var self = this;
         itemView.model.save({
-            folders: _.without(itemView.model.get('folders'), this.model.folder.getFilter())
+            folders: _.without(itemView.model.get('folders'), this.model.folder.id)
         }, {wait: true, success: function (item) {
             self.removeItemView(itemView);
         }})        
+    },
+    renderHeader: function () {
+        this.header = new FutureContainerHeader({ model: this.model.folder });
+        this.$('.header').append(this.header.render().el);
+        return this;
     },
     renderFooter: function () {
         this.footer = new AddItem({ model: this.model });
@@ -90,9 +96,16 @@ var FutureContainer = Container.extend({
         this.listenTo(this.model.folder.getItems(), 'remove', this.itemRemoved);
         
     },
-    filterChanged: function(){              
-        var folder = _state.getFolderByFilter(this.model.get('filter'));
+    stopListeningFolderEvents: function() {
+        //Unbind old folder events and item events
+        this.stopListening(this.model.folder.children);
+        this.stopListening(this.model.folder.getItems());
+    },
+    folderChanged: function(){              
+        var folder = _state.getFolderById(this.model.get('folder'));
         if(folder) {
+            this.stopListeningFolderEvents();
+            
             this.model.folder = folder;
             //Listen to new folder events
             this.listenFolderEvents();
@@ -103,13 +116,11 @@ var FutureContainer = Container.extend({
         }
     },
     navigateToFolder: function (folder) {
-        //Unbind old folder events and item events
-        this.stopListening(this.model.folder.children);
-        this.stopListening(this.model.folder.getItems());
+        this.stopListeningFolderEvents();
         //Sets the new folder
         this.model.save({
             title: folder.get('label'),
-            filter: folder.getFilter()
+            folder: folder.id
         });        
     },
     navigateToParentFolder: function () {
