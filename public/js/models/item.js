@@ -11,10 +11,10 @@ module.exports = AppModel.extend({
         _state.items.add(this);
     },
     getFolders: function () {
-        return _.map(this.get('folders'), function (filter) {
+        return _.map(this.get('folders'), function (folderId) {
             //We have to declare it here because of circle reference between Item and State
             var _state = require('models/state');
-            return _state.getFolderByFilter(filter);
+            return _state.getFolderById(folderId);
         })
     }
 });

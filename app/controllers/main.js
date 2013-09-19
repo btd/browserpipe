@@ -22,7 +22,7 @@ exports.home = function (req, res) {
                     return _.map(listboard.containers, '_id');
                 }).flatten().value();
 
-                var filters = _.map(folders, 'fullPath');
+                var folderIds = _.map(folders, '_id');
 
                 var itemsByContainersPromise = Item.findAllByContainers(
                         req.user,
@@ -30,7 +30,7 @@ exports.home = function (req, res) {
                     );
                 var itemsByFoldersPromise = Item.findAllByFolders(
                         req.user,
-                        filters
+                        folderIds
                     );
 
                 return q.all([

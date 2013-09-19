@@ -19,8 +19,11 @@ module.exports = Folder = AppModel.extend({
     getFilter: function () {
         return (this.get('path') === "" ? "" : this.get('path') + "/") + this.get('label');
     },
+    getPreviousFilter: function () {
+        return (this.previous('path') === "" ? "" : this.previous('path') + "/") + this.previous('label');
+    },
     isUserFolder: function () {
-        return this.getFilter().substring(0, 6) === "Folders/";
+        return this.getFilter().substring(0, 8) === "Folders/";
     },
     addChildren: function (children) {
         this.children.add(children);
@@ -31,9 +34,7 @@ module.exports = Folder = AppModel.extend({
     getItems: function () {
         //Check if children are not loaded at init
         if (!this.items) {
-            var _state = require('models/state');
-            var items = _state.getItemsByFilter(this.getFilter());
-            this.items = new ItemCollection(items);
+            this.items = new ItemCollection();
         }
         return this.items;
     },

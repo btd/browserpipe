@@ -8,7 +8,7 @@ var ContainerSchema = new Schema({
     externalId: {type: String, trim: true},
 
     //For 2 container (future containers)
-    filter: {type: String, trim: true}
+    folder: {type: Schema.ObjectId, ref: 'Folder'},
 },{
     toObject: { virtuals: true },
     toJSON: { virtuals: true }

@@ -70,11 +70,6 @@ exports.create = function (req, res) {
 
     //Creates the future listboard
     user.addLaterListboard({ type: 1, label: 'My later listboard'})
-
-    //Create a later listboard
-    user.addFutureListboard({ type: 2, label: 'My future  listboard'})
-        .addContainerByFolder(readLaterFolder)
-        .addContainerByFolder(coolSitesFolder);
    
     //TODO: THIS IS TEMPORAL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     //CREATES A NOW LISTBOARD
@@ -85,28 +80,36 @@ exports.create = function (req, res) {
     //Sets current listboard to recently created one
     user.saveWithPromise()
         .then(function() {
-            q.all([
-                    foldersFolder.saveWithPromise(),
-                    trashFolder.saveWithPromise(),
-                    importsFolder.saveWithPromise(),
-                    readLaterFolder.saveWithPromise(),
-                    coolSitesFolder.saveWithPromise(),                    
-                ])
-                .spread(function () {
-                    res.format({
+            return q.all([
+                foldersFolder.saveWithPromise(),
+                trashFolder.saveWithPromise(),
+                importsFolder.saveWithPromise(),
+                readLaterFolder.saveWithPromise(),
+                coolSitesFolder.saveWithPromise(),                    
+            ]);
+        })
+        .then(function () {
+            //Create a future listboard
+            //We need to do it later so the folders are saved
+            user.addFutureListboard({ type: 2, label: 'My future  listboard'})
+                .addContainerByFolder(readLaterFolder)
+                .addContainerByFolder(coolSitesFolder);                           
+            return user.saveWithPromise(); 
+        })
+        .then(function () {
+            res.format({
 
-                        html: function () {
-                            req.login(user, function (err) {
-                                if (err) return res.render('500')
-                                return res.redirect('/welcome')
-                            })
-                        },
+                html: function () {
+                    req.login(user, function (err) {
+                        if (err) return res.render('500')
+                        return res.redirect('/welcome')
+                    })
+                },
 
-                        json: function () {
-                            res.send({ _id: user._id });
-                        }
-                    });
-                }).done()
+                json: function () {
+                    res.send({ _id: user._id });
+                }
+            });
         })
         .fail(function (err) {
             res.format({

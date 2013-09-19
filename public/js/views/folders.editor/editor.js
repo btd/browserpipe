@@ -27,7 +27,7 @@ var FoldersEditor = AppView.extend({
         var self = this;
         var compiledTemplate = _.template(template, {});
         this.$el.html(compiledTemplate);
-        this.collection.each(function(folder) {
+        this.collection.each(function(folder) {            
             if (folder.isUserFolder())
                 self.renderFolder(folder)
         })
@@ -73,14 +73,13 @@ var FoldersEditor = AppView.extend({
     getUserFoldersFolder: function() {
         //TODO: review this if we load folders from server async in the future
         var self = this;        
-        return _.chain(_state.folders)
-            .values()
+        return _.chain(_state.getAllFolders())
             .filter(function(folder) {
                 return !self.collection.contains(folder) && folder.isUserFolder();
             })
             .map(function(folder) {
                 var filter = folder.getFilter();
-                return filter.substring(6, filter.length);
+                return filter.substring(8, filter.length);
             })
             .value();
     },
@@ -105,17 +104,15 @@ var FoldersEditor = AppView.extend({
         }).length > 0)
             return;
         var folder = _state.getFolderByFilter(filter);
-        if (!folder)
-            folder = this.createFolder(filter);
-        this.collection.add(folder);
+        if (folder)
+            this.collection.add(folder);
+        else
+            this.createAndAddFolder(filter);
     },
-    createFolder: function(filter) {
-        var index = filter.lastIndexOf('/'); //It has at least one /
-        var path = filter.substring(0, index);
-        var label = filter.substring(index + 1);
-        return new Folder({
-            label: label,
-            path: path
+    createAndAddFolder: function(filter) {
+        var self = this;
+        _state.createFolderIfNew(filter).done(function(folder) {
+            self.collection.add(folder);
         });
     }
 });

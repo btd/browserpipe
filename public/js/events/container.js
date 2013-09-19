@@ -7,25 +7,26 @@ module.exports = function (socket) {
             if (container.get(key) !== containerUpdate[key]) {
                 container.set(key, containerUpdate[key]);
                 //Events is not fired automatically
-                collection.trigger('change:' + key, container);
+                //collection.trigger('change:' + key, container);
             }
         });
     }
 
+    var createContainer = function(listboard, container) {
+        if (listboard && !listboard.containers.get(container.cid))
+            listboard.containers.add(container);
+    }
+
     socket.on('create.container', function (data) {
         var listboard = _state.getListboard(data.listboardType, data.listboardId);
-        if (listboard && !listboard.containers.get(data.container.cid))
-            listboard.containers.add(data.container);
+        createContainer(listboard, data.container);
     });
 
     socket.on('bulk.create.container', function (data) {
         var listboard = _state.getListboard(data.listboardType, data.listboardId);
-        if (listboard)
-            for (var index in data.containers) {
-                var container = data.containers[index];
-                if (!listboard.containers.get(container.cid))
-                    listboard.containers.add(container);
-            }
+        for (var index in data.containers) 
+            createContainer(listboard, data.containers[index])
+
     });
 
     socket.on('update.container', function (data) {
@@ -37,23 +38,26 @@ module.exports = function (socket) {
         }
     });
 
-    socket.on('delete.container', function (data) {
-        var listboard = _state.getListboard(data.listboardType, data.listboardId);
+    var deleteContainer = function(listboard, containerId) {
         if (listboard) {
-            var container = listboard.containers.get(data.containerId);
+            var container = listboard.containers.get(containerId);
             if (container)
                 listboard.containers.remove(container);
         }
+    }
+
+    socket.on('delete.container', function (data) {
+        var listboard = _state.getListboard(data.listboardType, data.listboardId);
+        deleteContainer(listboard, data.containerId);        
     });
 
     socket.on('bulk.delete.container', function (data) {
-        var listboard = _state.getListboard(data.listboardType, data.listboardId);
-        if (listboard)
-            for (var index in data.containerIds) {
-                var cont = listboard.containers.get(data.containerIds[index]);
-                if (cont)
-                    listboard.containers.remove(cont);
-            }
+        for (var index in data) {
+            var container = data[index];
+            var listboard = _state.getListboardByContainerId(container._id);        
+            deleteContainer(listboard, container._id);      
+        }
+        
     });
 };
 

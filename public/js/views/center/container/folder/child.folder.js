@@ -20,6 +20,9 @@ var ContainerChildFolder = AppView.extend({
         }
     },
     initializeView: function () {
+        this.listenTo(this.model, 'change:label', function () {
+            this.render();
+        }, this);
     },
     renderView: function () {
         var compiledTemplate = _.template(template, { label: this.model.get('label') });

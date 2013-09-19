@@ -21,14 +21,14 @@ ListboardSchema.plugin(require('../util/mongoose-timestamp'));
 
 
 ListboardSchema.methods.addContainerByFolder = function (folder) {
-    return this.addContainer({ type: this.type, title: folder.label, filter: folder.fullPath });
+    return this.addContainer({ type: this.type, title: folder.label, folder: folder });
 };
 
 ListboardSchema.methods.addContainer = function (cont) {
     this.containers.push({
         type: cont.type,
         title: cont.title,
-        filter: cont.filter,
+        folder: cont.folder,
         externalId: cont.externalId,
         cid: cont.cid
     });
@@ -45,12 +45,12 @@ ListboardSchema.methods.last = function () {
 };
 
 ListboardSchema.methods.getContainerByExternalId = function (externalId) {
-    var result = _.filter(this.containers, function(cont){ return cont.externalId === externalId; });
-    if(result.length == 1)
+    var result = _.filter(this.containers, function( cont ){ return cont.externalId === externalId; });
+    if (result.length === 1)
         return result[0];
-    else if(result.length === 0)
+    else if (result.length === 0)
         return null
-    else if(result.length > 1)
+    else if (result.length > 1)
         throw "Cannot be two containers with same external id on a listboard"
 }
 

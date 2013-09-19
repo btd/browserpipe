@@ -22,7 +22,7 @@ var updateClients = function(req, delta) {
 
 //Create container
 exports.create = function (req, res) {
-    var container = req.listboard.addContainer(_.pick(req.body, 'title', 'filter', 'type', 'cid')).last();
+    var container = req.listboard.addContainer(_.pick(req.body, 'title', 'folder', 'type', 'cid')).last();
     var delta = {
         type: 'create.container',
         data: {
@@ -42,7 +42,7 @@ exports.update = function (req, res) {
     });
     if (containerIdx >= 0) {
         var container = req.listboard.containers[containerIdx];
-        _.merge(container, _.pick(req.body, 'title', 'filter'));
+        _.merge(container, _.pick(req.body, 'title', 'folder'));
         req.listboard.containers.set(containerIdx, container);
         var delta = {
             type: 'update.container',

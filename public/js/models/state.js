@@ -1,161 +1,75 @@
 var Backbone = require('backbone'),
     Browsers = require('collections/browsers'),
     Listboards = require('collections/listboards'),
+    FolderCollection = require('collections/folders'),
     ItemCollection = require('collections/items'),
     Folder = require('models/folder'),
     _ = require('lodash');
 
 var State = Backbone.Model.extend({
-    folders: {},
+    foldersHash: {},
+    folders: new FolderCollection(),
     items: new ItemCollection(),
     loadInitialData: function () {
 
         //Loads Folders
         this.loadFolders();
 
-        //Loads NowListboards
-        this.loadNowListboards();
-
-        //Loads LaterListboards
-        this.loadLaterListboards();
-
-        //Loads FutureListboards
-        this.loadFutureListboards();
+        //Loads Listboards
+        this.loadListboards();
 
         //Load items
         this.loadItems();
     },
-    loadNowListboards: function () {
-        this.nowListboards = new Listboards(initialOptions.nowListboards);
-    },
-    loadLaterListboards: function () {
-        this.laterListboards = new (Listboards.Later)(initialOptions.laterListboards);
-    },
-    loadFutureListboards: function () {
-        this.futureListboards = new (Listboards.Future)(initialOptions.futureListboards);
-    },
-    loadItemsByContainer: function(container) {
 
-        _.map(initialOptions.items, function(item){            
-            if(_.contains(item.containers,container.get('_id')))
-                container.addItem(item);
-        });
-    },
+    //////////////////////////////////////////FOLDERS//////////////////////////////////////
     loadFolders: function () {
         //Load children folders
         var initialFolders = initialOptions.folders || [];
         _.each(initialFolders, function (folderItem) {
             var folder = new Folder(folderItem);
-            this.folders[folder.getFilter()] = folder;
+            this.folders.add(folder);
+            this.foldersHash[folder.getFilter()] = folder;
             if (!_.isEmpty(folder.get('path'))) {
-                var parentFolder = this.folders[folder.get('path')];
+                var parentFolder = this.foldersHash[folder.get('path')];
                 parentFolder.addChildren(folder);
             }                        
         }, this);
+
+        this.listenTo(this.folders, 'change:path', this.folderFilterChanged, this);
+        this.listenTo(this.folders, 'change:label', this.folderFilterChanged, this);
     },
     addFolder: function (folder) {
-        if(!this.folders[folder.getFilter()])
-            this.folders[folder.getFilter()] = folder;
+        this.folders.add(folder);
+        if(!this.foldersHash[folder.getFilter()])
+            this.foldersHash[folder.getFilter()] = folder;        
     },
     removeFolder: function (folder) {
+        this.folders.remove(folder);
         var parent = this.getFolderByFilter(folder.get('path'));
         if(parent)
             parent.children.remove(folder);
-        this.folders[folder.getFilter()] = null;
+        this.foldersHash[folder.getFilter()] = null;
     },
-    loadBrowsers: function () {        
-        this.browsers = new Browsers(initialOptions.browsers)
-    },    
-    loadItems: function () {
-        var self = this;
-        for (var index in initialOptions.items) {
-            var item = initialOptions.items[index];
-            for (var index2 in item.folders) {
-                var filter  = item.folders[index2];
-                var folder = self.getFolderByFilter(filter);
-                if (folder) {
-                    if (!folder.items)
-                        folder.items = new ItemCollection();
-                    folder.addItem(item);
-                }
-            }
-        }        
+    folderFilterChanged: function (folder) {
+         this.foldersHash[folder.getPreviousFilter()] = null;
+         this.foldersHash[folder.getFilter()] = folder;         
     },
     //TODO: Now all folders are loaded in memory.
     //      It should loads folders from server in an optmized way
     //      And this method shoud return a promise
     getFolderByFilter: function (filter) {
-        return this.folders[filter];
+        return this.foldersHash[filter];
     },
-    getItemsByFilter: function (filter) {
-        //TODO: load items
-        return [];
+    getFolderById: function (folderId) {
+        return this.folders.get(folderId);
     },
-    getListboard: function(listboardType, listboardId) {
-        switch(listboardType){
-            case 0: return this.nowListboards.get(listboardId);
-            case 1: return this.laterListboards.get(listboardId);
-            case 2: return this.futureListboards.get(listboardId);
-        }            
-    },
-    addItemToFolders: function (item) {
-        var self = this;
-        _.map(item.get('folders'), function (filter) {
-            var folder = self.getFolderByFilter(filter);
-            if (folder)
-                folder.addItem(item);
-        });
-    },
-    addItemToContainers: function (item) {
-        var containers = this.getContainersByIds(item.get('containers'));
-        _.map(containers, function (container) {
-            if(!container.items.get(item.cid))
-                container.addItem(item);
-        });                
-    },
-    getItemById: function (id) {
-        return this.items.get(id);
-    },
-    getContainersByIds: function(containerIds) {
-        var self = this;
-        var listboards = _.union(
-            this.nowListboards.models, 
-            this.laterListboards.models, 
-            this.futureListboards.models
-        );   
-        return _.chain(listboards)        
-            .map(function (listboard) {
-                return  self.getContainersByIdsAndListboard(containerIds, listboard);
-            })
-            .flatten()
-            .compact()
-            .value();
-    },
-    getContainersByIdsAndListboard: function(containerIds, listboard) {
-        return _.map(containerIds, function (containerId) {
-            var container = listboard.containers.get(containerId);
-            if(container)
-                return container;
-        });
-    },
-    getItemFromContainers: function (listboardType, listboardId, containerId, itemId) {
-        var listboard = this.getListboard(listboardType, listboardId);
-        if(listboard){
-            var container = listboard.containers.get(containerId);
-            if(container && container.items.get(itemId))
-                return container.items.get(itemId);
-        }
-        return null;
-    },
-    removeItemFromContainers: function (item) {
-        var containers = this.getContainersByIds(item.containers);
-        _.map(containers, function (container) {
-            container.removeItem(itemId);
-        }); 
+    getAllFolders: function() {
+        return this.folders.models;
     },
     createFolderIfNew: function (filter) {
         var self = this;
-        if (filter != 'Folders' && filter.substring(0, 5) != "Folders/")
+        if (filter != 'Folders' && filter.substring(0, 8) != "Folders/")
             return null;
         var defer = $.Deferred();
         var folder = this.getFolderByFilter(filter);
@@ -179,7 +93,127 @@ var State = Backbone.Model.extend({
         else  //Resolves with the folder if existis
             defer.resolve(folder);
         return defer;
+    },
+    //////////////////////////////////////////FOLDERS//////////////////////////////////////
+
+
+    //////////////////////////////////////////LISTBOARDS//////////////////////////////////////
+    loadListboards: function() {
+        //Loads NowListboards
+        this.loadNowListboards();
+
+        //Loads LaterListboards
+        this.loadLaterListboards();
+
+        //Loads FutureListboards
+        this.loadFutureListboards();
+    },
+    loadNowListboards: function () {
+        this.nowListboards = new Listboards(initialOptions.nowListboards);
+    },
+    loadLaterListboards: function () {
+        this.laterListboards = new (Listboards.Later)(initialOptions.laterListboards);
+    },
+    loadFutureListboards: function () {
+        this.futureListboards = new (Listboards.Future)(initialOptions.futureListboards);
+    },    
+    getListboard: function(listboardType, listboardId) {
+        switch(listboardType){
+            case 0: return this.nowListboards.get(listboardId);
+            case 1: return this.laterListboards.get(listboardId);
+            case 2: return this.futureListboards.get(listboardId);
+        }            
+    },
+    //////////////////////////////////////////LISTBOARDS//////////////////////////////////////
+
+
+    //////////////////////////////////////////ITEMS//////////////////////////////////////
+    loadItems: function () {
+        var self = this;
+        for (var index in initialOptions.items) {
+            var item = initialOptions.items[index];
+            for (var index2 in item.folders) {
+                var folderId  = item.folders[index2];
+                var folder = self.folders.get(folderId);
+                if (folder) {
+                    if (!folder.items)
+                        folder.items = new ItemCollection();
+                    folder.addItem(item);
+                }
+            }
+        }        
+    },
+    loadItemsByContainer: function(container) {
+        _.map(initialOptions.items, function(item){            
+            if(_.contains(item.containers,container.get('_id')))
+                container.addItem(item);
+        });
+    },
+    addItemToFolders: function (item) {
+        var self = this;
+        _.map(item.get('folders'), function (folderId) {
+            var folder = self.folders.get(folderId);
+            if (folder)
+                folder.addItem(item);
+        });
+    },
+    addItemToContainers: function (item) {
+        var containers = this.getContainersByIds(item.get('containers'));
+        _.map(containers, function (container) {
+            if(!container.items.get(item.cid))
+                container.addItem(item);
+        });                
+    },
+    getItemById: function (id) {
+        return this.items.get(id);
+    },
+    getItemByCId: function (cid) {
+        return this.items.get(cid);
+    },
+    getListboardByContainerId: function(containerId) {
+        var self = this;
+        var listboards = _.union(
+            this.nowListboards.models, 
+            this.laterListboards.models, 
+            this.futureListboards.models
+        );   
+        return _.first(
+            _.chain(listboards)        
+            .map(function (listboard) {
+                if(listboard.containers.get(containerId))
+                    return listboard;
+            })
+            .flatten()
+            .compact()            
+            .value()
+        );
+    },
+    getContainersByIds: function(containerIds) {
+        var self = this;
+        var listboards = _.union(
+            this.nowListboards.models, 
+            this.laterListboards.models, 
+            this.futureListboards.models
+        );   
+        return _.chain(listboards)        
+            .map(function (listboard) {
+                return  self.getContainersByIdsAndListboard(containerIds, listboard);
+            })
+            .flatten()
+            .compact()
+            .value();
+    },
+    getContainersByIdsAndListboard: function(containerIds, listboard) {
+        return _.map(containerIds, function (containerId) {
+            var container = listboard.containers.get(containerId);
+            if(container)
+                return container;
+        });
     }
+    //////////////////////////////////////////ITEMS//////////////////////////////////////
+
+
+    
 });
 
 module.exports = new State();
