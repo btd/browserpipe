@@ -1,21 +1,14 @@
 // Filename: router.js
 
-var _state = require('models/state'),    
-    Search = require('views/top-bar/search'),    
-    Sections = require('views/top-bar/sections'),
-    AccountNav  = require('views/top-bar/account.nav'),
-    Settings = require('views/center/settings'),
-    Help = require('views/center/help'),
-    Welcome = require('views/center/welcome'),
-    AccordionListboards = require('views/center/listboard/accordion.listboards'),
+var _state = require('models/state'),        
     Backbone = require('backbone'),
+    HomeComponent = require('components/built/home');
     io = require('socket.io');
 
 var AppRouter = Backbone.Router.extend({
     views: {},
     routes: {        
-        '/' : 'gotoListboards',
-        'welcome' : 'welcome',        
+        '/' : 'gotoListboards',   
         'listboards': 'listboards',
         'settings': 'settings',
         'help': 'help',
@@ -25,15 +18,10 @@ var AppRouter = Backbone.Router.extend({
     gotoListboards: function (actions) {   
         Backbone.history.navigate('/listboards', {trigger: true});
     },
-    welcome: function (actions) {     
-        if(!this.welcomeView) {
-            this.welcomeView = new Welcome();       
-            this.welcomeView.render();
-        }
-        this.cleaMainContainer('welcome');
-        this.welcomeView.show();
-    },
     listboards: function (actions) {               
+        HomeComponent.render(this.getDocHeight(), this.getDocWidth());
+    },
+    /*listboards: function (actions) {               
         if(!this.accordionListboardsView) {
             this.accordionListboardsView = new AccordionListboards();       
             this.accordionListboardsView.render();
@@ -66,22 +54,27 @@ var AppRouter = Backbone.Router.extend({
             this.settingsView.hide();
         if(exception != 'help' && this.helpView)
             this.helpView.hide();        
-    },
+    },*/
     initialize: function () {
         //Load initial data
         _state.loadInitialData();
 
         //Top bar accordtion sections
-        this.sections = new Sections();
+        /*this.sections = new Sections();
         this.sections.render();
 
         //Top bar account nav
         this.accountNav = new AccountNav();
-        this.accountNav.render();
+        this.accountNav.render();*/
 
         //Saves reference to the socket
         var url = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
         this.socket = io.connect(url);
+
+        var self = this;
+        $(window).resize(function () {
+            HomeComponent.setDocumentSize(self.getDocHeight(), self.getDocWidth());
+        });
 
         //Load model events
         require('events/listboard')(this.socket);
@@ -89,7 +82,13 @@ var AppRouter = Backbone.Router.extend({
         require('events/container')(this.socket);
         require('events/item')(this.socket);
 
-    }
+    },
+    getDocHeight: function() {
+        return $(window).height(); 
+    },
+    getDocWidth: function() {
+        return $(window).width(); 
+    },
 });
 
 module.exports.initialize = function () {

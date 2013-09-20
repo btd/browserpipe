@@ -1,12 +1,14 @@
 #top-bar {
-    min-height: 46px;
+    height: 46px;
     margin-bottom: 0px;
     border: none;
+    width: 100%;
 
     .navbar-inner {
         background: @blue1;
         padding-bottom: 6px;
         border: none;
+        .flatten();
 
         .dropdown-menu, .modal, .btn {    
             .flatten();
@@ -74,31 +76,6 @@
                 line-height: 35px;
             }
 
-        }
-        #section-selector{            
-            text-overflow: ellipsis;
-            max-width: 450px;                
-            margin-left: 3px;
-            margin-right: 8px;
-
-            .nav-option {
-                margin-right: 6px;
-
-                a {
-                    background-color: @blue2;                    
-                    -moz-transition:width 0.2s ease-out; 
-                    -webkit-transition:width 0.2s ease-out;
-                    -o-transition:width 0.2s ease-out;
-                    -ms-transition:width 0.2s ease-out;
-                    transition:width 0.2s ease-out;
-
-                    text-shadow: none;
-
-                    &:hover {
-                        background-color: @blue3;
-                    }
-                }
-            }    
         }
 
         #search-cont {
