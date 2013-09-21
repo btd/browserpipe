@@ -2,7 +2,7 @@
 
 var _state = require('models/state'),        
     Backbone = require('backbone'),
-    HomeComponent = require('components/built/home');
+    HomeView = require('components/built/home');
     io = require('socket.io');
 
 var AppRouter = Backbone.Router.extend({
@@ -19,7 +19,12 @@ var AppRouter = Backbone.Router.extend({
         Backbone.history.navigate('/listboards', {trigger: true});
     },
     listboards: function (actions) {               
-        HomeComponent.render(this.getDocHeight(), this.getDocWidth());
+        this.homeView = HomeView.render(
+            this.getDocHeight(),
+            this.getDocWidth(),
+            _state.getAllListboards(),
+            _state.getSelectedListboard()
+        );
     },
     /*listboards: function (actions) {               
         if(!this.accordionListboardsView) {
@@ -73,7 +78,10 @@ var AppRouter = Backbone.Router.extend({
 
         var self = this;
         $(window).resize(function () {
-            HomeComponent.setDocumentSize(self.getDocHeight(), self.getDocWidth());
+            self.homeView.setState({ docHeight: self.getDocHeight(), docWidth: self.getDocWidth() });
+        });
+        _state.on('selected.listboard.changed', function (data) {
+            self.homeView.setState({ selectedListboard: _state.getSelectedListboard() });
         });
 
         //Load model events

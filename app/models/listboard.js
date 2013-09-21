@@ -6,7 +6,7 @@ var Schema = require('mongoose').Schema,
 
 
 var ListboardSchema = new Schema({
-    type: {type: Number, required: true}, //0: now, 1: later, 2: future
+    type: {type: Number, required: true}, //0: browser, 1: custom listboard
     label: { type: String, required: true, trim: true, validate: validation.nonEmpty("Label") },
     containers: [ require('./container') ],
 
@@ -21,7 +21,7 @@ ListboardSchema.plugin(require('../util/mongoose-timestamp'));
 
 
 ListboardSchema.methods.addContainerByFolder = function (folder) {
-    return this.addContainer({ type: this.type, title: folder.label, folder: folder });
+    return this.addContainer({ type: 2, title: folder.label, folder: folder });
 };
 
 ListboardSchema.methods.addContainer = function (cont) {

@@ -7,13 +7,9 @@ var _ = require('lodash'),
     responses = require('../util/responses.js'),
     errors = require('../util/errors.js');
 
-//Find laterListboard by id
+//Find listboard by id
 exports.listboard = function (req, res, next, id) {    
-    req.listboard = 
-        req.user.nowListboards.id(id) ||
-        req.user.laterListboards.id(id) ||
-        req.user.futureListboards.id(id)
-
+    req.listboard = req.user.listboards.id(id)
     if(!req.listboard) {
         errors.sendNotFound(res);
     } else {
@@ -139,7 +135,7 @@ exports.sync = function (req, res) {
 
     var user = req.user;
     //TODO: listboard should be created by the extension if it does not existis, if not it should be loded by :listboardId
-    var nowListboard = user.nowListboards[0];
+    var nowListboard = user.listboards[0];
     var windows = req.body.windows;
     var syncDate = new Date();
 

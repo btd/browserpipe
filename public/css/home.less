@@ -8,6 +8,9 @@
 @import "home/center/listboards.panel.less";
 @import "home/center/listboards.panel.responsive.less";
 @import "home/center/listboard.less";
+@import "home/center/listboard.responsive.less";
+@import "home/center/container.less";
+@import "home/center/container.responsive.less";
 @import "home/footer/footer.less";
 
 html, body {
@@ -22,15 +25,15 @@ html, body {
     height: 100%;
     width: 100%;
 
-    .header {
+    .main-header {
         display: table-row;
         background: gray;  
     }
-    .content {        
+    .main-content {        
         display: table-row;  /* height is dynamic, and will expand... */
         height: 100%;        /* ...as content is added (won't scroll) */
     }
-    .footer {
+    .main-footer {
         display: table-row;
     }
 }

@@ -68,15 +68,14 @@ exports.create = function (req, res) {
     var readLaterFolder = foldersFolder.createChildFolder("Read Later");
     var coolSitesFolder = foldersFolder.createChildFolder("Cool Sites");
 
-    //Creates the future listboard
-    user.addLaterListboard({ type: 1, label: 'My later listboard'})
-   
     //TODO: THIS IS TEMPORAL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     //CREATES A NOW LISTBOARD
     //UNTIL IT CREATES IT AUTOMATICALLY VIA EXTENSION AND AP
-    user.addNowListboard({type: 0, label: 'My Chrome Browser'})
+    user.addListboard({type: 0, label: 'My Chrome Browser'})
 
-
+    //Creates an empty listboard
+    user.addListboard({ type: 1, label: 'Empty listboard'})
+   
     //Sets current listboard to recently created one
     user.saveWithPromise()
         .then(function() {
@@ -89,9 +88,9 @@ exports.create = function (req, res) {
             ]);
         })
         .then(function () {
-            //Create a future listboard
+            //Create a listboard with folders
             //We need to do it later so the folders are saved
-            user.addFutureListboard({ type: 2, label: 'My future  listboard'})
+            user.addListboard({ type: 1, label: 'My future  listboard'})
                 .addContainerByFolder(readLaterFolder)
                 .addContainerByFolder(coolSitesFolder);                           
             return user.saveWithPromise(); 

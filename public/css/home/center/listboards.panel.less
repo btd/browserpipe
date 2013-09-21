@@ -1,20 +1,39 @@
 .listboards-panel {
-	position: absolute;
-	overflow-y: auto;
+    width: 100%;
+    position: relative;        
+    overflow-x: auto;
 	background-color: @grey;
-    .flatten();
-    width: 180px;
+    .flatten();    
 
     .listboards {
     	margin: 0;
     	padding: 0;
 
-    	li {
-    		width: 90px;
-    		height: 90px;
-    		margin: 15px auto;
+    	li {            
+            width: 90px;
+            display: table;
+            vertical-align: middle;
+    		text-align: center;    		
     		overflow: hidden;
     		background-color: @blue2; 	
+            float: left;
+
+            a {             
+                display: table-cell;
+                vertical-align: middle;   
+                color: @white;
+                font-weight: bold;
+                .opacity(50);
+
+                &:hover {
+                    text-decoration: none;
+                    cursor:pointer; 
+                    .opacity(100);
+                }
+                &.selected {
+                    .opacity(100);                 
+                }
+            }
     	}
     }
 

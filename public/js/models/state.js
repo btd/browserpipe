@@ -99,31 +99,23 @@ var State = Backbone.Model.extend({
 
     //////////////////////////////////////////LISTBOARDS//////////////////////////////////////
     loadListboards: function() {
-        //Loads NowListboards
-        this.loadNowListboards();
-
-        //Loads LaterListboards
-        this.loadLaterListboards();
-
-        //Loads FutureListboards
-        this.loadFutureListboards();
-    },
-    loadNowListboards: function () {
-        this.nowListboards = new Listboards(initialOptions.nowListboards);
-    },
-    loadLaterListboards: function () {
-        this.laterListboards = new (Listboards.Later)(initialOptions.laterListboards);
-    },
-    loadFutureListboards: function () {
-        this.futureListboards = new (Listboards.Future)(initialOptions.futureListboards);
+        this.listboards = new Listboards(initialOptions.listboards);
+        this.selectedListboard = this.listboards.at(0);
     },    
-    getListboard: function(listboardType, listboardId) {
-        switch(listboardType){
-            case 0: return this.nowListboards.get(listboardId);
-            case 1: return this.laterListboards.get(listboardId);
-            case 2: return this.futureListboards.get(listboardId);
-        }            
+    getListboardById: function(listboardId) {
+        return this.listboards.get(listboardId);          
     },
+    getAllListboards: function() {
+        return this.listboards;
+    },
+    getSelectedListboard: function() {
+        return this.selectedListboard;
+    },
+    setSelectedListboard: function(listboardId) {
+        this.selectedListboard = this.getListboardById(listboardId);
+        this.trigger('selected.listboard.changed');
+    },
+
     //////////////////////////////////////////LISTBOARDS//////////////////////////////////////
 
 
@@ -171,14 +163,9 @@ var State = Backbone.Model.extend({
         return this.items.get(cid);
     },
     getListboardByContainerId: function(containerId) {
-        var self = this;
-        var listboards = _.union(
-            this.nowListboards.models, 
-            this.laterListboards.models, 
-            this.futureListboards.models
-        );   
+        var self = this;          
         return _.first(
-            _.chain(listboards)        
+            _.chain(this.listboards)        
             .map(function (listboard) {
                 if(listboard.containers.get(containerId))
                     return listboard;
@@ -190,12 +177,7 @@ var State = Backbone.Model.extend({
     },
     getContainersByIds: function(containerIds) {
         var self = this;
-        var listboards = _.union(
-            this.nowListboards.models, 
-            this.laterListboards.models, 
-            this.futureListboards.models
-        );   
-        return _.chain(listboards)        
+        return _.chain(this.listboards)        
             .map(function (listboard) {
                 return  self.getContainersByIdsAndListboard(containerIds, listboard);
             })
