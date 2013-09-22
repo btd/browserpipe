@@ -9,17 +9,17 @@ var _state = require('models/state')
 
 var ContainerView = React.createClass({displayName: 'ContainerView', 
 	getContainerTitle: function() {
-		if($.trim(this.props.container.get('title')) === '')
-			if(this.props.container.get('type')===0) 
-				return this.props.container.getItems().length + " Tabs";
+		if($.trim(this.props.container.title) === '')
+			if(this.props.container.type === 0) 
+				return this.props.container.items.length + " Tabs";
 			else
 				return React.DOM.i(null, "Unnamed")
 		else
-			return this.props.container.get('title');
+			return this.props.container.title;
 	},
 	getTabsCount: function() {
-		 if(this.props.container.get('type')===0 && $.trim(this.props.container.get('title')) === '')
-			return React.DOM.span( {className:"tabs-count"},  this.props.container.getItems().length + " Tabs" )
+		 if(this.props.container.type === 0 && $.trim(this.props.container.title) === '')
+			return React.DOM.span( {className:"tabs-count"},  this.props.container.items.length + " Tabs" )
 		else
 			return null;
 	},
@@ -34,7 +34,7 @@ var ContainerView = React.createClass({displayName: 'ContainerView',
 				React.DOM.span( {className:"title"},  this.getContainerTitle()  ),
 				 this.getTabsCount(), 
 				React.DOM.div( {className:"input-append edit-title hide"}, 
-				  React.DOM.input( {type:"text", value:this.props.container.get('title')} ),
+				  React.DOM.input( {type:"text", value:this.props.container.title} ),
 				  React.DOM.button( {className:"btn edit-title-save", type:"button"}, React.DOM.i( {className:"icon-ok"})),
 				  React.DOM.button( {className:"btn edit-title-cancel", type:"button"}, React.DOM.i( {className:"icon-remove"}))
 				)
@@ -45,7 +45,7 @@ var ContainerView = React.createClass({displayName: 'ContainerView',
 		return (
 			React.DOM.ul( {className:"items"}, 
 			                    
-                this.props.container.getItems().map(function(item) {
+                this.props.container.items.map(function(item) {
                     return Item( {item:item} )
                 })
             

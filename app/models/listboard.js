@@ -11,6 +11,7 @@ var ListboardSchema = new Schema({
     containers: [ require('./container') ],
 
     //For 0 container (associated with a browser)
+    browserKey: { type: String },
     lastSyncDate: Date
 },{
     toObject: { virtuals: true },

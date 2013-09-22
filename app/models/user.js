@@ -31,6 +31,16 @@ UserSchema.methods.authenticate = function (password) {
     return bcrypt.compareSync(password, this.password);
 };
 
+UserSchema.methods.getListboardByBrowserKey = function (key) {
+    var result = _.filter(this.listboards, function( listboard ){ return listboard.browserKey === key; });
+    if (result.length === 1)
+        return result[0];
+    else if (result.length === 0)
+        return null
+    else if (result.length > 1)
+        throw "Cannot be two listboards with same browser key"
+}
+
 UserSchema.methods.addListboard = function (rawListboard) {
     this.listboards.push(rawListboard);
     return _.last(this.listboards);

@@ -9,13 +9,33 @@
     	margin: 0;
     	padding: 0;
 
-    	li {            
+        li.listboard {            
             width: 90px;
+            background-color: @blue2; 
+
+            a {
+                .opacity(70);  
+
+                &.selected {
+                    .opacity(100);                 
+                }          
+            }              
+        }
+
+        li.chrome-extension-warning{
+            width: 270px;
+            background-color: red;
+
+            a {
+                .opacity(80);            
+            }
+        }            
+
+    	li {       
             display: table;
             vertical-align: middle;
     		text-align: center;    		
     		overflow: hidden;
-    		background-color: @blue2; 	
             float: left;
 
             a {             
@@ -23,15 +43,11 @@
                 vertical-align: middle;   
                 color: @white;
                 font-weight: bold;
-                .opacity(50);
 
                 &:hover {
                     text-decoration: none;
                     cursor:pointer; 
                     .opacity(100);
-                }
-                &.selected {
-                    .opacity(100);                 
                 }
             }
     	}

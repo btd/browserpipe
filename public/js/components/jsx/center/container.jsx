@@ -9,17 +9,17 @@ var _state = require('models/state')
 
 var ContainerView = React.createClass({ 
 	getContainerTitle: function() {
-		if($.trim(this.props.container.get('title')) === '')
-			if(this.props.container.get('type')===0) 
-				return this.props.container.getItems().length + " Tabs";
+		if($.trim(this.props.container.title) === '')
+			if(this.props.container.type === 0) 
+				return this.props.container.items.length + " Tabs";
 			else
 				return <i>Unnamed</i>
 		else
-			return this.props.container.get('title');
+			return this.props.container.title;
 	},
 	getTabsCount: function() {
-		 if(this.props.container.get('type')===0 && $.trim(this.props.container.get('title')) === '')
-			return <span class="tabs-count">{ this.props.container.getItems().length + " Tabs" }</span>
+		 if(this.props.container.type === 0 && $.trim(this.props.container.title) === '')
+			return <span class="tabs-count">{ this.props.container.items.length + " Tabs" }</span>
 		else
 			return null;
 	},
@@ -34,7 +34,7 @@ var ContainerView = React.createClass({
 				<span class="title">{ this.getContainerTitle() } </span>
 				{ this.getTabsCount() }
 				<div class="input-append edit-title hide">
-				  <input type="text" value={this.props.container.get('title')} />
+				  <input type="text" value={this.props.container.title} />
 				  <button class="btn edit-title-save" type="button"><i class="icon-ok"></i></button>
 				  <button class="btn edit-title-cancel" type="button"><i class="icon-remove"></i></button>
 				</div>
@@ -45,7 +45,7 @@ var ContainerView = React.createClass({
 		return (
 			<ul class="items">
 			{                    
-                this.props.container.getItems().map(function(item) {
+                this.props.container.items.map(function(item) {
                     return <Item item= {item} />
                 })
             }

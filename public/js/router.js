@@ -18,78 +18,44 @@ var AppRouter = Backbone.Router.extend({
     gotoListboards: function (actions) {   
         Backbone.history.navigate('/listboards', {trigger: true});
     },
-    listboards: function (actions) {               
-        this.homeView = HomeView.render(
-            this.getDocHeight(),
-            this.getDocWidth(),
-            _state.getAllListboards(),
-            _state.getSelectedListboard()
-        );
+    listboards: function (actions) { 
+        var self = this;
+        _state.isExtensionInstalled(function(installed) {
+            self.homeView = HomeView.render(
+                self.getDocHeight(),
+                self.getDocWidth(),
+                _state.getAllListboards(),
+                _state.getSelectedListboard(),
+                installed
+            ); 
+        })
     },
-    /*listboards: function (actions) {               
-        if(!this.accordionListboardsView) {
-            this.accordionListboardsView = new AccordionListboards();       
-            this.accordionListboardsView.render();
-        }
-        this.cleaMainContainer('accordionListboards');
-        this.accordionListboardsView.show();        
-    },   
-    settings: function (actions) {     
-        if(!this.settingsView) {
-            this.settingsView = new Settings();       
-            this.settingsView.render();
-        }
-        this.cleaMainContainer('settings');
-        this.settingsView.show();
-    },
-    help: function (actions) {     
-        if(!this.helpView) {
-            this.helpView = new Help();       
-            this.helpView.render();
-        }
-        this.cleaMainContainer('help');
-        this.helpView.show();
-    },
-    cleaMainContainer: function(exception){
-        if(exception != 'welcome' && this.welcomeView)
-            this.welcomeView.hide();        
-        if(exception != 'accordionListboards' && this.accordionListboardsView)
-            this.accordionListboardsView.hide();
-        if(exception != 'settings' && this.settingsView)
-            this.settingsView.hide();
-        if(exception != 'help' && this.helpView)
-            this.helpView.hide();        
-    },*/
     initialize: function () {
         //Load initial data
+        var self = this;
+        _state.init({
+            callback: function(key) {
+                self.stateChanged(key)
+            }
+        })
         _state.loadInitialData();
-
-        //Top bar accordtion sections
-        /*this.sections = new Sections();
-        this.sections.render();
-
-        //Top bar account nav
-        this.accountNav = new AccountNav();
-        this.accountNav.render();*/
 
         //Saves reference to the socket
         var url = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
         this.socket = io.connect(url);
 
+        this.loadWindowEvent();        
+        this.loadServerEvents();
+    },
+    loadWindowEvent: function() {
+        //TODO: view is there is a better way to capture and pass events
         var self = this;
         $(window).resize(function () {
-            self.homeView.setState({ docHeight: self.getDocHeight(), docWidth: self.getDocWidth() });
-        });
-        _state.on('selected.listboard.changed', function (data) {
-            self.homeView.setState({ selectedListboard: _state.getSelectedListboard() });
-        });
-
-        //Load model events
-        require('events/listboard')(this.socket);
-        require('events/folder')(this.socket);
-        require('events/container')(this.socket);
-        require('events/item')(this.socket);
-
+            self.homeView.setState({ 
+                docHeight: self.getDocHeight(), 
+                docWidth: self.getDocWidth()
+            });
+        });  
     },
     getDocHeight: function() {
         return $(window).height(); 
@@ -97,6 +63,37 @@ var AppRouter = Backbone.Router.extend({
     getDocWidth: function() {
         return $(window).width(); 
     },
+    stateChanged: function(key) {
+        if(this.homeView) {
+            if(_.contains([
+                'listboard.added',
+                'listboard.removed'
+            ], key))
+                this.homeView.setState({ listboards: _state.getAllListboards(), selectedListboard: _state.getSelectedListboard() });
+            else if(_.contains([
+                'selected.listboard.changed',
+                'selected.listboard.container.added',
+                'selected.listboard.container.changed',
+                'selected.listboard.container.removed',
+                'selected.listboard.folder.added',
+                'selected.listboard.folder.changed',
+                'selected.listboard.folder.removed'
+            ], key)){            
+                this.homeView.setState({ listboards: _state.getAllListboards(), selectedListboard: _state.getSelectedListboard() }); 
+            }
+            else if(_.contains([
+                'extension.possible.installed'
+            ], key)){            
+                this.homeView.setState({ isExtensionInstalled: true}); 
+            }            
+        }
+    },
+    loadServerEvents: function() {        
+        require('events/listboard')(this.socket);
+        require('events/folder')(this.socket);
+        require('events/container')(this.socket);
+        require('events/item')(this.socket);
+    }
 });
 
 module.exports.initialize = function () {

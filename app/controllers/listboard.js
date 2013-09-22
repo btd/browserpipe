@@ -9,12 +9,25 @@ var _ = require('lodash'),
 
 //Find listboard by id
 exports.listboard = function (req, res, next, id) {    
-    req.listboard = req.user.listboards.id(id)
+    req.listboard = req.user.listboards.id(id);
     if(!req.listboard) {
         errors.sendNotFound(res);
     } else {
         next();
     }
+};
+
+//Find listboard by browser key
+exports.browserKey = function (req, res, next, key) {   
+    req.browserKey = key;
+    req.listboard = req.user.getListboardByBrowserKey(key);
+    next();
+};
+
+//Find listboard by browser key
+exports.browserName = function (req, res, next, name) {   
+    req.browserName = name;
+    next();
 };
 
 var saveListboard = function(req, res, listboard, delta){
@@ -80,16 +93,24 @@ exports.destroy = function (req, res) {
     saveListboard(req, res, listboard, delta);    
 }
 
-var fillAndSendCreateContainersDelta = function(req, nowListboard, type, externalIds) {    
+var sendCreateListboardDelta = function(req, listboard) {    
+    if(!req.listboard)
+        return req.sockets.forEach(function(s) {
+            s.emit('create.listboard',listboard);
+        });
+    else
+        return;
+}
+
+var fillAndSendCreateContainersDelta = function(req, listboard, type, externalIds) {    
     return function(){        
         if(externalIds.length > 0) {
             var containers = _.map(externalIds, function(externalId){                 
-                return nowListboard.getContainerByExternalId(externalId);
+                return listboard.getContainerByExternalId(externalId);
             });            
             req.sockets.forEach(function(s) {
                 s.emit(type, { 
-                    listboardType: 0,
-                    listboardId: nowListboard._id,
+                    listboardId: listboard._id,
                     containers: _.compact(containers) 
                 });
             });
@@ -97,16 +118,15 @@ var fillAndSendCreateContainersDelta = function(req, nowListboard, type, externa
     }
 }
 
-var fillAndSendDeleteContainersDelta = function(req, nowListboard, type, externalIds) {    
+var fillAndSendDeleteContainersDelta = function(req, listboard, type, externalIds) {    
     return function(){        
         if(externalIds.length > 0) {
             var containerIds = _.map(externalIds, function(externalId){                 
-                return nowListboard.getContainerByExternalId(externalId)._id;
+                return listboard.getContainerByExternalId(externalId)._id;
             });            
             req.sockets.forEach(function(s) {
                 s.emit(type, { 
-                    listboardType: 0,
-                    listboardId: nowListboard._id,
+                    listboardId: listboard._id,
                     containerIds: _.compact(containerIds) 
                 });
             });
@@ -133,14 +153,17 @@ var fillAndSendCreateUpdateItemsDelta = function(req, type, externalIds) {
 exports.sync = function (req, res) {
     //TODO: it has to get the user according to the browser and oauth
 
-    var user = req.user;
-    //TODO: listboard should be created by the extension if it does not existis, if not it should be loded by :listboardId
-    var nowListboard = user.listboards[0];
+    var user = req.user;    
+    var listboard = req.listboard;
+    if(!listboard) {
+        listboard = user.addListboard({type: 0, label: 'My ' + req.browserName + ' Browser', browserKey: req.browserKey})        
+    }
+    
     var windows = req.body.windows;
     var syncDate = new Date();
 
     //Updates the sync date
-    nowListboard.lastSyncDate = syncDate;
+    listboard.lastSyncDate = syncDate;
 
     //Create arrays to send Socket.io delta
     var createdContainersExternalIds = [];
@@ -149,12 +172,12 @@ exports.sync = function (req, res) {
     var updatedtemsExternalIds = [];
     
     //Create the new ones
-    var containersExternalIds = _.map(nowListboard.containers, function(cont){ return cont.externalId});
+    var containersExternalIds = _.map(listboard.containers, function(cont){ return cont.externalId});
     _.map(windows, function (win) {
         //If there is no container for this window, we create it
         if(_.indexOf(containersExternalIds, win.externalId) == -1){ 
             
-            nowListboard.addContainer({
+            listboard.addContainer({
                 type: 0,
                 externalId: win.externalId
             });     
@@ -165,10 +188,10 @@ exports.sync = function (req, res) {
 
     //Deactivate the closed containers    
     var windowsExternalIds = _.map(windows, function(win){ return win.externalId});
-    _.map(nowListboard.containers, function (cont) {        
+    _.map(listboard.containers, function (cont) {        
         if(_.indexOf(windowsExternalIds, cont.externalId) == -1){ 
             
-            nowListboard.removeContainer(cont);
+            listboard.removeContainer(cont);
             
             deletedContainersExternalIds.push(cont.externalId);
         }
@@ -183,7 +206,7 @@ exports.sync = function (req, res) {
             var result = _.map(windows, function (win) {
                 
                 //We get the container that already exists
-                var container = nowListboard.getContainerByExternalId(win.externalId);
+                var container = listboard.getContainerByExternalId(win.externalId);
                 if(container){                    
 
                     return Item.findByContainer(user, container._id).then(function(items){
@@ -227,10 +250,11 @@ exports.sync = function (req, res) {
             });                 
             return q.all(result);
         })
-        .then(responses.sendModelId(res, nowListboard))
+        .then(responses.sendModelId(res, listboard))
         .fail(errors.ifErrorSendInternalServer(res))
-        .then(fillAndSendCreateContainersDelta(req, nowListboard, 'bulk.create.container', createdContainersExternalIds))
-        .then(fillAndSendDeleteContainersDelta(req, nowListboard, 'bulk.delete.container', deletedContainersExternalIds))
+        .then(sendCreateListboardDelta(req, listboard))
+        .then(fillAndSendCreateContainersDelta(req, listboard, 'bulk.create.container', createdContainersExternalIds))
+        .then(fillAndSendDeleteContainersDelta(req, listboard, 'bulk.delete.container', deletedContainersExternalIds))
         .then(fillAndSendCreateUpdateItemsDelta(req, 'bulk.create.item', createdItemsExternalIds))
         .then(fillAndSendCreateUpdateItemsDelta(req, 'bulk.update.item', updatedtemsExternalIds))
         .done();    

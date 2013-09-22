@@ -26,7 +26,6 @@ exports.create = function (req, res) {
     var delta = {
         type: 'create.container',
         data: {
-            listboardType: container.type,
             listboardId: req.listboard._id,
             container: container
         }
@@ -47,7 +46,6 @@ exports.update = function (req, res) {
         var delta = {
             type: 'update.container',
             data: { 
-                listboardType: container.type,
                 listboardId: req.listboard._id,
                 container: container
             }   
@@ -71,7 +69,6 @@ exports.destroy = function (req, res) {
         var delta = {
             type: 'delete.container',
             data: { 
-                listboardType: container.type,
                 listboardId: req.listboard._id,
                 containerId: containerId
             }   

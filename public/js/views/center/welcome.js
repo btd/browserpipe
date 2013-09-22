@@ -4,7 +4,6 @@ var Backbone = require('backbone');
 var config = require('config');
 var _state = require('models/state');
 var AppView = require('views/view');
-var template = require('templates/welcome/welcome');
 
 var Welcome = AppView.extend({
     tagName: 'div',

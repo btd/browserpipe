@@ -68,11 +68,6 @@ exports.create = function (req, res) {
     var readLaterFolder = foldersFolder.createChildFolder("Read Later");
     var coolSitesFolder = foldersFolder.createChildFolder("Cool Sites");
 
-    //TODO: THIS IS TEMPORAL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    //CREATES A NOW LISTBOARD
-    //UNTIL IT CREATES IT AUTOMATICALLY VIA EXTENSION AND AP
-    user.addListboard({type: 0, label: 'My Chrome Browser'})
-
     //Creates an empty listboard
     user.addListboard({ type: 1, label: 'Empty listboard'})
    
@@ -101,7 +96,7 @@ exports.create = function (req, res) {
                 html: function () {
                     req.login(user, function (err) {
                         if (err) return res.render('500')
-                        return res.redirect('/welcome')
+                        return res.redirect('/listboards')
                     })
                 },
 
