@@ -110,25 +110,25 @@ var State = {
 
 
     //Server calls    
-    saveFolder: function(folder, success) {
+    serverSaveFolder: function(folder, success) {
         return $.ajax({
             url: '/folders',
             type: 'POST', 
-            data: JSON.stringify(folder),
+            data: folder,
             dataType: "json",
             success: success
         });
     },    
-    updateFolder: function(folder, success){
+    serverUpdateFolder: function(folder, success){
         return $.ajax({
             url: '/folders/' + folder._id,
             type: "PUT", 
-            data: JSON.stringify(folder),
+            data: folder,
             dataType: "json",
             success: success
         });
     },
-    removeFolder: function(folder, success){
+    serverRemoveFolder: function(folder, success){
         return $.ajax({
             url: '/folders/' + folder._id,
             type: "DELETE", 
@@ -142,10 +142,15 @@ var State = {
     //////////////////////////////////////////LISTBOARDS//////////////////////////////////////
     //Load
     loadListboards: function() {
+        var self = this;
         this.listboards = initialOptions.listboards;
         _.each(this.listboards, function (listboard) {            
            _.each(listboard.containers, function (container) {            
                container.items = [];
+               if(container.type === 2) {                
+                    var folder = self.getFolderById(container.folder);                    
+                    container.folderObj = folder;
+                }
             });
         });
         this.selectFirstListboard();
@@ -186,7 +191,7 @@ var State = {
         var listboard =  this.getListboardById(listboardUpdate._id);
         if (listboard) {
             _.extend(listboard, listboardUpdate);
-            if(this.getSelectedListboardId() === listboardId)
+            if(this.getSelectedListboardId() === listboard._id)
                 this.callback('selected.listboard.changed');
         }
     }, 
@@ -195,7 +200,7 @@ var State = {
         if(listboard){
             this.listboards = _.without(this.listboards, listboard);
             var selectedListboardId = this.getSelectedListboardId();
-            if(selectedListboardId === listboardId)
+            if(selectedListboardId === listboard._id)
                 this.selectFirstListboard();
             this.callback('listboard.removed');
         }
@@ -203,27 +208,30 @@ var State = {
 
 
     //Server calls    
-    saveListboard: function(listboard){
+    serverSaveListboard: function(listboard, success){
         return $.ajax({
             url: '/listboards',
             type: "POST", 
-            data: JSON.stringify(listboard),
-            dataType: "json"
+            data: listboard,
+            dataType: "json",
+            success: success
         });
     },    
-    updateListboard: function(listboard){
+    serverUpdateListboard: function(listboard, success){
         return $.ajax({
             url: '/listboards/' + listboard._id,
             type: "PUT", 
-            data: JSON.stringify(listboard),
-            dataType: "json"
+            data: listboard,
+            dataType: "json",
+            success: success
         });
     },
-    removeListboard: function(listboard){
+    serverRemoveListboard: function(listboard, success){
         return $.ajax({
             url: '/listboards/' + listboard._id,
             type: "DELETE", 
-            dataType: "json"
+            dataType: "json",
+            success: success
         });
     },
     //////////////////////////////////////////LISTBOARDS//////////////////////////////////////
@@ -248,11 +256,15 @@ var State = {
 
     //CRUD
     addContainer: function(listboardId, container) {        
-        container.items = [];
+        container.items = [];        
         var listboard = this.getListboardById(listboardId);
         if (listboard) {
             if(!this.getContainerByIdAndListboard(listboard, container._id))
                 listboard.containers.push(container);
+            if(container.type === 2) {                
+                var folder = this.getFolderById(container.folder);
+                container.folderObj = folder;
+            }
             if(this.getSelectedListboardId() === listboardId)
                 this.callback('selected.listboard.container.added');
         }
@@ -262,7 +274,13 @@ var State = {
         if (listboard) {
             var container = this.getContainerByIdAndListboard(listboard, containerUpdate._id);
             if (container) {
-                _.extend(container, containerUpdate);
+                //If folder changed, we load again the folder obj
+                if(container.type === 2 && container.folder != containerUpdate.folder) {                                                        
+                    var folder = this.getFolderById(containerUpdate.folder);                    
+                    container.folderObj = folder;
+                }
+                //We then mixed the props
+                _.extend(container, containerUpdate);                
                 if(this.getSelectedListboardId() === listboardId)
                     this.callback('selected.listboard.container.changed');
             }
@@ -280,27 +298,30 @@ var State = {
     },
 
     //Server calls    
-    saveContainer: function(listboardId, container){
+    serverSaveContainer: function(listboardId, container, success){
         return $.ajax({
             url: '/listboards/' + listboardId + '/containers',
             type: "POST", 
-            data: JSON.stringify(container),
-            dataType: "json"
+            data: container,
+            dataType: "json",
+            success: success
         });
     },    
-    updateContainer: function(listboardId, container){
+    serverUpdateContainer: function(listboardId, container, success){
         return $.ajax({
             url: '/listboards/' + listboardId + '/containers/' + container._id,
             type: "PUT", 
-            data: JSON.stringify(container),
-            dataType: "json"
+            data: container,
+            dataType: "json",
+            success: success
         });
     },
-    removeContainer: function(listboardId, container){
+    serverRemoveContainer: function(listboardId, container, success){
         return $.ajax({
             url: '/listboards/' + listboardId + '/containers/' + container._id,
             type: "DELETE", 
-            dataType: "json"
+            dataType: "json",
+            success: success
         });
     },
     //////////////////////////////////////////CONTAINERS//////////////////////////////////////
@@ -432,27 +453,30 @@ var State = {
 
 
     //Server calls    
-    saveItem: function(item){
+    serverSaveItem: function(item, success){
         return $.ajax({
             url: '/items',
             type: "POST", 
-            data: JSON.stringify(item),
-            dataType: "json"
+            data: item,
+            dataType: "json",
+            success: success
         });
     },    
-    updateItem: function(item){
+    serverUpdateItem: function(item, success){
         return $.ajax({
             url: '/items/' + item._id,
             type: "PUT", 
-            data: JSON.stringify(item),
-            dataType: "json"
+            data: item,
+            dataType: "json",
+            success: success
         });
     },
-    removeItem: function(item){
+    serverRemoveItem: function(item, success){
         return $.ajax({
             url: '/items/' + item._id,
             type: "DELETE", 
-            dataType: "json"
+            dataType: "json",
+            success: success
         });
     },
     //////////////////////////////////////////ITEMS//////////////////////////////////////

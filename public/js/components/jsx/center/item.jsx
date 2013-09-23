@@ -23,6 +23,7 @@ var ItemView = React.createClass({
           {  this.getTitle()  } 
         </a>
         <div class="description">{ this.props.item.note }</div>  		
+        <img class="screenshot" src="/img/no_screenshot.png" alt="ScreenShot" />  
       </li>
     );
   }

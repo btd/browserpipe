@@ -2,7 +2,49 @@
     overflow-x: auto;
     float: left;
 
+    .sub-bar {
+        margin: 0;        
+        padding-left: 12px;
+        background: @grey1;
+        position: fixed;
+        width: 100%;
+
+        .le-label {
+            font-weight: bold;
+            font-size: 16px;
+            margin: 6px 18px 0 0;
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
+
+        .edit-title {
+            margin-bottom: 6px;
+
+            input {
+                width: 130px;
+            }
+        }
+
+        .navbar-inner {   
+            padding-top: 3px;
+            background: @grey1;
+            min-height: 33px;
+            padding-left: 0;          
+            .flatten();  
+            overflow: hidden;
+
+            a {
+                margin: 0 6px;
+                text-shadow: none;
+                padding: 4px 12px;
+            }
+        }
+    }
+
     .containers {
+        margin-top: 36px !important;
         padding: 0 3px;
         -webkit-overflow-scrolling: touch;    
         margin: 0;

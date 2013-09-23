@@ -3,54 +3,72 @@
     position: relative;        
     overflow-x: auto;
 	background-color: @grey;
-    .flatten();    
+    .flatten();   
+
+     a.chrome-extension-warning{
+        width: 270px;
+        background-color: red; 
+        color: @white;
+        text-align: center;         
+        overflow: hidden;
+        float: left;
+        .opacity(80);     
+        color: @white;
+        font-weight: bold;
+        overflow: hidden;
+        text-overflow: ellipsis;  
+
+         &:hover {
+            cursor:pointer; 
+            .opacity(100);
+            text-decoration: none;
+        }
+    }          
 
     .listboards {
     	margin: 0;
     	padding: 0;
 
-        li.listboard {            
-            width: 90px;
-            background-color: @blue2; 
+        ul {
+            margin: 0;
+            padding: 0;
 
-            a {
-                .opacity(70);  
-
-                &.selected {
-                    .opacity(100);                 
-                }          
-            }              
-        }
-
-        li.chrome-extension-warning{
-            width: 270px;
-            background-color: red;
-
-            a {
-                .opacity(80);            
-            }
-        }            
-
-    	li {       
-            display: table;
-            vertical-align: middle;
-    		text-align: center;    		
-    		overflow: hidden;
-            float: left;
-
-            a {             
-                display: table-cell;
-                vertical-align: middle;   
+            li.listboard {            
+                width: 90px;
+                background-color: @blue2;
+                max-width: 90px;    
+                text-align: center;         
+                overflow: hidden;
+                float: left;
+                .opacity(80);     
                 color: @white;
                 font-weight: bold;
-
+                overflow: hidden;
+                text-overflow: ellipsis;   
+                
                 &:hover {
-                    text-decoration: none;
                     cursor:pointer; 
                     .opacity(100);
                 }
+                &.selected {
+                    .opacity(100);                 
+                }
             }
-    	}
+        }
+    }
+
+    .add-listboard {        
+        margin-top: 9px;
+        background-color: #1f3659;
+        color: #fff;
+        background-image: none; 
+        .opacity(80);      
+
+        &:hover {
+            text-decoration: none;
+            cursor:pointer; 
+            .opacity(100);
+        }
     }
 
 }

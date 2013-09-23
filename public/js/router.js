@@ -78,8 +78,8 @@ var AppRouter = Backbone.Router.extend({
                 'selected.listboard.folder.added',
                 'selected.listboard.folder.changed',
                 'selected.listboard.folder.removed'
-            ], key)){            
-                this.homeView.setState({ listboards: _state.getAllListboards(), selectedListboard: _state.getSelectedListboard() }); 
+            ], key)){     
+                this.homeView.setState({ selectedListboard: _state.getSelectedListboard() }); 
             }
             else if(_.contains([
                 'extension.possible.installed'

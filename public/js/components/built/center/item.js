@@ -22,7 +22,8 @@ var ItemView = React.createClass({displayName: 'ItemView',
         React.DOM.a( {className:"title", target:"_blank", href: this.props.item.url }, 
             this.getTitle()   
         ),
-        React.DOM.div( {className:"description"},  this.props.item.note )  		
+        React.DOM.div( {className:"description"},  this.props.item.note ),  		
+        React.DOM.img( {className:"screenshot", src:"/img/no_screenshot.png", alt:"ScreenShot"} )  
       )
     );
   }

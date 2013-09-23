@@ -22,7 +22,7 @@ var updateClients = function(req, delta) {
 
 //Create container
 exports.create = function (req, res) {
-    var container = req.listboard.addContainer(_.pick(req.body, 'title', 'folder', 'type', 'cid')).last();
+    var container = req.listboard.addContainer(_.pick(req.body, 'title', 'folder', 'type')).last();
     var delta = {
         type: 'create.container',
         data: {

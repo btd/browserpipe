@@ -20,7 +20,7 @@ var HomeView = React.createClass({displayName: 'HomeView',
       };
   },
   handleListboardClick: function(e) {
-      e.preventDefault();
+      e.preventDefault();      
       _state.setSelectedListboard(e.target.id.substring(3));
       var selectedListboard = _state.getSelectedListboard();
       this.setState({ selectedListboard: selectedListboard });      

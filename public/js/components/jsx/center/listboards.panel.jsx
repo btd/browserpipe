@@ -19,12 +19,12 @@ var ListboardsPanelView = React.createClass({
             if(this.props.docWidth > 575)
                 extensionButtonWidth = 306; //(270 = extension button width) + (12 = listboard padding) + (24 = listboard margin)
             else
-                extensionButtonWidth = 294; //(270 = listboard width) + (12 = listboard padding) + (12 = listboard margin)
+                extensionButtonWidth = 494; //(270 = listboard width) + (12 = listboard padding) + (12 = listboard margin)
         }
         if(this.props.docWidth > 575) //(575 = responsive design limit)
-            return this.props.listboards.length * 126 + extensionButtonWidth; //(90 = listboard width) + (12 = listboard padding) + (24 = listboard margin)
+            return this.props.listboards.length * 126 + extensionButtonWidth + 51; //(90 = listboard width) + (12 = listboard padding) + (24 = listboard margin) + (11 = Add buton)
         else
-            return this.props.listboards.length * 114 + extensionButtonWidth; //(90 = listboard width) + (12 = listboard padding) + (12 = listboard margin)
+            return this.props.listboards.length * 114 + extensionButtonWidth + 51; //(90 = listboard width) + (12 = listboard padding) + (12 = listboard margin)  + (11 = Add buton)
     },    
     getListboardsPanelStyle: function() {
         return { width: this.getListboardsPanelWidth() };
@@ -35,11 +35,9 @@ var ListboardsPanelView = React.createClass({
     getExtensionButton: function() {
         if(!this.props.isExtensionInstalled)
             return (
-                <li class="chrome-extension-warning">
-                    <a href="#installExtensionModal" data-toggle="modal">
+                <a class="chrome-extension-warning" href="#installExtensionModal" data-toggle="modal">
                     You have not installed the sync extension in this browser, click here to install it
-                    </a>
-                </li>
+                </a>
             );
         else
             return null;
@@ -47,24 +45,37 @@ var ListboardsPanelView = React.createClass({
     installChromeExtension: function() {        
         _state.installChromeExtension();
     },
+    addEmptyListboardAndSelectIt: function() {
+        _state.serverSaveListboard({
+            type: 1,
+            label: 'Unamed'
+        }, function(listboard){
+            _state.setSelectedListboard(listboard._id);
+        })
+    },
     render: function() {
         var self = this;
-        return  (<div class="listboards-panel" style={ this.getListboardsPanelStyle() }>                 
-                <ul class="listboards" style={ this.getListboardStyle() }>
-                { this.getExtensionButton() }
-                {                    
-                    this.props.listboards.map(function(listboard) {
-                        return <li class="listboard"> 
-                            <a 
-                            id={'li_' + listboard.id} 
-                            class={self.props.selectedListboard.id === listboard.id ? "selected" : ""}
-                            onClick={self.props.handleListboardClick}>
-                                {listboard.label}
-                            </a>
-                        </li > 
-                    })
-                }
-                </ul>
+        return  (
+            <div class="listboards-panel" style={ this.getListboardsPanelStyle() }>                                 
+                <div class="listboards" style={ this.getListboardStyle() }>                
+                    { this.getExtensionButton() }
+                    <ul>
+                    {                    
+                        this.props.listboards.map(function(listboard) {
+                            return <li 
+                                class={self.props.selectedListboard.id === listboard.id ? "listboard selected" : "listboard"}
+                                id={'li_' + listboard.id}                             
+                                onClick={self.props.handleListboardClick}> 
+                                    {listboard.label}
+                                </li > 
+                        })
+                    }
+                    </ul>
+                    <a class="add-listboard btn" onClick={this.addEmptyListboardAndSelectIt}  href="#" title="Add listboard" data-toggle="tooltip">
+                        <i class="icon-plus"></i>
+                    </a>
+                </div>
+                
                 <div id="installExtensionModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                   <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>

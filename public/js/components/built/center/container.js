@@ -5,15 +5,18 @@
 var _state = require('models/state')
     _ = require('lodash'),
     React = require('React'),
-    Item = require('components/built/center/item');
+    Item = require('components/built/center/item'),
+    Folder = require('components/built/center/folder');
 
 var ContainerView = React.createClass({displayName: 'ContainerView', 
-	getContainerTitle: function() {
-		if($.trim(this.props.container.title) === '')
+	getContainerTitle: function() {		
+		if(this.props.container.type === 2) 
+			return this.props.container.folderObj.label;
+		else if(!this.props.container.title || $.trim(this.props.container.title) === '')			
 			if(this.props.container.type === 0) 
 				return this.props.container.items.length + " Tabs";
 			else
-				return React.DOM.i(null, "Unnamed")
+				return 'Unnamed'
 		else
 			return this.props.container.title;
 	},
@@ -27,11 +30,46 @@ var ContainerView = React.createClass({displayName: 'ContainerView',
 		var maxHeight = this.props.containersHeight - 26 - 60 ; //(26 = cont header height)(60 =  cont footer height)    
 	    return maxHeight;
 	},
+	saveContainerLabel: function(newTitle, success) {    
+	   _state.serverUpdateContainer(
+		   	this.props.selectedListboard._id,
+		   {
+		     _id: this.props.container._id,
+		     title: newTitle
+		   },
+		   success 
+	   );
+	},
+	navigateToParentFolder: function() {
+		var parent = _state.getFolderByFilter(this.props.container.folderObj.path);
+		_state.serverUpdateContainer(
+		   	this.props.selectedListboard._id,
+		   {
+		     _id: this.props.container._id,
+		     folder: parent._id
+		   }
+	   );
+	},
+	navigateToChildFolder: function(folderId) {
+		var child = _state.getFolderById(folderId);
+		_state.serverUpdateContainer(
+		   	this.props.selectedListboard._id,
+		   {
+		     _id: this.props.container._id,
+		     folder: child._id
+		   }
+	   );
+	},
 	renderHeader: function() {
 		return (
 			React.DOM.div(null, 
+				 this.props.container.type === 2 ? this.renderFolderHeader() : null, 
 				React.DOM.i( {className:"icon-remove close-container", title:"Close"}),
-				React.DOM.span( {className:"title"},  this.getContainerTitle()  ),
+				React.DOM.span( {className:"title"}, 
+					LabelEditorComponent( 
+	                    {onSaveLabel:this.saveContainerLabel, 
+	                    defaultLabelValue:this.getContainerTitle()} )
+				),
 				 this.getTabsCount(), 
 				React.DOM.div( {className:"input-append edit-title hide"}, 
 				  React.DOM.input( {type:"text", value:this.props.container.title} ),
@@ -41,7 +79,24 @@ var ContainerView = React.createClass({displayName: 'ContainerView',
 			)
 		);
 	},
+	renderFolderHeader: function() {
+		return (
+			React.DOM.span(null, 
+				React.DOM.a( {href:"#", className:"add-folder-icon"}, " Add folder"),
+				 _state.getFolderFilter(this.props.container.folderObj) !== 'Folders'? 
+				React.DOM.i( {onClick:this.navigateToParentFolder, className:"icon-arrow-up container-folder-icon", title:"Navigate folders up"}) : null 
+			)
+		);
+	},
 	renderBox: function() {
+		return (
+			React.DOM.div( {className:"box", style:{ maxHeight: this.getBoxMaxHeight() }}, 
+				 this.props.container.type === 2 ? this.renderFolders() : null, 
+            	 this.renderItems() 
+			)
+		);
+	},
+	renderItems: function() {
 		return (
 			React.DOM.ul( {className:"items"}, 
 			                    
@@ -49,6 +104,31 @@ var ContainerView = React.createClass({displayName: 'ContainerView',
                     return Item( {item:item} )
                 })
             
+			)
+		);
+	},
+	renderFolders: function() {
+		var self = this;
+		return (
+			React.DOM.div(null, 
+				React.DOM.ul( {className:"folders"}, 	
+					                    
+	                	this.props.container.folderObj.children.map(function(folder) {
+		                    return Folder( {folder:folder, navigateToChildFolder:self.navigateToChildFolder} )
+		                })
+		            
+				),
+				React.DOM.div( {className:"input-append add-folder hide"}, 
+					React.DOM.div( {className:"control-group"},     
+				    	React.DOM.div( {className:"controls"}, 
+							React.DOM.input( {type:"text", value:""}),
+							React.DOM.div(null, 
+							  	React.DOM.button( {className:"btn add-folder-save", type:"button"}, React.DOM.i( {className:"icon-ok save-icon"}, " Add folder")),
+							  	React.DOM.button( {className:"btn add-folder-cancel", type:"button"}, React.DOM.i( {className:"icon-remove cancel-icon"}))
+							)
+						)
+					)
+				)
 			)
 		);
 	},
@@ -77,10 +157,8 @@ var ContainerView = React.createClass({displayName: 'ContainerView',
 	render: function() {
 		return (
 			React.DOM.li( {className:"container"}, 
-				React.DOM.div( {className:"container-header"},  this.renderHeader() ),
-				React.DOM.div( {className:"box", style:{ maxHeight: this.getBoxMaxHeight() }}, 
-					 this.renderBox() 
-				),
+				React.DOM.div( {className:"container-header"},  this.renderHeader() ),				
+				 this.renderBox(), 
 				React.DOM.div( {className:"container-footer"},  this.renderFooter() )
 			)
 		);

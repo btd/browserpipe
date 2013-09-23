@@ -48,9 +48,9 @@ var updateClients = function(req, delta) {
 
 //Create Later listboard
 exports.create = function (req, res) {
-    //You can only create later or future listboards  
-    if(req.body.type === 1 || req.body.type === 2) {
-        var listboard = req.user.addListboard(_.pick(req.body, 'label', 'type', 'cid'));
+    //You can only create listboards of type 1 
+    if(req.body.type === '1') {
+        var listboard = req.user.addListboard(_.pick(req.body, 'label', 'type'));
                 
         var delta = {
             type: 'create.listboard',
@@ -66,7 +66,7 @@ exports.create = function (req, res) {
 exports.update = function (req, res) {
 
      //Validate user input
-    req.check('label', 'Please a label').notEmpty();
+    req.check('label', 'Please a label').notEmpty();    
 
     //If errors, flash or send them
     var err = req.validationErrors();
@@ -156,7 +156,7 @@ exports.sync = function (req, res) {
     var user = req.user;    
     var listboard = req.listboard;
     if(!listboard) {
-        listboard = user.addListboard({type: 0, label: 'My ' + req.browserName + ' Browser', browserKey: req.browserKey})        
+        listboard = user.addListboard({type: 0, label: 'My ' + req.browserName + ' browser', browserKey: req.browserKey})        
     }
     
     var windows = req.body.windows;
