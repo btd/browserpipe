@@ -1,2 +1,0 @@
-<span class="editor-folder-label"><%= label %></span>
-<a class="close" href="#">&times;</a>

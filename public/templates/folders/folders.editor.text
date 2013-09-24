@@ -1,2 +1,0 @@
-<input class="input-xlarge editor-folder-input" type="text" data-provide="typeahead" name="editor-folder-input" placeholder="Press enter to add a folder"/>
-<div class="editor-folders"></div>

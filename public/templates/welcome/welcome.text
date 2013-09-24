@@ -1,7 +1,0 @@
-<div id="welcome-options">
-    <h2>Welcome to Listboard.it!</h2>
-    <p>Start right away by syncing your tab</p>
-    <a id="btn-install-extension" href="/clients/chrome/extension.crx" class="btn btn-success btn-block btn-big">Install sync extension</a>
-    <p>or</p>
-    <p><a id="btn-explore-app" class="" href="/">explore the app</a></p>
-</div>

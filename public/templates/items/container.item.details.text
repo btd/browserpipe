@@ -1,7 +1,0 @@
-<img class="favicon" src="/img/default.favicon.png" alt="Favicon" />
-<a target="_blank" href="<%= item.get('url') %>"><%= $.trim(item.get('title')) != "" ?  item.get('title') : item.get('url') %></a>
-<div class="details">
-	<div class="description"><%= item.get('note') %></div>
-	<ul class="folders clearfix"></ul>
-	<img class="screenshot" src="" alt="ScreenShot" />	
-</div>
