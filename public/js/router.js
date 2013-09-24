@@ -78,7 +78,7 @@ var AppRouter = Backbone.Router.extend({
                 'selected.listboard.folder.added',
                 'selected.listboard.folder.changed',
                 'selected.listboard.folder.removed'
-            ], key)){     
+            ], key)){                     
                 this.homeView.setState({ selectedListboard: _state.getSelectedListboard() }); 
             }
             else if(_.contains([

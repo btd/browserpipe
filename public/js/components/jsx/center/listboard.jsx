@@ -68,7 +68,7 @@ var ListboardView = React.createClass({
                 </li>
                 <li>
                   <a class="add-container btn" onClick={this.addFolderContainer} href="#" title="Add folder container" data-toggle="tooltip">
-                    <i class="icon-plus"></i>
+                    Folders
                   </a>
                 </li>
               </ul>

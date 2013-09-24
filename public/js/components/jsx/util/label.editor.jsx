@@ -35,7 +35,7 @@ var LabelEditorComponent = React.createClass({
       <div>       
         <div ref="label" class="le-label" onClick={this.showAndFocusInput}>{this.props.defaultLabelValue}</div>                
         <div ref="labelEditor" class="input-append le-editor hide">
-          <input ref="labelInput"type="text" defaultValue={this.props.defaultLabelValue}
+          <input ref="labelInput" type="text" defaultValue={this.props.defaultLabelValue}
             onKeyUp={this.handleKeyUp} />
           <button onClick={this.saveLabel} class="btn edit-title-save" type="button"><i class="icon-ok"></i></button>
           <button onClick={this.hideInput} class="btn edit-title-cancel" type="button"><i class="icon-remove"></i></button>

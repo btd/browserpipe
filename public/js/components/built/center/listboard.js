@@ -68,8 +68,7 @@ var ListboardView = React.createClass({displayName: 'ListboardView',
                 ),
                 React.DOM.li(null, 
                   React.DOM.a( {className:"add-container btn", onClick:this.addFolderContainer, href:"#", title:"Add folder container", 'data-toggle':"tooltip"}, 
-                    React.DOM.i( {className:"icon-plus"})
-                  )
+" Folders "                  )
                 )
               )
             )

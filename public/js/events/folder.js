@@ -15,13 +15,13 @@ module.exports = function (socket) {
             _state.updateFolder(folderUpdates[index]);
     }); 
 
-    socket.on('delete.folder', function (folderId) {        
-        _state.removeFolder(folderId);
+    socket.on('delete.folder', function (folder) {        
+        _state.removeFolder(folder._id);
     });
 
-    socket.on('bulk.delete.folder', function (folderIds) {
-        for (var index in folderIds)
-            _state.removeFolder(folderIds[index]);
+    socket.on('bulk.delete.folder', function (folders) {
+        for (var index in folders)
+            _state.removeFolder(folders[index]._id);
     }); 
 };
 

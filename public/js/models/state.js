@@ -3,7 +3,7 @@ var $ = require('jquery'),
 
 var State = {
     init: function(options){
-        this.callback = options.callback;
+        this.trigger = options.callback;
     },
     loadInitialData: function () {
 
@@ -34,7 +34,7 @@ var State = {
 
     //Gets
     getFolderFilter: function(folder) {
-        return (folder.path === "" ? "" : folder.path + "/") + folder.label;
+        return (!folder.path || folder.path === "" ? "" : folder.path + "/") + folder.label;
     },
     //TODO: Now all folders are loaded in memory.
     //      It should loads folders from server in an optmized way
@@ -60,8 +60,8 @@ var State = {
             var parentFolder = this.foldersHash[folder.path];
             parentFolder.children.push(folder);            
             if(this.getSelectedListboard() 
-                && this.getContainerByFolder(this.getSelectedListboard(), folder._id))
-                this.callback('selected.listboard.folder.added');
+                && this.getContainerByFolderId(folder._id))
+                this.trigger('selected.listboard.folder.added');
         }  
     },
     updateFolder: function(folderUpdate) {
@@ -69,8 +69,8 @@ var State = {
         if (folder) {
             _.extend(folder, folderUpdate);
             if(this.getSelectedListboard() 
-                && this.getContainerByFolder(this.getSelectedListboard(), folder._id))
-                this.callback('selected.listboard.folder.changed');
+                && this.getContainerByFolderId(folder._id))
+                this.trigger('selected.listboard.folder.changed');
         }
     }, 
     removeFolder: function (folderId) {
@@ -82,8 +82,8 @@ var State = {
                 parent.children = _.without(parent.children, folder);
             this.foldersHash[this.getFolderFilter(folder)] = null;
             if(this.getSelectedListboard() 
-                && this.getContainerByFolder(this.getSelectedListboard(), parent._id))
-                this.callback('selected.listboard.folder.removed');
+                && this.getContainerByFolderId(parent._id))
+                this.trigger('selected.listboard.folder.removed');
         }
     },     
     createFolderIfNew: function (filter, success) {
@@ -178,21 +178,21 @@ var State = {
     },
     setSelectedListboard: function(listboardId) {
         this.selectedListboard = this.getListboardById(listboardId);
-        this.callback('selected.listboard.changed');
+        this.trigger('selected.listboard.changed');
     },
     addListboard: function(listboard) {
         _.each(listboard.containers, function (container) {            
            container.items = [];
         });
         this.listboards.push(listboard);
-        this.callback('listboard.added');
+        this.trigger('listboard.added');
     },
     updateListboard: function(listboardUpdate) {
         var listboard =  this.getListboardById(listboardUpdate._id);
         if (listboard) {
             _.extend(listboard, listboardUpdate);
             if(this.getSelectedListboardId() === listboard._id)
-                this.callback('selected.listboard.changed');
+                this.trigger('selected.listboard.changed');
         }
     }, 
     removeListboard: function(listboardId) {  
@@ -202,7 +202,7 @@ var State = {
             var selectedListboardId = this.getSelectedListboardId();
             if(selectedListboardId === listboard._id)
                 this.selectFirstListboard();
-            this.callback('listboard.removed');
+            this.trigger('listboard.removed');
         }
     },
 
@@ -249,13 +249,15 @@ var State = {
     getContainerByIdAndListboard: function(listboard, containerId) {
         return _.findWhere(listboard.containers, {_id: containerId});
     },
-    getContainerByFolderId: function(listboard, folderId) {
-        return _.findWhere(listboard.containers, {folder: folderId});
+    getContainerByFolderId: function(folderId) {
+        return _.flatten(this.listboards.map(function(listboard){
+            return _.findWhere(listboard.containers, {folder: folderId});    
+        }));        
     },
 
 
     //CRUD
-    addContainer: function(listboardId, container) {        
+    addContainer: function(listboardId, container) {              
         container.items = [];        
         var listboard = this.getListboardById(listboardId);
         if (listboard) {
@@ -266,7 +268,7 @@ var State = {
                 container.folderObj = folder;
             }
             if(this.getSelectedListboardId() === listboardId)
-                this.callback('selected.listboard.container.added');
+                this.trigger('selected.listboard.container.added');
         }
     },
     updateContainer: function(listboardId, containerUpdate) {
@@ -282,7 +284,7 @@ var State = {
                 //We then mixed the props
                 _.extend(container, containerUpdate);                
                 if(this.getSelectedListboardId() === listboardId)
-                    this.callback('selected.listboard.container.changed');
+                    this.trigger('selected.listboard.container.changed');
             }
         }
     },
@@ -290,10 +292,11 @@ var State = {
         var listboard = this.getListboardById(listboardId);
         if (listboard) {
             var container = this.getContainerByIdAndListboard(listboard, containerId);
-            if (container)
-                listboard.containers = _.without(listboard.containers, listboard);
-            if(this.getSelectedListboardId() === listboard._id)
-                this.callback('selected.listboard.container.removed');
+            if (container) {
+                listboard.containers = _.without(listboard.containers, container);
+                if(this.getSelectedListboardId() === listboard._id)
+                    this.trigger('selected.listboard.container.removed');
+            }
         }        
     },
 
@@ -361,21 +364,33 @@ var State = {
                 || _.contains(item.containers, container._id) 
             });
             if(result.length > 0)
-                this.callback('selected.listboard.changed');
+                this.trigger('selected.listboard.changed');
         }
 
     },
-    addItemToFolder: function(folderId, item) {
+    addItemToFolder: function(folderId, item) {        
         var folder = this.getFolderById(folderId);
         var itemExist = _.findWhere(folder.items, {_id: item._id});
         if(!itemExist)
             folder.items.push(item);
+        //Checks if the folder is in the selected listboard
+        var containers = _.compact(this.getContainerByFolderId(folderId));
+        var selectedListboard = this.getSelectedListboard();
+        for(index in containers){
+            if(this.getContainerByIdAndListboard(selectedListboard, containers[index]._id)){
+                this.trigger('selected.listboard.changed');
+                return;
+            }
+        }   
     },
     addItemToContainer: function(containerId, item) {
         var container = this.getContainerById(containerId);        
         var itemExist = _.findWhere(container.items, {_id: item._id});        
         if(!itemExist)
             container.items.push(item);
+        var selectedListboard = this.getSelectedListboard();
+        if(this.getContainerByIdAndListboard(selectedListboard, containerId))
+            this.trigger('selected.listboard.changed');
     },
     updateItem: function(itemUpdate) {
         var item =  this.getItemById(itemUpdate._id);
@@ -411,7 +426,7 @@ var State = {
                     || _.contains(toRemoveContainersIds, container._id) 
                 });
                 if(result.length > 0)
-                    this.callback('selected.listboard.changed');
+                    this.trigger('selected.listboard.changed');
             }
                 
         }
@@ -434,7 +449,7 @@ var State = {
                     || _.contains(item.containers, container._id) 
                 });
                 if(result.length > 0)
-                    this.callback('selected.listboard.changed');
+                    this.trigger('selected.listboard.changed');
             }
         }
     },
