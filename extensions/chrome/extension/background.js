@@ -20,11 +20,11 @@ function generateRandomKey() {
 
 function syncAll(){
 
-	var key = localStorage["nrowser_listboard_unique_key"];
+	var key = localStorage["browser_listboard_unique_key"];
 
 	if(!key){
 		key = generateRandomKey();
-		localStorage["nrowser_listboard_unique_key"] = key;
+		localStorage["browser_listboard_unique_key"] = key;
 	}
 
 	var url = 'http://local.listboard.it:4000/browser/chrome/sync/' + key;
