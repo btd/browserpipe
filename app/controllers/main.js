@@ -10,13 +10,9 @@ var _ = require('lodash'),
 exports.home = function (req, res) {
     if (req.isAuthenticated()) {
 
-        var nowListboards = req.user.nowListboards;
-        var laterListboards = req.user.laterListboards;
-        var futureListboards = req.user.futureListboards;
+        var listboards = req.user.listboards;
         Folder.getAll(req.user)
-            .then(function (folders) {
-                //We only load the ones from opened containers
-                var listboards = _.union(nowListboards, laterListboards, futureListboards);                
+            .then(function (folders) {                
                 //Load container ids
                 var containerIds = _(listboards).map(function (listboard) {
                     return _.map(listboard.containers, '_id');
@@ -43,9 +39,7 @@ exports.home = function (req, res) {
             }).spread(function (folders, items) {
                 res.render('main/home', {
                     user: req.user,
-                    nowListboards: nowListboards,
-                    laterListboards: laterListboards,
-                    futureListboards: futureListboards,
+                    listboards: listboards,
                     items: items,
                     folders: folders
                 });

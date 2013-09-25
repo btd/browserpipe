@@ -1,1 +1,0 @@
-<li class="js-selector-item"><a href="javascript: void(0)" data-id="<%= listboard.id %>" class="js-listboard-select-item"><%= listboard.get('label') %></a></li>

@@ -2,9 +2,6 @@
 //it will use the first one with type = 0
 // TODO remove jquery if we use it only for ajax !
 
-var config = {
-	apiUpdateTabsURL: 'http://localhost:4000/now/listboards/xxxxxxxxxxx/sync'
-}
 
 chrome.browserAction.onClicked.addListener(function(tab) {
 	syncAll();    
@@ -13,8 +10,24 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 //We sync on insall
 syncAll();
 
+function generateRandomKey() {
+	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+	    var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+	    return v.toString(16);
+	});
+}
+
 
 function syncAll(){
+
+	var key = localStorage["browser_listboard_unique_key"];
+
+	if(!key){
+		key = generateRandomKey();
+		localStorage["browser_listboard_unique_key"] = key;
+	}
+
+	var url = 'http://local.listboard.it:4000/browser/chrome/sync/' + key;
 
 	chrome.windows.getAll({populate : true}, function (windows) {
 
@@ -58,7 +71,7 @@ function syncAll(){
 	    	}
 	    	result.windows.push(win);
 	    }
-	    $.post(config.apiUpdateTabsURL, result)
+	    $.post(url, result)
 		.done(function(data) {
 		  console.log(data);
 		}).fail(function(error) {

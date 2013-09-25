@@ -22,11 +22,10 @@ var updateClients = function(req, delta) {
 
 //Create container
 exports.create = function (req, res) {
-    var container = req.listboard.addContainer(_.pick(req.body, 'title', 'folder', 'type', 'cid')).last();
+    var container = req.listboard.addContainer(_.pick(req.body, 'title', 'folder', 'type')).last();
     var delta = {
         type: 'create.container',
         data: {
-            listboardType: container.type,
             listboardId: req.listboard._id,
             container: container
         }
@@ -47,7 +46,6 @@ exports.update = function (req, res) {
         var delta = {
             type: 'update.container',
             data: { 
-                listboardType: container.type,
                 listboardId: req.listboard._id,
                 container: container
             }   
@@ -71,7 +69,6 @@ exports.destroy = function (req, res) {
         var delta = {
             type: 'delete.container',
             data: { 
-                listboardType: container.type,
                 listboardId: req.listboard._id,
                 containerId: containerId
             }   

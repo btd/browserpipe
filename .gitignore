@@ -18,3 +18,4 @@ main.min.map
 coverage
 compiled-assets
 public/js/apps/
+store/

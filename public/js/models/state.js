@@ -1,15 +1,10 @@
-var Backbone = require('backbone'),
-    Browsers = require('collections/browsers'),
-    Listboards = require('collections/listboards'),
-    FolderCollection = require('collections/folders'),
-    ItemCollection = require('collections/items'),
-    Folder = require('models/folder'),
+var $ = require('jquery'),
     _ = require('lodash');
 
-var State = Backbone.Model.extend({
-    foldersHash: {},
-    folders: new FolderCollection(),
-    items: new ItemCollection(),
+var State = {
+    init: function(options){
+        this.trigger = options.callback;
+    },
     loadInitialData: function () {
 
         //Loads Folders
@@ -22,38 +17,24 @@ var State = Backbone.Model.extend({
         this.loadItems();
     },
 
+
+
     //////////////////////////////////////////FOLDERS//////////////////////////////////////
+    //Load
     loadFolders: function () {
         //Load children folders
-        var initialFolders = initialOptions.folders || [];
-        _.each(initialFolders, function (folderItem) {
-            var folder = new Folder(folderItem);
-            this.folders.add(folder);
-            this.foldersHash[folder.getFilter()] = folder;
-            if (!_.isEmpty(folder.get('path'))) {
-                var parentFolder = this.foldersHash[folder.get('path')];
-                parentFolder.addChildren(folder);
-            }                        
+        var self = this;             
+        this.folders = [];
+        this.foldersHash = {};
+        _.each(initialOptions.folders || [], function (folder) {            
+               self.addFolder(folder);
         }, this);
+    },
 
-        this.listenTo(this.folders, 'change:path', this.folderFilterChanged, this);
-        this.listenTo(this.folders, 'change:label', this.folderFilterChanged, this);
-    },
-    addFolder: function (folder) {
-        this.folders.add(folder);
-        if(!this.foldersHash[folder.getFilter()])
-            this.foldersHash[folder.getFilter()] = folder;        
-    },
-    removeFolder: function (folder) {
-        this.folders.remove(folder);
-        var parent = this.getFolderByFilter(folder.get('path'));
-        if(parent)
-            parent.children.remove(folder);
-        this.foldersHash[folder.getFilter()] = null;
-    },
-    folderFilterChanged: function (folder) {
-         this.foldersHash[folder.getPreviousFilter()] = null;
-         this.foldersHash[folder.getFilter()] = folder;         
+
+    //Gets
+    getFolderFilter: function(folder) {
+        return (!folder.path || folder.path === "" ? "" : folder.path + "/") + folder.label;
     },
     //TODO: Now all folders are loaded in memory.
     //      It should loads folders from server in an optmized way
@@ -62,12 +43,50 @@ var State = Backbone.Model.extend({
         return this.foldersHash[filter];
     },
     getFolderById: function (folderId) {
-        return this.folders.get(folderId);
+        return _.findWhere(this.folders, {_id: folderId});
     },
     getAllFolders: function() {
-        return this.folders.models;
+        return this.folders;
+    },  
+
+
+    //CRUD
+    addFolder: function (folder) {
+        folder.children = [];
+        folder.items = [];
+        this.folders.push(folder);       
+        this.foldersHash[this.getFolderFilter(folder)] = folder;
+        if (!_.isEmpty(folder.path)) {
+            var parentFolder = this.foldersHash[folder.path];
+            parentFolder.children.push(folder);            
+            if(this.getSelectedListboard() 
+                && this.getContainerByFolderId(folder._id))
+                this.trigger('selected.listboard.folder.added');
+        }  
     },
-    createFolderIfNew: function (filter) {
+    updateFolder: function(folderUpdate) {
+        var folder =  this.getFolderById(folderUpdate._id);
+        if (folder) {
+            _.extend(folder, folderUpdate);
+            if(this.getSelectedListboard() 
+                && this.getContainerByFolderId(folder._id))
+                this.trigger('selected.listboard.folder.changed');
+        }
+    }, 
+    removeFolder: function (folderId) {
+        var folder =  this.getFolderById(folderId);
+        if(folder) {
+            this.folders = _.without(this.folders, folder);
+            var parent = this.getFolderByFilter(folder.path);
+            if(parent)
+                parent.children = _.without(parent.children, folder);
+            this.foldersHash[this.getFolderFilter(folder)] = null;
+            if(this.getSelectedListboard() 
+                && this.getContainerByFolderId(parent._id))
+                this.trigger('selected.listboard.folder.removed');
+        }
+    },     
+    createFolderIfNew: function (filter, success) {
         var self = this;
         if (filter != 'Folders' && filter.substring(0, 8) != "Folders/")
             return null;
@@ -78,143 +97,444 @@ var State = Backbone.Model.extend({
             var path = filter.substring(0, index);
             var label = filter.substring(index + 1);
             //Gets or creates the parent
-            this.createFolderIfNew(path)
-                .done(function (parent) {
-                    parent.children.createFolder({
-                        label: label,
-                        path: path
-                    })
-                    .done(function (folder) {
-                        self.addFolder(folder);
-                        defer.resolve(folder);
-                    });
-                });
+            return this.createFolderIfNew(path, function(){
+                self.saveFolder({
+                    label: label,
+                    path: path
+                }, success)
+            });
         }
         else  //Resolves with the folder if existis
-            defer.resolve(folder);
-        return defer;
+            success();
+    },
+
+
+    //Server calls    
+    serverSaveFolder: function(folder, success) {
+        return $.ajax({
+            url: '/folders',
+            type: 'POST', 
+            data: folder,
+            dataType: "json",
+            success: success
+        });
+    },    
+    serverUpdateFolder: function(folder, success){
+        return $.ajax({
+            url: '/folders/' + folder._id,
+            type: "PUT", 
+            data: folder,
+            dataType: "json",
+            success: success
+        });
+    },
+    serverRemoveFolder: function(folder, success){
+        return $.ajax({
+            url: '/folders/' + folder._id,
+            type: "DELETE", 
+            dataType: "json",
+            success: success
+        });
     },
     //////////////////////////////////////////FOLDERS//////////////////////////////////////
 
 
     //////////////////////////////////////////LISTBOARDS//////////////////////////////////////
+    //Load
     loadListboards: function() {
-        //Loads NowListboards
-        this.loadNowListboards();
+        var self = this;
+        this.listboards = initialOptions.listboards;
+        _.each(this.listboards, function (listboard) {            
+           _.each(listboard.containers, function (container) {            
+               container.items = [];
+               if(container.type === 2) {                
+                    var folder = self.getFolderById(container.folder);                    
+                    container.folderObj = folder;
+                }
+            });
+        });
+        this.selectFirstListboard();
+    },
 
-        //Loads LaterListboards
-        this.loadLaterListboards();
 
-        //Loads FutureListboards
-        this.loadFutureListboards();
+    //Gets
+    getListboardById: function (listboardId) {
+        return _.findWhere(this.listboards, {_id: listboardId});
+    }, 
+    getAllListboards: function() {
+        return this.listboards;
     },
-    loadNowListboards: function () {
-        this.nowListboards = new Listboards(initialOptions.nowListboards);
+    getSelectedListboard: function() {
+        return this.selectedListboard;
     },
-    loadLaterListboards: function () {
-        this.laterListboards = new (Listboards.Later)(initialOptions.laterListboards);
+    getSelectedListboardId: function() {
+        return this.getSelectedListboard() && this.getSelectedListboard()._id;
     },
-    loadFutureListboards: function () {
-        this.futureListboards = new (Listboards.Future)(initialOptions.futureListboards);
+
+
+    //CRUD
+    selectFirstListboard: function() {
+        this.selectedListboard = this.listboards[0];
+    },
+    setSelectedListboard: function(listboardId) {
+        this.selectedListboard = this.getListboardById(listboardId);
+        this.trigger('selected.listboard.changed');
+    },
+    addListboard: function(listboard) {
+        _.each(listboard.containers, function (container) {            
+           container.items = [];
+        });
+        this.listboards.push(listboard);
+        this.trigger('listboard.added');
+    },
+    updateListboard: function(listboardUpdate) {
+        var listboard =  this.getListboardById(listboardUpdate._id);
+        if (listboard) {
+            _.extend(listboard, listboardUpdate);
+            if(this.getSelectedListboardId() === listboard._id)
+                this.trigger('selected.listboard.changed');
+        }
+    }, 
+    removeListboard: function(listboardId) {  
+        var listboard = this.getListboardById(listboardId);
+        if(listboard){
+            this.listboards = _.without(this.listboards, listboard);
+            var selectedListboardId = this.getSelectedListboardId();
+            if(selectedListboardId === listboard._id)
+                this.selectFirstListboard();
+            this.trigger('listboard.removed');
+        }
+    },
+
+
+    //Server calls    
+    serverSaveListboard: function(listboard, success){
+        return $.ajax({
+            url: '/listboards',
+            type: "POST", 
+            data: listboard,
+            dataType: "json",
+            success: success
+        });
     },    
-    getListboard: function(listboardType, listboardId) {
-        switch(listboardType){
-            case 0: return this.nowListboards.get(listboardId);
-            case 1: return this.laterListboards.get(listboardId);
-            case 2: return this.futureListboards.get(listboardId);
-        }            
+    serverUpdateListboard: function(listboard, success){
+        return $.ajax({
+            url: '/listboards/' + listboard._id,
+            type: "PUT", 
+            data: listboard,
+            dataType: "json",
+            success: success
+        });
+    },
+    serverRemoveListboard: function(listboard, success){
+        return $.ajax({
+            url: '/listboards/' + listboard._id,
+            type: "DELETE", 
+            dataType: "json",
+            success: success
+        });
     },
     //////////////////////////////////////////LISTBOARDS//////////////////////////////////////
 
 
-    //////////////////////////////////////////ITEMS//////////////////////////////////////
-    loadItems: function () {
-        var self = this;
-        for (var index in initialOptions.items) {
-            var item = initialOptions.items[index];
-            for (var index2 in item.folders) {
-                var folderId  = item.folders[index2];
-                var folder = self.folders.get(folderId);
-                if (folder) {
-                    if (!folder.items)
-                        folder.items = new ItemCollection();
-                    folder.addItem(item);
+    //////////////////////////////////////////CONTAINERS//////////////////////////////////////
+    //Gets
+    getContainerById: function(containerId){
+        for (var i = 0; i < this.listboards.length; i++) {
+            var container = this.getContainerByIdAndListboard(this.listboards[i], containerId);
+            if(container)
+                return container;
+        };
+    },
+    getContainerByIdAndListboard: function(listboard, containerId) {
+        return _.findWhere(listboard.containers, {_id: containerId});
+    },
+    getContainerByFolderId: function(folderId) {
+        return _.flatten(this.listboards.map(function(listboard){
+            return _.findWhere(listboard.containers, {folder: folderId});    
+        }));        
+    },
+
+
+    //CRUD
+    addContainer: function(listboardId, container) {              
+        container.items = [];        
+        var listboard = this.getListboardById(listboardId);
+        if (listboard) {
+            if(!this.getContainerByIdAndListboard(listboard, container._id))
+                listboard.containers.push(container);
+            if(container.type === 2) {                
+                var folder = this.getFolderById(container.folder);
+                container.folderObj = folder;
+            }
+            if(this.getSelectedListboardId() === listboardId)
+                this.trigger('selected.listboard.container.added');
+        }
+    },
+    updateContainer: function(listboardId, containerUpdate) {
+        var listboard = this.getListboardById(listboardId);
+        if (listboard) {
+            var container = this.getContainerByIdAndListboard(listboard, containerUpdate._id);
+            if (container) {
+                //If folder changed, we load again the folder obj
+                if(container.type === 2 && container.folder != containerUpdate.folder) {                                                        
+                    var folder = this.getFolderById(containerUpdate.folder);                    
+                    container.folderObj = folder;
                 }
+                //We then mixed the props
+                _.extend(container, containerUpdate);                
+                if(this.getSelectedListboardId() === listboardId)
+                    this.trigger('selected.listboard.container.changed');
+            }
+        }
+    },
+    removeContainer: function(listboardId, containerId) {
+        var listboard = this.getListboardById(listboardId);
+        if (listboard) {
+            var container = this.getContainerByIdAndListboard(listboard, containerId);
+            if (container) {
+                listboard.containers = _.without(listboard.containers, container);
+                if(this.getSelectedListboardId() === listboard._id)
+                    this.trigger('selected.listboard.container.removed');
             }
         }        
     },
-    loadItemsByContainer: function(container) {
-        _.map(initialOptions.items, function(item){            
-            if(_.contains(item.containers,container.get('_id')))
-                container.addItem(item);
+
+    //Server calls    
+    serverSaveContainer: function(listboardId, container, success){
+        return $.ajax({
+            url: '/listboards/' + listboardId + '/containers',
+            type: "POST", 
+            data: container,
+            dataType: "json",
+            success: success
+        });
+    },    
+    serverUpdateContainer: function(listboardId, container, success){
+        return $.ajax({
+            url: '/listboards/' + listboardId + '/containers/' + container._id,
+            type: "PUT", 
+            data: container,
+            dataType: "json",
+            success: success
         });
     },
-    addItemToFolders: function (item) {
-        var self = this;
-        _.map(item.get('folders'), function (folderId) {
-            var folder = self.folders.get(folderId);
-            if (folder)
-                folder.addItem(item);
+    serverRemoveContainer: function(listboardId, container, success){
+        return $.ajax({
+            url: '/listboards/' + listboardId + '/containers/' + container._id,
+            type: "DELETE", 
+            dataType: "json",
+            success: success
         });
     },
-    addItemToContainers: function (item) {
-        var containers = this.getContainersByIds(item.get('containers'));
-        _.map(containers, function (container) {
-            if(!container.items.get(item.cid))
-                container.addItem(item);
-        });                
+    //////////////////////////////////////////CONTAINERS//////////////////////////////////////
+
+
+    //////////////////////////////////////////ITEMS//////////////////////////////////////
+    //Load
+    loadItems: function () {
+        this.items = []; 
+        _.each(initialOptions.items || [], function (item) {            
+            this.addItem(item);
+        }, this);
     },
-    getItemById: function (id) {
-        return this.items.get(id);
+
+
+    //Gets
+    getItemById: function(itemId) {
+        return _.findWhere(this.items, {_id: itemId});
     },
-    getItemByCId: function (cid) {
-        return this.items.get(cid);
+
+
+    //CRUD
+    addItem: function (item) {
+        this.items.push(item);
+        _.each(item.folders, function (folderId) {            
+            this.addItemToFolder(folderId, item);
+        }, this);
+        _.each(item.containers, function (containerId) {            
+            this.addItemToContainer(containerId, item);
+        }, this);
+
+        //Updates selected listboard
+        var selectedListboard = this.getSelectedListboard();
+        if(selectedListboard){
+            var result = _.filter(selectedListboard.containers, function(container){
+                return _.contains(item.folders, container.folder) 
+                || _.contains(item.containers, container._id) 
+            });
+            if(result.length > 0)
+                this.trigger('selected.listboard.changed');
+        }
+
     },
-    getListboardByContainerId: function(containerId) {
-        var self = this;
-        var listboards = _.union(
-            this.nowListboards.models, 
-            this.laterListboards.models, 
-            this.futureListboards.models
-        );   
-        return _.first(
-            _.chain(listboards)        
-            .map(function (listboard) {
-                if(listboard.containers.get(containerId))
-                    return listboard;
-            })
-            .flatten()
-            .compact()            
-            .value()
-        );
+    addItemToFolder: function(folderId, item) {        
+        var folder = this.getFolderById(folderId);
+        var itemExist = _.findWhere(folder.items, {_id: item._id});
+        if(!itemExist)
+            folder.items.push(item);
+        //Checks if the folder is in the selected listboard
+        var containers = _.compact(this.getContainerByFolderId(folderId));
+        var selectedListboard = this.getSelectedListboard();
+        for(index in containers){
+            if(this.getContainerByIdAndListboard(selectedListboard, containers[index]._id)){
+                this.trigger('selected.listboard.changed');
+                return;
+            }
+        }   
     },
-    getContainersByIds: function(containerIds) {
-        var self = this;
-        var listboards = _.union(
-            this.nowListboards.models, 
-            this.laterListboards.models, 
-            this.futureListboards.models
-        );   
-        return _.chain(listboards)        
-            .map(function (listboard) {
-                return  self.getContainersByIdsAndListboard(containerIds, listboard);
-            })
-            .flatten()
-            .compact()
-            .value();
+    addItemToContainer: function(containerId, item) {
+        var container = this.getContainerById(containerId);        
+        var itemExist = _.findWhere(container.items, {_id: item._id});        
+        if(!itemExist)
+            container.items.push(item);
+        var selectedListboard = this.getSelectedListboard();
+        if(this.getContainerByIdAndListboard(selectedListboard, containerId))
+            this.trigger('selected.listboard.changed');
     },
-    getContainersByIdsAndListboard: function(containerIds, listboard) {
-        return _.map(containerIds, function (containerId) {
-            var container = listboard.containers.get(containerId);
-            if(container)
-                return container;
+    updateItem: function(itemUpdate) {
+        var item =  this.getItemById(itemUpdate._id);
+        if (item){
+
+            var toAddFoldersIds = _.difference(itemUpdate.folders, item.folders);
+            var toAddContainersIds = _.difference(itemUpdate.containers, item.containers);
+            var toRemoveFolderIds = _.difference(item.folders, itemUpdate.folders);
+            var toRemoveContainersIds = _.difference(item.containers, itemUpdate.containers);
+            
+             _.each(toAddFoldersIds, function (folderId) {            
+                this.addItemToFolder(folderId, item);
+            }, this);
+            _.each(toAddContainersIds, function (containerId) {            
+                this.addItemToContainer(containerId, item);
+            }, this);
+             _.each(toRemoveFolderIds, function (folderId) {            
+                this.removeItemFromFolder(folderId, item);
+            }, this);
+            _.each(toRemoveContainersIds, function (containerId) {            
+                this.removeItemFromContainer(containerId, item);
+            }, this);
+
+            _.extend(item, itemUpdate);
+
+            //Checks if we need to throw an event
+            var selectedListboard = this.getSelectedListboard();
+            if(selectedListboard){
+                var result = _.filter(selectedListboard.containers, function(container){
+                    return _.contains(toAddFoldersIds, container.folder) 
+                    || _.contains(toAddContainersIds, container._id) 
+                    || _.contains(toRemoveFolderIds, container.folder) 
+                    || _.contains(toRemoveContainersIds, container._id) 
+                });
+                if(result.length > 0)
+                    this.trigger('selected.listboard.changed');
+            }
+                
+        }
+    }, 
+    removeItem: function (itemId) {
+        var item =  this.getItemById(itemId);
+        if (item){        
+            this.items = _.without(this.items, item);
+            _.each(item.folders, function (folderId) {            
+                this.removeItemFromFolder(folderId, item);
+            }, this);
+            _.each(item.containers, function (containerId) {            
+                this.removeItemFromContainer(containerId, item);
+            }, this);
+
+            //Updates selected listboard
+            if(selectedListboard){
+                var result = _.filter(selectedListboard.containers, function(container){
+                    return _.contains(item.folders, container.folder) 
+                    || _.contains(item.containers, container._id) 
+                });
+                if(result.length > 0)
+                    this.trigger('selected.listboard.changed');
+            }
+        }
+    },
+    removeItemFromFolder: function(folderId, itemToRemove) {
+        var folder = this.getFolderById(folderId);
+        var item = _.findWhere(folder.items, {_id: itemToRemove._id});
+        if(item)
+            folder.items = _.without(folder.items, item);
+    },
+    removeItemFromContainer: function(containerId, itemToRemove) {
+        var container = this.getContainerById(containerId);
+        var item = _.findWhere(container.items, {_id: itemToRemove._id});
+        if(item)
+            container.items = _.without(container.items, item);
+    },
+
+
+    //Server calls    
+    serverSaveItem: function(item, success){
+        return $.ajax({
+            url: '/items',
+            type: "POST", 
+            data: item,
+            dataType: "json",
+            success: success
         });
-    }
+    },    
+    serverUpdateItem: function(item, success){
+        return $.ajax({
+            url: '/items/' + item._id,
+            type: "PUT", 
+            data: item,
+            dataType: "json",
+            success: success
+        });
+    },
+    serverRemoveItem: function(item, success){
+        return $.ajax({
+            url: '/items/' + item._id,
+            type: "DELETE", 
+            dataType: "json",
+            success: success
+        });
+    },
     //////////////////////////////////////////ITEMS//////////////////////////////////////
 
+    //////////////////////////////////////////EXTENSION//////////////////////////////////////
+    isExtensionInstalled: function(callback) {      
+        //window.chrome.app.isInstalled does not work for extensions
+        //Only way I found is this
+        var self = this;
+        if(!this.extensionInstalled) {
+            var s = document.createElement('script');
+            s.onload = function() {
+                self.extensionInstalled = true;
+                callback(true);
+            };
+            s.onerror = function() {
+                self.extensionInstalled = true;
+                callback(false);
+            };
+            s.src = 'chrome-extension://jhlmlfahjekacljfabgbcoanjooeccmm/manifest.json';
+            document.body.appendChild(s);
+        }
+    },
+    installChromeExtension: function() {        
+        var self = this;
+        if (typeof window.chrome !== "undefined"){
+            window.chrome.webstore.install(
+                'https://chrome.google.com/webstore/detail/jhlmlfahjekacljfabgbcoanjooeccmm',
+                function(){                    
+                    self.callback('extension.possible.installed');
+                    $('#installExtensionModal').modal('hide');
+                },
+                function(){
+                    //TODO: manage when it fails
+                }
+            );
+            
+        }
+    }
+    //////////////////////////////////////////EXTENSION//////////////////////////////////////
 
     
-});
+};
 
-module.exports = new State();
+module.exports = State;
 

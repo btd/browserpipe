@@ -1,4 +1,4 @@
-.items-container {
+.container {
     position: relative;
     background: @grey1;
     margin: 6px 2px 6px 2px;
@@ -8,19 +8,8 @@
     overflow-y: hidden;         
     .box-sizing(border-box);    
     border: 2px solid @grey1;
-
-    .options{
-        position: absolute;
-        margin-left: 280px;
-
-        .dropdown-toggle{
-            display: none;            
-        }
-        .dropdown-menu {
-            left: -150px !important;
-        }
-    }
-    .header-inner {        
+    
+    .container-header {        
         .clearfix();   
         min-height: 20px; 
         position: relative;
@@ -56,6 +45,9 @@
             } 
             i {
                 color: @grey4;
+            }
+            input[type=text] {
+                width: 110px;
             }
         }
         .tabs-count {
@@ -125,21 +117,17 @@
                 margin-bottom: 3px;
                 padding: 6px 12px;          
                 background-color: @blue;   
-                position: relative;          
+                position: relative;    
+                color: white;
+                text-shadow: 0 1px 0 @blue;                    
+                text-shadow: none;
+                word-break: break-all;   
 
                 &:hover{
                     cursor: pointer;
                     background-color: darken(@blue, 6%);
-                }        
-                .folder-label {
-                    color: white;
-                    text-shadow: 0 1px 0 @blue;                    
-                    text-shadow: none;
-                    word-break: break-all; 
-                    width: 180px;   
-                }
+                }   
                 .remove-child-folder {
-                    display: none;
                     .opacity(30);
                     position: absolute;
                     right: 12px;
@@ -172,6 +160,10 @@
                 a {
                     color: @grey3;     
                     word-break: break-all;
+                    font-size: 13px;
+                    margin-left: 3px;
+                    font-weight: bold;
+
                 }
                 .description {
                     font-size: 12px; 
@@ -183,12 +175,12 @@
 
                     &.collapsed {
                         display:none;
-                    }
-                    .screenshot {
-                        margin-top: 4px;
-                        max-height: 200px;
-                        max-width: 200px;
-                    }
+                    }                    
+                }
+                .screenshot {
+                    margin-top: 4px;
+                    max-height: 200px;
+                    max-width: 200px;
                 }
                 .remove-item {
                     display: none;
@@ -203,7 +195,7 @@
             }   
         }
     }   
-    .footer {
+    .container-footer {
 
         .add-item {
 

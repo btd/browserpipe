@@ -30,6 +30,11 @@
         
         "socket.io": "bower_components/socket.io-client/dist/socket.io.js",
 
+        "React" : {
+            "path": "bower_components/react/react.js",
+            "exports": "React"
+        },
+
         "main" : "js/main.js",
         "router": "js/router.js",
         "util" : "js/util.js",
@@ -37,10 +42,10 @@
 
         "<%= dir[0] %>/<%= file %>": "js/{collections,models,events}/**/*.js",
 
-        "views/<%= file %>": "js/views/*.js",
-        "views/<%= dir[0] %>/<%= file %>": "js/views/*/*.js",
-        "views/<%= dir[1] %>/<%= dir[0] %>/<%= file %>": "js/views/*/*/*.js",
-        "views/<%= dir[2] %>/<%= dir[1] %>/<%= dir[0] %>/<%= file %>": "js/views/*/*/*/*.js",
+        "components/built/<%= file %>": "js/components/built/*.js",
+        "components/built/<%= dir[0] %>/<%= file %>": "js/components/built/*/*.js",
+        "components/built/<%= dir[1] %>/<%= dir[0] %>/<%= file %>": "js/components/built/*/*/*.js",
+        "components/built/<%= dir[2] %>/<%= dir[1] %>/<%= dir[0] %>/<%= file %>": "js/components/built/*/*/*/*.js",
 
         "<%= dir.splice(0, 2).reverse().join('/') %>/<%= file %>": "templates/**/*.text"
     },

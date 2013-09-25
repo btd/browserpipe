@@ -22,9 +22,7 @@ var UserSchema = new Schema({
         //do not allow user to set empty password
         return _.isEmpty(password) ? undefined : bcrypt.hashSync(password, bcryptRounds);
     }, required: true},
-    nowListboards: [ ListboardSchema ],
-    laterListboards: [ ListboardSchema ],
-    futureListboards: [ ListboardSchema ]
+    listboards: [ ListboardSchema ]
 });
 
 UserSchema.plugin(require('../util/mongoose-timestamp'));
@@ -33,40 +31,23 @@ UserSchema.methods.authenticate = function (password) {
     return bcrypt.compareSync(password, this.password);
 };
 
-UserSchema.methods.addListboard = function (rawListboard) {
-    switch (rawListboard.type) {
-        case 0 :
-            this.nowListboards.push(rawListboard);
-            return _.last(this.nowListboards);
-        case 1 :
-            this.laterListboards.push(rawListboard);
-            return _.last(this.laterListboards);
-        case 2 :
-            this.futureListboards.push(rawListboard);
-            return _.last(this.futureListboards);
-    }
-    //TODO: how are we going to handle and log errors?
-    throw new Error('Invalid listboard type');
+UserSchema.methods.getListboardByBrowserKey = function (key) {
+    var result = _.filter(this.listboards, function( listboard ){ return listboard.browserKey === key; });
+    if (result.length === 1)
+        return result[0];
+    else if (result.length === 0)
+        return null
+    else if (result.length > 1)
+        throw "Cannot be two listboards with same browser key"
 }
 
-UserSchema.methods.addNowListboard = function (rawListboard) {
-    this.nowListboards.push(rawListboard);
-    return _.last(this.nowListboards);
-};
-
-UserSchema.methods.addLaterListboard = function (rawListboard) {
-    this.laterListboards.push(rawListboard);
-    return _.last(this.laterListboards);
-};
-
-UserSchema.methods.addFutureListboard = function (rawListboard) {
-    this.futureListboards.push(rawListboard);
-    return _.last(this.futureListboards);
-};
-
+UserSchema.methods.addListboard = function (rawListboard) {
+    this.listboards.push(rawListboard);
+    return _.last(this.listboards);
+}
 
 UserSchema.methods.getContainersByFolderIds = function (folderIds) {
-    return _.chain(this.futureListboards)
+    return _.chain(this.listboards)
                 .map(function (listboard) { return listboard.containers})
                 .flatten()
                 .filter(function(container) {
@@ -76,7 +57,7 @@ UserSchema.methods.getContainersByFolderIds = function (folderIds) {
 };
 
 UserSchema.methods.removeContainersByFolderIds = function (folderIds) {
-    _.map(this.futureListboards, function (listboard) {                     
+    _.map(this.listboards, function (listboard) {                     
         var containersToRemove =  _.chain(listboard.containers)
             .filter(function(container) {                
                 return _.contains(folderIds, container.folder.toString()) 

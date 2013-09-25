@@ -16,8 +16,7 @@ module.exports = function (app, passport) {
 
   //General routes
   var main = require('../app/controllers/main');
-  app.get('/', main.home);
-  app.get('/welcome', auth.ensureLoggedIn('/login'), main.home);
+  app.get('/', main.home);  
   
   //User routes
   var users = require('../app/controllers/user')  ;
@@ -40,14 +39,18 @@ module.exports = function (app, passport) {
   var listboard = require('../app/controllers/listboard');
   app.get(    '/listboards',         auth.ensureLoggedIn('/login'), main.home);
 
-  //Now
+  //Listboards routes
   app.post(  '/listboards',                auth.send401IfNotAuthenticated, listboard.create);
   app.put(   '/listboards/:listboardId',   auth.send401IfNotAuthenticated, listboard.update);
   app.delete('/listboards/:listboardId',   auth.send401IfNotAuthenticated, listboard.destroy);
-  //TODO: manage properly api OAuth from http://developer.chrome.com/extensions/tut_oauth.html  
-  app.post(  '/now/listboards/xxxxxxxxxxx/sync',  auth.send401IfNotAuthenticated, listboard.sync);
 
   app.param('listboardId', auth.send401IfNotAuthenticated, listboard.listboard);    
+
+  //TODO: manage properly api OAuth from http://developer.chrome.com/extensions/tut_oauth.html  
+  app.post(  '/browser/:browserName/sync/:browserKey',  auth.send401IfNotAuthenticated, listboard.sync);
+  app.param('browserKey', auth.send401IfNotAuthenticated, listboard.browserKey);    
+  app.param('browserName', auth.send401IfNotAuthenticated, listboard.browserName);    
+  
 
   //Containers routes
   var container = require('../app/controllers/container');

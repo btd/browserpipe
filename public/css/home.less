@@ -3,30 +3,38 @@
 // Rules import
 @import "common/colors.less";
 @import "common/util.less";
-@import "home/home.responsive.less";
 @import "home/top/top.bar.less";
-@import "home/center/home.less";
-@import "home/center/welcome.less";
-@import "home/center/accordion.less";
+@import "home/top/top.bar.responsive.less";
+@import "home/center/listboards.panel.less";
+@import "home/center/listboards.panel.responsive.less";
+@import "home/center/listboard.less";
+@import "home/center/listboard.responsive.less";
 @import "home/center/container.less";
-@import "home/bottom/breadcrumb.less";
-@import "modal/modal.less";
-@import "modal/folders.editor.less";
+@import "home/center/container.responsive.less";
+@import "home/footer/footer.less";
 
-
-body.home {
-  background-color:@blue3;
-  font-family: Arial, Helvetica, sans-serif;
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    background-color:@blue3;
+    font-family: Arial, Helvetica, sans-serif;
 }
-h4 {
-    font-size: 16px;
-}
+.wrapper {
+    display: table;   
+    height: 100%;
+    width: 100%;
 
-#main-container {   
-    margin: 0px; 
-
-    #main-container-inner {   
-        overflow-y: auto;
+    .main-header {
+        display: table-row;
+        background: gray;  
+    }
+    .main-content {        
+        display: table-row;  /* height is dynamic, and will expand... */
+        height: 100%;        /* ...as content is added (won't scroll) */
+    }
+    .main-footer {
+        display: table-row;
     }
 }
 
