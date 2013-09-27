@@ -52,7 +52,7 @@ jshint-jenkins:
 watch-main:
 	watchify -t reactify --extension .jsx --debug public/js/main.js -o ./public/js/apps/main.js
 
-watch-main:
+build-main:
 	browserify -t reactify --extension .jsx --debug public/js/main.js -o ./public/js/apps/main.js
 
 install:
