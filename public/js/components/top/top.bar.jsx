@@ -2,7 +2,7 @@
  * @jsx React.DOM
  */
 
-var React = require('React');
+var React = require('react');
 
 var TobBarView = React.createClass({
   render: function() {

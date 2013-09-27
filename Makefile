@@ -5,12 +5,6 @@ clean:
 	@rm -fr ./cache
 	@rm -fr ./compiled-assets
 	@rm -fr ./coverage
-	@rm -f ./public/js/*.min.js
-	@rm -f ./public/js/*.min.map
-
-lmd: 
-	lmd build default
-	lmd watch default
 
 start: clean
 	@NODE_ENV=development ./node_modules/.bin/nodemon --watch app --watch config server.js
@@ -54,6 +48,12 @@ lint:
 
 jshint-jenkins:
 	./node_modules/.bin/jshint --reporter=checkstyle app config public/js 1> results/checkstyle.xml || exit 0
+
+watch-main:
+	watchify -t reactify --extension .jsx --debug public/js/main.js -o ./public/js/apps/main.js
+
+watch-main:
+	browserify -t reactify --extension .jsx --debug public/js/main.js -o ./public/js/apps/main.js
 
 install:
 	bower install

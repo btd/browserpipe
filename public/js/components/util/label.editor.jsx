@@ -2,10 +2,10 @@
  * @jsx React.DOM
  */
 
-var _state = require('models/state')
+var _state = require('../../state')
     _ = require('lodash'),
-    React = require('React'),
-    Container = require('components/built/center/container');
+    React = require('react'),
+    Container = require('../center/container');
 
 var LabelEditorComponent = React.createClass({  
   getInitialState: function() {

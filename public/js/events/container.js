@@ -1,4 +1,4 @@
-var _state = require('models/state')
+var _state = require('../state')
 
 module.exports = function (socket) {
    

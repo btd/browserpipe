@@ -3,9 +3,9 @@
  */
 
 var $ = require('jquery'),
-    _state = require('models/state'),
+    _state = require('../../state'),
     _ = require('lodash'),
-    React = require('React');
+    React = require('react');
 
 var ItemView = React.createClass({   
   getTitle: function() {

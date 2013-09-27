@@ -36,7 +36,8 @@
     "mkdirp": "~0.3.5",
     "phantomjs": "~1.9.2-1",
     "url-to-screenshot": "~0.4.1",
-    "redis": "~0.8.4"
+    "redis": "~0.8.4",
+    "react-tools": "~0.4.1"
   },
   "devDependencies": {
     "mocha": "*",
@@ -51,6 +52,15 @@
     "grunt-contrib-jshint": "~0.6.3",
     "grunt-contrib-watch": "~0.5.3",
     "grunt-lmd": "~0.1.13",
-    "grunt-develop": "~0.2.1"
+    "grunt-develop": "~0.2.1",
+    "grunt-react": "~0.4.0",
+    "reactify": "~0.3.1"
+  },
+  "browser": {
+    "socket.io": "./public/bower_components/socket.io-client/dist/socket.io.js",
+    "page": "./public/bower_components/page.js/index.js",
+    "lodash": "./public/bower_components/lodash/dist/lodash.js",
+    "jquery": "./public/bower_components/jquery/jquery.js",
+    "react": "./node_modules/react-tools/build/modules/React.js"
   }
 }
