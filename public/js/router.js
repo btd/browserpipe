@@ -1,104 +1,112 @@
 // Filename: router.js
 
-var _state = require('models/state'),        
-    Backbone = require('backbone'),
-    HomeView = require('components/built/home');
-    io = require('socket.io');
+var _state = require('./state'),
+    page = require('page'),
+    HomeView = require('./components/home');
+    io = require('socket.io'),
+    $ = require('jquery');
 
-var AppRouter = Backbone.Router.extend({
-    views: {},
-    routes: {        
-        '/' : 'gotoListboards',   
-        'listboards': 'listboards',
-        'settings': 'settings',
-        'help': 'help',
-        // Default
-        '*actions': 'gotoListboards'
-    },
-    gotoListboards: function (actions) {   
-        Backbone.history.navigate('/listboards', {trigger: true});
-    },
-    listboards: function (actions) { 
-        var self = this;
-        _state.isExtensionInstalled(function(installed) {
-            self.homeView = HomeView.render(
-                self.getDocHeight(),
-                self.getDocWidth(),
-                _state.getAllListboards(),
-                _state.getSelectedListboard(),
-                installed
-            ); 
-        })
-    },
-    initialize: function () {
-        //Load initial data
-        var self = this;
-        _state.init({
-            callback: function(key) {
-                self.stateChanged(key)
-            }
-        })
-        _state.loadInitialData();
+var homeView, //react home component instance
+    socket; //socket.io client socket
 
-        //Saves reference to the socket
-        var url = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
-        this.socket = io.connect(url);
-
-        this.loadWindowEvent();        
-        this.loadServerEvents();
-    },
-    loadWindowEvent: function() {
-        //TODO: view is there is a better way to capture and pass events
-        var self = this;
-        $(window).resize(function () {
-            self.homeView.setState({ 
-                docHeight: self.getDocHeight(), 
-                docWidth: self.getDocWidth()
-            });
-        });  
-    },
-    getDocHeight: function() {
-        return $(window).height(); 
-    },
-    getDocWidth: function() {
-        return $(window).width(); 
-    },
-    stateChanged: function(key) {
-        if(this.homeView) {
-            if(_.contains([
-                'listboard.added',
-                'listboard.removed'
-            ], key))
-                this.homeView.setState({ listboards: _state.getAllListboards(), selectedListboard: _state.getSelectedListboard() });
-            else if(_.contains([
-                'selected.listboard.changed',
-                'selected.listboard.container.added',
-                'selected.listboard.container.changed',
-                'selected.listboard.container.removed',
-                'selected.listboard.folder.added',
-                'selected.listboard.folder.changed',
-                'selected.listboard.folder.removed'
-            ], key)){                     
-                this.homeView.setState({ selectedListboard: _state.getSelectedListboard() }); 
-            }
-            else if(_.contains([
-                'extension.possible.installed'
-            ], key)){            
-                this.homeView.setState({ isExtensionInstalled: true}); 
-            }            
-        }
-    },
-    loadServerEvents: function() {        
-        require('events/listboard')(this.socket);
-        require('events/folder')(this.socket);
-        require('events/container')(this.socket);
-        require('events/item')(this.socket);
-    }
+page('/', function () {
+    setTimeout(function() {
+        page('/listboards');
+    }, 0);
 });
 
-module.exports.initialize = function () {
-    var app_router = new AppRouter();
-    //Start monitoring all hashchange events for history
-    Backbone.history.start({pushState: true});
-    return app_router;
+page('/listboards', function () {
+    var that = this;
+    _state.isExtensionInstalled(function(installed) {
+        homeView = HomeView.render(
+            getDocHeight(),
+            getDocWidth(),
+            _state.getAllListboards(),
+            _state.getSelectedListboard(),
+            installed
+        );
+    })
+});
+
+
+
+var getDocHeight = function() {
+    return $(window).height();
 };
+
+var getDocWidth = function() {
+    return $(window).width();
+};
+
+var initialize = function () {
+    //init routing
+    page({
+        popstate: false,
+        click: false,
+        dispatch: true
+    });
+
+    //Load initial data
+    var that = this;
+    _state.init({
+        callback: function(key) {
+            stateChanged(key)
+        }
+    })
+    _state.loadInitialData();
+
+    //Saves reference to the socket
+    var url = location.protocol+'//'+location.host;
+    socket = io.connect(url);
+
+    loadWindowEvent();
+    loadServerEvents();
+
+    return page;
+};
+
+var loadWindowEvent = function() {
+    //TODO: view is there is a better way to capture and pass events
+    $(window).resize(function () {
+        homeView.setState({
+            docHeight: getDocHeight(),
+            docWidth: getDocWidth()
+        });
+    });
+};
+
+//TODO write simple event dispatcher
+var stateChanged = function(key) {
+    if(homeView) {
+        if(_.contains([
+            'listboard.added',
+            'listboard.removed'
+        ], key))
+            homeView.setState({ listboards: _state.getAllListboards(), selectedListboard: _state.getSelectedListboard() });
+        else if(_.contains([
+            'selected.listboard.changed',
+            'selected.listboard.container.added',
+            'selected.listboard.container.changed',
+            'selected.listboard.container.removed',
+            'selected.listboard.folder.added',
+            'selected.listboard.folder.changed',
+            'selected.listboard.folder.removed'
+        ], key)){
+            homeView.setState({ selectedListboard: _state.getSelectedListboard() });
+        }
+        else if(_.contains([
+            'extension.possible.installed'
+        ], key)){
+            homeView.setState({ isExtensionInstalled: true});
+        }
+    }
+}
+
+var loadServerEvents = function() {
+    require('./events/listboard')(socket);
+    require('./events/folder')(socket);
+    require('./events/container')(socket);
+    require('./events/item')(socket);
+};
+
+module.exports = initialize;

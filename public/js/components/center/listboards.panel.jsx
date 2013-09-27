@@ -2,9 +2,9 @@
  * @jsx React.DOM
  */
 
-var _state = require('models/state')
+var _state = require('../../state')
     _ = require('lodash'),
-    React = require('React');
+    React = require('react');
 
 var ListboardsPanelView = React.createClass({
     getListboardsPanelHeight: function() {

@@ -2,11 +2,11 @@
  * @jsx React.DOM
  */
 
-var _state = require('models/state')
+var _state = require('../../state')
     _ = require('lodash'),
-    React = require('React'),
-    Container = require('components/built/center/container');
-    LabelEditorComponent = require('components/built/util/label.editor');
+    React = require('react'),
+    Container = require('./container');
+    LabelEditorComponent = require('../util/label.editor');
 
 var ListboardView = React.createClass({ 
   getListboardWidth: function() {    

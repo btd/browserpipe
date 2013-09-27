@@ -2,12 +2,12 @@
  * @jsx React.DOM
  */
 
-var _state = require('models/state')
+var _state = require('../state')
     _ = require('lodash'),
-    React = require('React'),
-    TopBarView = require('components/built/top/top.bar'),
-    ListboardsPanelView = require('components/built/center/listboards.panel'),
-    ListboardView = require('components/built/center/listboard');
+    React = require('react'),
+    TopBarView = require('./top/top.bar'),
+    ListboardsPanelView = require('./center/listboards.panel'),
+    ListboardView = require('./center/listboard');
 
 var HomeView = React.createClass({  
   getInitialState: function() {

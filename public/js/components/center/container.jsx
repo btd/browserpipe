@@ -2,14 +2,14 @@
  * @jsx React.DOM
  */
 
-var _state = require('models/state')
+var _state = require('../../state')
     _ = require('lodash'),
-    util = require('util'),
-    React = require('React'),
-    Item = require('components/built/center/item'),
-    Folder = require('components/built/center/folder');
+    util = require('../../util'),
+    React = require('react'),
+    Item = require('./item'),
+    Folder = require('./folder');
 
-var ContainerView = React.createClass({displayName: 'ContainerView', 
+var ContainerView = React.createClass({ 
 	getContainerTitle: function() {		
 		if(this.props.container.type === 2) 
 			return this.props.container.folderObj.label;
@@ -23,7 +23,7 @@ var ContainerView = React.createClass({displayName: 'ContainerView',
 	},
 	getTabsCount: function() {
 		 if(this.props.container.type === 0 && $.trim(this.props.container.title) === '')
-			return React.DOM.span( {className:"tabs-count"},  this.props.container.items.length + " Tabs" )
+			return <span class="tabs-count">{ this.props.container.items.length + " Tabs" }</span>
 		else
 			return null;
 	},
@@ -132,101 +132,101 @@ var ContainerView = React.createClass({displayName: 'ContainerView',
     },
 	renderHeader: function() {
 		return (
-			React.DOM.div(null, 
-				 this.props.container.type === 2 ? this.renderFolderHeader() : null, 
-				React.DOM.i( {onClick:this.closeContainer, className:"icon-remove close-container", title:"Close"}),
-				React.DOM.span( {className:"title"}, 
-					LabelEditorComponent( 
-	                    {onSaveLabel:this.saveContainerLabel, 
-	                    defaultLabelValue:this.getContainerTitle()} )
-				),
-				 this.getTabsCount() 
-			)
+			<div>
+				{ this.props.container.type === 2 ? this.renderFolderHeader() : null }
+				<i onClick={this.closeContainer} class="icon-remove close-container" title="Close"></i>
+				<span class="title">
+					<LabelEditorComponent 
+	                    onSaveLabel= {this.saveContainerLabel} 
+	                    defaultLabelValue= {this.getContainerTitle()} />
+				</span>
+				{ this.getTabsCount() }
+			</div>
 		);
 	},
 	renderFolderHeader: function() {
 		return (
-			React.DOM.span(null, 
-				React.DOM.a( {href:"#", onClick:this.showAndFocusAddFolderInput, className:"add-folder-icon"}, " Add folder"),
-				 _state.getFolderFilter(this.props.container.folderObj) !== 'Folders'? 
-				React.DOM.i( {onClick:this.navigateToParentFolder, className:"icon-arrow-up container-folder-icon", title:"Navigate folders up"}) : null 
-			)
+			<span>
+				<a href="#" onClick={this.showAndFocusAddFolderInput} class="add-folder-icon">&nbsp;Add folder</a>
+				{ _state.getFolderFilter(this.props.container.folderObj) !== 'Folders'? 
+				<i onClick={this.navigateToParentFolder} class="icon-arrow-up container-folder-icon" title="Navigate folders up"></i> : null }
+			</span>
 		);
 	},
 	renderBox: function() {
 		return (
-			React.DOM.div( {className:"box", style:{ maxHeight: this.getBoxMaxHeight() }}, 
-				 this.props.container.type === 2 ? this.renderFolders() : null, 
-            	 this.renderItems() 
-			)
+			<div class="box" style={{ maxHeight: this.getBoxMaxHeight() }}>
+				{ this.props.container.type === 2 ? this.renderFolders() : null }
+            	{ this.renderItems() }
+			</div>
 		);
 	},
 	renderItems: function() {		
 		var items = (this.props.container.type === 2 ? this.props.container.folderObj.items: this.props.container.items);
 		return (
-			React.DOM.ul( {className:"items"}, 
-			                    
+			<ul class="items">
+			{                    
                 items.map(function(item) {
-                    return Item( {item:item} )
+                    return <Item item= {item} />
                 })
-            
-			)
+            }
+			</ul>
 		);
 	},
 	renderFolders: function() {
 		var self = this;
 		return (
-			React.DOM.div(null, 
-				React.DOM.ul( {className:"folders"}, 	
-					                    
+			<div>
+				<ul class="folders">	
+					{                    
 	                	this.props.container.folderObj.children.map(function(folder) {
-		                    return Folder( {folder:folder, navigateToChildFolder:self.navigateToChildFolder} )
+		                    return <Folder folder= {folder} navigateToChildFolder= {self.navigateToChildFolder} />
 		                })
-		            
-				),
-				React.DOM.div( {ref:"folderEditor", className:"input-append add-folder hide"}, 
-					React.DOM.div( {className:"control-group"},     
-				    	React.DOM.div( {className:"controls"}, 
-							React.DOM.input( {ref:"folderInput", type:"text"}),
-							React.DOM.div(null, 
-							  	React.DOM.button( {onClick:this.saveFolder, className:"btn add-folder-save", type:"button"}, React.DOM.i( {className:"icon-ok save-icon"}, " Add folder")),
-							  	React.DOM.button( {onClick:this.hideFolderInput, className:"btn add-folder-cancel", type:"button"}, React.DOM.i( {className:"icon-remove cancel-icon"}))
-							)
-						)
-					)
-				)
-			)
+		            }
+				</ul>
+				<div ref="folderEditor" class="input-append add-folder hide">
+					<div class="control-group">    
+				    	<div class="controls">
+							<input ref="folderInput" type="text"/>
+							<div>
+							  	<button onClick={this.saveFolder} class="btn add-folder-save" type="button"><i class="icon-ok save-icon">&nbsp;Add folder</i></button>
+							  	<button onClick={this.hideFolderInput} class="btn add-folder-cancel" type="button"><i class="icon-remove cancel-icon"></i></button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 		);
 	},
 	renderFooter: function() {
 		return (
-			React.DOM.div(null, 
-				React.DOM.div( {ref:"itemEditor", className:"input-append add-item hide"}, 
-					React.DOM.div( {className:"control-group"},     
-				      React.DOM.div( {className:"controls"}, 
-						  React.DOM.textarea( {ref:"itemInput", className:"item-url", cols:"2"}),
-						  React.DOM.div(null, 
-						  	React.DOM.span( {ref:"itemURLBlankError", className:"help-inline hide item-url-blank"}, "Cannot be blank"),
-						  	React.DOM.span( {ref:"itemURLInvalidError", className:"help-inline hide item-url-invalid"}, "Invalid URL")
-						  ),
-						  React.DOM.div(null, 
-						  	React.DOM.button( {onClick:this.saveItem, className:"btn add-item-save", type:"button"}, React.DOM.i( {className:"icon-ok save-icon"}, " Add URL")),
-						  	React.DOM.button( {onClick:this.hideItemInput, className:"btn add-item-cancel", type:"button"}, React.DOM.i( {className:"icon-remove cancel-icon"}))
-						)
-					)
-				  )
-				),
-				React.DOM.a( {onClick:this.showAndFocusAddItemInput, className:"opt-add-item"}, "Add URL")			
-			)
+			<div>
+				<div ref="itemEditor" class="input-append add-item hide">
+					<div class="control-group">    
+				      <div class="controls">
+						  <textarea ref="itemInput" class="item-url" cols="2"></textarea>
+						  <div>
+						  	<span ref="itemURLBlankError" class="help-inline hide item-url-blank">Cannot be blank</span>
+						  	<span ref="itemURLInvalidError" class="help-inline hide item-url-invalid">Invalid URL</span>
+						  </div>
+						  <div>
+						  	<button onClick={this.saveItem} class="btn add-item-save" type="button"><i class="icon-ok save-icon">&nbsp;Add URL</i></button>
+						  	<button onClick={this.hideItemInput} class="btn add-item-cancel" type="button"><i class="icon-remove cancel-icon"></i></button>
+						</div>
+					</div>
+				  </div>
+				</div>
+				<a onClick={this.showAndFocusAddItemInput} class="opt-add-item">Add URL</a>			
+			</div>
 		);
 	},
 	render: function() {
 		return (
-			React.DOM.li( {className:"container"}, 
-				React.DOM.div( {className:"container-header"},  this.renderHeader() ),				
-				 this.renderBox(), 
-				React.DOM.div( {className:"container-footer"},  this.renderFooter() )
-			)
+			<li class="container">
+				<div class="container-header">{ this.renderHeader() }</div>				
+				{ this.renderBox() }
+				<div class="container-footer">{ this.renderFooter() }</div>
+			</li>
 		);
 	}
 
