@@ -49,7 +49,7 @@ var updateClients = function(req, delta) {
 //Create Later listboard
 exports.create = function (req, res) {
     //You can only create listboards of type 1 
-    if(req.body.type === '1') {
+    if(req.body.type === 1) {
         var listboard = req.user.addListboard(_.pick(req.body, 'label', 'type'));
                 
         var delta = {

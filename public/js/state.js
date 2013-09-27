@@ -4,6 +4,11 @@ var $ = require('jquery'),
 var State = {
     init: function(options){
         this.trigger = options.callback;
+
+        $.ajaxSetup({
+            dataType: 'json',
+            contentType: 'application/json'
+        })
     },
     loadInitialData: function () {
 
@@ -114,8 +119,7 @@ var State = {
         return $.ajax({
             url: '/folders',
             type: 'POST', 
-            data: folder,
-            dataType: "json",
+            data: JSON.stringify(folder),
             success: success
         });
     },    
@@ -123,16 +127,14 @@ var State = {
         return $.ajax({
             url: '/folders/' + folder._id,
             type: "PUT", 
-            data: folder,
-            dataType: "json",
+            data: JSON.stringify(folder),
             success: success
         });
     },
     serverRemoveFolder: function(folder, success){
         return $.ajax({
             url: '/folders/' + folder._id,
-            type: "DELETE", 
-            dataType: "json",
+            type: "DELETE",
             success: success
         });
     },
@@ -212,8 +214,7 @@ var State = {
         return $.ajax({
             url: '/listboards',
             type: "POST", 
-            data: listboard,
-            dataType: "json",
+            data: JSON.stringify(listboard),
             success: success
         });
     },    
@@ -221,16 +222,14 @@ var State = {
         return $.ajax({
             url: '/listboards/' + listboard._id,
             type: "PUT", 
-            data: listboard,
-            dataType: "json",
+            data: JSON.stringify(listboard),
             success: success
         });
     },
     serverRemoveListboard: function(listboard, success){
         return $.ajax({
             url: '/listboards/' + listboard._id,
-            type: "DELETE", 
-            dataType: "json",
+            type: "DELETE",
             success: success
         });
     },
@@ -305,8 +304,7 @@ var State = {
         return $.ajax({
             url: '/listboards/' + listboardId + '/containers',
             type: "POST", 
-            data: container,
-            dataType: "json",
+            data: JSON.stringify(container),
             success: success
         });
     },    
@@ -314,16 +312,14 @@ var State = {
         return $.ajax({
             url: '/listboards/' + listboardId + '/containers/' + container._id,
             type: "PUT", 
-            data: container,
-            dataType: "json",
+            data: JSON.stringify(container),
             success: success
         });
     },
     serverRemoveContainer: function(listboardId, container, success){
         return $.ajax({
             url: '/listboards/' + listboardId + '/containers/' + container._id,
-            type: "DELETE", 
-            dataType: "json",
+            type: "DELETE",
             success: success
         });
     },
@@ -472,8 +468,7 @@ var State = {
         return $.ajax({
             url: '/items',
             type: "POST", 
-            data: item,
-            dataType: "json",
+            data: JSON.stringify(item),
             success: success
         });
     },    
@@ -481,16 +476,14 @@ var State = {
         return $.ajax({
             url: '/items/' + item._id,
             type: "PUT", 
-            data: item,
-            dataType: "json",
+            data: JSON.stringify(item),
             success: success
         });
     },
     serverRemoveItem: function(item, success){
         return $.ajax({
             url: '/items/' + item._id,
-            type: "DELETE", 
-            dataType: "json",
+            type: "DELETE",
             success: success
         });
     },

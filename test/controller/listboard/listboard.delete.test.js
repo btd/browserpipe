@@ -16,7 +16,7 @@ describe('listboard controller delete', function () {
 
             User.byId(userId)
                 .then(function(user) {
-                    var listboard = user.laterListboards[0];
+                    var listboard = user.listboards[0];
 
                     request(app)
                         .del('/listboards/'+listboard._id)

@@ -5,7 +5,6 @@ var should = require('should'),
 
 var app = require('../../../app/server');
 
-var testNowListboard = { type: 0, label: "My Chrome Browser" }
 var testLaterListboard = { type: 1, label: "My Later listboard" }
 
 
@@ -35,7 +34,7 @@ describe('listboard controller create', function () {
                         .then(function(user) {
                             should.exist(user);
                             
-                            var listboard = user.laterListboards.id(res.body._id);
+                            var listboard = user.listboards.id(res.body._id);
 
                             listboard.label.should.be.equal(testLaterListboard.label);
                             listboard._id.toString().should.be.equal(res.body._id);

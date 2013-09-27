@@ -48,7 +48,7 @@ describe('listboard controller update', function () {
                                 .then(function(user) {
                                     should.exist(user);
 
-                                    var listboard = user.laterListboards.id(createdListboardId);
+                                    var listboard = user.listboards.id(createdListboardId);
 
                                     listboard.label.should.be.equal(testLaterListboard2.label);
 
