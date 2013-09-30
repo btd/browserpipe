@@ -242,7 +242,7 @@ var State = {
             var container = this.getContainerByIdAndListboard(this.listboards[i], containerId);
             if(container)
                 return container;
-        };
+        }
     },
     getContainerByIdAndListboard: function(listboard, containerId) {
         return _.findWhere(listboard.containers, {_id: containerId});
@@ -378,7 +378,7 @@ var State = {
         var containers = _.compact(this.getContainerByFolderId(folderId));
         var selectedListboard = this.getSelectedListboard();
         if(selectedListboard)
-            for(index in containers){
+            for(var index in containers){
                 if(this.getContainerByIdAndListboard(selectedListboard, containers[index]._id)){
                     this.trigger('selected.listboard.changed');
                     return;
