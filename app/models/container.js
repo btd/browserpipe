@@ -16,12 +16,4 @@ var ContainerSchema = new Schema({
 
 ContainerSchema.plugin(require('../util/mongoose-timestamp'));
 
-ContainerSchema.virtual('cid').get(function() {
-  return this._cid;
-});
-
-ContainerSchema.virtual('cid').set(function(cid) {
-  this._cid = cid;
-});
-
 module.exports = ContainerSchema;

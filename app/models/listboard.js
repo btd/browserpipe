@@ -30,8 +30,7 @@ ListboardSchema.methods.addContainer = function (cont) {
         type: cont.type,
         title: cont.title,
         folder: cont.folder,
-        externalId: cont.externalId,
-        cid: cont.cid
+        externalId: cont.externalId
     });
     return this;
 };
@@ -54,13 +53,5 @@ ListboardSchema.methods.getContainerByExternalId = function (externalId) {
     else if (result.length > 1)
         throw "Cannot be two containers with same external id on a listboard"
 }
-
-ListboardSchema.virtual('cid').get(function() {
-  return this._cid;
-});
-
-ListboardSchema.virtual('cid').set(function(cid) {
-  this._cid = cid;
-});
 
 module.exports = ListboardSchema;

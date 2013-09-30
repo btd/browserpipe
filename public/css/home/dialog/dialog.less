@@ -1,0 +1,41 @@
+.modal {
+    .modal-header {
+        background-color: #3360af;
+        color: #fff;
+        padding: 3px 15px;
+        word-break: break-all;
+
+        .close {
+            margin-top: 6px;
+        }
+    }
+    .modal-body{
+        .nav-tabs {
+            margin-bottom: 3px;
+            border-bottom: none;
+
+            li{
+                float: right;
+
+                &.active {
+
+                    a, a:hover, a:focus{
+                        border: none;                            
+                    }
+                }
+            }
+        }                        
+        .tooltip {
+            position: absolute;
+            right:0;
+            bottom: 0;
+         }
+    }
+    .opt-margin-left {
+        margin-left: 12px;
+        vertical-align: bottom;
+    }
+    .opt-button {
+        .tobutton(@blue2, @blue3);
+    }
+}

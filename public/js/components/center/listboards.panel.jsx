@@ -2,8 +2,9 @@
  * @jsx React.DOM
  */
 
-var _state = require('../../state')
+var _state = require('../../state'),    
     _ = require('lodash'),
+    page = require('page'),
     React = require('react');
 
 var ListboardsPanelView = React.createClass({
@@ -27,7 +28,8 @@ var ListboardsPanelView = React.createClass({
             return this.props.listboards.length * 114 + extensionButtonWidth + 51; //(90 = listboard width) + (12 = listboard padding) + (12 = listboard margin)  + (11 = Add buton)
     },    
     getListboardsPanelStyle: function() {
-        return { width: this.getListboardsPanelWidth() };
+        var visible = this.props.visible? "block" : "none";
+        return { width: this.getListboardsPanelWidth(), display: visible };
     },
     getListboardStyle: function() {        
         return  { width: this.getListboardsWidth() };
@@ -45,12 +47,13 @@ var ListboardsPanelView = React.createClass({
     installChromeExtension: function() {        
         _state.installChromeExtension();
     },
-    addEmptyListboardAndSelectIt: function() {
+    addEmptyListboardAndSelectIt: function(e) {
+        e.preventDefault();
         _state.serverSaveListboard({
             type: 1,
             label: 'Unamed'
         }, function(listboard){
-            _state.setSelectedListboard(listboard._id);
+            page('/listboard/' + listboard._id);
         })
     },
     render: function() {
