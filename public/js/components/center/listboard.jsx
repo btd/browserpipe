@@ -4,8 +4,9 @@
 
 var _state = require('../../state')
     _ = require('lodash'),
+    page = require('page'),
     React = require('react'),
-    Container = require('./container');
+    Container = require('./container'),
     LabelEditorComponent = require('../util/label.editor');
 
 var ListboardView = React.createClass({ 
@@ -48,10 +49,18 @@ var ListboardView = React.createClass({
           folder: rootFolderId
       })
   },
+  goToSettings: function(e) {
+    page('/listboard/' + this.props.selectedListboard._id + '/settings');
+    e.preventDefault();
+  },
+  getListboardStyle: function() {
+      var visible = this.props.visible? "block" : "none";
+      return { width: this.getListboardWidth(), display: visible };
+  },
   render: function() {
     var self = this;    
     return (        
-        <div class="listboard" style={{width: this.getListboardWidth()}} >
+        <div class="listboard" style={this.getListboardStyle()} >
           <div class="navbar sub-bar">
             <div class="navbar-inner">
               <ul class="nav">                
@@ -71,7 +80,14 @@ var ListboardView = React.createClass({
                     Folders
                   </a>
                 </li>
-              </ul>
+              </ul>              
+              <ul class="nav pull-right">
+                <li>
+                  <a class="btn" onClick={this.goToSettings} href="#" title="Settings" data-toggle="tooltip">
+                    <i class="icon-cog"></i>
+                  </a>
+                </li>
+              </ul>                
             </div>
           </div>
           <ul class="containers" style={this.getContainersStyle()} >

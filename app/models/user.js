@@ -46,6 +46,11 @@ UserSchema.methods.addListboard = function (rawListboard) {
     return _.last(this.listboards);
 }
 
+UserSchema.methods.removeListboard = function (listboard) {
+    this.listboards.remove(listboard);
+    return this;
+};
+
 UserSchema.methods.getContainersByFolderIds = function (folderIds) {
     return _.chain(this.listboards)
                 .map(function (listboard) { return listboard.containers})

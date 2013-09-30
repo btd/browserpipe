@@ -154,8 +154,7 @@ var State = {
                     container.folderObj = folder;
                 }
             });
-        });
-        this.selectFirstListboard();
+        });        
     },
 
 
@@ -169,7 +168,7 @@ var State = {
     getSelectedListboard: function() {
         return this.selectedListboard;
     },
-    getSelectedListboardId: function() {
+    getSelectedListboardId: function() {        
         return this.getSelectedListboard() && this.getSelectedListboard()._id;
     },
 
@@ -197,8 +196,8 @@ var State = {
                 this.trigger('selected.listboard.changed');
         }
     }, 
-    removeListboard: function(listboardId) {  
-        var listboard = this.getListboardById(listboardId);
+    removeListboard: function(listboardToDelete) {  
+        var listboard = this.getListboardById(listboardToDelete._id);
         if(listboard){
             this.listboards = _.without(this.listboards, listboard);
             var selectedListboardId = this.getSelectedListboardId();
@@ -340,9 +339,15 @@ var State = {
     getItemById: function(itemId) {
         return _.findWhere(this.items, {_id: itemId});
     },
+    getSelectedItem: function() {
+        return this.selectedItem;
+    },
 
 
     //CRUD
+    setSelectedItem: function(itemId) {
+        this.selectedItem = this.getItemById(itemId);        
+    },
     addItem: function (item) {
         this.items.push(item);
         _.each(item.folders, function (folderId) {            
@@ -372,21 +377,24 @@ var State = {
         //Checks if the folder is in the selected listboard
         var containers = _.compact(this.getContainerByFolderId(folderId));
         var selectedListboard = this.getSelectedListboard();
-        for(index in containers){
-            if(this.getContainerByIdAndListboard(selectedListboard, containers[index]._id)){
-                this.trigger('selected.listboard.changed');
-                return;
-            }
-        }   
+        if(selectedListboard)
+            for(index in containers){
+                if(this.getContainerByIdAndListboard(selectedListboard, containers[index]._id)){
+                    this.trigger('selected.listboard.changed');
+                    return;
+                }
+            }   
     },
     addItemToContainer: function(containerId, item) {
-        var container = this.getContainerById(containerId);        
-        var itemExist = _.findWhere(container.items, {_id: item._id});        
-        if(!itemExist)
-            container.items.push(item);
-        var selectedListboard = this.getSelectedListboard();
-        if(this.getContainerByIdAndListboard(selectedListboard, containerId))
-            this.trigger('selected.listboard.changed');
+        var container = this.getContainerById(containerId);    
+        if(container){
+            var itemExist = _.findWhere(container.items, {_id: item._id});        
+            if(!itemExist)
+                container.items.push(item);
+            var selectedListboard = this.getSelectedListboard();            
+            if(selectedListboard && this.getContainerByIdAndListboard(selectedListboard, containerId))
+                this.trigger('selected.listboard.changed');
+        }
     },
     updateItem: function(itemUpdate) {
         var item =  this.getItemById(itemUpdate._id);
