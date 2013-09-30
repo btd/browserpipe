@@ -101,7 +101,6 @@ exports.destroy = function (req, res) {
             return Item.findAllByContainers(req.user, listboard.containers)                 
         })
         .then(function(items) {
-            console.log(items.length);
             var promises = _.map(items, function(item) {                            
                 _.map(listboard.containers, function(containerId) {
                     item.containers.remove(containerId)
