@@ -12,7 +12,7 @@ module.exports = function (socket) {
     });
 
     socket.on('update.item', function (itemUpdate) {        
-        _state.updateItem(data);
+        _state.updateItem(itemUpdate);
     });
 
     socket.on('bulk.update.item', function (itemUpdates) {

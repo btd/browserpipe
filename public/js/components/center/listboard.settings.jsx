@@ -2,9 +2,10 @@
  * @jsx React.DOM
  */
 
-var _state = require('../../state')
+var _state = require('../../state'),
     _ = require('lodash'),
     React = require('react'),
+    page = require('page'),
     LabelEditorComponent = require('../util/label.editor');
 
 var ListboardSettingsView = React.createClass({
@@ -47,7 +48,7 @@ var ListboardSettingsView = React.createClass({
                 <div class="name-editor">             
                     <LabelEditorComponent 
                         onSaveLabel= {this.saveListboardLabel} 
-                        defaultLabelValue= {this.props.selectedListboard.label} />
+                        labelValue= {this.props.selectedListboard.label} />
                     <small><i>(click to edit)</i></small>
                 </div>
                 <a ref="deleteOption" onClick={this.showDeleteWarning} href="#" class="delete-option">delete listboard</a>

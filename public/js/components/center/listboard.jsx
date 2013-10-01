@@ -2,7 +2,7 @@
  * @jsx React.DOM
  */
 
-var _state = require('../../state')
+var _state = require('../../state'),
     _ = require('lodash'),
     page = require('page'),
     React = require('react'),
@@ -67,7 +67,7 @@ var ListboardView = React.createClass({
                 <li>
                   <LabelEditorComponent 
                     onSaveLabel= {this.saveListboardLabel} 
-                    defaultLabelValue= {this.props.selectedListboard.label} />
+                    labelValue= {this.props.selectedListboard.label} />
                   </li>
                 <li class="divider"></li>
                 <li>

@@ -2,12 +2,13 @@
  * @jsx React.DOM
  */
 
-var _state = require('../../state')
+var _state = require('../../state'),
     _ = require('lodash'),
     util = require('../../util'),
     React = require('react'),
     Item = require('./item'),
-    Folder = require('./folder');
+    Folder = require('./folder'),
+    LabelEditorComponent = require('../util/label.editor');
 
 var ContainerView = React.createClass({ 
 	getContainerTitle: function() {		
@@ -17,7 +18,7 @@ var ContainerView = React.createClass({
 			if(this.props.container.type === 0) 
 				return this.props.container.items.length + " Tabs";
 			else
-				return 'Unnamed'
+				return null
 		else
 			return this.props.container.title;
 	},
@@ -75,7 +76,7 @@ var ContainerView = React.createClass({
 	},
 	saveFolder: function() {    
 		var self = this;
-		var label = $.trim(this.refs.folderInput.getDOMNode().value)
+		var label = $.trim(this.refs.folderInput.getDOMNode().value)		
 		var path = _state.getFolderFilter(this.props.container.folderObj);
 
 		if(label != '')
@@ -135,11 +136,16 @@ var ContainerView = React.createClass({
 			<div>
 				{ this.props.container.type === 2 ? this.renderFolderHeader() : null }
 				<i onClick={this.closeContainer} class="icon-remove close-container" title="Close"></i>
-				<span class="title">
-					<LabelEditorComponent 
-	                    onSaveLabel= {this.saveContainerLabel} 
-	                    defaultLabelValue= {this.getContainerTitle()} />
-				</span>
+				{
+					this.props.container.type !== 2 || this.props.container.folderObj.path !== '' ?
+						<span class="title">
+							<LabelEditorComponent 
+		                    	onSaveLabel= {this.saveContainerLabel} 
+		                    	labelValue= {this.getContainerTitle()}
+		                    	defaultLabelValue= "Unnamed" />
+						</span>	: null
+				}
+				
 				{ this.getTabsCount() }
 			</div>
 		);
@@ -162,7 +168,7 @@ var ContainerView = React.createClass({
 		);
 	},
 	renderItems: function() {		
-		var items = (this.props.container.type === 2 ? this.props.container.folderObj.items: this.props.container.items);
+		var items = (this.props.container.type === 2 ? this.props.container.folderObj.items: this.props.container.items) || [];
 		return (
 			<ul class="items">
 			{                    

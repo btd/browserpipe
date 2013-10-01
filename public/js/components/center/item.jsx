@@ -19,16 +19,19 @@ var ItemView = React.createClass({
     e.preventDefault();
     page('/item/' + this.props.item._id);
   },
+  stopPropagation: function(e) {
+    e.stopPropagation();      
+  },
   render: function() {
     return (          
-      <li class="item"> 
+      <li onClick={ this.navigateToItem } class="item"> 
         <i class="icon-remove remove-item" title="Close"></i>
         <img class="favicon" src={ this.props.item.favicon } alt="Favicon" />
-        <a class="title" target="_blank" href={ this.props.item.url }>
+        <a onClick={ this.stopPropagation } class="title" target="_blank" href={ decodeURIComponent(this.props.item.url) }>
           {  this.getTitle()  } 
         </a>
         <div class="description">{ this.props.item.note }</div>  		
-        <img onClick={ this.navigateToItem } class="screenshot" src="/img/no_screenshot.png" alt="ScreenShot" />  
+        <img class="screenshot" src="/img/no_screenshot.png" alt="ScreenShot" />  
       </li>
     );
   }
