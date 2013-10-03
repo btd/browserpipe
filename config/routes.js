@@ -39,7 +39,7 @@ module.exports = function (app, passport) {
   var listboard = require('../app/controllers/listboard');
   app.get(    '/listboards',              auth.ensureLoggedIn('/login'), main.home);
   app.get(    '/listboard/:listboardId',  auth.ensureLoggedIn('/login'), main.home);
-  app.get(    '/listboard/settings',      auth.ensureLoggedIn('/login'), main.home);
+  app.get(    '/listboard/:listboardId/settings',      auth.ensureLoggedIn('/login'), main.home);
 
   //Listboards routes
   app.post(  '/listboards',                auth.send401IfNotAuthenticated, listboard.create);

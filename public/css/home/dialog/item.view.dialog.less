@@ -10,23 +10,20 @@
             margin-right: 12px;
             height: 16px;
             width: 16px;
+            float: left;
         }
         .edit-item-title {
+
+            .le-label {
+                word-break: break-word;
+            }
+
             &:hover{
                 cursor: pointer;
             }
-        }            
-        .edit-item-title-controls {                
-            display: none;
-            margin: 6px 0;
-        }
+        } 
         .item-title {
             margin: 0;
-        }
-        .help-inline {
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-            font-size: 14px;
-            color: #6b2423;
         }
     }
     .modal-body{
@@ -47,10 +44,6 @@
         .edit-item-note-controls {
             display: none; 
         }
-        #item-note {                       
-            margin: 12px 0 0;
-            width: 450px;
-        }  
         .item-screenshot {
 			width: 500px; 
 			height: 300px;

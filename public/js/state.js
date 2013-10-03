@@ -38,7 +38,7 @@ var State = {
 
 
     //Gets
-    getFolderFilter: function(folder) {
+    getFolderFilter: function(folder) {        
         return (!folder.path || folder.path === "" ? "" : folder.path + "/") + folder.label;
     },
     //TODO: Now all folders are loaded in memory.
@@ -148,7 +148,7 @@ var State = {
         this.listboards = initialOptions.listboards;
         _.each(this.listboards, function (listboard) {            
            _.each(listboard.containers, function (container) {            
-               container.items = [];
+               container.items = [];               
                if(container.type === 2) {                
                     var folder = self.getFolderById(container.folder);                    
                     container.folderObj = folder;
@@ -191,7 +191,8 @@ var State = {
     updateListboard: function(listboardUpdate) {
         var listboard =  this.getListboardById(listboardUpdate._id);
         if (listboard) {
-            _.extend(listboard, listboardUpdate);
+            //We do not update arrays here
+            _.extend(listboard, _.pick(listboardUpdate, 'label'));
             if(this.getSelectedListboardId() === listboard._id)
                 this.trigger('selected.listboard.changed');
         }
@@ -255,13 +256,13 @@ var State = {
 
 
     //CRUD
-    addContainer: function(listboardId, container) {              
+    addContainer: function(listboardId, container) { 
         container.items = [];        
         var listboard = this.getListboardById(listboardId);
         if (listboard) {
             if(!this.getContainerByIdAndListboard(listboard, container._id))
-                listboard.containers.push(container);
-            if(container.type === 2) {                
+                listboard.containers.push(container);            
+            if(container.type === 2) {                            
                 var folder = this.getFolderById(container.folder);
                 container.folderObj = folder;
             }
@@ -342,7 +343,10 @@ var State = {
     getSelectedItem: function() {
         return this.selectedItem;
     },
-
+    getSelectedItemId: function() {        
+        return this.getSelectedItem() && this.getSelectedItem()._id;
+    },
+    
 
     //CRUD
     setSelectedItem: function(itemId) {
@@ -432,7 +436,9 @@ var State = {
                 if(result.length > 0)
                     this.trigger('selected.listboard.changed');
             }
-                
+
+            if(this.getSelectedItemId() === item._id)
+                this.trigger('selected.item.changed');                
         }
     }, 
     removeItem: function (itemId) {

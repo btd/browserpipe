@@ -1,6 +1,7 @@
 // Filename: router.js
 
 var _state = require('./state'),
+    _ = require('lodash'),
     page = require('page'),
     HomeView = require('./components/home'),
     io = require('socket.io'),
@@ -148,7 +149,10 @@ var stateChanged = function(key) {
             'listboard.added',
             'listboard.removed'
         ], key))
-            homeView.setState({ listboards: _state.getAllListboards(), selectedListboard: _state.getSelectedListboard() });
+            homeView.setState({ 
+                listboards: _state.getAllListboards(), 
+                selectedListboard: _state.getSelectedListboard() 
+            });
         else if(_.contains([
             'selected.listboard.changed',
             'selected.listboard.container.added',
@@ -157,13 +161,24 @@ var stateChanged = function(key) {
             'selected.listboard.folder.added',
             'selected.listboard.folder.changed',
             'selected.listboard.folder.removed'
+        ], key)){            
+            homeView.setState({ 
+                selectedListboard: _state.getSelectedListboard() 
+            });
+        }
+        else if(_.contains([
+            'selected.item.changed'
         ], key)){
-            homeView.setState({ selectedListboard: _state.getSelectedListboard() });
+            homeView.setState({
+                selectedItem: _state.getSelectedItem()
+            });
         }
         else if(_.contains([
             'extension.possible.installed'
         ], key)){
-            homeView.setState({ isExtensionInstalled: true});
+            homeView.setState({ 
+                isExtensionInstalled: true
+            });
         }
     }
 }

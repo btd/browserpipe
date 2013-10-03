@@ -53,10 +53,10 @@ UserSchema.methods.removeListboard = function (listboard) {
 
 UserSchema.methods.getContainersByFolderIds = function (folderIds) {
     return _.chain(this.listboards)
-                .map(function (listboard) { return listboard.containers})
+                .map(function (listboard) { return listboard.containers})                
                 .flatten()
                 .filter(function(container) {
-                    return _.contains(folderIds, container.folder.toString()) 
+                    return (container.type === 2) && _.contains(folderIds, container.folder.toString()) 
                 })
                 .value();
 };
@@ -65,7 +65,7 @@ UserSchema.methods.removeContainersByFolderIds = function (folderIds) {
     _.map(this.listboards, function (listboard) {                     
         var containersToRemove =  _.chain(listboard.containers)
             .filter(function(container) {                
-                return _.contains(folderIds, container.folder.toString()) 
+                return (container.type === 2) && _.contains(folderIds, container.folder.toString()) 
             })
             .value();
         _.map(containersToRemove, function(container) {

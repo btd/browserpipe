@@ -2,7 +2,7 @@
  * @jsx React.DOM
  */
 
-var _state = require('../state')
+var _state = require('../state'),
     _ = require('lodash'),
     page = require('page'),
     React = require('react'),
@@ -30,6 +30,10 @@ var HomeView = React.createClass({
       e.preventDefault();
       page('/listboard/' + e.target.id.substring(3));
   },
+  handleBodyClick: function(e) {
+      if(this.state.dialogItemVisible)      
+        page('/listboard/' + this.state.selectedListboard._id);
+  },
   render: function() {
     this.listboardsPanelView = <ListboardsPanelView 
       visible = {this.state.listboardsVisible}
@@ -52,10 +56,11 @@ var HomeView = React.createClass({
 
     this.dialogItemView = this.state.dialogItemVisible? <DialogItemView 
       visible = {this.state.dialogItemVisible}
+      selectedListboard= {this.state.selectedListboard}
       item={this.state.selectedItem} /> : null;
 
     return (
-      <div class="wrapper">
+      <div onClick={this.handleBodyClick} class="wrapper">
         <div class="main-header">
           <TopBarView docWidth={this.state.docWidth} />
         </div>
@@ -68,6 +73,7 @@ var HomeView = React.createClass({
         <div class="main-footer">
           <small>@Listboard.it</small>
         </div>
+        {this.state.dialogItemVisible? <div class="modal-backdrop fade in"></div> : null}
       </div>
     );
   }

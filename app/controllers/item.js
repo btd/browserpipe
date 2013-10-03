@@ -48,8 +48,10 @@ exports.update = function (req, res) {
     item.markModified('folders');
     _.merge(item, _.pick(req.body, 'type', 'folders', 'containers', 'title', 'url', 'note', 'cid'));
     //We need to merge array manually, because empty arrays are not merged
-    item.containers = req.body.containers;
-    item.folders = req.body.folders;
+    if(req.body.containers)
+        item.containers = req.body.containers;
+    if(req.body.folders)
+        item.folders = req.body.folders;
 
     var delta = {
         type: 'update.item',
