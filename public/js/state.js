@@ -1,6 +1,12 @@
 var $ = require('jquery'),
     _ = require('lodash');
 
+var folder = require('./data/folder'),
+    Folder = folder.Folder,
+    Folders = folder.Folders;
+
+//TODO mix to State emitter
+//TODO wrap triggering events to subscribed on change of collections and models
 var State = {
     init: function (options) {
         this.trigger = options.callback;
@@ -10,59 +16,48 @@ var State = {
             contentType: 'application/json'
         })
     },
-    loadInitialData: function () {
+    loadInitialData: function (initialOptions) {
 
         //Loads Folders
-        this.loadFolders();
+        this.loadFolders(initialOptions.folders || []);
 
         //Loads Listboards
-        this.loadListboards();
+        this.loadListboards(initialOptions.listboards || []);
 
         //Load items
-        this.loadItems();
+        this.loadItems(initialOptions.items || []);
     },
 
 
     //////////////////////////////////////////FOLDERS//////////////////////////////////////
     //Load
-    loadFolders: function () {
+    loadFolders: function (from) {
         //Load children folders
-        var self = this;
-        this.folders = [];
-        this.foldersHash = {};
-        _.each(initialOptions.folders || [], function (folder) {
-            self.addFolder(folder);
-        }, this);
+        this.folders = new Folders([]);
+        _.each(from, this.addFolder, this);
     },
 
-
-    //Gets
-    getFolderFilter: function (folder) {
-        return (!folder.path || folder.path === "" ? "" : folder.path + "/") + folder.label;
-    },
-    //TODO: Now all folders are loaded in memory.
-    //      It should loads folders from server in an optmized way
-    //      And this method shoud return a promise
     getFolderByFilter: function (filter) {
-        return this.foldersHash[filter];
+        return this.folders.byFilter(filter);
     },
     getFolderById: function (folderId) {
-        return _.findWhere(this.folders, {_id: folderId});
+        return this.folders.byId(folderId);
     },
     getAllFolders: function () {
         return this.folders;
     },
 
-
     //CRUD
     addFolder: function (folder) {
-        folder.children = [];
-        folder.items = [];
+        folder = new Folder(folder);
+
         this.folders.push(folder);
-        this.foldersHash[this.getFolderFilter(folder)] = folder;
-        if (!_.isEmpty(folder.path)) {
-            var parentFolder = this.foldersHash[folder.path];
+
+        if (!folder.isRoot) {
+
+            var parentFolder = this.folders.byFilter(folder.path);
             parentFolder.children.push(folder);
+
             if (this.getSelectedListboard() && this.getContainerByFolderId(folder._id))
                 this.trigger('selected.listboard.folder.added');
         }
@@ -71,44 +66,23 @@ var State = {
         var folder = this.getFolderById(folderUpdate._id);
         if (folder) {
             _.extend(folder, folderUpdate);
+
             if (this.getSelectedListboard() && this.getContainerByFolderId(folder._id))
                 this.trigger('selected.listboard.folder.changed');
         }
     },
     removeFolder: function (folderId) {
-        var folder = this.getFolderById(folderId);
+        var folder = this.folders.removeById(folderId);
         if (folder) {
-            this.folders = _.without(this.folders, folder);
-            var parent = this.getFolderByFilter(folder.path);
-            if (parent)
-                parent.children = _.without(parent.children, folder);
-            this.foldersHash[this.getFolderFilter(folder)] = null;
+            if(!folder.isRoot) {
+                var parent = this.getFolderByFilter(folder.path);
+                parent.children.removeById(folderId);
+            }
+
             if (this.getSelectedListboard() && this.getContainerByFolderId(parent._id))
                 this.trigger('selected.listboard.folder.removed');
         }
     },
-    createFolderIfNew: function (filter, success) {
-        var self = this;
-        if (filter != 'Folders' && filter.substring(0, 8) != "Folders/")
-            return null;
-        var defer = $.Deferred();
-        var folder = this.getFolderByFilter(filter);
-        if (!folder) { //If it does not extists, it creates it
-            var index = filter.lastIndexOf('/'); //It has at least one "/"
-            var path = filter.substring(0, index);
-            var label = filter.substring(index + 1);
-            //Gets or creates the parent
-            return this.createFolderIfNew(path, function () {
-                self.saveFolder({
-                    label: label,
-                    path: path
-                }, success)
-            });
-        }
-        else  //Resolves with the folder if existis
-            success();
-    },
-
 
     //Server calls    
     serverSaveFolder: function (folder, success) {
@@ -139,9 +113,9 @@ var State = {
 
     //////////////////////////////////////////LISTBOARDS//////////////////////////////////////
     //Load
-    loadListboards: function () {
+    loadListboards: function (from) {
         var self = this;
-        this.listboards = initialOptions.listboards;
+        this.listboards = from;
         _.each(this.listboards, function (listboard) {
             _.each(listboard.containers, function (container) {
                 container.items = [];
@@ -324,9 +298,9 @@ var State = {
 
     //////////////////////////////////////////ITEMS//////////////////////////////////////
     //Load
-    loadItems: function () {
+    loadItems: function (from) {
         this.items = [];
-        _.each(initialOptions.items || [], function (item) {
+        _.each(from, function (item) {
             this.addItem(item);
         }, this);
     },

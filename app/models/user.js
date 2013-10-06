@@ -47,7 +47,7 @@ UserSchema.methods.addListboard = function (rawListboard) {
 }
 
 UserSchema.methods.removeListboard = function (listboard) {
-    this.listboards.remove(listboard);
+    this.listboards.id(listboard).remove();
     return this;
 };
 

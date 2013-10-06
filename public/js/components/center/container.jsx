@@ -76,8 +76,8 @@ var ContainerView = React.createClass({
 	},
 	saveFolder: function() {    
 		var self = this;
-		var label = $.trim(this.refs.folderInput.getDOMNode().value)		
-		var path = _state.getFolderFilter(this.props.container.folderObj);
+		var label = $.trim(this.refs.folderInput.getDOMNode().value)
+		var path = this.props.container.folderObj.filter;
 
 		if(label != '')
 			_state.serverSaveFolder({
@@ -154,7 +154,7 @@ var ContainerView = React.createClass({
 		return (
 			<span>
 				<a href="#" onClick={this.showAndFocusAddFolderInput} class="add-folder-icon">&nbsp;Add folder</a>
-				{ _state.getFolderFilter(this.props.container.folderObj) !== 'Folders'? 
+				{ this.props.container.folderObj.filter !== 'Folders'?
 				<i onClick={this.navigateToParentFolder} class="icon-arrow-up container-folder-icon" title="Navigate folders up"></i> : null }
 			</span>
 		);

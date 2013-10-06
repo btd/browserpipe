@@ -23,6 +23,15 @@ var nodeAlias = function(subPath, aliasName) {
     return alias(path.join('./node_modules', subPath), aliasName);
 };
 
+var browserifyAliases = [
+    bowerAlias('page.js/index.js', 'page'),
+    nodeAlias('react-tools/build/modules/React.js', 'react'),
+    bowerAlias('socket.io-client/dist/socket.io.js', 'socket.io'),
+    bowerAlias('lodash/dist/lodash.js', 'lodash'),
+    bowerAlias('emitter/index.js', 'emitter'),
+    bowerAlias('indexof/index.js', 'indexof')
+];
+
 module.exports = function(grunt) {
 
 
@@ -40,12 +49,16 @@ module.exports = function(grunt) {
 
             watch: {
                 publicJs: {
-                    files: ['public/js/**/*.js', 'public/js/components/**/*.jsx', '!public/js/apps/*'],
+                    files: ['public/js/**/*.js', 'public/js/components/**/*.jsx', '!public/js/apps/**'],
                     tasks: ['browserify']
                 },
                 app: {
                     files: ['app/**/*.js', 'config/**/*.js', 'app/**/*.jade'],
                     tasks: ['develop']
+                },
+                tests: {
+                    files: ['public/js/**/*.js', 'public/js/components/**/*.jsx', '!public/js/apps/**', 'public/js/test/tests.js'],
+                    tasks: ['browserify:tests']
                 }
             },
 
@@ -54,12 +67,22 @@ module.exports = function(grunt) {
                     src: ['public/js/main.js'],
                     dest: 'public/js/apps/main.js',
                     options: {
-                        alias: [
-                            bowerAlias('page.js/index.js', 'page'),
-                            nodeAlias('react-tools/build/modules/React.js', 'react'),
-                            bowerAlias('socket.io-client/dist/socket.io.js', 'socket.io'),
-                            bowerAlias('lodash/dist/lodash.js', 'lodash')
-                        ],
+                        alias: browserifyAliases,
+                        extensions: [".jsx"],
+                        shim: {
+                            jquery: { path: "./public/bower_components/jquery/jquery.js", exports: "$" }
+                        },
+                        debug: true,
+                        transform: ['reactify']
+                    }
+                },
+                tests: {
+                    src: ['public/js/test/tests.js'],
+                    dest: 'public/js/test/test.js',
+                    options: {
+                        alias: browserifyAliases.concat([
+                            bowerAlias('should.js/lib/should.js', 'should')
+                        ]),
                         extensions: [".jsx"],
                         shim: {
                             jquery: { path: "./public/bower_components/jquery/jquery.js", exports: "$" }
