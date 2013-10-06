@@ -1,0 +1,7 @@
+{
+    "globals": {
+        "module": true,
+        "exports": true,
+        "require": true
+    }
+}

@@ -46,7 +46,7 @@
     "supertest": "*",
     "cookiejar": "*",
     "istanbul": "*",
-    "jshint": "*",
+    "jshint": "~2.1.11",
     "jsdom": "*",
     "grunt": "~0.4.1",
     "grunt-contrib-jshint": "~0.6.3",

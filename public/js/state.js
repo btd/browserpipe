@@ -64,8 +64,7 @@ var State = {
         if (!_.isEmpty(folder.path)) {
             var parentFolder = this.foldersHash[folder.path];
             parentFolder.children.push(folder);            
-            if(this.getSelectedListboard() 
-                && this.getContainerByFolderId(folder._id))
+            if(this.getSelectedListboard() && this.getContainerByFolderId(folder._id))
                 this.trigger('selected.listboard.folder.added');
         }  
     },
@@ -73,8 +72,7 @@ var State = {
         var folder =  this.getFolderById(folderUpdate._id);
         if (folder) {
             _.extend(folder, folderUpdate);
-            if(this.getSelectedListboard() 
-                && this.getContainerByFolderId(folder._id))
+            if(this.getSelectedListboard() && this.getContainerByFolderId(folder._id))
                 this.trigger('selected.listboard.folder.changed');
         }
     }, 
@@ -86,8 +84,7 @@ var State = {
             if(parent)
                 parent.children = _.without(parent.children, folder);
             this.foldersHash[this.getFolderFilter(folder)] = null;
-            if(this.getSelectedListboard() 
-                && this.getContainerByFolderId(parent._id))
+            if(this.getSelectedListboard() && this.getContainerByFolderId(parent._id))
                 this.trigger('selected.listboard.folder.removed');
         }
     },     
@@ -243,7 +240,7 @@ var State = {
             var container = this.getContainerByIdAndListboard(this.listboards[i], containerId);
             if(container)
                 return container;
-        };
+        }
     },
     getContainerByIdAndListboard: function(listboard, containerId) {
         return _.findWhere(listboard.containers, {_id: containerId});
@@ -356,8 +353,7 @@ var State = {
         var selectedListboard = this.getSelectedListboard();
         if(selectedListboard){
             var result = _.filter(selectedListboard.containers, function(container){
-                return _.contains(item.folders, container.folder) 
-                || _.contains(item.containers, container._id) 
+                return _.contains(item.folders, container.folder) || _.contains(item.containers, container._id)
             });
             if(result.length > 0)
                 this.trigger('selected.listboard.changed');
@@ -372,7 +368,7 @@ var State = {
         //Checks if the folder is in the selected listboard
         var containers = _.compact(this.getContainerByFolderId(folderId));
         var selectedListboard = this.getSelectedListboard();
-        for(index in containers){
+        for(var index in containers){
             if(this.getContainerByIdAndListboard(selectedListboard, containers[index]._id)){
                 this.trigger('selected.listboard.changed');
                 return;
@@ -416,10 +412,10 @@ var State = {
             var selectedListboard = this.getSelectedListboard();
             if(selectedListboard){
                 var result = _.filter(selectedListboard.containers, function(container){
-                    return _.contains(toAddFoldersIds, container.folder) 
-                    || _.contains(toAddContainersIds, container._id) 
-                    || _.contains(toRemoveFolderIds, container.folder) 
-                    || _.contains(toRemoveContainersIds, container._id) 
+                    return _.contains(toAddFoldersIds, container.folder) ||
+                        _.contains(toAddContainersIds, container._id) ||
+                        _.contains(toRemoveFolderIds, container.folder) ||
+                        _.contains(toRemoveContainersIds, container._id)
                 });
                 if(result.length > 0)
                     this.trigger('selected.listboard.changed');
@@ -441,8 +437,7 @@ var State = {
             //Updates selected listboard
             if(selectedListboard){
                 var result = _.filter(selectedListboard.containers, function(container){
-                    return _.contains(item.folders, container.folder) 
-                    || _.contains(item.containers, container._id) 
+                    return _.contains(item.folders, container.folder) || _.contains(item.containers, container._id)
                 });
                 if(result.length > 0)
                     this.trigger('selected.listboard.changed');

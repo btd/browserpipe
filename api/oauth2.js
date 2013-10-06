@@ -1,6 +1,5 @@
 var express = require('express'),
     _ = require('lodash'),
-    url = require('url'),
     mongoStore = require('connect-mongo')(express);
 
 var config = require('../config/config'),
@@ -45,6 +44,7 @@ var authorized = function(req, res, next) {
         }, next);
 };
 
+/*jshint unused:true, eqnull:true */
 var nonEmptyString = function(value) {
     return value != null && _.isString(value) && value.length > 0;
 };
@@ -106,7 +106,7 @@ module.exports = function(app) {
                             });
                         }
                     })
-                    .fail(function(err) {
+                    .fail(function() {
                         res.status(400).render('error', {
                             param: 'client_id'
                         });
