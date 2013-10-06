@@ -64,14 +64,6 @@ ItemSchema.statics.byId = function (id) {
     return qfindOne({ _id: id});
 }
 
-ItemSchema.virtual('cid').get(function() {
-  return this._cid;
-});
-
-ItemSchema.virtual('cid').set(function(cid) {
-  this._cid = cid;
-});
-
 var qfindOne = function (obj) {
     return Item
             .findOne(obj)

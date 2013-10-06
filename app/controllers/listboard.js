@@ -85,12 +85,32 @@ exports.update = function (req, res) {
 
 //Delete Later Listboard
 exports.destroy = function (req, res) {
-    var listboard = req.listboard.remove();
+
+    var listboard = req.listboard;
+
+    //We do not send an items update, no need, it will just removed an unexistent container
     var delta = {
         type: 'delete.listboard',
         data: listboard
-    }
-    saveListboard(req, res, listboard, delta);    
+    }        
+
+    req.user.removeListboard(listboard)
+        .saveWithPromise()
+        .then(function() {
+            //Items with all folders and descendant folders are updated
+            return Item.findAllByContainers(req.user, listboard.containers)                 
+        })
+        .then(function(items) {
+            var promises = _.map(items, function(item) {                            
+                _.map(listboard.containers, function(containerId) {
+                    item.containers.remove(containerId)
+                });                    
+                return item.saveWithPromise();
+            });
+            return q.all(promises);
+        })
+        .then(saveListboard(req, res, listboard, delta))          
+        .done()    
 }
 
 var sendCreateListboardDelta = function(req, listboard) {    

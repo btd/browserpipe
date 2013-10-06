@@ -37,7 +37,9 @@ module.exports = function (app, passport) {
 
   //Listboard
   var listboard = require('../app/controllers/listboard');
-  app.get(    '/listboards',         auth.ensureLoggedIn('/login'), main.home);
+  app.get(    '/listboards',              auth.ensureLoggedIn('/login'), main.home);
+  app.get(    '/listboard/:listboardId',  auth.ensureLoggedIn('/login'), main.home);
+  app.get(    '/listboard/:listboardId/settings',      auth.ensureLoggedIn('/login'), main.home);
 
   //Listboards routes
   app.post(  '/listboards',                auth.send401IfNotAuthenticated, listboard.create);
@@ -47,9 +49,9 @@ module.exports = function (app, passport) {
   app.param('listboardId', auth.send401IfNotAuthenticated, listboard.listboard);    
 
   //TODO: manage properly api OAuth from http://developer.chrome.com/extensions/tut_oauth.html  
-  app.post(  '/browser/:browserName/sync/:browserKey',  auth.send401IfNotAuthenticated, listboard.sync);
-  app.param('browserKey', auth.send401IfNotAuthenticated, listboard.browserKey);    
-  app.param('browserName', auth.send401IfNotAuthenticated, listboard.browserName);    
+  app.post(   '/browser/:browserName/sync/:browserKey',  auth.send401IfNotAuthenticated, listboard.sync);
+  app.param(  'browserKey', auth.send401IfNotAuthenticated, listboard.browserKey);    
+  app.param(  'browserName', auth.send401IfNotAuthenticated, listboard.browserName);    
   
 
   //Containers routes
@@ -60,14 +62,16 @@ module.exports = function (app, passport) {
 
   //Folders routes
   var folder = require('../app/controllers/folder');
-  app.post( '/folders',             auth.send401IfNotAuthenticated, folder.create);
-  app.put(  '/folders/:folderId',     auth.send401IfNotAuthenticated, folder.update);
-  app.delete('/folders/:folderId',    auth.send401IfNotAuthenticated, folder.destroy);
+  app.post(   '/folders',             auth.send401IfNotAuthenticated, folder.create);
+  app.put(    '/folders/:folderId',     auth.send401IfNotAuthenticated, folder.update);
+  app.delete( '/folders/:folderId',    auth.send401IfNotAuthenticated, folder.destroy);
     
   app.param('folderId', auth.send401IfNotAuthenticated, folder.folder);
 
   //Items routes
   var item = require('../app/controllers/item');
+  app.get(    '/item/:itemId',  auth.ensureLoggedIn('/login'), main.home);
+  
   app.post(   '/items',          item.create);
   app.put(    '/items/:itemId',  item.update);
   app.delete( '/items/:itemId',  item.destroy);

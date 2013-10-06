@@ -51,7 +51,7 @@
 
 
 
-#modal-view-bkmkr {
+#modal-view-item {
     .modal-header {
         a {
             font-size: 13px;
@@ -63,24 +63,15 @@
             margin-right: 12px;
             height: 16px;
             width: 16px;
+            float: left;
         }
         .edit-item-title {
+            word-break: break-word;
+
             &:hover{
                 cursor: pointer;
             }
-        }            
-        .edit-item-title-controls {                
-            display: none;
-            margin: 6px 0;
-        }
-        #item-title {
-            margin: 0;
-        }
-        .help-inline {
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-            font-size: 14px;
-            color: #6b2423;
-        }
+        }   
     }
     .modal-body{
         .item-note-content {

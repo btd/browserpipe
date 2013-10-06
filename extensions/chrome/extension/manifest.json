@@ -3,7 +3,7 @@
 
   "name": "Listboard.it",
   "description": "This extension is to sync tabs with Listboard.it.",
-  "version": "1.0.1",
+  "version": "1.0.2",
 
   "permissions": [
     "tabs",

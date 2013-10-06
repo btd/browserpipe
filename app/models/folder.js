@@ -18,14 +18,6 @@ var FolderSchema = new Schema({
 
 FolderSchema.plugin(require('../util/mongoose-timestamp'));
 
-FolderSchema.virtual('cid').get(function() {
-  return this._cid;
-});
-
-FolderSchema.virtual('cid').set(function(cid) {
-  this._cid = cid;
-});
-
 FolderSchema.methods.isRoot = function () {
     return _.isEmpty(this.path);
 };

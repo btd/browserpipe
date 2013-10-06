@@ -1,13 +1,43 @@
 // Filename: router.js
 
 var _state = require('./state'),
+    _ = require('lodash'),
     page = require('page'),
-    HomeView = require('./components/home');
+    HomeView = require('./components/home'),
     io = require('socket.io'),
     $ = require('jquery');
 
 var homeView, //react home component instance
     socket; //socket.io client socket
+
+var loadHomeView = function(listboardsVisible, listboardSettingsVisible, dialogItemVisible) {
+    if(!homeView){
+        var that = this;
+        _state.isExtensionInstalled(function(installed) {
+            homeView = HomeView.render(
+                getDocHeight(),
+                getDocWidth(),
+                _state.getAllListboards(),
+                _state.getSelectedListboard(),
+                _state.getSelectedItem(),
+                installed,
+                listboardsVisible,
+                listboardSettingsVisible,
+                dialogItemVisible
+            );
+        })
+    } else {
+       var selectedListboard = _state.getSelectedListboard();
+       var selectedItem = _state.getSelectedItem();
+        homeView.setState({ 
+            selectedListboard: selectedListboard,
+            selectedItem: selectedItem,
+            listboardsVisible: listboardsVisible,
+            listboardSettingsVisible: listboardSettingsVisible,
+            dialogItemVisible: dialogItemVisible
+        }); 
+    }
+}
 
 page('/', function () {
     setTimeout(function() {
@@ -16,18 +46,55 @@ page('/', function () {
 });
 
 page('/listboards', function () {
-    var that = this;
-    _state.isExtensionInstalled(function(installed) {
-        homeView = HomeView.render(
-            getDocHeight(),
-            getDocWidth(),
-            _state.getAllListboards(),
-            _state.getSelectedListboard(),
-            installed
-        );
-    })
+    setTimeout(function() {
+        _state.selectFirstListboard();
+        var selectedListboard = _state.getSelectedListboard();
+        if(selectedListboard)
+            page('/listboard/' + selectedListboard._id);
+        else
+            loadHomeView(true, false, false);
+    }, 0);
 });
 
+page('/listboard/:id', function (ctx) {    
+    setTimeout(function() {
+        var id = ctx.params.id;
+        if(_state.getListboardById(id)){
+            _state.setSelectedListboard(id);        
+            loadHomeView(true, false, false);
+        }
+        else
+            loadNotFoundView();
+     }, 0);
+});
+
+page('/listboard/:id/settings', function (ctx) {
+    setTimeout(function() {
+        var id = ctx.params.id;
+        if(_state.getListboardById(id)){
+            _state.setSelectedListboard(id);        
+            loadHomeView(false, true, false);    
+        }
+        else
+            loadNotFoundView();
+     }, 0);    
+});
+
+page('/item/:id', function (ctx) {    
+    setTimeout(function() {        
+        var id = ctx.params.id;
+        if(_state.getItemById(id)){
+            _state.setSelectedItem(id);        
+            //If loaded for the first time, there is no selected listboard, so we select one
+            //TODO: select the first listboard that contains the item
+            if(!_state.getSelectedListboard())
+                _state.selectFirstListboard();
+            loadHomeView(true, false, true);
+        }
+        else
+            loadNotFoundView();
+     }, 0);
+});
 
 
 var getDocHeight = function() {
@@ -52,7 +119,7 @@ var initialize = function () {
         callback: function(key) {
             stateChanged(key)
         }
-    })
+    });    
     _state.loadInitialData();
 
     //Saves reference to the socket
@@ -82,7 +149,10 @@ var stateChanged = function(key) {
             'listboard.added',
             'listboard.removed'
         ], key))
-            homeView.setState({ listboards: _state.getAllListboards(), selectedListboard: _state.getSelectedListboard() });
+            homeView.setState({ 
+                listboards: _state.getAllListboards(), 
+                selectedListboard: _state.getSelectedListboard() 
+            });
         else if(_.contains([
             'selected.listboard.changed',
             'selected.listboard.container.added',
@@ -91,13 +161,24 @@ var stateChanged = function(key) {
             'selected.listboard.folder.added',
             'selected.listboard.folder.changed',
             'selected.listboard.folder.removed'
+        ], key)){            
+            homeView.setState({ 
+                selectedListboard: _state.getSelectedListboard() 
+            });
+        }
+        else if(_.contains([
+            'selected.item.changed'
         ], key)){
-            homeView.setState({ selectedListboard: _state.getSelectedListboard() });
+            homeView.setState({
+                selectedItem: _state.getSelectedItem()
+            });
         }
         else if(_.contains([
             'extension.possible.installed'
         ], key)){
-            homeView.setState({ isExtensionInstalled: true});
+            homeView.setState({ 
+                isExtensionInstalled: true
+            });
         }
     }
 }
