@@ -49,7 +49,7 @@ module.exports = function(grunt) {
 
             watch: {
                 publicJs: {
-                    files: ['public/js/**/*.js', 'public/js/components/**/*.jsx', '!public/js/apps/**'],
+                    files: ['public/js/**/*.js', 'public/js/components/**/*.jsx', '!public/js/apps/**', '!public/js/test/test.js'],
                     tasks: ['browserify']
                 },
                 app: {
@@ -57,7 +57,7 @@ module.exports = function(grunt) {
                     tasks: ['develop']
                 },
                 tests: {
-                    files: ['public/js/**/*.js', 'public/js/components/**/*.jsx', '!public/js/apps/**', 'public/js/test/tests.js'],
+                    files: ['public/js/**/*.js', 'public/js/components/**/*.jsx', '!public/js/apps/**', '!public/js/test/test.js'],
                     tasks: ['browserify:tests']
                 }
             },
