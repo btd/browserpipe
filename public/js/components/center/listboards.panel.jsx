@@ -66,8 +66,8 @@ var ListboardsPanelView = React.createClass({
                     {                    
                         this.props.listboards.map(function(listboard) {
                             return <li 
-                                class={self.props.selectedListboard.id === listboard.id ? "listboard selected" : "listboard"}
-                                id={'li_' + listboard.id}                             
+                                class={self.props.selectedListboard._id === listboard._id ? "listboard selected" : "listboard"}
+                                id={'li_' + listboard._id}
                                 onClick={self.props.handleListboardClick}> 
                                     {listboard.label}
                                 </li > 
