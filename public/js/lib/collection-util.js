@@ -1,16 +1,18 @@
 var byId = function(Collection) {
     Collection.prototype.byId = function(id) {
-        return this.models[this._byIdCache[id]];
+        return this._byIdCache[id];
     };
+
     Collection.prototype.removeById = function(id) {
-        return this.remove(this._byIdCache[id]);
+        var index = this.models.indexOf(this._byIdCache[id]);
+        return this.remove(index);
     }
 
     Collection.on('initialize', function(collection) {
         collection._byIdCache = {};
 
         collection.on('add', function(model) {
-            collection._byIdCache[model._id] = collection.length - 1;
+            collection._byIdCache[model._id] = model;
         });
 
         collection.on('remove', function(model) {

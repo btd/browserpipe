@@ -79,12 +79,12 @@ var State = {
                 this.trigger('selected.listboard.folder.changed');
         }
     },
-    removeFolder: function (folderId) {
-        var folder = this.folders.removeById(folderId);
+    removeFolder: function (folderDelete) {
+        var folder = this.folders.removeById(folderDelete._id);
         if (folder) {
             if(!folder.isRoot) {
                 var parent = this.getFolderByFilter(folder.path);
-                parent.children.removeById(folderId);
+                parent.children.removeById(folderDelete._id);
             }
 
             if (this.getSelectedListboard() && this.getContainerByFolderId(parent._id))
@@ -124,6 +124,7 @@ var State = {
     //Load
     loadListboards: function (from) {
         this.listboards = new Listboards();
+        this.containers = new Containers(); //i hope i am right that embedded documents will have unique id
 
         _.each(from, this.addListboard, this);
     },
@@ -154,17 +155,14 @@ var State = {
 
     //CRUD Listboard
     addListboard: function (listboard) {
-        var containers = new Containers();
+        var containers = listboard.containers;
+        delete listboard.containers;
+        this.listboards.push(listboard);
 
-        _.each(listboard.containers, function (container) {
-            if (container.type === 2) {
-                container.folder = this.getFolderById(container.folder);
-            }
-            containers.push(container);
+        _.each(containers, function(container) {
+            this.addContainer(listboard._id, container);
         }, this);
 
-        listboard.containers = containers;
-        this.listboards.push(listboard);
         this.trigger('listboard.added');
     },
     updateListboard: function (listboardUpdate) {
@@ -176,9 +174,15 @@ var State = {
                 this.trigger('selected.listboard.changed');
         }
     },
-    removeListboard: function (listboardId) {
-        var listboard = this.listboards.removeById(listboardId);
+    removeListboard: function (listboardDelete) {
+        var listboard = this.listboards.removeById(listboardDelete._id);
         if (listboard) {
+            // remove state-wise containers collection
+            listboard.containers.each(function(container) {
+                this.containers.removeById(container._id); // O(N)
+            }, this);
+
+            //if we remove selected listboard set new selected
             var selectedListboardId = this.getSelectedListboardId();
             if (selectedListboardId === listboard._id)
                 this.selectFirstListboard();
@@ -219,46 +223,42 @@ var State = {
     //////////////////////////////////////////CONTAINERS//////////////////////////////////////
     //Gets
     getContainerById: function (containerId) {
-        for (var i = 0; i < this.listboards.length; i++) {
-            var container = this.getContainerByIdAndListboard(this.listboards[i], containerId);
-            if (container)
-                return container;
-        }
+        return this.containers.byId(containerId);
     },
     getContainerByIdAndListboard: function (listboard, containerId) {
-        return _.findWhere(listboard.containers, {_id: containerId});
+        return listboard.containers.byId(containerId);
     },
+    // it can be several containers
     getContainerByFolderId: function (folderId) {
-        return _.flatten(this.listboards.map(function (listboard) {
-            return _.findWhere(listboard.containers, {folder: folderId});
-        }));
+        return this.containers.filter(function(container) {
+            return container.folder && container.folder._id === folderId;
+        });
     },
 
 
     //CRUD
     addContainer: function (listboardId, container) {
-        container.items = [];
         var listboard = this.getListboardById(listboardId);
         if (listboard) {
-            if (!this.getContainerByIdAndListboard(listboard, container._id))
-                listboard.containers.push(container);
             if (container.type === 2) {
-                var folder = this.getFolderById(container.folder);
-                container.folder = folder;
+                container.folder = this.getFolderById(container.folder);
             }
+            listboard.containers.push(container);
+            this.containers.push(container);
+
             if (this.getSelectedListboardId() === listboardId)
                 this.trigger('selected.listboard.container.added');
         }
     },
+
     updateContainer: function (listboardId, containerUpdate) {
         var listboard = this.getListboardById(listboardId);
         if (listboard) {
-            var container = this.getContainerByIdAndListboard(listboard, containerUpdate._id);
+            var container = listboard.containers.byId(containerUpdate._id);
             if (container) {
                 //If folder changed, we load again the folder obj
-                if (container.type === 2 && container.folder != containerUpdate.folder) {
-                    var folder = this.getFolderById(containerUpdate.folder);
-                    container.folder = folder;
+                if (container.type === 2 && container.folder._id !== containerUpdate.folder) {
+                    containerUpdate.folder = this.getFolderById(containerUpdate.folder);
                 }
                 //We then mixed the props
                 _.extend(container, containerUpdate);
@@ -268,14 +268,12 @@ var State = {
         }
     },
     removeContainer: function (listboardId, containerId) {
-        var listboard = this.getListboardById(listboardId);
-        if (listboard) {
-            var container = this.getContainerByIdAndListboard(listboard, containerId);
-            if (container) {
-                listboard.containers = _.without(listboard.containers, container);
-                if (this.getSelectedListboardId() === listboard._id)
-                    this.trigger('selected.listboard.container.removed');
-            }
+        var container = this.containers.removeById(containerId);
+        if (container) {
+            this.getListboardById(listboardId).containers.removeById(containerId);
+
+            if (this.getSelectedListboardId() === listboardId)
+                this.trigger('selected.listboard.container.removed');
         }
     },
 

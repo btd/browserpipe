@@ -78,7 +78,7 @@ describe('state', function() {
 
             it('should remove folder', function() {
 
-                state.removeFolder(folder2._id);
+                state.removeFolder(folder2);
 
                 var folder = state.getFolderById(folder2._id);
 
@@ -107,6 +107,8 @@ describe('state', function() {
                 state.listboards.should.have.length(2);
                 state.listboards.at(0).containers.should.have.length(listboard1.containers.length);
                 state.listboards.at(0).should.include(listboard1);
+
+                state.containers.should.have.length(2);
             });
 
             // this test depends from other - it is awful
@@ -127,10 +129,16 @@ describe('state', function() {
             });
 
             it('should remove listboard', function() {
-                state.removeListboard(listboard1._id);
+                state.removeListboard(listboard1);
 
                 var l1 = state.getListboardById(listboard1._id);
+
+                //it is removed from lisboards
                 state.listboards.should.have.length(1);
+
+                // containers also removed
+                state.containers.should.have.length(0);
+
                 should(l1).not.be.ok;
             })
         })

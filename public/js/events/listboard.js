@@ -10,8 +10,8 @@ module.exports = function (socket) {
         _state.updateListboard(listboardUpdate);
     });
 
-    socket.on('delete.listboard', function (listboardId) {
-        _state.removeListboard(listboardId); 
+    socket.on('delete.listboard', function (listboard) {
+        _state.removeListboard(listboard);
     });
 };
 
