@@ -5,6 +5,14 @@ var folder = require('./data/folder'),
     Folder = folder.Folder,
     Folders = folder.Folders;
 
+var listboard = require('./data/listboard'),
+    Listboard = listboard.Listboard,
+    Listboards = listboard.Listboards,
+    Container = listboard.Container,
+    Containers = listboard.Containers;
+
+var noop = function() {}
+
 //TODO mix to State emitter
 //TODO wrap triggering events to subscribed on change of collections and models
 var State = {
@@ -84,6 +92,7 @@ var State = {
         }
     },
 
+    //TODO it should be done in more universal way, also need more universal validation
     //Server calls    
     serverSaveFolder: function (folder, success) {
         return $.ajax({
@@ -114,47 +123,47 @@ var State = {
     //////////////////////////////////////////LISTBOARDS//////////////////////////////////////
     //Load
     loadListboards: function (from) {
-        var self = this;
-        this.listboards = from;
-        _.each(this.listboards, function (listboard) {
-            _.each(listboard.containers, function (container) {
-                container.items = [];
-                if (container.type === 2) {
-                    var folder = self.getFolderById(container.folder);
-                    container.folderObj = folder;
-                }
-            });
-        });
+        this.listboards = new Listboards();
+
+        _.each(from, this.addListboard, this);
     },
 
 
     //Gets
     getListboardById: function (listboardId) {
-        return _.findWhere(this.listboards, {_id: listboardId});
+        return this.listboards.byId(listboardId);
     },
     getAllListboards: function () {
         return this.listboards;
     },
+
+    // selected listboard
     getSelectedListboard: function () {
         return this.selectedListboard;
     },
     getSelectedListboardId: function () {
         return this.getSelectedListboard() && this.getSelectedListboard()._id;
     },
-
-
-    //CRUD
     selectFirstListboard: function () {
-        this.selectedListboard = this.listboards[0];
+        this.setSelectedListboard(this.listboards.at(0)._id);
     },
     setSelectedListboard: function (listboardId) {
         this.selectedListboard = this.getListboardById(listboardId);
         this.trigger('selected.listboard.changed');
     },
+
+    //CRUD Listboard
     addListboard: function (listboard) {
+        var containers = new Containers();
+
         _.each(listboard.containers, function (container) {
-            container.items = [];
-        });
+            if (container.type === 2) {
+                container.folder = this.getFolderById(container.folder);
+            }
+            containers.push(container);
+        }, this);
+
+        listboard.containers = containers;
         this.listboards.push(listboard);
         this.trigger('listboard.added');
     },
@@ -167,13 +176,14 @@ var State = {
                 this.trigger('selected.listboard.changed');
         }
     },
-    removeListboard: function (listboardToDelete) {
-        var listboard = this.getListboardById(listboardToDelete._id);
+    removeListboard: function (listboardId) {
+        var listboard = this.listboards.removeById(listboardId);
         if (listboard) {
-            this.listboards = _.without(this.listboards, listboard);
             var selectedListboardId = this.getSelectedListboardId();
             if (selectedListboardId === listboard._id)
                 this.selectFirstListboard();
+
+            //TODO in trigger we can add small delay to combine several events and push them together
             this.trigger('listboard.removed');
         }
     },
@@ -234,7 +244,7 @@ var State = {
                 listboard.containers.push(container);
             if (container.type === 2) {
                 var folder = this.getFolderById(container.folder);
-                container.folderObj = folder;
+                container.folder = folder;
             }
             if (this.getSelectedListboardId() === listboardId)
                 this.trigger('selected.listboard.container.added');
@@ -248,7 +258,7 @@ var State = {
                 //If folder changed, we load again the folder obj
                 if (container.type === 2 && container.folder != containerUpdate.folder) {
                     var folder = this.getFolderById(containerUpdate.folder);
-                    container.folderObj = folder;
+                    container.folder = folder;
                 }
                 //We then mixed the props
                 _.extend(container, containerUpdate);

@@ -68,15 +68,16 @@ var proto = {
     }
 };
 
+//small evristic i know that each method in _ do not have more then 4 arguments
 var bind = function(functionName) {
     proto[functionName] = function() {
-        return _[functionName].apply(this.models, arguments);
+        return _[functionName].call(null, this.models, arguments[0], arguments[1], arguments[2], arguments[3]);
     }
 };
 
 var bindThis = function(functionName) {
     proto[functionName] = function() {
-        return new (this.constructor)(_[functionName].apply(this.models, arguments));
+        return new (this.constructor)(_[functionName].call(null, this.models, arguments[0], arguments[1], arguments[2], arguments[3]));
     }
 }
 
