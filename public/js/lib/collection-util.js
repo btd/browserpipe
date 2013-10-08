@@ -1,10 +1,12 @@
+
+
 var byId = function(Collection) {
     Collection.prototype.byId = function(id) {
         return this._byIdCache[id];
     };
 
     Collection.prototype.removeById = function(id) {
-        var index = this.models.indexOf(this._byIdCache[id]);
+        var index = this.indexOf(this._byIdCache[id]);
         return this.remove(index);
     }
 

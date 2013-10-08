@@ -3,19 +3,16 @@ var Emitter = require('emitter'),
 
 var createCollection = function(modelType) {
     var Collection = function(models) {
-        this.models = [];
-        this.model = modelType;
-
         for(var i in models) this.push(models[i]);
 
         Collection.emit('initialize', this);
     };
 
+    Collection.model = modelType;
+
     Collection.prototype = {
         constructor: Collection,
-        get length() {
-            return this.models.length;
-        }
+        length: 0
     };
 
     Emitter(Collection);
@@ -31,16 +28,18 @@ var createCollection = function(modelType) {
     return Collection;
 };
 
-
+var aPush = Array.prototype.push;
+var aSplice = Array.prototype.splice;
 
 var proto = {
+    indexOf: Array.prototype.indexOf,
     push: function() {
         _.each(arguments, function(model) {
-            if(this.model) {
-                model = (model instanceof this.model) ? model : (new (this.model)(model));
+            if(this.constructor.model) {
+                model = (model instanceof this.constructor.model) ? model : (new (this.constructor.model)(model));
             }
 
-            this.models.push(model);
+            aPush.call(this, model);
 
             this.constructor.emit('add', this, model);
             this.emit('add', model);
@@ -48,18 +47,16 @@ var proto = {
 
         return this;
     },
-    at: function(i) {
-        return this.models[i];
-    },
 
     last: function() {
-        return this.at(this.length - 1);
+        return this[this.length - 1];
     },
 
     remove: function(index) {
-        var model = this.at(index);
+        var model = this[index];
         if(model) {
-            this.models.splice(index, 1);
+
+            aSplice.call(this, index, 1);
 
             this.constructor.emit('remove', this, model);
             this.emit('remove', model);
@@ -71,13 +68,13 @@ var proto = {
 //small evristic i know that each method in _ do not have more then 4 arguments
 var bind = function(functionName) {
     proto[functionName] = function() {
-        return _[functionName].call(null, this.models, arguments[0], arguments[1], arguments[2], arguments[3]);
+        return _[functionName].call(null, this, arguments[0], arguments[1], arguments[2], arguments[3]);
     }
 };
 
 var bindThis = function(functionName) {
     proto[functionName] = function() {
-        return new (this.constructor)(_[functionName].call(null, this.models, arguments[0], arguments[1], arguments[2], arguments[3]));
+        return new (this.constructor)(_[functionName].call(null, this, arguments[0], arguments[1], arguments[2], arguments[3]));
     }
 }
 

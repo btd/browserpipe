@@ -1,5 +1,5 @@
 var should = require('should');
-
+var _ = require('lodash');
 
 var state = require('../state');
 
@@ -30,7 +30,7 @@ var listboard1 = {
         _id: 2,
         label: 'c2',
         type: 2,
-        folder: 124
+        folder: folder2._id
     }]
 };
 
@@ -60,7 +60,7 @@ describe('state', function() {
             it('should add to parent folder children reference if it is not a root folder', function() {
                 var f1 = state.getFolderById(folder1._id);
                 f1.children.should.have.length(1);
-                f1.children.at(0).should.include(folder2);
+                f1.children[0].should.include(folder2);
             });
 
             it('should update properties of folder', function() {
@@ -105,16 +105,16 @@ describe('state', function() {
                 state.loadListboards([ listboard1, listboard2 ]);
 
                 state.listboards.should.have.length(2);
-                state.listboards.at(0).containers.should.have.length(listboard1.containers.length);
-                state.listboards.at(0).should.include(listboard1);
+                state.listboards[0].containers.should.have.length(listboard1.containers.length);
+                state.listboards[0].should.include(_.omit(listboard1, 'containers'));
 
                 state.containers.should.have.length(2);
             });
 
             // this test depends from other - it is awful
             it('should return listboard by id', function() {
-                state.getListboardById(listboard1._id).should.include(listboard1);
-                state.getListboardById(listboard2._id).should.include(listboard2);
+                state.getListboardById(listboard1._id).should.include(_.omit(listboard1, 'containers'));
+                state.getListboardById(listboard2._id).should.include(_.omit(listboard2, 'containers'));
             });
 
             it('should update listboard', function() {
@@ -140,9 +140,62 @@ describe('state', function() {
                 state.containers.should.have.length(0);
 
                 should(l1).not.be.ok;
-            })
-        })
-    })
+            });
+
+
+        });
+
+        describe('containers', function() {
+            before(function() {
+                state.removeFolder(folder1._id);
+                state.removeFolder(folder2._id);
+
+                state.loadFolders([ folder1, folder2 ]);
+
+                state.removeListboard(listboard1);
+                state.removeListboard(listboard2);
+
+                state.loadListboards([ listboard1, listboard2 ]);
+            });
+
+            it('should be possible to update container', function() {
+                // fisrt we can change label
+
+                state.updateContainer(listboard1._id, {
+                    _id: listboard1.containers[0]._id,
+                    label: 'c12'
+                })
+
+                var container = state.getContainerById(listboard1.containers[0]._id);
+
+                container.should.have.property('label', 'c12');
+
+                state.updateContainer(listboard1._id, {
+                    _id: listboard1.containers[1]._id,
+                    folder: folder1._id
+                });
+
+                var container2 = state.getContainerById(listboard1.containers[1]._id);
+
+                container2.folder.should.include(folder1);
+            });
+
+            it('should be possible to remove container', function() {
+                // fisrt we can change label
+
+                state.removeContainer(listboard1._id, listboard1.containers[0]._id);
+
+                should(state.getContainerById(listboard1.containers[0]._id)).not.be.ok;
+
+                state.removeContainer(listboard1._id, listboard1.containers[1]._id);
+
+                should(state.getContainerById(listboard1.containers[1]._id));
+
+                state.containers.should.have.length(0);
+                state.getListboardById(listboard1._id).containers.should.have.length(0);
+            });
+        });
+    });
 });
 
 describe('Folder', function() {

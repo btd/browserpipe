@@ -11,7 +11,9 @@ var listboard = require('./data/listboard'),
     Container = listboard.Container,
     Containers = listboard.Containers;
 
-var noop = function() {}
+var item = require('./data/item'),
+    Item = item.Item,
+    Items = item.Items;
 
 //TODO mix to State emitter
 //TODO wrap triggering events to subscribed on change of collections and models
@@ -146,7 +148,7 @@ var State = {
         return this.getSelectedListboard() && this.getSelectedListboard()._id;
     },
     selectFirstListboard: function () {
-        this.setSelectedListboard(this.listboards.at(0)._id);
+        this.setSelectedListboard(this.listboards[0]._id);
     },
     setSelectedListboard: function (listboardId) {
         this.selectedListboard = this.getListboardById(listboardId);
@@ -155,11 +157,11 @@ var State = {
 
     //CRUD Listboard
     addListboard: function (listboard) {
-        var containers = listboard.containers;
-        delete listboard.containers;
-        this.listboards.push(listboard);
+        //it is moveton to change object that someone give us
+        var listboardCopy = _.omit(listboard, 'containers');
+        this.listboards.push(listboardCopy);
 
-        _.each(containers, function(container) {
+        _.each(listboard.containers, function(container) {
             this.addContainer(listboard._id, container);
         }, this);
 
@@ -241,8 +243,10 @@ var State = {
         var listboard = this.getListboardById(listboardId);
         if (listboard) {
             if (container.type === 2) {
+                container = _.clone(container); // to do not modify original object
                 container.folder = this.getFolderById(container.folder);
             }
+            container = new Container(container); // this is required to have the same reference in both collections
             listboard.containers.push(container);
             this.containers.push(container);
 
@@ -258,6 +262,7 @@ var State = {
             if (container) {
                 //If folder changed, we load again the folder obj
                 if (container.type === 2 && container.folder._id !== containerUpdate.folder) {
+                    containerUpdate = _.clone(containerUpdate);
                     containerUpdate.folder = this.getFolderById(containerUpdate.folder);
                 }
                 //We then mixed the props
@@ -307,16 +312,14 @@ var State = {
     //////////////////////////////////////////ITEMS//////////////////////////////////////
     //Load
     loadItems: function (from) {
-        this.items = [];
-        _.each(from, function (item) {
-            this.addItem(item);
-        }, this);
+        this.items = new Items();
+        _.each(from, this.addItem, this);
     },
 
 
     //Gets
     getItemById: function (itemId) {
-        return _.findWhere(this.items, {_id: itemId});
+        return this.items.byId(itemId);
     },
     getSelectedItem: function () {
         return this.selectedItem;
