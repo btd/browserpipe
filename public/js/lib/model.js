@@ -7,12 +7,15 @@ var isGetter = function(attributeOptions) {
 
 var createModel = function(modelOptions) {
     var Model = function(attributes) {
-        // what i need it is create new object with copied keys
-        attributes = _.clone(attributes);
-
-        Object.defineProperty(this, 'attributes', {
-            value: {},
-            enumerable: false
+        Object.defineProperties(this, {
+            attributes: { //where we store attibute values
+                value: {},
+                enumerable: false
+            },
+            _callbacks: { //for event emmitter
+                value: {},
+                enumerable: false
+            }
         });
 
         // set default values and assign
@@ -43,12 +46,13 @@ var createModel = function(modelOptions) {
                         var changed = this.attributes[name] !== value;
 
                         if(changed) {
+                            var prev = this.attributes[name];
                             this.attributes[name] = value;
 
-                            this.constructor.emit('change', this, name, value);
-                            this.constructor.emit('change:' + name, this, value);
-                            this.emit('change', name, value);
-                            this.emit('change:' + name, value);
+                            this.constructor.emit('change', this, name, value, prev);
+                            this.constructor.emit('change:' + name, this, value, prev);
+                            this.emit('change', name, value, prev);
+                            this.emit('change:' + name, value, prev);
                         }
                     },
                     enumerable: true

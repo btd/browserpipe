@@ -11,7 +11,10 @@ var byId = function(Collection) {
     }
 
     Collection.on('initialize', function(collection) {
-        collection._byIdCache = {};
+        Object.defineProperty(collection, '_byIdCache', {
+            value: {},
+            enumerable: false
+        });
 
         collection.on('add', function(model) {
             collection._byIdCache[model._id] = model;
@@ -36,7 +39,10 @@ var byFieldCache = function(name) {
         };
 
         Collection.on('initialize', function(collection) {
-            collection[cache] = {};
+            Object.defineProperty(collection, cache, {
+                value: {},
+                enumerable: false
+            });
 
             collection.on('add', function(model) {
                 collection[cache][model[name]] = model;

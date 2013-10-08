@@ -2,7 +2,17 @@ var Emitter = require('emitter'),
     _ = require('lodash');
 
 var createCollection = function(modelType) {
+
     var Collection = function(models) {
+        Object.defineProperties(this, {
+            _callbacks: { //for event emmitter
+                value: {},
+                enumerable: false
+            }
+        });
+
+        this.length = 0; //weird thing that i could not make length not enumerable =(
+
         for(var i in models) this.push(models[i]);
 
         Collection.emit('initialize', this);
@@ -11,8 +21,7 @@ var createCollection = function(modelType) {
     Collection.model = modelType;
 
     Collection.prototype = {
-        constructor: Collection,
-        length: 0
+        constructor: Collection
     };
 
     Emitter(Collection);
@@ -30,6 +39,7 @@ var createCollection = function(modelType) {
 
 var aPush = Array.prototype.push;
 var aSplice = Array.prototype.splice;
+var aSlice = Array.prototype.slice;
 
 var proto = {
     indexOf: Array.prototype.indexOf,
@@ -62,6 +72,10 @@ var proto = {
             this.emit('remove', model);
         }
         return model;
+    },
+
+    toJSON: function() {
+        return aSlice.call(this); //let it think that we are array =)
     }
 };
 
