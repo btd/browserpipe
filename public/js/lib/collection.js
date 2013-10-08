@@ -79,7 +79,7 @@ var bindThis = function(functionName) {
 }
 
 bind('each');
-bind('exists');
+bind('some');
 bind('map');
 
 bindThis('filter');
