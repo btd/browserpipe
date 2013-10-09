@@ -102,8 +102,8 @@ exports.destroy = function (req, res) {
         })
         .then(function(items) {
             var promises = _.map(items, function(item) {                            
-                _.map(listboard.containers, function(containerId) {
-                    item.containers.remove(containerId)
+                _.each(listboard.containers, function(containerId) {
+                    item.containers.remove(containerId); //TODO where this remove taken???
                 });                    
                 return item.saveWithPromise();
             });

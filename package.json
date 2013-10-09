@@ -34,13 +34,12 @@
     "jsdom": "~0.8.4",
     "URIjs": "~1.11.2",
     "mkdirp": "~0.3.5",
-    "phantomjs": "~1.9.2-1",
     "url-to-screenshot": "~0.4.1",
     "redis": "~0.8.4",
     "react-tools": "~0.4.1"
   },
   "devDependencies": {
-    "mocha": "*",
+    "mocha": "~1.13.0",
     "nodemon": "*",
     "should": "*",
     "supertest": "*",

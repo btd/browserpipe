@@ -16,12 +16,12 @@ module.exports = function (socket) {
     }); 
 
     socket.on('delete.folder', function (folder) {        
-        _state.removeFolder(folder._id);
+        _state.removeFolder(folder);
     });
 
     socket.on('bulk.delete.folder', function (folders) {
         for (var index in folders)
-            _state.removeFolder(folders[index]._id);
+            _state.removeFolder(folders[index]);
     }); 
 };
 

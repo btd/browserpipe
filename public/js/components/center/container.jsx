@@ -13,7 +13,7 @@ var _state = require('../../state'),
 var ContainerView = React.createClass({ 
 	getContainerTitle: function() {		
 		if(this.props.container.type === 2) 
-			return this.props.container.folderObj.label;
+			return this.props.container.folder.label;
 		else if(!this.props.container.title || $.trim(this.props.container.title) === '')			
 			if(this.props.container.type === 0) 
 				return this.props.container.items.length + " Tabs";
@@ -46,7 +46,7 @@ var ContainerView = React.createClass({
 	   );
 	},
 	navigateToParentFolder: function() {
-		var parent = _state.getFolderByFilter(this.props.container.folderObj.path);
+		var parent = _state.getFolderByFilter(this.props.container.folder.path);
 		_state.serverUpdateContainer(
 		   	this.props.selectedListboard._id,
 		   {
@@ -76,8 +76,8 @@ var ContainerView = React.createClass({
 	},
 	saveFolder: function() {    
 		var self = this;
-		var label = $.trim(this.refs.folderInput.getDOMNode().value)		
-		var path = _state.getFolderFilter(this.props.container.folderObj);
+		var label = $.trim(this.refs.folderInput.getDOMNode().value)
+		var path = this.props.container.folder.filter;
 
 		if(label != '')
 			_state.serverSaveFolder({
@@ -137,7 +137,7 @@ var ContainerView = React.createClass({
 				{ this.props.container.type === 2 ? this.renderFolderHeader() : null }
 				<i onClick={this.closeContainer} class="icon-remove close-container" title="Close"></i>
 				{
-					this.props.container.type !== 2 || this.props.container.folderObj.path !== '' ?
+					this.props.container.type !== 2 || this.props.container.folder.path !== '' ?
 						<span class="title">
 							<LabelEditorComponent 
 		                    	onSaveLabel= {this.saveContainerLabel} 
@@ -154,7 +154,7 @@ var ContainerView = React.createClass({
 		return (
 			<span>
 				<a href="#" onClick={this.showAndFocusAddFolderInput} class="add-folder-icon">&nbsp;Add folder</a>
-				{ _state.getFolderFilter(this.props.container.folderObj) !== 'Folders'? 
+				{ this.props.container.folder.filter !== 'Folders'?
 				<i onClick={this.navigateToParentFolder} class="icon-arrow-up container-folder-icon" title="Navigate folders up"></i> : null }
 			</span>
 		);
@@ -168,7 +168,7 @@ var ContainerView = React.createClass({
 		);
 	},
 	renderItems: function() {		
-		var items = (this.props.container.type === 2 ? this.props.container.folderObj.items: this.props.container.items) || [];
+		var items = (this.props.container.type === 2 ? this.props.container.folder.items: this.props.container.items) || [];
 		return (
 			<ul class="items">
 			{                    
@@ -185,7 +185,7 @@ var ContainerView = React.createClass({
 			<div>
 				<ul class="folders">	
 					{                    
-	                	this.props.container.folderObj.children.map(function(folder) {
+	                	this.props.container.folder.children.map(function(folder) {
 		                    return <Folder folder= {folder} navigateToChildFolder= {self.navigateToChildFolder} />
 		                })
 		            }

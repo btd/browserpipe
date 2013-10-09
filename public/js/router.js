@@ -120,7 +120,7 @@ var initialize = function () {
             stateChanged(key)
         }
     });    
-    _state.loadInitialData();
+    _state.loadInitialData(initialOptions);
 
     //Saves reference to the socket
     var url = location.protocol+'//'+location.host;
