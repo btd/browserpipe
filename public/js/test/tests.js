@@ -40,7 +40,6 @@ var listboard2 = {
     type: 1
 };
 
-state.init({ callback: function() {} });
 state.loadInitialData({ folders: [folder1, folder2] });
 
 describe('state', function() {
@@ -196,12 +195,4 @@ describe('state', function() {
             });
         });
     });
-});
-
-describe('Folder', function() {
-    it('should have keys only attributes', function() {
-        var folder = new Folder(folder1);
-
-        folder.should.have.keys(Object.keys(folder1).concat(['children', 'items']));
-    })
 });
