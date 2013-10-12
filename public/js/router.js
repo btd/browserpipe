@@ -159,6 +159,8 @@ var stateChanges = function() {
             prev.off('change', onSelectedListboardChange);
         }
 
+        onSelectedListboardChange(); //because it changed on state
+
         value.on('change', onSelectedListboardChange);
     });
 
@@ -166,6 +168,8 @@ var stateChanges = function() {
         if(prev) {//first time of course it is undefined
             prev.off('change', onSelectedItemChange);
         }
+
+        onSelectedItemChange(); //because it changed on state
 
         value.on('change', onSelectedItemChange);
     });
