@@ -1,21 +1,27 @@
-node_modules/
-.monitor
+# general things
 .DS_Store
-npm-debug.log
-public/css/*.css
-app-cov
-coverage.html
-public/js/listboard.it.js
-_src-with-coverage
-_test-with-coverage
 .idea
-builtAssets
-data
-public/bower_components
-main.min.js
-main.min.map
-.lmd/logs
-coverage
+
+node_modules/
+bower_components/
+npm-debug.log
+
+public/css/*.css
+
+# where my mongo live
+/data
+
+# istanbul
+/coverage
+
+# where mincer store compiled assets
 compiled-assets
-public/js/apps/
-store/
+
+# where builded apps lives
+/public/js/apps/
+
+# this one create by default jobs
+/store/
+
+# current script which build browser tests
+/public/js/test/test.js

@@ -15,17 +15,23 @@ var item = require('./data/item'),
     Item = item.Item,
     Items = item.Items;
 
-//TODO mix to State emitter
-//TODO wrap triggering events to subscribed on change of collections and models
-var State = {
-    init: function (options) {
-        this.trigger = options.callback;
+$.ajaxSetup({
+    dataType: 'json',
+    contentType: 'application/json'
+});
 
-        $.ajaxSetup({
-            dataType: 'json',
-            contentType: 'application/json'
-        })
-    },
+var model = require('moco').model;
+
+var State1 = model()
+    .attr('folders', { collection: Folders })
+    .attr('listboards', { collection: Listboards })
+    .attr('containers', { collection: Containers })
+    .attr('items', { collection: Items })
+    .attr('selectedListboard')
+    .attr('selectedItem')
+    .use(model.nestedObjects);
+_.extend(State1.prototype, {
+
     loadInitialData: function (initialOptions) {
 
         //Loads Folders
@@ -43,7 +49,6 @@ var State = {
     //Load
     loadFolders: function (from) {
         //Load children folders
-        this.folders = new Folders([]);
         _.each(from, this.addFolder, this);
     },
 
@@ -64,23 +69,14 @@ var State = {
         this.folders.push(folder);
 
         if (!folder.isRoot) {
-
             var parentFolder = this.folders.byFilter(folder.path);
             parentFolder.children.push(folder);
-
-            if (this.isFolderOnSelectedListboard(folder)) {
-                this.trigger('selected.listboard.folder.added');
-            }
         }
     },
     updateFolder: function (folderUpdate) {
         var folder = this.getFolderById(folderUpdate._id);
         if (folder) {
             _.extend(folder, folderUpdate);
-
-            if (this.isFolderOnSelectedListboard(folder)) {
-                this.trigger('selected.listboard.folder.changed');
-            }
         }
     },
     removeFolder: function (folderDelete) {
@@ -90,27 +86,7 @@ var State = {
                 var parent = this.getFolderByFilter(folder.path);
                 parent.children.removeById(folderDelete._id);
             }
-
-            if (this.isFolderOnSelectedListboard(folder)) {
-                this.trigger('selected.listboard.folder.removed');
-            }
         }
-    },
-
-    isFolderOnSelectedListboard: function(folder) {
-        var selectedListboard = this.getSelectedListboard();
-        if (selectedListboard) {
-            var parentFolder = this.getFolderByFilter(folder.path);
-
-            var changedContainer = selectedListboard.containers.some(function(container) {
-                return container.type === 2 && container.folder._id === parentFolder._id
-            });
-
-            if(changedContainer) {
-                return true;
-            }
-        }
-        return false;
     },
 
     //TODO it should be done in more universal way, also need more universal validation
@@ -144,9 +120,6 @@ var State = {
     //////////////////////////////////////////LISTBOARDS//////////////////////////////////////
     //Load
     loadListboards: function (from) {
-        this.listboards = new Listboards();
-        this.containers = new Containers(); //i hope i am right that embedded documents will have unique id
-
         _.each(from, this.addListboard, this);
     },
 
@@ -171,7 +144,6 @@ var State = {
     },
     setSelectedListboard: function (listboardId) {
         this.selectedListboard = this.getListboardById(listboardId);
-        this.trigger('selected.listboard.changed');
     },
 
     //CRUD Listboard
@@ -183,23 +155,19 @@ var State = {
         _.each(listboard.containers, function(container) {
             this.addContainer(listboard._id, container);
         }, this);
-
-        this.trigger('listboard.added');
     },
     updateListboard: function (listboardUpdate) {
         var listboard = this.getListboardById(listboardUpdate._id);
         if (listboard) {
             //We do not update arrays here
             _.extend(listboard, _.pick(listboardUpdate, 'label'));
-            if (this.getSelectedListboardId() === listboard._id)
-                this.trigger('selected.listboard.changed');
         }
     },
     removeListboard: function (listboardDelete) {
         var listboard = this.listboards.removeById(listboardDelete._id);
         if (listboard) {
             // remove state-wise containers collection
-            listboard.containers.each(function(container) {
+            listboard.containers.forEach(function(container) {
                 this.containers.removeById(container._id); // O(N)
             }, this);
 
@@ -207,9 +175,6 @@ var State = {
             var selectedListboardId = this.getSelectedListboardId();
             if (selectedListboardId === listboard._id)
                 this.selectFirstListboard();
-
-            //TODO in trigger we can add small delay to combine several events and push them together
-            this.trigger('listboard.removed');
         }
     },
 
@@ -268,9 +233,6 @@ var State = {
             container = new Container(container); // this is required to have the same reference in both collections
             listboard.containers.push(container);
             this.containers.push(container);
-
-            if (this.getSelectedListboardId() === listboardId)
-                this.trigger('selected.listboard.container.added');
         }
     },
 
@@ -286,8 +248,6 @@ var State = {
                 }
                 //We then mixed the props
                 _.extend(container, containerUpdate);
-                if (this.getSelectedListboardId() === listboardId)
-                    this.trigger('selected.listboard.container.changed');
             }
         }
     },
@@ -295,9 +255,6 @@ var State = {
         var container = this.containers.removeById(containerId);
         if (container) {
             this.getListboardById(listboardId).containers.removeById(containerId);
-
-            if (this.getSelectedListboardId() === listboardId)
-                this.trigger('selected.listboard.container.removed');
         }
     },
 
@@ -331,7 +288,6 @@ var State = {
     //////////////////////////////////////////ITEMS//////////////////////////////////////
     //Load
     loadItems: function (from) {
-        this.items = new Items();
         _.each(from, this.addItem, this);
     },
 
@@ -371,19 +327,6 @@ var State = {
         var itemExist = folder.items.byId(item._id);
         if (!itemExist) {
             folder.items.push(item);
-
-            //Checks if the folder is in the selected listboard
-            var selectedListboard = this.getSelectedListboard();
-
-            if (selectedListboard) {
-                var changedContainer = selectedListboard.containers.some(function(container) {
-                    return container.type === 2 && container.folder._id === folderId
-                });
-
-                if(changedContainer) {
-                    this.trigger('selected.listboard.changed');
-                }
-            }
         }
     },
     addItemToContainer: function (containerId, item) {
@@ -392,10 +335,6 @@ var State = {
             var itemExist = container.items.byId(item._id);
             if (!itemExist) {
                 container.items.push(item);
-
-                var selectedListboard = this.getSelectedListboard();
-                if (selectedListboard && this.getContainerByIdAndListboard(selectedListboard, containerId))
-                    this.trigger('selected.listboard.changed');
             }
         }
     },
@@ -422,9 +361,6 @@ var State = {
             }, this);
 
             _.extend(item, itemUpdate);
-
-            if (this.getSelectedItemId() === item._id)
-                this.trigger('selected.item.changed');
         }
     },
     removeItem: function (itemId) {
@@ -441,31 +377,11 @@ var State = {
     removeItemFromFolder: function (folderId, itemToRemove) {
         var folder = this.getFolderById(folderId);
         var itemExist = folder.items.removeById(item._id);
-        if (itemExist) {
-            //Checks if the folder is in the selected listboard
-            var selectedListboard = this.getSelectedListboard();
-
-            if (selectedListboard) {
-                var changedContainer = selectedListboard.containers.some(function(container) {
-                    return container.type === 2 && container.folder._id === folderId
-                });
-
-                if(changedContainer) {
-                    this.trigger('selected.listboard.changed');
-                }
-            }
-        }
     },
     removeItemFromContainer: function (containerId, itemToRemove) {
         var container = this.getContainerById(containerId);
         if (container) {
             var itemExist = container.items.removeById(item._id);
-            if (itemExist) {
-
-                var selectedListboard = this.getSelectedListboard();
-                if (selectedListboard && this.getContainerByIdAndListboard(selectedListboard, containerId))
-                    this.trigger('selected.listboard.changed');
-            }
         }
     },
 
@@ -521,7 +437,7 @@ var State = {
             window.chrome.webstore.install(
                 'https://chrome.google.com/webstore/detail/jhlmlfahjekacljfabgbcoanjooeccmm',
                 function () {
-                    self.callback('extension.possible.installed');
+                    self.emit('extension.possible.installed');
                     $('#installExtensionModal').modal('hide');
                 },
                 function () {
@@ -534,7 +450,7 @@ var State = {
     //////////////////////////////////////////EXTENSION//////////////////////////////////////
 
 
-};
+});
 
-module.exports = State;
+module.exports = new State1();
 

@@ -113,13 +113,7 @@ var initialize = function () {
         dispatch: true
     });
 
-    //Load initial data
-    var that = this;
-    _state.init({
-        callback: function(key) {
-            stateChanged(key)
-        }
-    });    
+    //Load initial data variable initialOptions global
     _state.loadInitialData(initialOptions);
 
     //Saves reference to the socket
@@ -128,6 +122,7 @@ var initialize = function () {
 
     loadWindowEvent();
     loadServerEvents();
+    stateChanges();
 
     return page;
 };
@@ -142,45 +137,58 @@ var loadWindowEvent = function() {
     });
 };
 
-//TODO write simple event dispatcher
-var stateChanged = function(key) {
+var onSelectedListboardChange = function() {
     if(homeView) {
-        if(_.contains([
-            'listboard.added',
-            'listboard.removed'
-        ], key))
-            homeView.setState({ 
-                listboards: _state.getAllListboards(), 
-                selectedListboard: _state.getSelectedListboard() 
-            });
-        else if(_.contains([
-            'selected.listboard.changed',
-            'selected.listboard.container.added',
-            'selected.listboard.container.changed',
-            'selected.listboard.container.removed',
-            'selected.listboard.folder.added',
-            'selected.listboard.folder.changed',
-            'selected.listboard.folder.removed'
-        ], key)){            
-            homeView.setState({ 
-                selectedListboard: _state.getSelectedListboard() 
-            });
-        }
-        else if(_.contains([
-            'selected.item.changed'
-        ], key)){
-            homeView.setState({
-                selectedItem: _state.getSelectedItem()
-            });
-        }
-        else if(_.contains([
-            'extension.possible.installed'
-        ], key)){
-            homeView.setState({ 
-                isExtensionInstalled: true
-            });
-        }
+        homeView.setState({
+            selectedListboard: _state.getSelectedListboard()
+        });
     }
+};
+
+var onSelectedItemChange = function() {
+    if(homeView) {
+        homeView.setState({
+            selectedItem: _state.getSelectedItem()
+        });
+    }
+}
+
+var stateChanges = function() {
+    _state.on('change:selectedListboard', function(value, prev) {
+        if(prev) {//first time of course it is undefined
+            prev.off('change', onSelectedListboardChange);
+        }
+
+        onSelectedListboardChange(); //because it changed on state
+
+        value.on('change', onSelectedListboardChange);
+    });
+
+    _state.on('change:selectedItem', function(value, prev) {
+        if(prev) {//first time of course it is undefined
+            prev.off('change', onSelectedItemChange);
+        }
+
+        onSelectedItemChange(); //because it changed on state
+
+        value.on('change', onSelectedItemChange);
+    });
+
+    var addedOrDeletedListboard = function() {
+        homeView.setState({
+            listboards: _state.getAllListboards(),
+            selectedListboard: _state.getSelectedListboard()
+        });
+    }
+
+    _state.listboards.on('add', addedOrDeletedListboard);
+    _state.listboards.on('remove', addedOrDeletedListboard);
+
+    _state.on('extension.possible.installed', function() {
+        homeView.setState({
+            isExtensionInstalled: true
+        });
+    });
 }
 
 var loadServerEvents = function() {

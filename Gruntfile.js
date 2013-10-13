@@ -29,7 +29,8 @@ var browserifyAliases = [
     bowerAlias('socket.io-client/dist/socket.io.js', 'socket.io'),
     bowerAlias('lodash/dist/lodash.js', 'lodash'),
     bowerAlias('emitter/index.js', 'emitter'),
-    bowerAlias('indexof/index.js', 'indexof')
+    bowerAlias('indexof/index.js', 'indexof'),
+    bowerAlias('moco/index.js', 'moco')
 ];
 
 module.exports = function(grunt) {
@@ -69,6 +70,7 @@ module.exports = function(grunt) {
                     options: {
                         alias: browserifyAliases,
                         extensions: [".jsx"],
+                        external: ['emitter-component'],
                         shim: {
                             jquery: { path: "./public/bower_components/jquery/jquery.js", exports: "$" }
                         },
@@ -83,6 +85,7 @@ module.exports = function(grunt) {
                         alias: browserifyAliases.concat([
                             bowerAlias('should.js/lib/should.js', 'should')
                         ]),
+                        external: ['emitter-component'],
                         extensions: [".jsx"],
                         shim: {
                             jquery: { path: "./public/bower_components/jquery/jquery.js", exports: "$" }
