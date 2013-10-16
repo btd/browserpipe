@@ -154,25 +154,9 @@ var onSelectedItemChange = function() {
 }
 
 var stateChanges = function() {
-    _state.on('change:selectedListboard', function(value, prev) {
-        if(prev) {//first time of course it is undefined
-            prev.off('change', onSelectedListboardChange);
-        }
+    _state.on('change:selectedListboard', onSelectedListboardChange);
 
-        onSelectedListboardChange(); //because it changed on state
-
-        value.on('change', onSelectedListboardChange);
-    });
-
-    _state.on('change:selectedItem', function(value, prev) {
-        if(prev) {//first time of course it is undefined
-            prev.off('change', onSelectedItemChange);
-        }
-
-        onSelectedItemChange(); //because it changed on state
-
-        value.on('change', onSelectedItemChange);
-    });
+    _state.on('change:selectedItem', onSelectedItemChange);
 
     var addedOrDeletedListboard = function() {
         homeView.setState({

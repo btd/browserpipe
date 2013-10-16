@@ -27,9 +27,10 @@ var State1 = model()
     .attr('listboards', { collection: Listboards })
     .attr('containers', { collection: Containers })
     .attr('items', { collection: Items })
-    .attr('selectedListboard')
-    .attr('selectedItem')
+    .attr('selectedListboard', { model: Listboard })
+    .attr('selectedItem', { model: Item })
     .use(model.nestedObjects);
+
 _.extend(State1.prototype, {
 
     loadInitialData: function (initialOptions) {
