@@ -25,6 +25,8 @@ Application.by({ name: 'Chrome Extension' })
             application.save(function(err) {
                 console.log('Add temp application with client_id: ' + application.client_id + ' client_secret: ' + application.client_secret );
             });
+        } else {
+            console.log('application with client_id: ' + application.client_id + ' client_secret: ' + application.client_secret );
         }
     })
 
