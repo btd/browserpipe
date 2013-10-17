@@ -5,7 +5,7 @@ var _ = require('lodash'),
     Item = mongoose.model('Item'),
     responses = require('../util/responses.js'),
     errors = require('../util/errors.js'),
-    Jobs = require('../../jobs/manager');
+    jobs = new (require('../../jobs/manager'));
 
 var saveItem = function(req, res, item, delta) {
     return item.saveWithPromise()
@@ -44,21 +44,23 @@ exports.create = function(req, res) {
 
 var launchItemJobs = function(req, res, item) {
     return function() {
-        var jobs = new Jobs();
+        var delta = {
+            type: 'update.item',
+            data: item
+        }        
         jobs.schedule('check url', {
             uri: item.url,
             uniqueId: item._id.toString()
-        });
+        }).on('complete', function() {
+            item.favicon = "/screenshots/" + item._id.toString() + "/favicon.png";
+            saveItem(req, res, item, delta)
+                .done();
+        })
         jobs.schedule('screenshot', {
             uri: item.url,
             uniqueId: item._id.toString()
         }).on('complete', function() {
-            item.screenshot = "/screenshots/" + item._id.toString() + "/screenshot.jpg"
-            item.favicon = "/screenshots/" + item._id.toString() + "/favicon.png"
-            var delta = {
-                type: 'update.item',
-                data: item
-            }
+            item.screenshot = "/screenshots/" + item._id.toString() + "/screenshot.jpg";
             saveItem(req, res, item, delta)
                 .done();
         })
