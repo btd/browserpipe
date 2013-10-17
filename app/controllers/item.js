@@ -54,6 +54,7 @@ var launchItemJobs = function(req, res, item) {
             uniqueId: item._id.toString()
         }).on('complete', function() {
             item.screenshot = "/screenshots/" + item._id.toString() + "/screenshot.jpg"
+            item.favicon = "/screenshots/" + item._id.toString() + "/favicon.png"
             var delta = {
                 type: 'update.item',
                 data: item

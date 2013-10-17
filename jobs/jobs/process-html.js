@@ -39,7 +39,7 @@ ProcessHtmlJob.prototype.constructor = ProcessHtmlJob;
 ProcessHtmlJob.prototype.exec = function (done) {
     var that = this;
 
-    var addDownload = function(url, path) {
+    var addDownload = function(url, path, uniqueId) {
         that.jobs.schedule('download', { uri: url, path: path, uniqueId: uniqueId });
     };
 
@@ -60,6 +60,7 @@ ProcessHtmlJob.prototype.exec = function (done) {
         jsdom.env({
             url: this.uri,
             path: this.path,
+            uniqueId: this.uniqueId,
             done: function(err, window) {
                 if(err) throw err;
 
