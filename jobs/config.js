@@ -1,7 +1,7 @@
 var _ = require('lodash');
 
 var common = {
-    'storePath': './store',
+    'storePath': './public/screenshots',
     'screenshot': {
         format: 'jpg',
         width: 800,

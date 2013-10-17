@@ -13,10 +13,12 @@ var Job = require('../job'),
 var CheckUrlJob = function (options, instance, jobs) {
     Job.call(this, options, instance, jobs);
 
-    this.uri = typeof options === 'string' ? options : options.uri;
+    this.uri = options.uri;
+    this.uniqueId = options.uniqueId;    
     this.userAgent = options.userAgent || utils.userAgent.default;
 
     if (!this.uri) throw new Error('uri required');
+    if (!this.uniqueId) throw new Error('uniqueId required');
 };
 
 CheckUrlJob.prototype = Object.create(Job.prototype);
@@ -41,8 +43,7 @@ CheckUrlJob.prototype.exec = function (done) {
 
             if (utils.isHtmlContentType(mime)) {
                 that.log('Html content - schedule download');
-
-                that.jobs.schedule('download-html', { uri: that.uri });
+                that.jobs.schedule('download-html', { uri: that.uri, uniqueId: that.uniqueId });
             }
 
             //TODO we can download probably not big pdfs, texts

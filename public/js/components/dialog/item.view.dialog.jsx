@@ -9,6 +9,9 @@ var _state = require('../../state'),
 	LabelEditorComponent = require('../util/label.editor');
 
 var DialogItemView = React.createClass({
+  getScreenshot: function() {
+    return this.props.item.screenshot || "/img/default.screenshot.png";
+  },
   saveItemTitle: function(newTitle, success) {    
      _state.serverUpdateItem(
   	   {
@@ -57,7 +60,9 @@ var DialogItemView = React.createClass({
 					</ul>
 					<div class="tab-content">
 						<div class="tab-pane active" id="general"> 
-							<img class="item-screenshot img-polaroid" data-src="holder.js/300x200" alt="300x200" src="/img/default.screenshot.png" /> 							
+							<div class="item-screenshot-container">
+								<img class="item-screenshot img-polaroid" data-src="holder.js/300x200" alt="300x200" src={ this.getScreenshot() } /> 							
+							</div>
 							<span class="edit-item-note">
 								<LabelEditorComponent 
 				                    onSaveLabel= {this.saveItemNote} 

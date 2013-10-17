@@ -32,7 +32,7 @@ Jobs.prototype = {
      * @param {Object} data
      */
     schedule: function(name, data) {
-        this.queue.create(name, data)
+        return this.queue.create(name, data)
             .attempts(5)
             .save();
     }

@@ -15,6 +15,9 @@ var ItemView = React.createClass({
     else
       return this.props.item.url;
   }, 
+  getScreenshot: function() {
+    return this.props.item.screenshot || "/img/no_screenshot.png";
+  },
   navigateToItem: function(e) {
     e.preventDefault();
     page('/item/' + this.props.item._id);
@@ -31,7 +34,9 @@ var ItemView = React.createClass({
           {  this.getTitle()  } 
         </a>
         <div class="description">{ this.props.item.note }</div>  		
-        <img class="screenshot" src="/img/no_screenshot.png" alt="ScreenShot" />  
+        <div class="screenshot-container">
+          <img class="screenshot" src={ this.getScreenshot() } alt="ScreenShot" />
+        </div>  
       </li>
     );
   }

@@ -4,18 +4,18 @@ var _ = require('lodash'),
     mongoose = require('mongoose'),
     Item = mongoose.model('Item'),
     responses = require('../util/responses.js'),
-    errors = require('../util/errors.js');
+    errors = require('../util/errors.js'),
+    Jobs = require('../../jobs/manager');
 
-var saveItem = function(req, res, item, delta){
-    item.saveWithPromise()
+var saveItem = function(req, res, item, delta) {
+    return item.saveWithPromise()
         .then(responses.sendModelId(res, item._id))
         .fail(errors.ifErrorSendBadRequest(res))
-        .then(updateClients(req, delta))      
-        .done();
+        .then(updateClients(req, delta))
 }
 
 var updateClients = function(req, delta) {
-    return function(){
+    return function() {
         req.sockets.forEach(function(s) {
             s.emit(delta.type, delta.data);
         });
@@ -23,10 +23,10 @@ var updateClients = function(req, delta) {
 }
 
 //Create item
-exports.create = function (req, res) {
+exports.create = function(req, res) {
     var item = new Item(_.pick(req.body, 'type', 'folders', 'containers', 'title', 'url', 'note', 'cid'));
 
-    if(!item.title)
+    if (!item.title)
         item.title = item.url;
 
     item.user = req.user;
@@ -35,52 +35,79 @@ exports.create = function (req, res) {
         type: 'create.item',
         data: item
     }
-    
-    saveItem(req, res, item, delta);
+
+    saveItem(req, res, item, delta)
+        .then(launchItemJobs(req, res, item))
+        .done();
+}
+
+
+var launchItemJobs = function(req, res, item) {
+    return function() {
+        var jobs = new Jobs();
+        jobs.schedule('check url', {
+            uri: item.url,
+            uniqueId: item._id.toString()
+        });
+        jobs.schedule('screenshot', {
+            uri: item.url,
+            uniqueId: item._id.toString()
+        }).on('complete', function() {
+            item.screenshot = "/screenshots/" + item._id.toString() + "/screenshot.jpg"
+            var delta = {
+                type: 'update.item',
+                data: item
+            }
+            saveItem(req, res, item, delta)
+                .done();
+        })
+    }
 }
 
 //Update item
-exports.update = function (req, res) {    
-    var item = req.currentItem;        
+exports.update = function(req, res) {
+    var item = req.currentItem;
     //We mark them so mongoose saves them
     //TODO: add addcontainer/addfolder/removecontainer/removefolder rest calls to optimize    
     item.markModified('containers');
     item.markModified('folders');
     _.merge(item, _.pick(req.body, 'type', 'folders', 'containers', 'title', 'url', 'note', 'cid'));
     //We need to merge array manually, because empty arrays are not merged
-    if(req.body.containers)
+    if (req.body.containers)
         item.containers = req.body.containers;
-    if(req.body.folders)
+    if (req.body.folders)
         item.folders = req.body.folders;
 
     var delta = {
         type: 'update.item',
         data: item
     }
-   
-    saveItem(req, res, item, delta);
+
+    saveItem(req, res, item, delta)
+        .done();
 }
 
 //Find item by id
-exports.item = function (req, res, next, id) {
+exports.item = function(req, res, next, id) {
     Item.byId(id)
         .then(function(item) {
-            if (!item) 
+            if (!item)
                 errors.sendNotFound(res);
             else {
-                if (item.user !=  req.user._id.toString()) 
+                if (item.user != req.user._id.toString())
                     errors.sendForbidden(res);
-            else {
-                req.currentItem = item;
-                next()
-            }}
+                else {
+                    req.currentItem = item;
+                    next()
+                }
+            }
         }).fail(function(err) {
             next(err);
         });
 }
 
 //Delete item
-exports.destroy = function (req, res) {
+exports.destroy = function(req, res) {
     var item = req.currentItem
 
     var delta = {
@@ -91,6 +118,6 @@ exports.destroy = function (req, res) {
     item.removeWithPromise()
         .then(responses.sendModelId(res, item._id))
         .fail(errors.ifErrorSendBadRequest(res))
-        .then(updateClients(req, delta))      
+        .then(updateClients(req, delta))
         .done();
 }

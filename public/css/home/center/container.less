@@ -181,11 +181,16 @@
                         display:none;
                     }                    
                 }
-                .screenshot {
+                .screenshot-container {
                     margin-top: 4px;
                     max-height: 200px;
-                    max-width: 200px;
-                }
+                    width: 200px;
+                    overflow: hidden;
+
+                    .screenshot {
+                        max-width: 200px;
+                    }
+                }                
                 .remove-item {
                     display: none;
                     margin: 3px 3px 3px 2px;

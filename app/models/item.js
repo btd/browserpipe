@@ -15,6 +15,7 @@ var ItemSchema = new Schema({
     ],
     user: {type: Schema.ObjectId, ref: 'User'},
     favicon: {type: String, trim: true},
+    screenshot: {type: String, trim: true},
     title: {type: String, trim: true},
     url: {type: String, trim: true},
     note: {type: String, trim: true},
@@ -32,31 +33,31 @@ ItemSchema.plugin(require('../util/mongoose-timestamp'));
 
 ItemSchema.statics.findByContainer = function (user, containerId) {
     return this
-        .find({user: user, containers: containerId}, '_id type containers folders title favicon url note externalId')
+        .find({user: user, containers: containerId}, '_id type containers folders title favicon screenshot url note externalId')
         .execWithPromise();
 }
 
 ItemSchema.statics.getByExternalId = function (user, externalId) {
     return this
-        .findOne({user: user, externalId: externalId}, '_id type containers folders title favicon url note externalId')
+        .findOne({user: user, externalId: externalId}, '_id type containers folders title favicon screenshot url note externalId')
         .execWithPromise();
 }
 
 ItemSchema.statics.getByExternalId = function (user, externalId) {
     return this
-        .findOne({user: user, externalId: externalId}, '_id type containers folders title favicon url note externalId')
+        .findOne({user: user, externalId: externalId}, '_id type containers folders title favicon screenshot url note externalId')
         .execWithPromise();
 }
 
 ItemSchema.statics.findAllByContainers = function (user, containerIds) {
     return this
-        .find({user: user, containers: {$in: containerIds}}, '_id type containers folders title favicon url note externalId')
+        .find({user: user, containers: {$in: containerIds}}, '_id type containers folders title favicon screenshot url note externalId')
         .execWithPromise();
 }
 
 ItemSchema.statics.findAllByFolders = function (user, folderIds) {
     return this
-        .find({user: user, folders: {$in: folderIds}}, '_id type containers folders title favicon url note externalId')
+        .find({user: user, folders: {$in: folderIds}}, '_id type containers folders title favicon screenshot url note externalId')
         .execWithPromise();
 }
 
@@ -67,7 +68,7 @@ ItemSchema.statics.byId = function (id) {
 var qfindOne = function (obj) {
     return Item
             .findOne(obj)
-            //.findOne(obj, '_id type containers folders title favicon url note externalId') //TODO: why is this not finding the item????
+            //.findOne(obj, '_id type containers folders title favicon screenshot url note externalId') //TODO: why is this not finding the item????
             .execWithPromise();
 };
 
