@@ -20,6 +20,7 @@ var ProcessHtmlJob = function (options, instance, jobs) {
 
     this.uri = options.uri;
     this.path = options.path;
+    this.uniqueId = options.uniqueId;
 
     this.favicon = true;
     this.styles = false;
@@ -28,6 +29,7 @@ var ProcessHtmlJob = function (options, instance, jobs) {
 
     if (!this.uri) throw new Error('uri required');
     if (!this.path) throw new Error('path required');
+    if (!this.uniqueId) throw new Error('uniqueId required');
 };
 
 ProcessHtmlJob.prototype = Object.create(Job.prototype);
@@ -37,8 +39,8 @@ ProcessHtmlJob.prototype.constructor = ProcessHtmlJob;
 ProcessHtmlJob.prototype.exec = function (done) {
     var that = this;
 
-    var addDownload = function(url, path) {
-        that.jobs.schedule('download', { uri: url, path: path });
+    var addDownload = function(url, path, uniqueId) {
+        that.jobs.schedule('download', { uri: url, path: path, uniqueId: uniqueId });
     };
 
     var removeAllTags = function(window, tagName) {
@@ -58,6 +60,7 @@ ProcessHtmlJob.prototype.exec = function (done) {
         jsdom.env({
             url: this.uri,
             path: this.path,
+            uniqueId: this.uniqueId,
             done: function(err, window) {
                 if(err) throw err;
 

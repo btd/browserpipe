@@ -29,7 +29,7 @@
     "socket.io": "~0.9.16",
     "express": "~3.4.0",
     "express-namespace": "~0.1.1",
-    "superagent": "~0.15.4",
+    "superagent": "0.15.6",
     "kue": "~0.6.2",
     "jsdom": "~0.8.4",
     "URIjs": "~1.11.2",

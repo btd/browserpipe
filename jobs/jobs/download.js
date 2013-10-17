@@ -16,6 +16,7 @@ var DownloadJob = function (options, instance, jobs) {
 
     this.uri = options.uri;
     this.path = options.path;
+    this.uniqueId = options.uniqueId;
 
     this.userAgent = options.userAgent || utils.userAgent.default;
 
@@ -36,7 +37,7 @@ DownloadJob.prototype.exec = function (done) {
 
     if(!this.path) {
         var filename = path.basename(new URL(this.uri).filename() || '/index.html');
-        this.path = path.join(config.storePath, utils.uid(24), filename);
+        this.path = path.join(config.storePath, this.uniqueId, filename);
     }
 
     this.log('Prepare location for file: ' + this.path);

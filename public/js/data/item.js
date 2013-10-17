@@ -8,6 +8,7 @@ var Item = model()
     .attr('_id', { primary: true }) // ObjectId text representation
     .attr('label') // String
     .attr('title') // String
+    .attr('screenshot') // String
     .attr('favicon') // String url for favicon
     .attr('url') // String
     .attr('note') // String
