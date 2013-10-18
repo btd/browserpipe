@@ -33,17 +33,9 @@ CheckUrlJob.prototype.exec = function (done) {
         .set('User-Agent', this.userAgent)
         .end(function (err, res) {
             
-            if (err) {
-                that.log(err.toString());
-                return done();
-            }
+            if (err) throw err;
 
             var mime = res.headers['content-type'];
-
-            if (!mime) {
-                that.log("mime not defined");
-                return done();
-            }
 
             that.log('Got request check content-type: ' + mime);
 

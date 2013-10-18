@@ -45,10 +45,7 @@ DownloadJob.prototype.exec = function (done) {
 
     mkdirp(path.dirname(this.path), function(err) {
         
-        if (err) {
-            that.log(err);
-            return done();
-        }
+        if (err) throw err;
 
         var stream = fs.createWriteStream(that.path);
 

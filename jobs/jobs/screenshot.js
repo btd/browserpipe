@@ -42,24 +42,15 @@ ScreenShotJob.prototype.exec = function (done) {
         .format(format)
         .capture(function(err, img) {
             
-            if (err) {
-                that.log(err.toString());
-                return done();
-            }
+            if (err) throw err;
 
             mkdirp(path.dirname(that.path), function(err) {
                 
-                if (err) {
-                    that.log(err.toString());
-                    return done();
-                }
+                if (err) throw err;
 
                 fs.writeFile(that.path, img, function(err) {
 
-                    if (err) {
-                        that.log(err.toString());
-                        return done();
-                    }
+                    if (err) throw err;
 
                     that.log('Screenshot of ' + that.uri + ' saved '+ that.path);
 
