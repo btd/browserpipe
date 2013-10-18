@@ -28,3 +28,7 @@ compiled-assets
 
 # current script which build browser tests
 /public/js/test/test.js
+
+# admin
+/admin/public/templates/
+/admin/node_modules/
