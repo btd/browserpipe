@@ -1,0 +1,10 @@
+rm -rf ./public/templates
+mkdir -p ./public/templates
+
+# Templates
+node_modules/.bin/jaded -a "ext/jade" -i ./templates -o ./public/templates
+
+# TODO - process that minifies all js
+# uglifyjs -nc --unsafe -mt -o ./public/js/main.min.js ./public/js/main.js
+
+echo "Build completed!"

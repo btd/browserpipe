@@ -41,13 +41,16 @@ ScreenShotJob.prototype.exec = function (done) {
         .height(config.screenshot.height || 600)
         .format(format)
         .capture(function(err, img) {
+            
             if (err) throw err;
 
             mkdirp(path.dirname(that.path), function(err) {
-                if(err) throw err;
+                
+                if (err) throw err;
 
                 fs.writeFile(that.path, img, function(err) {
-                    if(err) throw err;
+
+                    if (err) throw err;
 
                     that.log('Screenshot of ' + that.uri + ' saved '+ that.path);
 
