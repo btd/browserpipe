@@ -9,19 +9,16 @@
           options: {
             limit: 1000
           }
-        }, function(err, users) {
+        }, function(err, results) {
           if (err != null) {
             window.location.hash = '/';
             return notify.error("Error retrieving documents: " + (err.err || err));
           }
-          if (users.length >= 999) {
+          if (results.length >= 999) {
             notify.alert("Document limit reached - only displaying first 1000");
           }
           $('#content').html(templ({
-            itemCount: 12,
-            noScreenshotCount: 13,
-            noFaviconCount: 222,
-            users: users
+            results: results
           }));
           return;
         });

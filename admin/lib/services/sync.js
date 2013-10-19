@@ -27,18 +27,16 @@
     }
   };
 
-  formatSyncUsers = function(res) {
-    var doc, out, _i, _len;
-    out = [];
-    for (_i = 0, _len = res.length; _i < _len; _i++) {
-      doc = res[_i];
+  formatSyncUsers = function(results) {
+    var res, out, _i, _len;
+    out = [];    
+    for (_i = 0, _len = results.length; _i < _len; _i++) {      
+      res = results[_i];
       out.push({
-        _id: doc._id,
-        //TODO: how can we get the items information?
-        itemCount: 12,
-        noScreenshotCount: 13,
-        noFaviconCount: 222,
-        email: doc.email
+        _id: res._id,        
+        itemCount: res.value.itemCount,
+        noScreenshotCount: res.value.noScreenshotCount,
+        noFaviconCount: res.value.noFaviconCount
       });
     }
     return out;
@@ -47,21 +45,36 @@
   tasks = {
     
     syncinfo: function(command, cb) {
-      if (command.query == null) {
-        return cb("Missing query");
-      }
-      if (command.options == null) {
-        command.options = {};
-      }
-      var col = cb.socket.mongo.database.collection("users");
-      return col.find(command.query, command.options).toArray(function(err, res) {
+
+      var map = function () {         
+         var noFaviconCount = this.favicon? 0: 1;
+         var noScreenshotCount = this.screenshot? 0: 1;
+         emit(this.user, {itemCount: 1, noFaviconCount: noFaviconCount, noScreenshotCount: noScreenshotCount});
+      };
+      var reduce = function (key, values) { 
+        var total = 0, totalNoFavicon = 0, totalNoScreenshot = 0;
+        values.forEach(function (value) { 
+          total += value.itemCount;         
+          totalNoFavicon += value.noFaviconCount;
+          totalNoScreenshot += value.noScreenshotCount;
+        });
+        return {
+          itemCount: total, 
+          noFaviconCount: totalNoFavicon, 
+          noScreenshotCount: totalNoScreenshot
+        };
+      };
+
+      var col = cb.socket.mongo.database.collection("items");
+      return col.mapReduce(map, reduce, {
+        out: {
+          inline: 1
+        }
+      }, function(err, res, stat) {
         if (err != null) {
           return cb(err);
         }
-        if (res == null) {
-          return cb(null, []);
-        }
-        return cb(null, formatSyncUsers(res));
+        return cb(null, formatSyncUsers(res), stat);
       });
     },
 
@@ -122,7 +135,6 @@
         return cb(null);
       });
     }
-
   };
 
   module.exports = function(cb, command) {
