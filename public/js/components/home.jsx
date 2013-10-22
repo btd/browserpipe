@@ -6,13 +6,14 @@ var _state = require('../state'),
     _ = require('lodash'),
     page = require('page'),
     React = require('react'),
-    TopBarView = require('./top/top.bar'),
-    ListboardsPanelView = require('./center/listboards.panel'),
-    ListboardView = require('./center/listboard'),
-    ListboardSettingsView = require('./center/listboard.settings'),
-    DialogItemView = require('./dialog/item.view.dialog');
+    TopBarComponent = require('./top/top.bar'),
+    ListboardsPanelComponent = require('./center/listboards.panel'),
+    ListboardComponent = require('./center/listboard'),
+    ListboardSettingsComponent = require('./center/listboard.settings'),
+    FolderPanelComponent = require('./center/folder.panel'),
+    DialogItemComponent = require('./dialog/item.view.dialog');
 
-var HomeView = React.createClass({  
+var HomeComponent = React.createClass({  
   getInitialState: function() {
       return {
           docHeight: this.props.docHeight,
@@ -20,12 +21,28 @@ var HomeView = React.createClass({
           listboards: this.props.listboards,
           selectedListboard: this.props.selectedListboard,
           selectedItem: this.props.selectedItem,
+          selectedFolder: this.props.selectedFolder,
           isExtensionInstalled: this.props.isExtensionInstalled,
           listboardsVisible: this.props.listboardsVisible,
           listboardSettingsVisible: this.props.listboardSettingsVisible,
           dialogItemVisible: this.props.dialogItemVisible
       };
+  },  
+  getCenterHeight: function() {
+    return this.state.docHeight - 46 - 21; //(47 = top bar height)(21 = footer height) (40 = scrollbars height ) 
   },
+  getListboardHeight: function() {
+    var height = this.getCenterHeight();
+    if(this.props.docWidth > 575) //(575 = responsive design limit)
+      height = height - 48; //(72 = listboard panel height)
+    else
+      height = height - 36 //(36 = listboard panel height)
+    return height;
+  },
+  getCenterWidth: function() {
+    //TODO: change this when collapsing the folder panel
+    return this.state.docWidth - 260; //(260 = folder panel)
+  },  
   handleListboardClick: function(e) {
       e.preventDefault();
       page('/listboard/' + e.target.id.substring(3));
@@ -35,45 +52,51 @@ var HomeView = React.createClass({
         page('/listboard/' + this.state.selectedListboard._id);
   },
   render: function() {
-    this.listboardsPanelView = <ListboardsPanelView 
-      visible = {this.state.listboardsVisible}
-      docWidth={this.state.docWidth} 
-      docHeight={this.state.docHeight} 
+
+    this.folderPanelComponent = <FolderPanelComponent 
+      folder= { this.state.selectedFolder } 
+      folderPanelHeight = { this.getCenterHeight() } />  
+
+    this.listboardsPanelComponent = <ListboardsPanelComponent 
+      visible = { this.state.listboardsVisible }
+      width={ this.getCenterWidth() } 
+      height={ this.state.docHeight } 
       handleListboardClick={ this.handleListboardClick } 
-      selectedListboard= {this.state.selectedListboard} 
-      isExtensionInstalled={this.state.isExtensionInstalled}
-      listboards= {this.state.listboards} />
+      selectedListboard= { this.state.selectedListboard } 
+      isExtensionInstalled={ this.state.isExtensionInstalled }
+      listboards= { this.state.listboards } />
 
-    this.listboardView = <ListboardView 
-      visible = {this.state.listboardsVisible}
-      docWidth={this.state.docWidth} 
-      docHeight={this.state.docHeight} 
-      selectedListboard= {this.state.selectedListboard} /> 
+    this.listboardComponent = <ListboardComponent 
+      visible = { this.state.listboardsVisible }
+      width={ this.getCenterWidth() } 
+      height={ this.getListboardHeight() } 
+      selectedListboard= { this.state.selectedListboard } />     
 
-    this.listboardSettingsView = <ListboardSettingsView 
-      visible = {this.state.listboardSettingsVisible}
-      selectedListboard= {this.state.selectedListboard} /> 
+    this.listboardSettingsComponent = <ListboardSettingsComponent 
+      visible = { this.state.listboardSettingsVisible }
+      selectedListboard= { this.state.selectedListboard } /> 
 
-    this.dialogItemView = this.state.dialogItemVisible? <DialogItemView 
-      visible = {this.state.dialogItemVisible}
-      selectedListboard= {this.state.selectedListboard}
-      item={this.state.selectedItem} /> : null;
+    this.dialogItemComponent = this.state.dialogItemVisible? <DialogItemComponent 
+      visible = { this.state.dialogItemVisible }
+      selectedListboard= { this.state.selectedListboard }
+      item={ this.state.selectedItem } /> : null;
 
     return (
-      <div onClick={this.handleBodyClick} class="wrapper">
-        <div class="main-header">
-          <TopBarView docWidth={this.state.docWidth} />
+      <div onClick={this.handleBodyClick} className="wrapper">
+        <div className="main-header">
+          <TopBarComponent docWidth={this.state.docWidth} />
         </div>
-        <div class="main-content">                 
-            {this.listboardsPanelView}
-            {this.listboardView}
-            {this.listboardSettingsView}
-            {this.dialogItemView}
+        <div className="main-content">                 
+            {this.folderPanelComponent}
+            {this.listboardsPanelComponent}            
+            {this.listboardComponent}
+            {this.listboardSettingsComponent}
+            {this.dialogItemComponent}
         </div>
-        <div class="main-footer">
+        <div className="main-footer">
           <small>@Listboard.it</small>
         </div>
-        {this.state.dialogItemVisible? <div class="modal-backdrop fade in"></div> : null}
+        {this.state.dialogItemVisible? <div className="modal-backdrop fade in"></div> : null}
       </div>
     );
   }
@@ -86,18 +109,20 @@ module.exports.render = function (
     listboards, 
     selectedListboard, 
     selectedItem,
+    selectedFolder,
     isExtensionInstalled,
     listboardsVisible,
     listboardSettingsVisible,
     dialogItemVisible
   ) {
   return React.renderComponent(
-    <HomeView 
+    <HomeComponent 
       docHeight={docHeight} 
       docWidth={docWidth} 
       listboards={listboards} 
       selectedListboard={selectedListboard}
       selectedItem={selectedItem}
+      selectedFolder={selectedFolder}
       isExtensionInstalled={isExtensionInstalled}
       listboardsVisible={listboardsVisible}
       listboardSettingsVisible={listboardSettingsVisible}

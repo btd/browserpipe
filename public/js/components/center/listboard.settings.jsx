@@ -8,7 +8,7 @@ var _state = require('../../state'),
     page = require('page'),
     LabelEditorComponent = require('../util/label.editor');
 
-var ListboardSettingsView = React.createClass({
+var ListboardSettingsComponent = React.createClass({
     getListboardSettingsStyle: function() {
         var visible = this.props.visible? "block" : "none";
         return { display: visible };
@@ -41,25 +41,25 @@ var ListboardSettingsView = React.createClass({
     render: function() {        
         var self = this;
         return  (
-            <div class="listboard-settings" style={ this.getListboardSettingsStyle() }>                                             
-                <a onClick={this.goToHome} class="back-icon" href="#">
-                    <i class="icon-arrow-left">&nbsp;&nbsp;go back</i>
+            <div className="listboard-settings" style={ this.getListboardSettingsStyle() }>                                             
+                <a onClick={this.goToHome} className="back-icon" href="#">
+                    <i className="icon-arrow-left">&nbsp;&nbsp;go back</i>
                 </a>
-                <div class="name-editor">             
+                <div className="name-editor">             
                     <LabelEditorComponent 
                         onSaveLabel= {this.saveListboardLabel} 
                         labelValue= {this.props.selectedListboard.label} />
                     <small><i>(click to edit)</i></small>
                 </div>
-                <a ref="deleteOption" onClick={this.showDeleteWarning} href="#" class="delete-option">delete listboard</a>
-                <div ref="deleteWarning" class="alert alert-error hide">
+                <a ref="deleteOption" onClick={this.showDeleteWarning} href="#" className="delete-option">delete listboard</a>
+                <div ref="deleteWarning" className="alert alert-error hide">
                     <div>All data from this listboard that was not archived in folders will be deleted.</div>
                     <div>Do you want to continue?</div>
-                    <button onClick={this.deleteListboard} class="save-option btn btn-danger btn-small" type="button">Yes, delete it</button>
-                    <span onClick={this.hideDeleteWarning} class="cancel-option">no, cancel</span>
+                    <button onClick={this.deleteListboard} className="save-option btn btn-danger btn-small" type="button">Yes, delete it</button>
+                    <span onClick={this.hideDeleteWarning} className="cancel-option">no, cancel</span>
                 </div>
         </div>);
     }
 });
 
-module.exports = ListboardSettingsView
+module.exports = ListboardSettingsComponent

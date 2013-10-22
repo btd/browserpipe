@@ -1,37 +1,29 @@
-.listboard {        
-    overflow-x: auto;
+.listboard {   
     float: left;
-
+    
     .sub-bar {
-        margin: 0;        
-        padding-left: 12px;
+        margin: 0;      
         background: @grey1;
-        position: fixed;
-        width: 100%;
 
-        .le-label {
+        .le-label {            
             font-weight: bold;
             font-size: 16px;
-            margin: 6px 18px 0 0;
+            margin: 6px 18px 0 12px;
 
             &:hover {
                 cursor: pointer;
             }
         }
-
-        .edit-title {
-            margin-bottom: 6px;
-
-            input {
-                width: 130px;
-            }
+        .le-editor {
+            margin-left: 12px;
         }
 
         .navbar-inner {   
+            margin: 0;
+            padding: 0;
             padding-top: 3px;
             background: @grey1;
             min-height: 33px;
-            padding-left: 0;          
             .flatten();  
             overflow: hidden;
 
@@ -43,14 +35,17 @@
         }
     }
 
-    .containers {
-        margin-top: 36px !important;
-        padding: 0 3px;
-        -webkit-overflow-scrolling: touch;    
-        margin: 0;
-        padding: 0;
-        height: 200px;
-        width: 5000px;
+    .listboard-center {
+        overflow-x: auto;  
+        padding-left: 6px;
+
+        .containers {            
+            padding: 0 3px;
+            -webkit-overflow-scrolling: touch;    
+            margin: 0;
+            padding: 0;
+            width: 5000px;
+        }
     }
    
 

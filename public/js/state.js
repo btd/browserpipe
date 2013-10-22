@@ -28,6 +28,7 @@ var State1 = model()
     .attr('containers', { collection: Containers })
     .attr('items', { collection: Items })
     .attr('selectedListboard')
+    .attr('selectedFolder')
     .attr('selectedItem')
     .use(model.nestedObjects);
 _.extend(State1.prototype, {
@@ -49,11 +50,24 @@ _.extend(State1.prototype, {
     //Load
     loadFolders: function (from) {
         //Load children folders
-        _.each(from, this.addFolder, this);
+        _.each(from, function(folderObj) {
+            var folder = this.addFolder(folderObj);
+            if(folder.isRoot)
+                this.selectedFolder = folder;
+        }, this);
     },
 
+    getSelectedFolder: function() {
+        return this.selectedFolder;
+    },
     getFolderByFilter: function (filter) {
-        return this.folders.byFilter(filter);
+        //TODO: folder by filter is not working when editing folder name and then adding a child folder            
+        //return this.folders.byFilter(filter);        
+        return _.find(this.folders, function(folder){
+            if(folder.filter === filter)
+                return folder;
+        })   
+        
     },
     getFolderById: function (folderId) {
         return this.folders.byId(folderId);
@@ -61,17 +75,22 @@ _.extend(State1.prototype, {
     getAllFolders: function () {
         return this.folders;
     },
+    setSelectedFolder: function (folderId) {
+        this.selectedFolder = this.getFolderById(folderId);
+    },
 
     //CRUD
-    addFolder: function (folder) {
-        folder = new Folder(folder);
+    addFolder: function (folderObj) {
+        var folder = new Folder(folderObj);
 
         this.folders.push(folder);
 
-        if (!folder.isRoot) {
-            var parentFolder = this.folders.byFilter(folder.path);
-            parentFolder.children.push(folder);
+        if (!folder.isRoot) {                        
+            var parentFolder = this.getFolderByFilter(folder.path);
+            parentFolder.children.push(folder);                     
         }
+
+        return folder;
     },
     updateFolder: function (folderUpdate) {
         var folder = this.getFolderById(folderUpdate._id);
@@ -148,12 +167,14 @@ _.extend(State1.prototype, {
 
     //CRUD Listboard
     addListboard: function (listboard) {
+        var that = this;
+
         //it is moveton to change object that someone give us
-        var listboardCopy = _.omit(listboard, 'containers');
+        var listboardCopy = _.omit(listboard, 'containers');        
         this.listboards.push(listboardCopy);
 
         _.each(listboard.containers, function(container) {
-            this.addContainer(listboard._id, container);
+            this.addContainer(listboard._id, container);            
         }, this);
     },
     updateListboard: function (listboardUpdate) {
@@ -214,22 +235,12 @@ _.extend(State1.prototype, {
     getContainerByIdAndListboard: function (listboard, containerId) {
         return listboard.containers.byId(containerId);
     },
-    // it can be several containers
-    getContainerByFolderId: function (folderId) {
-        return this.containers.filter(function(container) {
-            return container.folder && container.folder._id === folderId;
-        });
-    },
-
+    
 
     //CRUD
     addContainer: function (listboardId, container) {
         var listboard = this.getListboardById(listboardId);
         if (listboard) {
-            if (container.type === 2) {
-                container = _.clone(container); // to do not modify original object
-                container.folder = this.getFolderById(container.folder);
-            }
             container = new Container(container); // this is required to have the same reference in both collections
             listboard.containers.push(container);
             this.containers.push(container);
@@ -240,15 +251,8 @@ _.extend(State1.prototype, {
         var listboard = this.getListboardById(listboardId);
         if (listboard) {
             var container = listboard.containers.byId(containerUpdate._id);
-            if (container) {
-                //If folder changed, we load again the folder obj
-                if (container.type === 2 && container.folder._id !== containerUpdate.folder) {
-                    containerUpdate = _.clone(containerUpdate);
-                    containerUpdate.folder = this.getFolderById(containerUpdate.folder);
-                }
-                //We then mixed the props
+            if (container)
                 _.extend(container, containerUpdate);
-            }
         }
     },
     removeContainer: function (listboardId, containerId) {
