@@ -43,7 +43,7 @@ var FolderPanelComponent = React.createClass({
 	},
 	saveFolder: function() {    
 		var self = this;
-		var label = $.trim(this.refs.folderInput.getDOMNode().value)
+		var label = this.refs.folderInput.getDOMNode().value.trim()
 		var path = this.props.folder.filter;
 
 		if(label != '')
@@ -69,7 +69,7 @@ var FolderPanelComponent = React.createClass({
 		var self = this;
 		var folders = [];		
 		folders.push(this.props.folder._id)
-		var url = $.trim(this.refs.itemInput.getDOMNode().value)
+		var url = this.refs.itemInput.getDOMNode().value.trim();
 		var errorElements = this.validateFields(url);
 		if (errorElements.length === 0)
 			_state.serverSaveItem({				

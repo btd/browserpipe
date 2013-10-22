@@ -10,7 +10,7 @@ var $ = require('jquery'),
 
 var ItemComponent = React.createClass({   
   getTitle: function() {
-    if($.trim(this.props.item.title) != "")
+    if(this.props.item.title.trim() != "")
       return this.props.item.title;
     else
       return this.props.item.url;

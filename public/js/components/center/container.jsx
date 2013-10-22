@@ -11,7 +11,7 @@ var _state = require('../../state'),
 
 var ContainerComponent = React.createClass({ 
 	getContainerTitle: function() {		
-		if(!this.props.container.title || $.trim(this.props.container.title) === '')			
+		if(!this.props.container.title || this.props.container.title.trim() === '')			
 			if(this.props.container.type === 0) 
 				return this.props.container.items.length + " Tabs";
 			else
@@ -20,7 +20,7 @@ var ContainerComponent = React.createClass({
 			return this.props.container.title;
 	},
 	getTabsCount: function() {
-		 if(this.props.container.type === 0 && $.trim(this.props.container.title) === '')
+		 if(this.props.container.type === 0 && (!this.props.container.title || this.props.container.title.trim() === ''))
 			return <span className="tabs-count">{ this.props.container.items.length + " Tabs" }</span>
 		else
 			return null;
@@ -59,7 +59,7 @@ var ContainerComponent = React.createClass({
 		var self = this;
 		var containers = [];		
 		containers.push(this.props.container._id)
-		var url = $.trim(this.refs.itemInput.getDOMNode().value)
+		var url = this.refs.itemInput.getDOMNode().value.trim();
 		var errorElements = this.validateFields(url);
 		if (errorElements.length === 0)
 			_state.serverSaveItem({				

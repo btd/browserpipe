@@ -65,7 +65,7 @@ FolderSchema.statics.findAllDescendant = function (user, path) {
 FolderSchema.statics.updateFoldersPath = function(user,  oldPath, newPath, deltaFolders) {
     var promises = [];
     Folder.findAllDescendant(user, oldPath).then(function(folders) {
-        _.map(folders, function(folder){            
+        _.each(folders, function(folder){            
             if(folder.path.indexOf(oldPath) === 0) {                
                 folder.path = (newPath + folder.path.substring(oldPath.length));   
                 deltaFolders.data.push(folder);
