@@ -2,7 +2,8 @@
 
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
-    q = require('q');
+    q = require('q'),
+    _ = require('lodash');
 
 //There are to types of items: folder-item and note-item
 var ItemSchema = new Schema({
@@ -31,21 +32,21 @@ var ItemSchema = new Schema({
 
 ItemSchema.plugin(require('../util/mongoose-timestamp'));
 
+ItemSchema.statics.getByExternalId = function (user, externalId) {
+    return this
+        .findOne({user: user, externalId: externalId}, '_id type containers folders title favicon screenshot url note externalId')
+        .execWithPromise();
+}
+
+ItemSchema.statics.getByExternalId = function (user, externalId) {
+    return this
+        .findOne({user: user, externalId: externalId}, '_id type containers folders title favicon screenshot url note externalId')
+        .execWithPromise();
+}
+
 ItemSchema.statics.findByContainer = function (user, containerId) {
     return this
         .find({user: user, containers: containerId}, '_id type containers folders title favicon screenshot url note externalId')
-        .execWithPromise();
-}
-
-ItemSchema.statics.getByExternalId = function (user, externalId) {
-    return this
-        .findOne({user: user, externalId: externalId}, '_id type containers folders title favicon screenshot url note externalId')
-        .execWithPromise();
-}
-
-ItemSchema.statics.getByExternalId = function (user, externalId) {
-    return this
-        .findOne({user: user, externalId: externalId}, '_id type containers folders title favicon screenshot url note externalId')
         .execWithPromise();
 }
 
@@ -59,6 +60,33 @@ ItemSchema.statics.findAllByFolders = function (user, folderIds) {
     return this
         .find({user: user, folders: {$in: folderIds}}, '_id type containers folders title favicon screenshot url note externalId')
         .execWithPromise();
+}
+
+ItemSchema.statics.removeAllByContainers = function(user, containerIds) {
+    return Item.findAllByContainers(user, containerIds)
+        .then(function(items) {
+            var promises = _.map(items, function(item) {                            
+                _.each(containerIds, function(containerId) {
+                    item.containers.remove(containerId);
+                });                 
+                return item.saveWithPromise();
+            });
+            return q.all(promises);
+        });
+}
+
+ItemSchema.statics.removeAllByFolders = function(user, folderIds, deltaItems) {
+    return Item.findAllByFolders(user, folderIds)
+        .then(function(items) {
+            var promises = _.map(items, function(item) {                            
+                deltaItems.data.push(item);
+                _.each(folderIds, function(folderId) {
+                    item.folders.remove(folderId);
+                });                 
+                return item.saveWithPromise();
+            });
+            return q.all(promises);
+        });
 }
 
 ItemSchema.statics.byId = function (id) {

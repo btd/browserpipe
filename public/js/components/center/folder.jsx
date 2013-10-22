@@ -7,7 +7,7 @@ var $ = require('jquery'),
     _ = require('lodash'),
     React = require('react');
 
-var FolderView = React.createClass({   
+var FolderComponent = React.createClass({   
   navigateToFolder: function(e) {    
     e.stopPropagation();
     this.props.navigateToChildFolder(this.refs.folder.getDOMNode().id.substring(7));
@@ -24,12 +24,12 @@ var FolderView = React.createClass({
   },
   render: function() {
     return ( 
-      <li ref="folder" onMouseEnter={this.mouseEnter} onMouseLeave={this.mouseLeave} onClick={ this.navigateToFolder } id={'folder_' + this.props.folder._id} class="folder">
+      <li ref="folder" onMouseEnter={this.mouseEnter} onMouseLeave={this.mouseLeave} onClick={ this.navigateToFolder } id={'folder_' + this.props.folder._id} className="folder">
         <span onClick={ this.navigateToFolder }>{ this.props.folder.label }</span>
-        <i ref='btnRemoveChildFolder' onClick={this.removeFolder} class="icon-remove remove-child-folder hide" />
+        <i ref='btnRemoveChildFolder' onClick={this.removeFolder} className="icon-remove remove-child-folder hide" />
       </li>
     );
   }
 });
 
-module.exports = FolderView
+module.exports = FolderComponent

@@ -2,13 +2,12 @@
 
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
-    validation = require('./validation'),
-    _ = require('lodash'),
+    _ = require('lodash'),    
     q = require('q')
 
 var FolderSchema = new Schema({
     //Generic fields
-    label: {type: String, trim: true, validate: validation.nonEmpty("Label")}, //name of this folder
+    label: {type: String, trim: true }, //name of this folder
     path: {type: String, trim: true, default: ''}, //name of parent folder, default set to '' that if we will create index by this field, we do not create sparse index
     user: {type: Schema.ObjectId, ref: 'User'}
 },{
@@ -28,7 +27,9 @@ FolderSchema.methods.createChildFolder = function (folderLabel) {
 
 //TODO it should take all parents folder!!!
 FolderSchema.virtual('fullPath').get(function () {
-    return this.isRoot() ? this.label : this.path + '/' + this.label;
+    //If it has no label we use the id as a label
+    var label = this.label || this._id;
+    return this.isRoot() ? label : this.path + '/' + label;
 })
 
 FolderSchema.statics.byId = function (id) {
@@ -59,6 +60,42 @@ FolderSchema.statics.findAllDescendant = function (user, path) {
         .find({user: user, path: new RegExp("^" + path)}, 'user label path')
         .sort({'path': 1}) 
         .execWithPromise();
+}
+
+FolderSchema.statics.updateFoldersPath = function(user,  oldPath, newPath, deltaFolders) {
+    var promises = [];
+    Folder.findAllDescendant(user, oldPath).then(function(folders) {
+        _.each(folders, function(folder){            
+            if(folder.path.indexOf(oldPath) === 0) {                
+                folder.path = (newPath + folder.path.substring(oldPath.length));   
+                deltaFolders.data.push(folder);
+            }
+            //TODO: else log an error because query failed
+            promises.push(folder.saveWithPromise())
+        });
+    });
+    return q.all(promises);
+}
+
+
+
+FolderSchema.statics.removeFolderAndDescendants = function(user, folder, deltaFolders, deltaItems) {
+    var Item = mongoose.model('Item');
+    return Folder.findAllDescendant(user, folder.fullPath)
+        .then(function(folders) {   
+            var folderIds = [];
+            folders.push(folder);
+            _.each(folders, function(folder) {
+                deltaFolders.data.push(folder);              
+                folderIds.push(folder._id);
+            })
+            return Item.removeAllByFolders(user, folderIds, deltaItems)
+                .then(function() {
+                    return q.all(_.map(folders, function(folder) {
+                        return folder.removeWithPromise();
+                    }));
+                });
+        })
 }
 
 var qfindOne = function (obj) {

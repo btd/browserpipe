@@ -24,7 +24,7 @@ var updateClients = function(req, delta) {
 
 //Create item
 exports.create = function(req, res) {
-    var item = new Item(_.pick(req.body, 'type', 'folders', 'containers', 'title', 'url', 'note', 'cid'));
+    var item = new Item(_.pick(req.body, 'type', 'folders', 'containers', 'title', 'url', 'note'));
 
     if (!item.title)
         item.title = item.url;
@@ -74,7 +74,7 @@ exports.update = function(req, res) {
     //TODO: add addcontainer/addfolder/removecontainer/removefolder rest calls to optimize    
     item.markModified('containers');
     item.markModified('folders');
-    _.merge(item, _.pick(req.body, 'type', 'folders', 'containers', 'title', 'url', 'note', 'cid'));
+    _.merge(item, _.pick(req.body, 'type', 'folders', 'containers', 'title', 'url', 'note'));
     //We need to merge array manually, because empty arrays are not merged
     if (req.body.containers)
         item.containers = req.body.containers;

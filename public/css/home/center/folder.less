@@ -1,0 +1,112 @@
+.folder-panel {
+	width: 260px;
+	background-color: #1f3659;
+	margin: 0;
+    float:left;
+	z-index: 100;
+    position: relative;
+
+    .folder-panel-header {
+        height: 36px;
+
+        .folder-label {
+            color: @white; 
+            font-weight: bold;
+            margin: 6px;
+
+            .le-label {  
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                width: 200px;
+                display: block;
+                overflow: hidden;
+            }   
+            input[type=text] {
+                width: 102px;
+            }
+        }    
+
+        .folder-icon {  
+            right: 12px;
+            color: @white; 
+            .opacity(50);
+            position: absolute;
+
+            &:hover {
+                cursor:pointer; 
+                .opacity(100);
+            } 
+        }        
+        .add-folder-icon {    
+            font-size: 10px;
+            color: @white; 
+            position: absolute;
+            right: 6px;
+            top: 24px;            
+        }
+    }    
+    .box {                
+        overflow-y: auto; 
+        position: relative;
+    
+        .folders {
+            margin: 4px 5px 6px !important;
+
+            
+            &.collapsed {
+
+                .collapser {
+                    margin-bottom: 6px;   
+                }
+                .folder {
+                    display: none;
+                }
+            }
+
+            .folder {
+                margin-bottom: 3px;
+                padding: 6px 12px;          
+                background-color: @blue;   
+                position: relative;    
+                color: white;
+                text-shadow: 0 1px 0 @blue;                    
+                text-shadow: none;
+                word-break: break-all;   
+
+                &:hover{
+                    cursor: pointer;
+                    background-color: darken(@blue, 6%);
+                }   
+                .remove-child-folder {
+                    .opacity(30);
+                    position: absolute;
+                    right: 12px;
+                    top: 6px;
+
+                    &:hover{
+                        .opacity(50);
+                    } 
+                }
+            }
+        }
+    }
+    .folder-panel-footer {
+        height: 30px;
+
+        .opt-add-item {            
+            float: right;
+            margin-right: 18px;
+            color: #777;
+            font-size: 12px;
+
+            &:hover {
+                color: @white;
+                cursor: pointer;
+            }
+        }
+    }
+
+}
+
+
+	

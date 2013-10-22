@@ -1,18 +1,17 @@
 // Listboard schema
 
 var Schema = require('mongoose').Schema,
-    _ = require('lodash'),
-    validation = require('./validation');
+    _ = require('lodash');
 
 
 var ListboardSchema = new Schema({
     type: {type: Number, required: true}, //0: browser, 1: custom listboard
-    label: { type: String, required: true, trim: true, validate: validation.nonEmpty("Label") },
+    label: { type: String, trim: true },
     containers: [ require('./container') ],
 
     //For 0 container (associated with a browser)
     browserKey: { type: String },
-    lastSyncDate: Date
+    lastSyncDate: Date    
 },{
     toObject: { virtuals: true },
     toJSON: { virtuals: true }
@@ -20,16 +19,10 @@ var ListboardSchema = new Schema({
 
 ListboardSchema.plugin(require('../util/mongoose-timestamp'));
 
-
-ListboardSchema.methods.addContainerByFolder = function (folder) {
-    return this.addContainer({ type: 2, title: folder.label, folder: folder });
-};
-
 ListboardSchema.methods.addContainer = function (cont) {
     this.containers.push({
         type: cont.type,
         title: cont.title,
-        folder: cont.folder,
         externalId: cont.externalId
     });
     return this;

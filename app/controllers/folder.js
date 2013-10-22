@@ -28,7 +28,7 @@ var updateClients = function(req, delta) {
 //Create folder
 exports.create = function (req, res) {
     findByFullPath(req.body.path, function() {
-        var folder = new Folder(_.pick(req.body, 'label', 'path', 'cid'));
+        var folder = new Folder(_.pick(req.body, 'label', 'path'));
         folder.user = req.user;
         var delta = {
             type: 'create.folder',
@@ -42,23 +42,6 @@ exports.create = function (req, res) {
     });
 }
 
-var updateDescendantFolders = function(req, res, oldPath, newPath, deltaFolders) {
-
-    var promises = [];
-    Folder.findAllDescendant(req.user, oldPath).then(function(folders) {
-        _.map(folders, function(folder){            
-            if(folder.path.indexOf(oldPath) === 0) {                
-                folder.path = (newPath + folder.path.substring(oldPath.length));   
-                deltaFolders.data.push(folder);
-            }
-            //TODO: else log an error because query failed
-            promises.push(folder.saveWithPromise())
-        });
-    });
-    return q.all(promises);
-    
-}
-
 //Update folder
 exports.update = function (req, res) {    
     var folder = req.currentFolder;    
@@ -70,7 +53,7 @@ exports.update = function (req, res) {
     var deltaFolders = { type: 'bulk.update.folder', data: [folder] } 
 
     folder.saveWithPromise()
-        .then(updateDescendantFolders(req, res, oldPath, newPath, deltaFolders))
+        .then(Folder.updateFoldersPath(req.user,  oldPath, newPath, deltaFolders))
         .then(responses.sendModelId(res, folder._id))
         .fail(errors.ifErrorSendBadRequest(res))
         .then(updateClients(req, deltaFolders))             
@@ -78,43 +61,7 @@ exports.update = function (req, res) {
 
 }
 
-var deleteDescendantFolders = function(req, res, folderId, path, deltaFolders, deltaContainers, deltaItems) {
-
-    var folderIds = [folderId];
-   
-    //Folder and descendants folders and descendant folders path are deleted    
-    return Folder.findAllDescendant(req.user, path)
-            .then(function(folders) {        
-                var promises = _.map(folders, function(folder){            
-                    deltaFolders.data.push(folder);    
-                    folderIds.push(folder._id.toString());
-                    return folder.removeWithPromise()
-                });
-                return q.all(promises);
-            })
-            .then(function() {
-                //Containers with all folders and descendant folders are deleted                
-                var containers = req.user.getContainersByFolderIds(folderIds);                
-                deltaContainers.data = containers;
-                return req.user.removeContainersByFolderIds(folderIds);
-            })
-            .then(function() {
-                //Items with all folders and descendant folders are updated
-                return Item.findAllByFolders(req.user, folderIds)                 
-            })
-            .then(function(items) {
-                var promises = _.map(items, function(item) {            
-                    deltaItems.data.push(item);        
-                    _.map(folderIds, function(folderId) {
-                        item.folders.remove(folderId)
-                    });                    
-                    return item.saveWithPromise();
-                });
-                return q.all(promises);
-            });
-}
-
-//Delete folder, all its childs, containers associated and remove tag from item
+//Delete folder, all its childs folders and remove tag from item
 exports.destroy = function (req, res) {
     var folder = req.currentFolder;  
 
@@ -126,28 +73,13 @@ exports.destroy = function (req, res) {
     //Folder and descendants folders and descendant folders path are deleted
     var deltaFolders = { type: 'bulk.delete.folder', data: [folder] } 
 
-    //Containers with all folders and descendant folders are deleted
-    var deltaContainers = { type: 'bulk.delete.container', data: [] } 
-
     //Items with all folders and descendant folders are updated
     var deltaItems = { type: 'bulk.update.item', data: [] } 
 
-    folder.removeWithPromise()
-        .then(function() {
-            return deleteDescendantFolders(
-                    req, 
-                    res, 
-                    folder._id, 
-                    folder.fullPath, 
-                    deltaFolders, 
-                    deltaContainers, 
-                    deltaItems
-                );
-        })
+    Folder.removeFolderAndDescendants(req.user, folder, deltaFolders, deltaItems)
         .then(responses.sendModelId(res, folder._id))
         .fail(errors.ifErrorSendBadRequest(res))
-        .then(updateClients(req, deltaFolders))  
-        .then(updateClients(req, deltaContainers))  
+        .then(updateClients(req, deltaFolders))          
         .then(updateClients(req, deltaItems))  
         .done()
 }

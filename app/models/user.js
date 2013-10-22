@@ -51,31 +51,6 @@ UserSchema.methods.removeListboard = function (listboard) {
     return this;
 };
 
-UserSchema.methods.getContainersByFolderIds = function (folderIds) {
-    return _.chain(this.listboards)
-                .map(function (listboard) { return listboard.containers})                
-                .flatten()
-                .filter(function(container) {
-                    return (container.type === 2) && _.contains(folderIds, container.folder.toString()) 
-                })
-                .value();
-};
-
-UserSchema.methods.removeContainersByFolderIds = function (folderIds) {
-    _.map(this.listboards, function (listboard) {                     
-        var containersToRemove =  _.chain(listboard.containers)
-            .filter(function(container) {                
-                return (container.type === 2) && _.contains(folderIds, container.folder.toString()) 
-            })
-            .value();
-        _.map(containersToRemove, function(container) {
-            listboard.containers.remove(container);    
-        });
-    });
-    return this.saveWithPromise();
-};
-
-
 // 2 convinient wrappers to do not repeat in code also it populate internal doc
 UserSchema.statics.byId = function (id) {
     return qfindOne({ _id: id});
