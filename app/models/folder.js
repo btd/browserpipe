@@ -91,7 +91,9 @@ FolderSchema.statics.removeFolderAndDescendants = function(user, folder, deltaFo
             })
             return Item.removeAllByFolders(user, folderIds, deltaItems)
                 .then(function() {
-                    return folders;
+                    return q.all(_.map(folders, function(folder) {
+                        return folder.removeWithPromise();
+                    }));
                 });
         })
 }
