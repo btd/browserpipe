@@ -192,7 +192,7 @@ module.exports = function(app) {
                                                 (new AuthCode({ application: application, user: req.user, value: authCode, redirect_uri: req.session.oauth2.redirect_uri })).saveWithPromise()
                                                     .then(function() {
                                                         var params = {
-                                                            'code': authCode.value
+                                                            'code': authCode
                                                         };
                                                         if(req.session.oauth2.state) {
                                                             params.state = req.session.oauth2.state;
