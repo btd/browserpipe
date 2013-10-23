@@ -64,11 +64,15 @@ var and = function(funcs) {
     };
 };
 
+var ifPresentedThenNonEmpty = function(value) {
+    return value == null ? true : nonEmptyString(value);
+};
+
 var validateAuthorizationParams = _.pairs({
     'redirect_uri': [nonEmptyString, Application.redirectableUri],
     'client_id': [nonEmptyString],
     'response_type': [isCode],
-    'state': [nonEmptyString]
+    'state': [ifPresentedThenNonEmpty]
 });
 
 validateAuthorizationParams = _.map(validateAuthorizationParams, function(p) {
@@ -173,10 +177,13 @@ module.exports = function(app) {
                             AuthCode.byUserAndApplication(req.user, application)
                                 .then(function(authCode) {
                                     if(authCode && !authCode.expired() && authCode.redirect_uri === req.session.oauth2.redirect_uri) {
-                                        var redirect_uri = util.urlAppendParams(req.session.oauth2.redirect_uri, {
-                                            'code': authCode.value,
-                                            'state' : req.session.oauth2.state
-                                        });
+                                        var params = {
+                                            'code': authCode.value
+                                        };
+                                        if(req.session.oauth2.state) {
+                                            params.state = req.session.oauth2.state;
+                                        }
+                                        var redirect_uri = util.urlAppendParams(req.session.oauth2.redirect_uri, params);
 
                                         res.redirect(redirect_uri);
                                     } else {
@@ -184,11 +191,14 @@ module.exports = function(app) {
                                             .then(function(authCode) {
                                                 (new AuthCode({ application: application, user: req.user, value: authCode, redirect_uri: req.session.oauth2.redirect_uri })).saveWithPromise()
                                                     .then(function() {
-                                                        var redirect_uri = util.urlAppendParams(req.session.oauth2.redirect_uri, {
-                                                            'code': authCode,
-                                                            'state' : req.session.oauth2.state
-                                                        });
+                                                        var params = {
+                                                            'code': authCode
+                                                        };
+                                                        if(req.session.oauth2.state) {
+                                                            params.state = req.session.oauth2.state;
+                                                        }
 
+                                                        var redirect_uri = util.urlAppendParams(req.session.oauth2.redirect_uri, params);
                                                         res.redirect(redirect_uri);
                                                     }).fail(function(err) {
                                                         error.redirectError(req, res, new error.ServerError(err.message));
@@ -294,5 +304,9 @@ module.exports = function(app) {
         }
 
     });
+
+    app.get('/nothing', function(req, res) {
+        res.render('nothing');
+    })
 
 };

@@ -27,10 +27,11 @@ var State1 = model()
     .attr('listboards', { collection: Listboards })
     .attr('containers', { collection: Containers })
     .attr('items', { collection: Items })
-    .attr('selectedListboard')
-    .attr('selectedFolder')
-    .attr('selectedItem')
+    .attr('selectedListboard', { model: Listboard })
+    .attr('selectedItem', { model: Item })
+    .attr('selectedFolder', { model: Folder })
     .use(model.nestedObjects);
+
 _.extend(State1.prototype, {
 
     loadInitialData: function (initialOptions) {
@@ -61,13 +62,7 @@ _.extend(State1.prototype, {
         return this.selectedFolder;
     },
     getFolderByFilter: function (filter) {
-        //TODO: folder by filter is not working when editing folder name and then adding a child folder            
-        //return this.folders.byFilter(filter);        
-        return _.find(this.folders, function(folder){
-            if(folder.filter === filter)
-                return folder;
-        })   
-        
+        return this.folders.byFilter(filter);
     },
     getFolderById: function (folderId) {
         return this.folders.byId(folderId);
@@ -167,8 +162,6 @@ _.extend(State1.prototype, {
 
     //CRUD Listboard
     addListboard: function (listboard) {
-        var that = this;
-
         //it is moveton to change object that someone give us
         var listboardCopy = _.omit(listboard, 'containers');        
         this.listboards.push(listboardCopy);

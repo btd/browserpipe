@@ -79,4 +79,6 @@ var qfindOne = function (obj) {
     return User.findOne(obj).execWithPromise();
 };
 
+UserSchema.statics.by = qfindOne;
+
 module.exports = User = mongoose.model('User', UserSchema);

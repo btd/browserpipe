@@ -48,12 +48,6 @@ module.exports = function (app, passport) {
 
   app.param('listboardId', auth.send401IfNotAuthenticated, listboard.listboard);    
 
-  //TODO: manage properly api OAuth from http://developer.chrome.com/extensions/tut_oauth.html  
-  app.post(   '/browser/:browserName/sync/:browserKey',  auth.send401IfNotAuthenticated, listboard.sync);
-  app.param(  'browserKey', auth.send401IfNotAuthenticated, listboard.browserKey);    
-  app.param(  'browserName', auth.send401IfNotAuthenticated, listboard.browserName);    
-  
-
   //Containers routes
   var container = require('../app/controllers/container');
   app.post(   '/listboards/:listboardId/containers',               auth.send401IfNotAuthenticated, container.create);

@@ -2,10 +2,7 @@ var express = require('express'),
     _ = require('lodash'),
     error = require('./error');
 
-var Application = require('../app/models/application'),
-    User = require('../app/models/user'),
-    AuthCode = require('../app/models/authCode'),
-    AccessToken = require('../app/models/accessToken');
+var AccessToken = require('../app/models/accessToken');
 
 
 var hasValidAccessToken = function (req, res, next) {
@@ -22,23 +19,25 @@ var hasValidAccessToken = function (req, res, next) {
                     error.sendError(res, new error.AccessDenied());
                 }
             })
-            .fail(function (err) {
-                error.sendError(res, new error.ServerError(err.message));
-            });
+            .fail(error.sendIfFailed(res));
     } else {
-        error.sendError(res, new error.InvalidRequest());
+        error.sendError(res, new error.InvalidRequest('access_token query parameter missing or invalid'));
     }
 };
 
+
 module.exports = function (app) {
     //this one will check all routes has access_token query param, we can think to use instead X-Access-Token header or similar
-    app.namespace('/v1', hasValidAccessToken, function () {
+    app.namespace('/v1', hasValidAccessToken, express.json(), function () {
         //define routes there
 
         app.get('/token', function (req, res) {
+            //this is just to for tests
             res.send(req.accessToken.toJSON());
         });
-    });
+
+        require('./routes/browsers')(app);
+    })
 
     //this can be routes without
 }

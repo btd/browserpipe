@@ -1,23 +1,32 @@
 {
-  "manifest_version": 2,
+    "manifest_version": 2,
 
-  "name": "Listboard.it",
-  "description": "This extension is to sync tabs with Listboard.it.",
-  "version": "1.0.2",
+    "name": "Listboard.it",
+    "description": "This extension is to sync tabs with Listboard.it.",
+    "version": "1.0.3",
 
-  "permissions": [
-    "tabs",
-    "storage",
-    "*://*.listboard.it/"
-  ],
+    "permissions": [
+        "tabs",
+        "storage",
+        "*://*.listboard.it/*"
+    ],
 
-  "background": {
-    "scripts": ["jquery.min.js", "background.js"]
-  },
+    "background": {
+        "scripts": ["oauth2/oauth2.js", "sync.js"]
+    },
 
-  "browser_action": {
-    "default_icon": "icon.ico"
-  },
+    "browser_action": {
+        "default_icon": "icon.ico",
+        "default_title": "Listboard.It"
+    },
 
-  "web_accessible_resources": [ "manifest.json" ]
+    "web_accessible_resources": [ "manifest.json" ],
+
+    "content_scripts": [
+        {
+            "matches": ["http://api-local.listboard.it:4001/nothing*"],
+            "js": ["oauth2/oauth2_inject.js"],
+            "run_at": "document_start"
+        }
+    ]
 }

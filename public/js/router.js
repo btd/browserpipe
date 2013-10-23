@@ -10,6 +10,8 @@ var _state = require('./state'),
 var homeView, //react home component instance
     socket; //socket.io client socket
 
+//TODO where is loadNotFoundView ???
+
 var loadHomeView = function(listboardsVisible, listboardSettingsVisible, dialogItemVisible) {
     if(!homeView){
         var that = this;
@@ -166,25 +168,9 @@ var onSelectedFolderChange = function () {
 }
 
 var stateChanges = function() {
-    _state.on('change:selectedListboard', function(value, prev) {
-        if(prev) {//first time of course it is undefined
-            prev.off('change', onSelectedListboardChange);
-        }
+    _state.on('change:selectedListboard', onSelectedListboardChange);
 
-        onSelectedListboardChange(); //because it changed on state
-
-        value.on('change', onSelectedListboardChange);
-    });
-
-    _state.on('change:selectedItem', function(value, prev) {
-        if(prev) {//first time of course it is undefined
-            prev.off('change', onSelectedItemChange);
-        }
-
-        onSelectedItemChange(); //because it changed on state
-
-        value.on('change', onSelectedItemChange);
-    });
+    _state.on('change:selectedItem', onSelectedItemChange);
 
     _state.on('change:selectedFolder', function(value, prev) {
         if(prev) {//first time of course it is undefined

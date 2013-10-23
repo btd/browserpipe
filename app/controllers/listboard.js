@@ -20,7 +20,7 @@ exports.listboard = function (req, res, next, id) {
 //Find listboard by browser key
 exports.browserKey = function (req, res, next, key) {   
     req.browserKey = key;
-    req.listboard = req.user.getListboardByBrowserKey(key);
+    //req.listboard = req.user.getListboardByBrowserKey(key);
     next();
 };
 
@@ -55,8 +55,7 @@ exports.create = function (req, res) {
             type: 'create.listboard',
             data: listboard
         }
-        saveListboard(req, res, listboard, delta)        
-
+        saveListboard(req, res, listboard, delta);    
     }
     else 
         errors.sendBadRequest(res);
@@ -103,172 +102,4 @@ exports.destroy = function (req, res) {
     Item.removeAllByContainers(req.user, listboard.containers)
         .then(saveListboard(req, res, listboard, delta))          
         .done()    
-
-}
-
-var sendCreateListboardDelta = function(req, listboard) {    
-    if(!req.listboard)
-        return req.sockets.forEach(function(s) {
-            s.emit('create.listboard',listboard);
-        });
-    else
-        return;
-}
-
-var fillAndSendCreateContainersDelta = function(req, listboard, type, externalIds) {    
-    return function(){        
-        if(externalIds.length > 0) {
-            var containers = _.map(externalIds, function(externalId){                 
-                return listboard.getContainerByExternalId(externalId);
-            });            
-            req.sockets.forEach(function(s) {
-                s.emit(type, { 
-                    listboardId: listboard._id,
-                    containers: _.compact(containers) 
-                });
-            });
-        }
-    }
-}
-
-var fillAndSendDeleteContainersDelta = function(req, listboard, type, externalIds) {    
-    return function(){        
-        if(externalIds.length > 0) {
-            var containerIds = _.map(externalIds, function(externalId){                 
-                return listboard.getContainerByExternalId(externalId)._id;
-            });            
-            req.sockets.forEach(function(s) {
-                s.emit(type, { 
-                    listboardId: listboard._id,
-                    containerIds: _.compact(containerIds) 
-                });
-            });
-        }
-    }
-}
-
-var fillAndSendCreateUpdateItemsDelta = function(req, type, externalIds) {
-    return function(){                
-        if(externalIds.length > 0) {            
-            q.all(_.map(externalIds, function(externalId){ 
-                return Item.getByExternalId(req.user, externalId);
-            })).spread(function () { 
-                var items = arguments;
-                req.sockets.forEach(function(s) {
-                    s.emit(type, _.compact(items) );
-                });
-            }).done();
-        }
-    }
-}
-
-//Sync windows and tabs
-exports.sync = function (req, res) {
-    //TODO: it has to get the user according to the browser and oauth
-
-    var user = req.user;    
-    var listboard = req.listboard;
-    if(!listboard) {
-        listboard = user.addListboard({type: 0, label: 'My ' + req.browserName + ' browser', browserKey: req.browserKey})        
-    }
-    
-    var windows = req.body.windows;
-    var syncDate = new Date();
-
-    //Updates the sync date
-    listboard.lastSyncDate = syncDate;
-
-    //Create arrays to send Socket.io delta
-    var createdContainersExternalIds = [];
-    var deletedContainersExternalIds = [];
-    var createdItemsExternalIds = [];
-    var updatedtemsExternalIds = [];
-    
-    //Create the new ones
-    var containersExternalIds = _.map(listboard.containers, function(cont){ return cont.externalId});
-    _.map(windows, function (win) {
-        //If there is no container for this window, we create it
-        if(_.indexOf(containersExternalIds, win.externalId) == -1){ 
-            
-            listboard.addContainer({
-                type: 0,
-                externalId: win.externalId
-            });     
-            
-            createdContainersExternalIds.push(win.externalId);
-        }
-    });      
-
-    //Deactivate the closed containers    
-    var windowsExternalIds = _.map(windows, function(win){ return win.externalId});
-    _.map(listboard.containers, function (cont) {        
-        if(_.indexOf(windowsExternalIds, cont.externalId) == -1){ 
-            
-            listboard.removeContainer(cont);
-            
-            deletedContainersExternalIds.push(cont.externalId);
-        }
-    });    
-
-    //Save the listboard
-    user
-        .saveWithPromise()
-        .then(function(){
-
-            //We sync the tabs             
-            var result = _.map(windows, function (win) {
-                
-                //We get the container that already exists
-                var container = listboard.getContainerByExternalId(win.externalId);
-                if(container){                    
-
-                    return Item.findByContainer(user, container._id).then(function(items){
-                        var promises = [];
-
-                        //Create the new items
-                        var itemsExternalIds = _.map(items, function(item){ return item.externalId});
-                        _.map(win.tabs, function (tab) {    
-                            //If it does not contain an item for this tab, we create it
-                            if(_.indexOf(itemsExternalIds, tab.externalId) == -1){ 
-                                
-                                var item = new Item(_.pick(tab, 'externalId', 'title', 'url', 'favicon'));
-                                item.type = 0;
-                                item.user = user._id;
-                                item.containers = [container._id];          
-                                var promise = item.saveWithPromise();
-                                promises.push(promise);
-                                
-                                createdItemsExternalIds.push(item.externalId);
-                            }
-                        });     
-
-                        //Deactivate items for closed tabs
-                        var tabsExternalIds = _.map(win.tabs, function(tab){ return tab.externalId});                    
-                        _.map(items, function (item) {    
-                            //If there is no tab for that item, we deactivate it
-                            if(_.indexOf(tabsExternalIds, item.externalId) == -1) { 
-                                
-                                item.containers.remove(container._id);
-                                var promise = item.saveWithPromise();
-                                promises.push(promise);
-                                
-                                updatedtemsExternalIds.push(item.externalId);
-                            }
-                        });    
-
-                        return q.all(promises);                     
-                    });                       
-                    
-                }
-            });                 
-            return q.all(result);
-        })
-        .then(responses.sendModelId(res, listboard))
-        .fail(errors.ifErrorSendInternalServer(res))
-        .then(sendCreateListboardDelta(req, listboard))
-        .then(fillAndSendCreateContainersDelta(req, listboard, 'bulk.create.container', createdContainersExternalIds))
-        .then(fillAndSendDeleteContainersDelta(req, listboard, 'bulk.delete.container', deletedContainersExternalIds))
-        .then(fillAndSendCreateUpdateItemsDelta(req, 'bulk.create.item', createdItemsExternalIds))
-        .then(fillAndSendCreateUpdateItemsDelta(req, 'bulk.update.item', updatedtemsExternalIds))
-        .done();    
-}
+};

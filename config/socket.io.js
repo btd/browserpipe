@@ -4,6 +4,8 @@ var _ = require('lodash'),
     config = require('./config'),
     io = require('socket.io');
 
+var userUpdate = require('../app/controllers/user_update');
+
 module.exports = function () {
 
     var parseCookie = function (auth, cookieHeader) {
@@ -111,6 +113,13 @@ module.exports = function () {
 
             this.sio.sockets.on("connection", function (socket) {
                 //console.log("user connected: ", socket.handshake.user.name);
+                var client = userUpdate.waitUserUpdates(socket.handshake.user._id, function(event, data) {
+                    socket.emit(event, data);
+                });
+
+                socket.on('disconnect', function(){
+                    client.end();
+                });
             });
         },
         socketMiddleware: function () {
