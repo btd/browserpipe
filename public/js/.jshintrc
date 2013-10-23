@@ -1,5 +1,6 @@
 {
     "browser": true,
+    "node": true,
     "asi": true,
     "smarttabs": true,
     "expr": true

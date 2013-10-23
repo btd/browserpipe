@@ -17,12 +17,14 @@ module.exports = function (socket) {
     });
 
     socket.on('delete.container', function (data) {        
-        _state.removeContainer(data.listboardId, data.containerId);        
+        _state.removeContainer(data.listboardId, data.container);
     });
 
     socket.on('bulk.delete.container', function (data) {
-        for (var index in data) 
-            _state.removeContainer(data.listboardId, data.containerIds[index]);              
+        var l = data.containers.length, listboardId = data.listboardId;
+        while(l--) {
+            _state.removeContainer(listboardId, data.containers[l]);
+        }
     });
 };
 

@@ -10,6 +10,8 @@ var _state = require('./state'),
 var homeView, //react home component instance
     socket; //socket.io client socket
 
+//TODO where is loadNotFoundView ???
+
 var loadHomeView = function(listboardsVisible, listboardSettingsVisible, dialogItemVisible) {
     if(!homeView){
         var that = this;

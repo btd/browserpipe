@@ -1,5 +1,8 @@
 var app = require('./express');
 
+var Q = require('q');
+Q.longStackSupport = true;
+
 require('./oauth2')(app);
 require('./routes')(app);
 
@@ -30,4 +33,4 @@ Application.by({ name: 'Chrome Extension' })
         }
     })
 
-module.exports = app
+module.exports = app;

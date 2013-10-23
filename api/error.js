@@ -44,6 +44,16 @@ module.exports.redirectError = function(req, res, error) {
     }));
 };
 
-module.exports.sendError = function(res, error) {
-    res.send(error.http_code, { error: error.name });
+var sendError = function(res, error) {
+    res.send(error.http_code, { error: error.name, message: error.message });
 };
+
+module.exports.sendError = sendError;
+
+module.exports.sendIfFailed = function(res, errorType) {
+    errorType = errorType || errors.ServerError;
+    return function(err) {
+        console.error('You had an error: ', err.stack);
+        sendError(res, new errorType(err.message));
+    }
+}

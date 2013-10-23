@@ -12,6 +12,14 @@ var common = {
         accessToken: {
             length: 1024
         }
+    },
+    'socket.io': {
+        userUpdateRedisKeyPrefix: 'user_update:'
+    },
+    redis: {
+        host: '127.0.0.1',
+        port: 6379,
+        options: {}
     }
 };
 
@@ -35,8 +43,7 @@ var config = {
         mincer: {
             url: '/public',
             roots: './public'
-        },
-        'socket-io': {}
+        }
     },
     staging: {
         db: {
@@ -47,9 +54,7 @@ var config = {
             roots: './public',
             preprocess: ['img/index/**', 'font/**', 'css/index.css', 'js/apps/index.js'],
             manifest: path.join(__dirname, '..', 'compiled-assets')
-        },
-        precompiledAssets: ['img/index/**', 'font/**', 'css/index.css', 'js/apps/index.js'],
-        'socket-io': {}
+        }
     },
     production: {
         db: {
@@ -60,9 +65,7 @@ var config = {
             roots: './public',
             preprocess: ['img/index/**', 'font/**', 'css/index.css', 'js/apps/index.js'],
             manifest: path.join(__dirname, '..', 'compiled-assets')
-        },
-        precompiledAssets: ['img/index/**', 'font/**', 'css/index.css', 'js/apps/index.js'],
-        'socket-io': {}
+        }
     }
 };
 
