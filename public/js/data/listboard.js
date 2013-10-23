@@ -7,9 +7,8 @@ var _ = require('lodash'),
 
 var Container = model()
     .attr('_id', { primary: true }) // ObjectId text representation
-    .attr('label') // String
-    .attr('items', { collection: Items }) // collection of items
-    .attr('folder') // Folder if type === 2
+    .attr('title') // String
+    .attr('items', { collection: Items }) // collection of items    
     .attr('type') // integer; usually 1*/
     .use(model.nestedObjects);
 
@@ -22,7 +21,7 @@ module.exports.Containers = Containers;
 
 var Listboard = model()
     .attr('_id', { primary: true }) // ObjectId text representation
-    .attr('label') // String
+    .attr('label') // String    
     .attr('containers', { collection: Containers }) // collection of containers
     .attr('type') // integer; usually 1
     .use(model.nestedObjects);

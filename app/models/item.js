@@ -2,7 +2,8 @@
 
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
-    q = require('q');
+    q = require('q'),
+    _ = require('lodash');
 
 //There are to types of items: folder-item and note-item
 var ItemSchema = new Schema({
@@ -15,6 +16,7 @@ var ItemSchema = new Schema({
     ],
     user: {type: Schema.ObjectId, ref: 'User'},
     favicon: {type: String, trim: true},
+    screenshot: {type: String, trim: true},
     title: {type: String, trim: true},
     url: {type: String, trim: true},
     note: {type: String, trim: true},
@@ -30,34 +32,61 @@ var ItemSchema = new Schema({
 
 ItemSchema.plugin(require('../util/mongoose-timestamp'));
 
+ItemSchema.statics.getByExternalId = function (user, externalId) {
+    return this
+        .findOne({user: user, externalId: externalId}, '_id type containers folders title favicon screenshot url note externalId')
+        .execWithPromise();
+}
+
+ItemSchema.statics.getByExternalId = function (user, externalId) {
+    return this
+        .findOne({user: user, externalId: externalId}, '_id type containers folders title favicon screenshot url note externalId')
+        .execWithPromise();
+}
+
 ItemSchema.statics.findByContainer = function (user, containerId) {
     return this
-        .find({user: user, containers: containerId}, '_id type containers folders title favicon url note externalId')
-        .execWithPromise();
-}
-
-ItemSchema.statics.getByExternalId = function (user, externalId) {
-    return this
-        .findOne({user: user, externalId: externalId}, '_id type containers folders title favicon url note externalId')
-        .execWithPromise();
-}
-
-ItemSchema.statics.getByExternalId = function (user, externalId) {
-    return this
-        .findOne({user: user, externalId: externalId}, '_id type containers folders title favicon url note externalId')
+        .find({user: user, containers: containerId}, '_id type containers folders title favicon screenshot url note externalId')
         .execWithPromise();
 }
 
 ItemSchema.statics.findAllByContainers = function (user, containerIds) {
     return this
-        .find({user: user, containers: {$in: containerIds}}, '_id type containers folders title favicon url note externalId')
+        .find({user: user, containers: {$in: containerIds}}, '_id type containers folders title favicon screenshot url note externalId')
         .execWithPromise();
 }
 
 ItemSchema.statics.findAllByFolders = function (user, folderIds) {
     return this
-        .find({user: user, folders: {$in: folderIds}}, '_id type containers folders title favicon url note externalId')
+        .find({user: user, folders: {$in: folderIds}}, '_id type containers folders title favicon screenshot url note externalId')
         .execWithPromise();
+}
+
+ItemSchema.statics.removeAllByContainers = function(user, containerIds) {
+    return Item.findAllByContainers(user, containerIds)
+        .then(function(items) {
+            var promises = _.map(items, function(item) {                            
+                _.each(containerIds, function(containerId) {
+                    item.containers.remove(containerId);
+                });                 
+                return item.saveWithPromise();
+            });
+            return q.all(promises);
+        });
+}
+
+ItemSchema.statics.removeAllByFolders = function(user, folderIds, deltaItems) {
+    return Item.findAllByFolders(user, folderIds)
+        .then(function(items) {
+            var promises = _.map(items, function(item) {                            
+                deltaItems.data.push(item);
+                _.each(folderIds, function(folderId) {
+                    item.folders.remove(folderId);
+                });                 
+                return item.saveWithPromise();
+            });
+            return q.all(promises);
+        });
 }
 
 ItemSchema.statics.byId = function (id) {
@@ -67,7 +96,7 @@ ItemSchema.statics.byId = function (id) {
 var qfindOne = function (obj) {
     return Item
             .findOne(obj)
-            //.findOne(obj, '_id type containers folders title favicon url note externalId') //TODO: why is this not finding the item????
+            //.findOne(obj, '_id type containers folders title favicon screenshot url note externalId') //TODO: why is this not finding the item????
             .execWithPromise();
 };
 

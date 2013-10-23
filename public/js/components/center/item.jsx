@@ -8,13 +8,16 @@ var $ = require('jquery'),
     _ = require('lodash'),
     React = require('react');
 
-var ItemView = React.createClass({   
+var ItemComponent = React.createClass({   
   getTitle: function() {
-    if($.trim(this.props.item.title) != "")
+    if(this.props.item.title.trim() != "")
       return this.props.item.title;
     else
       return this.props.item.url;
   }, 
+  getScreenshot: function() {
+    return this.props.item.screenshot || "/img/no_screenshot.png";
+  },
   navigateToItem: function(e) {
     e.preventDefault();
     page('/item/' + this.props.item._id);
@@ -24,17 +27,19 @@ var ItemView = React.createClass({
   },
   render: function() {
     return (          
-      <li onClick={ this.navigateToItem } class="item"> 
-        <i class="icon-remove remove-item" title="Close"></i>
-        <img class="favicon" src={ this.props.item.favicon } alt="Favicon" />
-        <a onClick={ this.stopPropagation } class="title" target="_blank" href={ decodeURIComponent(this.props.item.url) }>
+      <li onClick={ this.navigateToItem } className="item"> 
+        <i className="icon-remove remove-item" title="Close"></i>
+        <img className="favicon" src={ this.props.item.favicon } alt="Favicon" />
+        <a onClick={ this.stopPropagation } className="title" target="_blank" href={ decodeURIComponent(this.props.item.url) }>
           {  this.getTitle()  } 
         </a>
-        <div class="description">{ this.props.item.note }</div>  		
-        <img class="screenshot" src="/img/no_screenshot.png" alt="ScreenShot" />  
+        <div className="description">{ this.props.item.note }</div>  		
+        <div className="screenshot-container">
+          <img className="screenshot" src={ this.getScreenshot() } alt="ScreenShot" />
+        </div>  
       </li>
     );
   }
 });
 
-module.exports = ItemView
+module.exports = ItemComponent

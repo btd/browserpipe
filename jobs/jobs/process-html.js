@@ -20,6 +20,7 @@ var ProcessHtmlJob = function (options, instance, jobs) {
 
     this.uri = options.uri;
     this.path = options.path;
+    this.uniqueId = options.uniqueId;
 
     this.favicon = true;
     this.styles = false;
@@ -28,6 +29,7 @@ var ProcessHtmlJob = function (options, instance, jobs) {
 
     if (!this.uri) throw new Error('uri required');
     if (!this.path) throw new Error('path required');
+    if (!this.uniqueId) throw new Error('uniqueId required');
 };
 
 ProcessHtmlJob.prototype = Object.create(Job.prototype);
@@ -37,8 +39,8 @@ ProcessHtmlJob.prototype.constructor = ProcessHtmlJob;
 ProcessHtmlJob.prototype.exec = function (done) {
     var that = this;
 
-    var addDownload = function(url, path) {
-        that.jobs.schedule('download', { uri: url, path: path });
+    var addDownload = function(url, path, uniqueId) {
+        that.jobs.schedule('download', { uri: url, path: path, uniqueId: uniqueId });
     };
 
     var removeAllTags = function(window, tagName) {
@@ -58,8 +60,10 @@ ProcessHtmlJob.prototype.exec = function (done) {
         jsdom.env({
             url: this.uri,
             path: this.path,
+            uniqueId: this.uniqueId,
             done: function(err, window) {
-                if(err) throw err;
+                
+                if (err) throw err;
 
                 var links = window.document.getElementsByTagName('link');
 
@@ -76,7 +80,7 @@ ProcessHtmlJob.prototype.exec = function (done) {
 
                             var faviconUrl = _url.toString();
                             var faviconPath = path.resolve(path.dirname(that.path), _url.filename());
-                            console.log('favicon', faviconUrl, faviconPath);
+                            that.log('favicon', faviconUrl, faviconPath);
 
                             link.setAttribute('href', _url.filename());
 
@@ -98,13 +102,16 @@ ProcessHtmlJob.prototype.exec = function (done) {
                 //now save changed file near old
                 //TODO it seems better to use write stream there
                 fs.writeFile(that.path + '.buf', window.document.doctype + window.document.innerHTML, function(err) {
-                    if(err) throw err;
+                    
+                    if (err) throw err;
 
                     fs.unlink(that.path, function(err) {
-                        if(err) throw err;
+                        
+                        if (err) throw err;
 
                         fs.rename(that.path + '.buf', that.path, function(err) {
-                            if(err) throw err;
+                            
+                            if (err) throw err;
 
                             that.log('file ' + that.path + ' processed');
 

@@ -2,7 +2,7 @@
 
 var _ = require('lodash'),
     q = require('q'),
-    mongoose = require('mongoose'),
+    mongoose = require('mongoose'),    
     Item = mongoose.model('Item'),
     responses = require('../util/responses.js'),
     errors = require('../util/errors.js');
@@ -48,10 +48,9 @@ var updateClients = function(req, delta) {
 
 //Create Later listboard
 exports.create = function (req, res) {
-    //You can only create listboards of type 1 
+    //User can only create listboards of type 1 
     if(req.body.type === 1) {
-        var listboard = req.user.addListboard(_.pick(req.body, 'label', 'type'));
-                
+        var listboard = req.user.addListboard(_.pick(req.body, 'label', 'type'));        
         var delta = {
             type: 'create.listboard',
             data: listboard
@@ -66,7 +65,7 @@ exports.create = function (req, res) {
 exports.update = function (req, res) {
 
      //Validate user input
-    req.check('label', 'Please a label').notEmpty();    
+    req.check('label', 'Please enter a label').notEmpty();    
 
     //If errors, flash or send them
     var err = req.validationErrors();
@@ -79,7 +78,7 @@ exports.update = function (req, res) {
             type: 'update.listboard',
             data: listboard
         }
-        saveListboard(req, res, listboard, delta);    
+        saveListboard(req, res, listboard, delta);                
     }
 };
 
@@ -94,21 +93,13 @@ exports.destroy = function (req, res) {
         data: listboard
     }        
 
-    req.user.removeListboard(listboard)
-        .saveWithPromise()
-        .then(function() {
-            //Items with all folders and descendant folders are updated
-            return Item.findAllByContainers(req.user, listboard.containers)                 
-        })
-        .then(function(items) {
-            var promises = _.map(items, function(item) {                            
-                _.each(listboard.containers, function(containerId) {
-                    item.containers.remove(containerId); //TODO where this remove taken???
-                });                    
-                return item.saveWithPromise();
-            });
-            return q.all(promises);
-        })
+    //Deltas for items removed    
+    var deltaItems = { type: 'bulk.update.item', data: [] } 
+
+    req.user.removeListboard(listboard);
+
+    //Remove items from listboard containers
+    Item.removeAllByContainers(req.user, listboard.containers)
         .then(saveListboard(req, res, listboard, delta))          
         .done()    
 };

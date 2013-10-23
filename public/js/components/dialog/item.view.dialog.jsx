@@ -8,7 +8,10 @@ var _state = require('../../state'),
     page = require('page'),
 	LabelEditorComponent = require('../util/label.editor');
 
-var DialogItemView = React.createClass({
+var DialogItemComponent = React.createClass({
+  getScreenshot: function() {
+    return this.props.item.screenshot || "/img/default.screenshot.png";
+  },
   saveItemTitle: function(newTitle, success) {    
      _state.serverUpdateItem(
   	   {
@@ -35,12 +38,12 @@ var DialogItemView = React.createClass({
   },
   render: function() {
     return (
-    		<div onClick={this.stopPropagation} class="modal-view-item modal">
-	        	<div class="modal-header">
-	        		<button onClick={this.closeDialogClick} type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    		<div onClick={this.stopPropagation} className="modal-view-item modal">
+	        	<div className="modal-header">
+	        		<button onClick={this.closeDialogClick} type="button" className="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 					<h4>
-						<img class="favicon" src={ this.props.item.favicon } alt="Favicon" /> 						
-						<span class="edit-item-title">
+						<img className="favicon" src={ this.props.item.favicon } alt="Favicon" /> 						
+						<span className="edit-item-title">
 							<LabelEditorComponent 
 			                    onSaveLabel= {this.saveItemTitle} 
 			                    labelValue= { this.props.item.title? this.props.item.title : this.props.item.url } />
@@ -50,23 +53,25 @@ var DialogItemView = React.createClass({
 						</div>
 					</h4>
 				</div>
-				<div class="modal-body">
-					<ul class="nav nav-tabs"> 
+				<div className="modal-body">
+					<ul className="nav nav-tabs"> 
 						<li><a href="#lists" data-toggle="tab">Lists</a></li>
 						<li><a href="#general" data-toggle="tab">General</a></li> 
 					</ul>
-					<div class="tab-content">
-						<div class="tab-pane active" id="general"> 
-							<img class="item-screenshot img-polaroid" data-src="holder.js/300x200" alt="300x200" src="/img/default.screenshot.png" /> 							
-							<span class="edit-item-note">
+					<div className="tab-content">
+						<div className="tab-pane active" id="general"> 
+							<div className="item-screenshot-container">
+								<img className="item-screenshot img-polaroid" data-src="holder.js/300x200" alt="300x200" src={ this.getScreenshot() } /> 							
+							</div>
+							<span className="edit-item-note">
 								<LabelEditorComponent 
 				                    onSaveLabel= {this.saveItemNote} 
 				                    labelValue= { this.props.item.note }
 				                    defaultLabelValue= "Add note" />
 							</span>								
 						</div>
-						<div class="tab-pane" id="lists">
-							<div class="item-lists"></div>
+						<div className="tab-pane" id="lists">
+							<div className="item-lists"></div>
 						</div>
 					</div>
 				</div>
@@ -75,4 +80,4 @@ var DialogItemView = React.createClass({
   }
 });
 
-module.exports = DialogItemView
+module.exports = DialogItemComponent

@@ -20,8 +20,15 @@ compiled-assets
 # where builded apps lives
 /public/js/apps/
 
+# where screenshots lives
+/public/screenshots/
+
 # this one create by default jobs
 /store/
 
 # current script which build browser tests
 /public/js/test/test.js
+
+# admin
+/admin/public/templates/
+/admin/node_modules/

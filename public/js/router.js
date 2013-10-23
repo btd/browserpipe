@@ -22,18 +22,22 @@ var loadHomeView = function(listboardsVisible, listboardSettingsVisible, dialogI
                 _state.getAllListboards(),
                 _state.getSelectedListboard(),
                 _state.getSelectedItem(),
+                _state.getSelectedFolder(),
                 installed,
                 listboardsVisible,
                 listboardSettingsVisible,
                 dialogItemVisible
             );
         })
-    } else {
+    } else {        
        var selectedListboard = _state.getSelectedListboard();
        var selectedItem = _state.getSelectedItem();
+       var selectedFolder = _state.getSelectedFolder();
+
         homeView.setState({ 
             selectedListboard: selectedListboard,
             selectedItem: selectedItem,
+            selectedFolder: selectedFolder,
             listboardsVisible: listboardsVisible,
             listboardSettingsVisible: listboardSettingsVisible,
             dialogItemVisible: dialogItemVisible
@@ -155,10 +159,28 @@ var onSelectedItemChange = function() {
     }
 }
 
+var onSelectedFolderChange = function () {
+    if(homeView) {
+        homeView.setState({
+            selectedFolder: _state.getSelectedFolder()
+        });
+    }
+}
+
 var stateChanges = function() {
     _state.on('change:selectedListboard', onSelectedListboardChange);
 
     _state.on('change:selectedItem', onSelectedItemChange);
+
+    _state.on('change:selectedFolder', function(value, prev) {
+        if(prev) {//first time of course it is undefined
+            prev.off('change', onSelectedFolderChange);
+        }
+
+        onSelectedFolderChange(); //because it changed on state
+
+        value.on('change', onSelectedFolderChange);
+    });
 
     var addedOrDeletedListboard = function() {
         homeView.setState({

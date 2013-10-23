@@ -29,14 +29,14 @@
     "socket.io": "~0.9.16",
     "express": "~3.4.0",
     "express-namespace": "~0.1.1",
-    "superagent": "~0.15.4",
+    "superagent": "0.15.6",
     "kue": "~0.6.2",
     "jsdom": "~0.8.4",
     "URIjs": "~1.11.2",
     "mkdirp": "~0.3.5",
     "url-to-screenshot": "~0.4.1",
     "redis": "~0.8.6",
-    "react-tools": "~0.4.1",
+    "react-tools": "~0.5.1",
     "hiredis": "~0.1.15"
   },
   "devDependencies": {
@@ -52,7 +52,7 @@
     "grunt-contrib-jshint": "~0.6.3",
     "grunt-contrib-watch": "~0.5.3",
     "grunt-develop": "~0.2.1",
-    "reactify": "~0.3.1",
+    "reactify": "~0.4.0",
     "grunt-browserify": "~1.2.6"
   }
 }

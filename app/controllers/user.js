@@ -59,36 +59,25 @@ exports.create = function (req, res) {
     user.provider = 'local' //for passport
     
     //Creates initial data
-    //Root folders
-    var foldersFolder = new Folder({ label: 'Folders', user: user });
-    var trashFolder = new Folder({ label: 'Trash', user: user });
-    var importsFolder = new Folder({ label: 'Imports', user: user });
 
-    //Create folders
-    var readLaterFolder = foldersFolder.createChildFolder("Read Later");
-    var coolSitesFolder = foldersFolder.createChildFolder("Cool Sites");
+    //Create a listboard
+    user.addListboard({ type: 1, label: 'Example listboard'})
 
-    //Creates an empty listboard
-    user.addListboard({ type: 1, label: 'Empty listboard'})
+    //Create a root folder
+    var rootFolder = new Folder({ label: 'Archive', user: user });
+
+    //Create child folders
+    var readLaterFolder = rootFolder.createChildFolder("Read Later");
+    var coolSitesFolder = rootFolder.createChildFolder("Cool Sites");
    
     //Sets current listboard to recently created one
     user.saveWithPromise()
         .then(function() {
             return q.all([
-                foldersFolder.saveWithPromise(),
-                trashFolder.saveWithPromise(),
-                importsFolder.saveWithPromise(),
+                rootFolder.saveWithPromise(),
                 readLaterFolder.saveWithPromise(),
                 coolSitesFolder.saveWithPromise(),                    
             ]);
-        })
-        .then(function () {
-            //Create a listboard with folders
-            //We need to do it later so the folders are saved
-            user.addListboard({ type: 1, label: 'My future  listboard'})
-                .addContainerByFolder(readLaterFolder)
-                .addContainerByFolder(coolSitesFolder);                           
-            return user.saveWithPromise(); 
         })
         .then(function () {
             res.format({
