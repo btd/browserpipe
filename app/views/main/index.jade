@@ -2,12 +2,12 @@ extends ../layouts/index
 
 block content
             
-  .reasons.pull-left           
+  .reasons
     h3 NO MORE 1000 TABS IN YOUR BROWSER!
     h3 SYNC THEM WITH LISTBOARD.IT
     h3 DRAG AND DROP FOR LATER USE
     h3 IS THAT EASY!
-  .box.register-box.border.pull-right
+  .box.register-box.border
     #thanks_box.hide
       h2 Thank you!
       h4 
@@ -31,63 +31,67 @@ block content
         input(type="submit", class="btn btn-success btn-block btn-big", value="Count me in!")
 
 block center
-  #demoappcont
-    != image_tag('img/index/capture.png')
-  
-  .box.features-box
-    h2 You will love it!
-    br    
-    h4 
-      i.icon-check-sign
-      | &nbsp;&nbsp; Real time updates      
-    h4 
-      i.icon-check-sign
-      | &nbsp;&nbsp; Save full browser sessions
-    h4 
-      i.icon-check-sign
-      | &nbsp;&nbsp; Drag and drop specific tabs for later user    
-    h4 
-      i.icon-check-sign
-      | &nbsp;&nbsp; Archive tabs for future use (bookmark)
-    h4 
-      i.icon-check-sign
-      | &nbsp;&nbsp; Organize archived tabs within folders
-    h4 
-      i.icon-check-sign
-      | &nbsp;&nbsp; Import URLs from external sources
-    h4 
-      i.icon-check-sign
-      | &nbsp;&nbsp; Export data to different formats
-    h4 
-      i.icon-check-sign
-      | &nbsp;&nbsp; Single page application
-    
-  .box.register-box    
-    form#form_invitation2(action="/invites", method="post")
-      h2 Interested?
-      .control-group
-          input(type="text", name="invite_email2", placeholder="Enter your email address", class="input-block-level")
-          span.help-inline.hide Please enter a valid email
-          .note-block No spam, we will only send you an invitation
-        .control-group
-          input(type="submit", class="btn btn-success btn-block btn-big", value="Sign me in!")    
-    #thanks_box2.hide
-      h2 Thank you!
-      h4 
-        | We will send you an invitation soon. 
-      h4
-        | If you want to let us know why you would like an account or just share some feedback, please email us to 
-        a(href="mailto:info@listboard.it", target="_blank") info@listboard.it
-      h4
-        | For more updates, 
-        a(href="http://twitter.com/listboardit", target="_blank") follow us 
-        | on Twitter.
+  .row-fluid.center.row-inner
+    .span12 
+      .row-fluid 
+        .inner
+          #demoappcont
+            != image_tag('img/index/capture.png')
+          
+          .box.features-box
+            h2 You will love it!
+            br    
+            h4 
+              i.icon-check-sign
+              | &nbsp;&nbsp; Real time updates      
+            h4 
+              i.icon-check-sign
+              | &nbsp;&nbsp; Save full browser sessions
+            h4 
+              i.icon-check-sign
+              | &nbsp;&nbsp; Drag and drop specific tabs for later user    
+            h4 
+              i.icon-check-sign
+              | &nbsp;&nbsp; Archive tabs for future use (bookmark)
+            h4 
+              i.icon-check-sign
+              | &nbsp;&nbsp; Organize archived tabs within folders
+            h4 
+              i.icon-check-sign
+              | &nbsp;&nbsp; Import URLs from external sources
+            h4 
+              i.icon-check-sign
+              | &nbsp;&nbsp; Export data to different formats
+            h4 
+              i.icon-check-sign
+              | &nbsp;&nbsp; Single page application
+            
+          .box.register-box    
+            form#form_invitation2(action="/invites", method="post")
+              h2 Interested?
+              .control-group
+                  input(type="text", name="invite_email2", placeholder="Enter your email address", class="input-block-level")
+                  span.help-inline.hide Please enter a valid email
+                  .note-block No spam, we will only send you an invitation
+                .control-group
+                  input(type="submit", class="btn btn-success btn-block btn-big", value="Sign me in!")    
+            #thanks_box2.hide
+              h2 Thank you!
+              h4 
+                | We will send you an invitation soon. 
+              h4
+                | If you want to let us know why you would like an account or just share some feedback, please email us to 
+                a(href="mailto:info@listboard.it", target="_blank") info@listboard.it
+              h4
+                | For more updates, 
+                a(href="http://twitter.com/listboardit", target="_blank") follow us 
+                | on Twitter.
 
-  .box.last
-    h2 Comments?
-    p 
-      | We would love to 
-      a(href="mailto:info@listboard.it", target="_blank") hear from you
+          .box.last
+            h2 Comments?
+            p 
+              | We would love to 
+              a(href="mailto:info@listboard.it", target="_blank") hear from you
         
 block footer
   :js
