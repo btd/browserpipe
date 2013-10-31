@@ -1,5 +1,6 @@
 @import 'bootstrap.less';
 @import 'base.less';
+@import 'index.responsive.less';
 
 @baseWidth: 978px;
 
@@ -24,13 +25,12 @@ body {
 .inner {
 	margin-left: auto;
 	margin-right: auto;
-	width: @baseWidth;
+	max-width: @baseWidth;
 }
 
 header{	
 
 	.outer {
-		margin-top: 20px;		
 		border-bottom: 1px solid rgba(255,255,255,.2);	
 
 		.inner {
@@ -40,11 +40,11 @@ header{
 			border-bottom: 1px solid rgba(3,3,3,.2);
 
 			#logo a {
+				margin-left: 12px;
 				color: #EFEFEF;
 				font-weight: 100;
 				text-decoration: none;
-				text-shadow: 0 0 5px rgba(192,228,255,.12);
-				font-size: 40px;
+				text-shadow: 0 0 5px rgba(192,228,255,.12);				
 				letter-spacing: -1px;
 			}
 
@@ -58,12 +58,10 @@ header{
 						display: block;
 						padding: 10px 20px;
 						color: rgba(255,255,255,.5);
-						text-decoration: none;
-						font-size: 18px;
+						text-decoration: none;						
 
 						.icon-twitter {
-							text-decoration: none;
-							font-size: 30px;
+							text-decoration: none;							
 							color: #EFEFEF;
 						}
 					}				
@@ -82,17 +80,34 @@ header{
 	margin-left: 0;
 }
 
-.box {
-	width: 400px;
-	margin: 60px auto 0px;
+.reasons {
+	color:#EFEFEF;
+
+
+	text-shadow:0px 1px 1px rgba(0, 0, 0, 0.6);
+
+	h3 {
+		text-transform: uppercase;		
+		line-height:1.5;
+		font-weight:600;
+		margin-bottom: 40px;
+		padding-bottom: 20px;
+
+		background: image_url('img/index/line.png') no-repeat 5% bottom;
+	}
+}
+
+.box{
+	margin: auto;
+	padding:20px 40px;
+	color:#3c4446;
 	text-align: center;	
 	color: #3c4446;
 
 	&.last {
 		margin-bottom: 100px;
 	}
-	h2 {
-		font-size: 30px;
+	h2 {		
 		opacity: 0.95;
 	}
 	h3 {
@@ -108,59 +123,8 @@ header{
 		font-weight: bold;
   		color: #999;
 	}
-}
-
-.reasons {
-	color:#EFEFEF;
-	padding:40px 0px 40px;
-	width:460px;
-
-	text-shadow:0px 1px 1px rgba(0, 0, 0, 0.6);
-
-	h3 {
-		text-transform: uppercase;
-		font-size:22px;
-		line-height:1.5;
-		font-weight:600;
-		margin-bottom: 40px;
-		padding-bottom: 20px;
-
-		background: image_url('img/index/line.png') no-repeat 5% bottom;
-	}
-}
-
-.box{
-	width:380px;
-	margin:45px auto 50px;
-	padding:20px 40px;
-	color:#3c4446;
-
 	h4 {
 		text-align: left;
-	}
-
-	&.register-box{
-		width:380px;
-	}
-
-	&.features-box{
-		width:400px;
-	}
-
-	&.login-box, &.signup-box{
-		width:280px;
-	}
-
-	&.border {
-		background:rgba(255, 255, 255, 0.8);
-		.box-shadow(0px 2px 2px rgba(0, 0, 0, 0.5));
-		.border-radius(3px);
-	}	
-	h2 {
-		font-size:30px;
-		opacity:0.95;
-	}
-	h4 {
 		line-height:1.5;
 		opacity:0.95;
 
@@ -169,6 +133,22 @@ header{
 			color: @blue1;
 		}
 	}
+	&.register-box{
+		max-width:380px;
+	}
+	&.features-box{
+		max-width:400px;
+	}
+
+	&.login-box, &.signup-box{
+		max-width:280px;
+	}
+
+	&.border {
+		background:rgba(255, 255, 255, 0.8);
+		.box-shadow(0px 2px 2px rgba(0, 0, 0, 0.5));
+		.border-radius(3px);
+	}		
 	input[type='text'], input[type='password'] {
 		margin:10px 0px 0px;
 		font-size:18px;
