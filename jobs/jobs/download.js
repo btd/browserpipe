@@ -33,7 +33,10 @@ DownloadJob.prototype.exec = function (done) {
     var req = request
         .get(this.uri)
         .set('User-Agent', this.userAgent)
-        .set('Accept-Encoding', 'gzip,deflate');//lets prefer gzip by default
+        .set('Accept-Encoding', 'gzip,deflate') //lets prefer gzip by default
+        .end(function (err, res) {            
+            if (err) return done(err);
+        });
 
     if(!this.path) {
         var filename = path.basename(new URL(this.uri).filename() || '/index.html');
@@ -45,7 +48,7 @@ DownloadJob.prototype.exec = function (done) {
 
     mkdirp(path.dirname(this.path), function(err) {
         
-        if (err) throw err;
+        if (err) return done(err);
 
         var stream = fs.createWriteStream(that.path);
 

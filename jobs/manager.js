@@ -10,6 +10,17 @@ kue.redis.createClient = function() {
 
 var Jobs = function(options) {
     this.queue = kue.createQueue();
+
+    //Removed job upon completion
+    this.queue.on('job complete', function(id){
+      kue.Job.get(id, function(err, job){
+        if (err) return;
+        job.remove(function(err){
+          if (err) throw err;
+          console.log('removed completed job #%d', job.id);
+        });
+      });
+    });
 };
 
 Jobs.prototype = {
@@ -22,7 +33,13 @@ Jobs.prototype = {
         var that = this;
 
         this.queue.process(name, function(j, done) {
-            (new jobType(j.data, j, that)).exec(done);
+            try {                
+                (new jobType(j.data, j, that)).exec(done);
+            } catch (err) {
+                // handle the error safely
+                console.log('Error in job "' + name + '": ' + err);
+                done(err);
+            }            
         });
     },
 

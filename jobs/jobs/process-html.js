@@ -63,7 +63,7 @@ ProcessHtmlJob.prototype.exec = function (done) {
             uniqueId: this.uniqueId,
             done: function(err, window) {
                 
-                if (err) throw err;
+                if (err) return done(err);
 
                 var links = window.document.getElementsByTagName('link');
 
@@ -103,15 +103,15 @@ ProcessHtmlJob.prototype.exec = function (done) {
                 //TODO it seems better to use write stream there
                 fs.writeFile(that.path + '.buf', window.document.doctype + window.document.innerHTML, function(err) {
                     
-                    if (err) throw err;
+                    if (err) return done(err);
 
                     fs.unlink(that.path, function(err) {
                         
-                        if (err) throw err;
+                        if (err) return done(err);
 
                         fs.rename(that.path + '.buf', that.path, function(err) {
                             
-                            if (err) throw err;
+                            if (err) return done(err);
 
                             that.log('file ' + that.path + ' processed');
 

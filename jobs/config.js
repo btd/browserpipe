@@ -10,7 +10,7 @@ var common = {
     },
     redis: {
         host: '127.0.0.1',
-        post: 6379
+        port: 6379
     }
 };
 

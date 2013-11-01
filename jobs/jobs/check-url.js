@@ -33,7 +33,7 @@ CheckUrlJob.prototype.exec = function (done) {
         .set('User-Agent', this.userAgent)
         .end(function (err, res) {
             
-            if (err) throw err;
+            if (err) return done(err);
 
             var mime = res.headers['content-type'];
 
