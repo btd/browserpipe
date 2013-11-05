@@ -33,3 +33,6 @@ compiled-assets
 /admin/public/templates/
 /admin/node_modules/
 *.rdb
+
+#logs
+/logs/*
