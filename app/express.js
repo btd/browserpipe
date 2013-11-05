@@ -1,6 +1,6 @@
 var express = require('express'),
     mongoStore = require('connect-mongo')(express),
-    config = require('./config');    
+    config = require('./../config');
 
 // App settings and middleware
 module.exports = function (app, config, passport) {
@@ -11,7 +11,7 @@ module.exports = function (app, config, passport) {
     app.set('view options', {'layout': false});
 
     var cm = new (require('./connect-mincer'))(config.mincer);
-    require('./less-mincer')(cm.environment);
+    require('./middlewares/less-mincer')(cm.environment);
     cm.preprocess();
     app.use(cm.middleware());
     app.use(config.mincer.url, cm.createServer());
@@ -82,7 +82,7 @@ module.exports = function (app, config, passport) {
     var server = http.createServer(app)
 
     // Configure socket.io
-    var sio = require('../config/socket.io');
+    var sio = require('./socket.io');
     
 
     //Initialize socket io

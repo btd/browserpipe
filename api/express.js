@@ -1,6 +1,8 @@
 var express = require('express');
 require('express-namespace');
 
+var logger = require('rufus').getLogger('express');
+
 var app = express();
 
 app.set('views', __dirname + '/view');
@@ -9,16 +11,11 @@ app.set('view options', { 'layout': false });
 
 app.use(express.static(__dirname + '/../public'));
 
-
-app.configure('development', function () {
-    app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-
-    //set up colour logger for dev
-    /*app.use(express.logger({ format: 'dev', stream: {
-       write: function(msg) {
-           logger.info(msg.substr(0, msg.length - 1))
-       }
-    }}));*/
-});
+// proxy logging via rufus
+app.use(express.logger({ format: 'short', stream: {
+    write: function(msg) {
+        logger.info(msg.substr(0, msg.length - 1));
+    }
+}}));
 
 module.exports = app;

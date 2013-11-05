@@ -1,0 +1,836 @@
+[2013/10/25 15:42:24.595] INFO  express - 127.0.0.1 - GET / HTTP/1.1 404 73 - 3 ms
+[2013/10/25 15:42:34.365] INFO  express - 127.0.0.1 - GET / HTTP/1.1 404 73 - 0 ms
+[2013/10/27 14:12:16.937] INFO  express - 127.0.0.1 - POST /v1/browsers/be484f80-98fe-48d6-9532-c76e4f57c532?access_token=cffc2e296e4e775aaa3bbb15257436db0a742a7a0f15271a61697faa3ef661a796abea247476cbaf39c0332c3ad8b48f3274ad07f8225d07eb18f9da0c44ce7d HTTP/1.1 200 2 - 126 ms
+[2013/10/27 14:16:29.934] INFO  express - 127.0.0.1 - GET / HTTP/1.1 404 73 - 3 ms
+[2013/10/27 14:42:39.037] ERROR root - Uncaught exception handled
+ReferenceError: ProcessHtmlJob is not defined
+    at Object.<anonymous> (/Users/den/Projects/listboard.it/jobs/jobs/screenshot.js:28:1)
+    at Module._compile (module.js:456:26)
+    at Object.Module._extensions..js (module.js:474:10)
+    at Module.load (module.js:356:32)
+    at Function.Module._load (module.js:312:12)
+    at Module.require (module.js:364:17)
+    at require (module.js:380:17)
+    at Object.<anonymous> (/Users/den/Projects/listboard.it/jobs/app.js:14:24)
+    at Module._compile (module.js:456:26)
+    at Object.Module._extensions..js (module.js:474:10)
+[2013/10/27 14:43:27.602] INFO  job.check-url - [object Arguments]
+[2013/10/27 14:43:27.711] INFO  job.check-url - [object Arguments]
+[2013/10/27 14:43:27.712] INFO  job.check-url - [object Arguments]
+[2013/10/27 14:43:57.518] INFO  job.check-url - check-url
+[2013/10/27 14:43:57.609] INFO  job.check-url - Got request check content-type: text/html; charset=UTF-8
+[2013/10/27 14:43:57.610] INFO  job.check-url - Html content - schedule download
+[2013/10/27 14:44:46.657] INFO  job.check-url - check-url
+[2013/10/27 14:44:46.666] INFO  job.undefined - undefined
+[2013/10/27 14:44:46.770] INFO  job.check-url - Got request check content-type: text/html; charset=UTF-8
+[2013/10/27 14:44:46.770] INFO  job.check-url - Html content - schedule download
+[2013/10/27 14:47:07.175] INFO  job.check-url - check-url
+[2013/10/27 14:47:07.183] INFO  job.undefined - undefined
+[2013/10/27 14:47:07.312] INFO  job.check-url - Got request check content-type: text/html; charset=UTF-8
+[2013/10/27 14:47:07.312] INFO  job.check-url - Html content - schedule download
+[2013/10/27 14:47:07.312] INFO  job.check-url - undefined
+[2013/10/27 14:47:07.320] INFO  job.undefined - undefined
+[2013/10/27 14:47:07.322] INFO  job.undefined - Prepare location for file: public/screenshots/l98rflz4mljlxbruatry5z1e/index.html
+[2013/10/27 14:47:07.765] INFO  job.undefined - Finish download: public/screenshots/l98rflz4mljlxbruatry5z1e/index.html
+[2013/10/27 14:47:07.765] INFO  job.undefined - Html content - schedule processing
+[2013/10/27 14:47:07.765] INFO  job.undefined - undefined
+[2013/10/27 14:47:07.772] INFO  job.undefined - undefined
+[2013/10/27 14:47:08.606] INFO  job.undefined - found links
+[2013/10/27 14:47:08.616] INFO  job.undefined - script removed
+[2013/10/27 14:47:08.622] INFO  job.undefined - object removed
+[2013/10/27 14:47:08.633] INFO  job.undefined - iframe removed
+[2013/10/27 14:47:08.639] INFO  job.undefined - audio removed
+[2013/10/27 14:47:08.645] INFO  job.undefined - video removed
+[2013/10/27 14:47:08.706] INFO  job.undefined - file public/screenshots/l98rflz4mljlxbruatry5z1e/index.html processed
+[2013/10/27 14:47:08.707] INFO  job.undefined - undefined
+[2013/10/27 14:47:11.509] INFO  job.undefined - Screenshot of http://habrahabr.ru saved public/screenshots/rfixnhcc4dk8ijsgfqphc47d/screenshot.jpg
+[2013/10/27 14:47:11.510] INFO  job.undefined - undefined
+[2013/10/27 14:48:23.603] INFO  job.check-url - check-url
+[2013/10/27 14:48:23.611] INFO  job.undefined - undefined
+[2013/10/27 14:48:23.715] INFO  job.check-url - Got request check content-type: text/html; charset=UTF-8
+[2013/10/27 14:48:23.716] INFO  job.check-url - Html content - schedule download
+[2013/10/27 14:48:23.716] INFO  job.check-url - undefined
+[2013/10/27 14:48:23.731] INFO  job.undefined - undefined
+[2013/10/27 14:48:23.733] INFO  job.undefined - Prepare location for file: public/screenshots/1e77cjphxhjqe4yx6vscwui2/index.html
+[2013/10/27 14:48:24.168] INFO  job.undefined - Finish download: public/screenshots/1e77cjphxhjqe4yx6vscwui2/index.html
+[2013/10/27 14:48:24.169] INFO  job.undefined - Html content - schedule processing
+[2013/10/27 14:48:24.169] INFO  job.undefined - undefined
+[2013/10/27 14:48:24.175] INFO  job.undefined - undefined
+[2013/10/27 14:48:43.958] INFO  job.check-url - check-url
+[2013/10/27 14:48:43.966] INFO  job.undefined - undefined
+[2013/10/27 14:48:44.075] INFO  job.check-url - Got request check content-type: text/html; charset=UTF-8
+[2013/10/27 14:48:44.076] INFO  job.check-url - Html content - schedule download
+[2013/10/27 14:48:44.077] INFO  job.check-url - undefined
+[2013/10/27 14:48:44.087] INFO  job.undefined - undefined
+[2013/10/27 14:48:44.089] INFO  job.undefined - Prepare location for file: public/screenshots/8nnh6lvwtyj9di3195u235fr/index.html
+[2013/10/27 14:48:44.528] INFO  job.undefined - Finish download: public/screenshots/8nnh6lvwtyj9di3195u235fr/index.html
+[2013/10/27 14:48:44.529] INFO  job.undefined - Html content - schedule processing
+[2013/10/27 14:48:44.529] INFO  job.undefined - undefined
+[2013/10/27 14:48:44.538] INFO  job.undefined - undefined
+[2013/10/27 14:49:14.278] INFO  job.check-url - check-url
+[2013/10/27 14:49:14.290] INFO  job.undefined - undefined
+[2013/10/27 14:49:14.419] INFO  job.check-url - Got request check content-type: text/html; charset=UTF-8
+[2013/10/27 14:49:14.420] INFO  job.check-url - Html content - schedule download
+[2013/10/27 14:49:14.421] INFO  job.check-url - undefined
+[2013/10/27 14:49:14.429] INFO  job.undefined - undefined
+[2013/10/27 14:49:14.431] INFO  job.undefined - Prepare location for file: public/screenshots/ghysqd7fuwezniaqwk7r2h4z/index.html
+[2013/10/27 14:49:14.853] INFO  job.undefined - Finish download: public/screenshots/ghysqd7fuwezniaqwk7r2h4z/index.html
+[2013/10/27 14:49:14.853] INFO  job.undefined - Html content - schedule processing
+[2013/10/27 14:49:14.854] INFO  job.undefined - undefined
+[2013/10/27 14:49:14.860] INFO  job.undefined - undefined
+[2013/10/27 14:49:15.682] INFO  job.undefined - found links
+[2013/10/27 14:49:15.693] INFO  job.undefined - script removed
+[2013/10/27 14:49:15.699] INFO  job.undefined - object removed
+[2013/10/27 14:49:15.710] INFO  job.undefined - iframe removed
+[2013/10/27 14:49:15.716] INFO  job.undefined - audio removed
+[2013/10/27 14:49:15.723] INFO  job.undefined - video removed
+[2013/10/27 14:49:15.782] INFO  job.undefined - file public/screenshots/ghysqd7fuwezniaqwk7r2h4z/index.html processed
+[2013/10/27 14:49:15.782] INFO  job.undefined - undefined
+[2013/10/27 14:52:45.337] INFO  jobs - check-url
+[2013/10/27 14:52:45.340] INFO  jobs - screenshot
+[2013/10/27 14:52:45.362] INFO  job.check-url - check-url
+[2013/10/27 14:52:45.367] INFO  job.undefined - undefined
+[2013/10/27 14:52:45.521] INFO  job.check-url - Got request check content-type: text/html; charset=UTF-8
+[2013/10/27 14:52:45.521] INFO  job.check-url - Html content - schedule download
+[2013/10/27 14:52:45.521] INFO  jobs - download-html
+[2013/10/27 14:52:45.522] INFO  job.check-url - undefined
+[2013/10/27 14:52:45.530] INFO  job.undefined - undefined
+[2013/10/27 14:52:45.533] INFO  job.undefined - Prepare location for file: public/screenshots/ni1nwi5zvahr7zebtwfl6rbn/index.html
+[2013/10/27 14:52:45.939] INFO  job.undefined - Finish download: public/screenshots/ni1nwi5zvahr7zebtwfl6rbn/index.html
+[2013/10/27 14:52:45.940] INFO  job.undefined - Html content - schedule processing
+[2013/10/27 14:52:45.940] INFO  jobs - process-html
+[2013/10/27 14:52:45.941] INFO  job.undefined - undefined
+[2013/10/27 14:52:45.948] INFO  job.undefined - undefined
+[2013/10/27 14:52:46.825] INFO  job.undefined - found links
+[2013/10/27 14:52:46.836] INFO  job.undefined - script removed
+[2013/10/27 14:52:46.844] INFO  job.undefined - object removed
+[2013/10/27 14:52:46.854] INFO  job.undefined - iframe removed
+[2013/10/27 14:52:46.861] INFO  job.undefined - audio removed
+[2013/10/27 14:52:46.867] INFO  job.undefined - video removed
+[2013/10/27 14:52:46.930] INFO  job.undefined - file public/screenshots/ni1nwi5zvahr7zebtwfl6rbn/index.html processed
+[2013/10/27 14:52:46.930] INFO  job.undefined - undefined
+[2013/10/27 14:53:41.694] INFO  jobs - check-url
+[2013/10/27 14:53:41.698] INFO  jobs - screenshot
+[2013/10/27 14:53:41.720] INFO  job.check-url - check-url
+[2013/10/27 14:53:41.725] INFO  job.screenshot - screenshot
+[2013/10/27 14:53:41.870] INFO  job.check-url - Got request check content-type: text/html; charset=UTF-8
+[2013/10/27 14:53:41.870] INFO  job.check-url - Html content - schedule download
+[2013/10/27 14:53:41.870] INFO  jobs - download-html
+[2013/10/27 14:53:41.871] INFO  job.check-url - undefined
+[2013/10/27 14:53:41.879] INFO  job.download-html - download-html
+[2013/10/27 14:53:41.882] INFO  job.download-html - Prepare location for file: public/screenshots/6mkc65y5tmgoduevrpaqt5pp/index.html
+[2013/10/27 14:53:42.349] INFO  job.download-html - Finish download: public/screenshots/6mkc65y5tmgoduevrpaqt5pp/index.html
+[2013/10/27 14:53:42.349] INFO  job.download-html - Html content - schedule processing
+[2013/10/27 14:53:42.350] INFO  jobs - process-html
+[2013/10/27 14:53:42.351] INFO  job.download-html - undefined
+[2013/10/27 14:53:42.358] INFO  job.process-html - process-html
+[2013/10/27 14:54:06.683] INFO  jobs - check-url
+[2013/10/27 14:54:06.687] INFO  jobs - screenshot
+[2013/10/27 14:54:06.711] INFO  job.check-url - check-url
+[2013/10/27 14:54:06.717] INFO  job.screenshot - screenshot
+[2013/10/27 14:54:06.865] INFO  job.check-url - Got request check content-type: text/html; charset=UTF-8
+[2013/10/27 14:54:06.867] INFO  job.check-url - Html content - schedule download
+[2013/10/27 14:54:06.870] INFO  jobs - download-html
+[2013/10/27 14:54:06.872] INFO  job.check-url - undefined
+[2013/10/27 14:54:06.878] INFO  job.download-html - download-html
+[2013/10/27 14:54:06.881] INFO  job.download-html - Prepare location for file: public/screenshots/dsckkvrc2o6mm69lldu6azwp/index.html
+[2013/10/27 14:54:30.472] INFO  jobs - check-url
+[2013/10/27 14:54:30.476] INFO  jobs - screenshot
+[2013/10/27 14:54:30.496] INFO  job.check-url - check-url
+[2013/10/27 14:54:30.502] INFO  job.screenshot - screenshot
+[2013/10/27 14:55:09.522] INFO  jobs - check-url
+[2013/10/27 14:55:09.526] INFO  jobs - screenshot
+[2013/10/27 14:55:09.545] INFO  job.check-url - check-url
+[2013/10/27 14:55:09.552] INFO  job.screenshot - screenshot
+[2013/10/27 14:56:24.944] ERROR root - Uncaught exception handled
+Error: connect ETIMEDOUT
+    at errnoException (net.js:901:11)
+    at Object.afterConnect [as oncomplete] (net.js:892:19)
+[2013/10/27 14:57:51.068] INFO  jobs - check-url
+[2013/10/27 14:57:51.071] INFO  jobs - screenshot
+[2013/10/27 14:57:51.095] INFO  job.check-url - check-url
+[2013/10/27 14:57:51.101] INFO  job.screenshot - screenshot
+[2013/10/27 14:58:22.830] INFO  jobs - schedule job check-url with {"uri":"http://habrahabr.ru"}
+[2013/10/27 14:58:22.833] INFO  jobs - schedule job screenshot with {"uri":"http://habrahabr.ru"}
+[2013/10/27 14:58:22.854] INFO  job.check-url - start job check-url with data {"uri":"http://habrahabr.ru"}
+[2013/10/27 14:58:22.860] INFO  job.screenshot - start job screenshot with data {"uri":"http://habrahabr.ru"}
+[2013/10/27 14:58:52.930] ERROR root - Uncaught exception handled
+Error: getaddrinfo ENOTFOUND
+    at errnoException (dns.js:37:11)
+    at Object.onanswer [as oncomplete] (dns.js:124:16)
+[2013/10/27 16:23:18.396] INFO  jobs - schedule job check-url with {"uri":"http://habrahabr.ru"}
+[2013/10/27 16:23:18.400] INFO  jobs - schedule job screenshot with {"uri":"http://habrahabr.ru"}
+[2013/10/27 16:23:18.421] INFO  job.check-url - start job check-url with data {"uri":"http://habrahabr.ru"}
+[2013/10/27 16:23:18.426] INFO  job.screenshot - start job screenshot with data {"uri":"http://habrahabr.ru"}
+[2013/10/27 16:23:18.583] INFO  job.check-url - Got request check content-type: text/html; charset=UTF-8
+[2013/10/27 16:23:18.584] INFO  job.check-url - Html content - schedule download
+[2013/10/27 16:23:18.584] INFO  jobs - schedule job download-html with {"uri":"http://habrahabr.ru","uniqueId":"ufmnguy8zu9jq8rqy2y9ywps"}
+[2013/10/27 16:23:18.585] INFO  job.check-url - finish job undefined within 165 ms
+[2013/10/27 16:23:18.592] INFO  job.download-html - start job download-html with data {"uri":"http://habrahabr.ru","uniqueId":"4eaoytrp5fh29xihyi38pmug"}
+[2013/10/27 16:23:18.595] INFO  job.download-html - Prepare location for file: public/screenshots/4eaoytrp5fh29xihyi38pmug/index.html
+[2013/10/27 16:23:19.001] INFO  job.download-html - Finish download: public/screenshots/4eaoytrp5fh29xihyi38pmug/index.html
+[2013/10/27 16:23:19.001] INFO  job.download-html - Html content - schedule processing
+[2013/10/27 16:23:19.001] INFO  jobs - schedule job process-html with {"uri":"http://habrahabr.ru","path":"public/screenshots/4eaoytrp5fh29xihyi38pmug/index.html","uniqueId":"4eaoytrp5fh29xihyi38pmug"}
+[2013/10/27 16:23:19.003] INFO  job.download-html - finish job undefined within 410 ms
+[2013/10/27 16:23:19.009] INFO  job.process-html - start job process-html with data {"uri":"http://habrahabr.ru","path":"public/screenshots/4eaoytrp5fh29xihyi38pmug/index.html","uniqueId":"4eaoytrp5fh29xihyi38pmug"}
+[2013/10/27 16:23:19.722] INFO  job.process-html - found links
+[2013/10/27 16:23:19.731] INFO  job.process-html - script removed
+[2013/10/27 16:23:19.738] INFO  job.process-html - object removed
+[2013/10/27 16:23:19.744] INFO  job.process-html - iframe removed
+[2013/10/27 16:23:19.750] INFO  job.process-html - audio removed
+[2013/10/27 16:23:19.761] INFO  job.process-html - video removed
+[2013/10/27 16:23:19.839] INFO  job.process-html - file public/screenshots/4eaoytrp5fh29xihyi38pmug/index.html processed
+[2013/10/27 16:23:19.840] INFO  job.process-html - finish job undefined within 830 ms
+[2013/10/27 16:23:25.776] INFO  job.screenshot - Screenshot of http://habrahabr.ru saved public/screenshots/mvpzt2g4duodv9jlorsr2sct/screenshot.jpg
+[2013/10/27 16:23:25.777] INFO  job.screenshot - finish job undefined within 7351 ms
+[2013/10/27 16:23:36.395] INFO  jobs - schedule job check-url with {"uri":"http://habrahabr.ru"}
+[2013/10/27 16:23:36.398] INFO  jobs - schedule job screenshot with {"uri":"http://habrahabr.ru"}
+[2013/10/27 16:23:36.417] INFO  job.check-url - start job check-url with data {"uri":"http://habrahabr.ru"}
+[2013/10/27 16:23:36.422] INFO  job.screenshot - start job screenshot with data {"uri":"http://habrahabr.ru"}
+[2013/10/27 16:23:36.502] INFO  job.check-url - Got request check content-type: text/html; charset=UTF-8
+[2013/10/27 16:23:36.503] INFO  job.check-url - Html content - schedule download
+[2013/10/27 16:23:36.503] INFO  jobs - schedule job download-html with {"uri":"http://habrahabr.ru","uniqueId":"jh2a78dcby52qij1rqxdkic8"}
+[2013/10/27 16:23:36.503] INFO  job.check-url - finish job undefined within 86 ms
+[2013/10/27 16:23:36.511] INFO  job.download-html - start job download-html with data {"uri":"http://habrahabr.ru","uniqueId":"ep8vhzp6ejcgzx4sa7mwgl1g"}
+[2013/10/27 16:23:36.513] INFO  job.download-html - Prepare location for file: public/screenshots/ep8vhzp6ejcgzx4sa7mwgl1g/index.html
+[2013/10/27 16:23:36.969] INFO  job.download-html - Finish download: public/screenshots/ep8vhzp6ejcgzx4sa7mwgl1g/index.html
+[2013/10/27 16:23:36.969] INFO  job.download-html - Html content - schedule processing
+[2013/10/27 16:23:36.969] INFO  jobs - schedule job process-html with {"uri":"http://habrahabr.ru","path":"public/screenshots/ep8vhzp6ejcgzx4sa7mwgl1g/index.html","uniqueId":"ep8vhzp6ejcgzx4sa7mwgl1g"}
+[2013/10/27 16:23:36.970] INFO  job.download-html - finish job undefined within 459 ms
+[2013/10/27 16:23:36.977] INFO  job.process-html - start job process-html with data {"uri":"http://habrahabr.ru","path":"public/screenshots/ep8vhzp6ejcgzx4sa7mwgl1g/index.html","uniqueId":"ep8vhzp6ejcgzx4sa7mwgl1g"}
+[2013/10/27 16:23:39.292] INFO  job.process-html - found links
+[2013/10/27 16:23:39.302] INFO  job.process-html - script removed
+[2013/10/27 16:23:39.308] INFO  job.process-html - object removed
+[2013/10/27 16:23:39.315] INFO  job.process-html - iframe removed
+[2013/10/27 16:23:39.321] INFO  job.process-html - audio removed
+[2013/10/27 16:23:39.332] INFO  job.process-html - video removed
+[2013/10/27 16:23:39.429] INFO  job.process-html - file public/screenshots/ep8vhzp6ejcgzx4sa7mwgl1g/index.html processed
+[2013/10/27 16:23:39.430] INFO  job.process-html - finish job undefined within 2453 ms
+[2013/10/27 16:23:42.791] INFO  job.screenshot - Screenshot of http://habrahabr.ru saved public/screenshots/d8e3feco62dfc6qcl8c95c58/screenshot.jpg
+[2013/10/27 16:23:42.791] INFO  job.screenshot - finish job undefined within 6369 ms
+[2013/10/27 16:24:27.179] INFO  jobs - schedule job check-url with {"uri":"http://habrahabr.ru"}
+[2013/10/27 16:24:27.183] INFO  jobs - schedule job screenshot with {"uri":"http://habrahabr.ru"}
+[2013/10/27 16:24:27.209] INFO  job.check-url - start job check-url with data {"uri":"http://habrahabr.ru"}
+[2013/10/27 16:24:27.218] INFO  job.screenshot - start job screenshot with data {"uri":"http://habrahabr.ru"}
+[2013/10/27 16:24:27.302] INFO  job.check-url - Got request check content-type: text/html; charset=UTF-8
+[2013/10/27 16:24:27.302] INFO  job.check-url - Html content - schedule download
+[2013/10/27 16:24:27.303] INFO  jobs - schedule job download-html with {"uri":"http://habrahabr.ru","uniqueId":"sreu64d9cps6j2ppcg3fxp9k"}
+[2013/10/27 16:24:27.303] INFO  job.check-url - finish job check-url within 94 ms
+[2013/10/27 16:24:27.315] INFO  job.download-html - start job download-html with data {"uri":"http://habrahabr.ru","uniqueId":"ufmnguy8zu9jq8rqy2y9ywps"}
+[2013/10/27 16:24:27.317] INFO  job.download-html - Prepare location for file: public/screenshots/ufmnguy8zu9jq8rqy2y9ywps/index.html
+[2013/10/27 16:24:27.794] INFO  job.download-html - Finish download: public/screenshots/ufmnguy8zu9jq8rqy2y9ywps/index.html
+[2013/10/27 16:24:27.794] INFO  job.download-html - Html content - schedule processing
+[2013/10/27 16:24:27.795] INFO  jobs - schedule job process-html with {"uri":"http://habrahabr.ru","path":"public/screenshots/ufmnguy8zu9jq8rqy2y9ywps/index.html","uniqueId":"ufmnguy8zu9jq8rqy2y9ywps"}
+[2013/10/27 16:24:27.796] INFO  job.download-html - finish job download-html within 481 ms
+[2013/10/27 16:24:27.805] INFO  job.process-html - start job process-html with data {"uri":"http://habrahabr.ru","path":"public/screenshots/ufmnguy8zu9jq8rqy2y9ywps/index.html","uniqueId":"ufmnguy8zu9jq8rqy2y9ywps"}
+[2013/10/27 16:24:28.560] INFO  job.process-html - found links
+[2013/10/27 16:24:28.570] INFO  job.process-html - script removed
+[2013/10/27 16:24:28.581] INFO  job.process-html - object removed
+[2013/10/27 16:24:28.588] INFO  job.process-html - iframe removed
+[2013/10/27 16:24:28.594] INFO  job.process-html - audio removed
+[2013/10/27 16:24:28.600] INFO  job.process-html - video removed
+[2013/10/27 16:24:28.661] INFO  job.process-html - file public/screenshots/ufmnguy8zu9jq8rqy2y9ywps/index.html processed
+[2013/10/27 16:24:28.661] INFO  job.process-html - finish job process-html within 856 ms
+[2013/10/27 16:25:20.254] INFO  jobs - schedule job check-url with {"uri":"http://habrahabr.ru"}
+[2013/10/27 16:25:20.258] INFO  jobs - schedule job screenshot with {"uri":"http://habrahabr.ru"}
+[2013/10/27 16:25:20.278] INFO  job.check-url.62 - start job check-url with data {"uri":"http://habrahabr.ru"}
+[2013/10/27 16:25:20.284] INFO  job.screenshot.63 - start job screenshot with data {"uri":"http://habrahabr.ru"}
+[2013/10/27 16:25:20.391] INFO  job.check-url.62 - Got request check content-type: text/html; charset=UTF-8
+[2013/10/27 16:25:20.392] INFO  job.check-url.62 - Html content - schedule download
+[2013/10/27 16:25:20.392] INFO  jobs - schedule job download-html with {"uri":"http://habrahabr.ru","uniqueId":"csry9u5ner5le2fayifnmet6"}
+[2013/10/27 16:25:20.392] INFO  job.check-url.62 - finish job check-url within 114 ms
+[2013/10/27 16:25:20.405] INFO  job.download-html.56 - start job download-html with data {"uri":"http://habrahabr.ru","uniqueId":"jh2a78dcby52qij1rqxdkic8"}
+[2013/10/27 16:25:20.407] INFO  job.download-html.56 - Prepare location for file: public/screenshots/jh2a78dcby52qij1rqxdkic8/index.html
+[2013/10/27 16:25:20.852] INFO  job.download-html.56 - Finish download: public/screenshots/jh2a78dcby52qij1rqxdkic8/index.html
+[2013/10/27 16:25:20.852] INFO  job.download-html.56 - Html content - schedule processing
+[2013/10/27 16:25:20.852] INFO  jobs - schedule job process-html with {"uri":"http://habrahabr.ru","path":"public/screenshots/jh2a78dcby52qij1rqxdkic8/index.html","uniqueId":"jh2a78dcby52qij1rqxdkic8"}
+[2013/10/27 16:25:20.853] INFO  job.download-html.56 - finish job download-html within 448 ms
+[2013/10/27 16:25:20.860] INFO  job.process-html.65 - start job process-html with data {"uri":"http://habrahabr.ru","path":"public/screenshots/jh2a78dcby52qij1rqxdkic8/index.html","uniqueId":"jh2a78dcby52qij1rqxdkic8"}
+[2013/10/27 16:25:21.684] INFO  job.process-html.65 - found links
+[2013/10/27 16:25:21.694] INFO  job.process-html.65 - script removed
+[2013/10/27 16:25:21.701] INFO  job.process-html.65 - object removed
+[2013/10/27 16:25:21.708] INFO  job.process-html.65 - iframe removed
+[2013/10/27 16:25:21.714] INFO  job.process-html.65 - audio removed
+[2013/10/27 16:25:21.721] INFO  job.process-html.65 - video removed
+[2013/10/27 16:25:21.782] INFO  job.process-html.65 - file public/screenshots/jh2a78dcby52qij1rqxdkic8/index.html processed
+[2013/10/27 16:25:21.783] INFO  job.process-html.65 - finish job process-html within 922 ms
+[2013/10/27 16:25:24.500] INFO  job.screenshot.63 - Screenshot of http://habrahabr.ru saved public/screenshots/hdc1vuldyysvckos26lwjc1o/screenshot.jpg
+[2013/10/27 16:25:24.501] INFO  job.screenshot.63 - finish job screenshot within 4218 ms
+[2013/10/27 16:37:43.988] INFO  jobs - schedule job check-url with {"uri":"http://habrahabr.ru"}
+[2013/10/27 16:37:43.991] INFO  jobs - schedule job screenshot with {"uri":"http://habrahabr.ru"}
+[2013/10/27 16:37:44.009] INFO  job.check-url.66 - start job check-url with data {"uri":"http://habrahabr.ru"}
+[2013/10/27 16:37:44.014] INFO  job.screenshot.67 - start job screenshot with data {"uri":"http://habrahabr.ru"}
+[2013/10/27 16:37:44.164] INFO  job.check-url.66 - Got request check content-type: text/html; charset=UTF-8
+[2013/10/27 16:37:44.164] INFO  job.check-url.66 - Html content - schedule download
+[2013/10/27 16:37:44.165] INFO  jobs - schedule job download-html with {"uri":"http://habrahabr.ru","uniqueId":"hemtkouavgmdcg4q3hsx43r7"}
+[2013/10/27 16:37:44.165] INFO  job.check-url.66 - finish job check-url within 156 ms
+[2013/10/27 16:37:44.172] INFO  job.download-html.60 - start job download-html with data {"uri":"http://habrahabr.ru","uniqueId":"sreu64d9cps6j2ppcg3fxp9k"}
+[2013/10/27 16:37:44.174] INFO  job.download-html.60 - Prepare location for file: public/screenshots/sreu64d9cps6j2ppcg3fxp9k/index.html
+[2013/10/27 16:37:44.643] INFO  job.download-html.60 - Finish download: public/screenshots/sreu64d9cps6j2ppcg3fxp9k/index.html
+[2013/10/27 16:37:44.643] INFO  job.download-html.60 - Html content - schedule processing
+[2013/10/27 16:37:44.644] INFO  jobs - schedule job process-html with {"uri":"http://habrahabr.ru","path":"public/screenshots/sreu64d9cps6j2ppcg3fxp9k/index.html","uniqueId":"sreu64d9cps6j2ppcg3fxp9k"}
+[2013/10/27 16:37:44.644] INFO  job.download-html.60 - finish job download-html within 472 ms
+[2013/10/27 16:37:44.649] INFO  job.process-html.69 - start job process-html with data {"uri":"http://habrahabr.ru","path":"public/screenshots/sreu64d9cps6j2ppcg3fxp9k/index.html","uniqueId":"sreu64d9cps6j2ppcg3fxp9k"}
+[2013/10/27 16:37:44.760] INFO  job.process-html.69 - finish job process-html within 111 ms
+[2013/10/27 16:38:02.510] INFO  jobs - schedule job check-url with {"uri":"http://habrahabr.ru"}
+[2013/10/27 16:38:02.514] INFO  jobs - schedule job screenshot with {"uri":"http://habrahabr.ru"}
+[2013/10/27 16:38:02.532] INFO  job.check-url.70 - start job check-url with data {"uri":"http://habrahabr.ru"}
+[2013/10/27 16:38:02.537] INFO  job.screenshot.71 - start job screenshot with data {"uri":"http://habrahabr.ru"}
+[2013/10/27 16:38:02.642] INFO  job.check-url.70 - Got request check content-type: text/html; charset=UTF-8
+[2013/10/27 16:38:02.643] INFO  job.check-url.70 - Html content - schedule download
+[2013/10/27 16:38:02.643] INFO  jobs - schedule job download-html with {"uri":"http://habrahabr.ru","uniqueId":"oyohrkevsiiil28oi8ydp62t"}
+[2013/10/27 16:38:02.643] INFO  job.check-url.70 - finish job check-url within 111 ms
+[2013/10/27 16:38:02.662] INFO  job.download-html.64 - start job download-html with data {"uri":"http://habrahabr.ru","uniqueId":"csry9u5ner5le2fayifnmet6"}
+[2013/10/27 16:38:02.664] INFO  job.download-html.64 - Prepare location for file: public/screenshots/csry9u5ner5le2fayifnmet6/index.html
+[2013/10/27 16:38:03.160] INFO  job.download-html.64 - Finish download: public/screenshots/csry9u5ner5le2fayifnmet6/index.html
+[2013/10/27 16:38:03.160] INFO  job.download-html.64 - Html content - schedule processing
+[2013/10/27 16:38:03.160] INFO  jobs - schedule job process-html with {"uri":"http://habrahabr.ru","path":"public/screenshots/csry9u5ner5le2fayifnmet6/index.html","uniqueId":"csry9u5ner5le2fayifnmet6"}
+[2013/10/27 16:38:03.161] INFO  job.download-html.64 - finish job download-html within 500 ms
+[2013/10/27 16:38:03.166] INFO  job.process-html.73 - start job process-html with data {"uri":"http://habrahabr.ru","path":"public/screenshots/csry9u5ner5le2fayifnmet6/index.html","uniqueId":"csry9u5ner5le2fayifnmet6"}
+[2013/10/27 16:38:03.270] INFO  job.process-html.73 - finish job process-html within 103 ms
+[2013/10/27 16:38:07.541] INFO  job.screenshot.71 - Screenshot of http://habrahabr.ru saved public/screenshots/nu92ajftynb4pfnw51fdg72p/screenshot.jpg
+[2013/10/27 16:38:07.541] INFO  job.screenshot.71 - finish job screenshot within 5004 ms
+[2013/10/27 16:39:55.745] INFO  jobs - schedule job check-url with {"uri":"http://stackoverflow.com"}
+[2013/10/27 16:39:55.764] INFO  job.check-url.74 - start job check-url with data {"uri":"http://stackoverflow.com"}
+[2013/10/27 16:39:56.262] INFO  job.check-url.74 - Got request check content-type: text/html; charset=utf-8
+[2013/10/27 16:39:56.263] INFO  job.check-url.74 - Html content - schedule download
+[2013/10/27 16:39:56.263] INFO  jobs - schedule job download-html with {"uri":"http://stackoverflow.com","uniqueId":"3ubsfy9d5lonulc27oxqppig"}
+[2013/10/27 16:39:56.263] INFO  job.check-url.74 - finish job check-url within 499 ms
+[2013/10/27 16:39:56.270] INFO  job.download-html.68 - start job download-html with data {"uri":"http://habrahabr.ru","uniqueId":"hemtkouavgmdcg4q3hsx43r7"}
+[2013/10/27 16:39:56.271] INFO  job.download-html.68 - Prepare location for file: public/screenshots/hemtkouavgmdcg4q3hsx43r7/index.html
+[2013/10/27 16:39:56.528] INFO  job.download-html.68 - Finish download: public/screenshots/hemtkouavgmdcg4q3hsx43r7/index.html
+[2013/10/27 16:39:56.528] INFO  job.download-html.68 - Html content - schedule processing
+[2013/10/27 16:39:56.530] INFO  jobs - schedule job process-html with {"uri":"http://habrahabr.ru","path":"public/screenshots/hemtkouavgmdcg4q3hsx43r7/index.html","uniqueId":"hemtkouavgmdcg4q3hsx43r7"}
+[2013/10/27 16:39:56.530] INFO  job.download-html.68 - finish job download-html within 260 ms
+[2013/10/27 16:39:56.536] INFO  job.process-html.76 - start job process-html with data {"uri":"http://habrahabr.ru","path":"public/screenshots/hemtkouavgmdcg4q3hsx43r7/index.html","uniqueId":"hemtkouavgmdcg4q3hsx43r7"}
+[2013/10/27 16:39:56.631] INFO  job.process-html.76 - finish job process-html within 95 ms
+[2013/10/27 16:40:19.879] INFO  jobs - schedule job check-url with {"uri":"http://stackoverflow.com"}
+[2013/10/27 16:40:19.899] INFO  job.check-url.77 - start job check-url with data {"uri":"http://stackoverflow.com"}
+[2013/10/27 16:40:20.244] INFO  job.check-url.77 - Got request check content-type: text/html; charset=utf-8
+[2013/10/27 16:40:20.244] INFO  job.check-url.77 - Html content - schedule download
+[2013/10/27 16:40:20.244] INFO  jobs - schedule job download-html with {"uri":"http://stackoverflow.com","uniqueId":"ac9i1obscfrvus2wuyb68xco"}
+[2013/10/27 16:40:20.244] INFO  job.check-url.77 - finish job check-url within 345 ms
+[2013/10/27 16:40:20.251] INFO  job.download-html.7 - start job download-html with data {"uri":"http://habrahabr.ru","uniqueId":"nxhjlgd22lp18pcr93h8s2s7"}
+[2013/10/27 16:40:20.253] INFO  job.download-html.7 - Prepare location for file: public/screenshots/nxhjlgd22lp18pcr93h8s2s7/index.html
+[2013/10/27 16:40:20.490] INFO  job.download-html.7 - Finish download: public/screenshots/nxhjlgd22lp18pcr93h8s2s7/index.html
+[2013/10/27 16:40:20.491] INFO  job.download-html.7 - Html content - schedule processing
+[2013/10/27 16:40:20.493] INFO  jobs - schedule job process-html with {"uri":"http://habrahabr.ru","path":"public/screenshots/nxhjlgd22lp18pcr93h8s2s7/index.html","uniqueId":"nxhjlgd22lp18pcr93h8s2s7"}
+[2013/10/27 16:40:20.493] INFO  job.download-html.7 - finish job download-html within 242 ms
+[2013/10/27 16:40:20.499] INFO  job.process-html.79 - start job process-html with data {"uri":"http://habrahabr.ru","path":"public/screenshots/nxhjlgd22lp18pcr93h8s2s7/index.html","uniqueId":"nxhjlgd22lp18pcr93h8s2s7"}
+[2013/10/27 16:40:20.589] INFO  job.process-html.79 - finish job process-html within 90 ms
+[2013/10/27 16:40:37.547] INFO  jobs - schedule job check-url with {"uri":"http://stackoverflow.com"}
+[2013/10/27 16:40:37.566] INFO  job.check-url.80 - start job check-url with data {"uri":"http://stackoverflow.com"}
+[2013/10/27 16:40:37.889] INFO  job.check-url.80 - Got request check content-type: text/html; charset=utf-8
+[2013/10/27 16:40:37.889] INFO  job.check-url.80 - Html content - schedule download
+[2013/10/27 16:40:37.889] INFO  jobs - schedule job download-html with {"uri":"http://stackoverflow.com","uniqueId":"cm74joatzmxvr3xd6ot3938z"}
+[2013/10/27 16:40:37.890] INFO  job.check-url.80 - finish job check-url within 324 ms
+[2013/10/27 16:40:37.896] INFO  job.download-html.72 - start job download-html with data {"uri":"http://habrahabr.ru","uniqueId":"oyohrkevsiiil28oi8ydp62t"}
+[2013/10/27 16:40:37.898] INFO  job.download-html.72 - Prepare location for file: public/screenshots/oyohrkevsiiil28oi8ydp62t/index.html
+[2013/10/27 16:40:38.096] INFO  job.download-html.72 - Finish download: public/screenshots/oyohrkevsiiil28oi8ydp62t/index.html
+[2013/10/27 16:40:38.096] INFO  job.download-html.72 - Html content - schedule processing
+[2013/10/27 16:40:38.099] INFO  jobs - schedule job process-html with {"uri":"http://habrahabr.ru","path":"public/screenshots/oyohrkevsiiil28oi8ydp62t/index.html","uniqueId":"oyohrkevsiiil28oi8ydp62t"}
+[2013/10/27 16:40:38.099] INFO  job.download-html.72 - finish job download-html within 203 ms
+[2013/10/27 16:40:38.104] INFO  job.process-html.82 - start job process-html with data {"uri":"http://habrahabr.ru","path":"public/screenshots/oyohrkevsiiil28oi8ydp62t/index.html","uniqueId":"oyohrkevsiiil28oi8ydp62t"}
+[2013/10/27 16:40:38.193] ERROR root - Uncaught exception handled
+SyntaxError: Unmatched selector: ]
+    at parse (/Users/den/Projects/listboard.it/node_modules/cheerio/node_modules/cheerio-select/node_modules/CSSselect/node_modules/CSSwhat/index.js:154:11)
+    at compile (/Users/den/Projects/listboard.it/node_modules/cheerio/node_modules/cheerio-select/node_modules/CSSselect/lib/compile.js:18:13)
+    at Function.selectAll (/Users/den/Projects/listboard.it/node_modules/cheerio/node_modules/cheerio-select/node_modules/CSSselect/index.js:14:42)
+    at module.exports (/Users/den/Projects/listboard.it/node_modules/cheerio/node_modules/cheerio-select/lib/select.js:13:20)
+    at exports.find (/Users/den/Projects/listboard.it/node_modules/cheerio/lib/api/traversing.js:7:20)
+    at new module.exports (/Users/den/Projects/listboard.it/node_modules/cheerio/lib/cheerio.js:76:18)
+    at initialize (/Users/den/Projects/listboard.it/node_modules/cheerio/lib/static.js:19:12)
+    at /Users/den/Projects/listboard.it/jobs/jobs/process-html.js:67:25
+    at fs.js:266:14
+    at Object.oncomplete (fs.js:107:15)
+[2013/10/27 16:40:49.632] INFO  jobs - schedule job check-url with {"uri":"http://stackoverflow.com"}
+[2013/10/27 16:40:49.652] INFO  job.check-url.83 - start job check-url with data {"uri":"http://stackoverflow.com"}
+[2013/10/27 16:40:50.005] INFO  job.check-url.83 - Got request check content-type: text/html; charset=utf-8
+[2013/10/27 16:40:50.006] INFO  job.check-url.83 - Html content - schedule download
+[2013/10/27 16:40:50.006] INFO  jobs - schedule job download-html with {"uri":"http://stackoverflow.com","uniqueId":"vd1db2os4o1ilgmu2h31gn1v"}
+[2013/10/27 16:40:50.006] INFO  job.check-url.83 - finish job check-url within 354 ms
+[2013/10/27 16:40:50.013] INFO  job.download-html.75 - start job download-html with data {"uri":"http://stackoverflow.com","uniqueId":"3ubsfy9d5lonulc27oxqppig"}
+[2013/10/27 16:40:50.015] INFO  job.download-html.75 - Prepare location for file: public/screenshots/3ubsfy9d5lonulc27oxqppig/index.html
+[2013/10/27 16:40:50.556] INFO  job.download-html.75 - Finish download: public/screenshots/3ubsfy9d5lonulc27oxqppig/index.html
+[2013/10/27 16:40:50.556] INFO  job.download-html.75 - Html content - schedule processing
+[2013/10/27 16:40:50.559] INFO  jobs - schedule job process-html with {"uri":"http://stackoverflow.com","path":"public/screenshots/3ubsfy9d5lonulc27oxqppig/index.html","uniqueId":"3ubsfy9d5lonulc27oxqppig"}
+[2013/10/27 16:40:50.559] INFO  job.download-html.75 - finish job download-html within 546 ms
+[2013/10/27 16:40:50.564] INFO  job.process-html.85 - start job process-html with data {"uri":"http://stackoverflow.com","path":"public/screenshots/3ubsfy9d5lonulc27oxqppig/index.html","uniqueId":"3ubsfy9d5lonulc27oxqppig"}
+[2013/10/27 16:40:50.657] INFO  job.process-html.85 - finish job process-html within 93 ms
+[2013/10/27 16:41:14.690] INFO  jobs - schedule job check-url with {"uri":"http://stackoverflow.com"}
+[2013/10/27 16:41:14.708] INFO  job.check-url.86 - start job check-url with data {"uri":"http://stackoverflow.com"}
+[2013/10/27 16:41:15.037] INFO  job.check-url.86 - Got request check content-type: text/html; charset=utf-8
+[2013/10/27 16:41:15.037] INFO  job.check-url.86 - Html content - schedule download
+[2013/10/27 16:41:15.038] INFO  jobs - schedule job download-html with {"uri":"http://stackoverflow.com","uniqueId":"qed6h45fvftc5r9dx9v4mybz"}
+[2013/10/27 16:41:15.038] INFO  job.check-url.86 - finish job check-url within 330 ms
+[2013/10/27 16:41:15.045] INFO  job.download-html.78 - start job download-html with data {"uri":"http://stackoverflow.com","uniqueId":"ac9i1obscfrvus2wuyb68xco"}
+[2013/10/27 16:41:15.046] INFO  job.download-html.78 - Prepare location for file: public/screenshots/ac9i1obscfrvus2wuyb68xco/index.html
+[2013/10/27 16:41:15.566] INFO  job.download-html.78 - Finish download: public/screenshots/ac9i1obscfrvus2wuyb68xco/index.html
+[2013/10/27 16:41:15.566] INFO  job.download-html.78 - Html content - schedule processing
+[2013/10/27 16:41:15.569] INFO  jobs - schedule job process-html with {"uri":"http://stackoverflow.com","path":"public/screenshots/ac9i1obscfrvus2wuyb68xco/index.html","uniqueId":"ac9i1obscfrvus2wuyb68xco"}
+[2013/10/27 16:41:15.569] INFO  job.download-html.78 - finish job download-html within 525 ms
+[2013/10/27 16:41:15.575] INFO  job.process-html.88 - start job process-html with data {"uri":"http://stackoverflow.com","path":"public/screenshots/ac9i1obscfrvus2wuyb68xco/index.html","uniqueId":"ac9i1obscfrvus2wuyb68xco"}
+[2013/10/27 16:41:15.670] INFO  job.process-html.88 - finish job process-html within 96 ms
+[2013/10/27 16:44:02.072] INFO  jobs - schedule job check-url with {"uri":"http://stackoverflow.com"}
+[2013/10/27 16:44:02.092] INFO  job.check-url.89 - start job check-url with data {"uri":"http://stackoverflow.com"}
+[2013/10/27 16:44:02.776] INFO  job.check-url.89 - Got request check content-type: text/html; charset=utf-8
+[2013/10/27 16:44:02.777] INFO  job.check-url.89 - Html content - schedule download
+[2013/10/27 16:44:02.777] INFO  jobs - schedule job download-html with {"uri":"http://stackoverflow.com","uniqueId":"t72mdymzch7od97bda2eyvm3"}
+[2013/10/27 16:44:02.777] INFO  job.check-url.89 - finish job check-url within 686 ms
+[2013/10/27 16:44:02.784] INFO  job.download-html.81 - start job download-html with data {"uri":"http://stackoverflow.com","uniqueId":"cm74joatzmxvr3xd6ot3938z"}
+[2013/10/27 16:44:02.785] INFO  job.download-html.81 - Prepare location for file: public/screenshots/cm74joatzmxvr3xd6ot3938z/index.html
+[2013/10/27 16:44:03.303] INFO  job.download-html.81 - Finish download: public/screenshots/cm74joatzmxvr3xd6ot3938z/index.html
+[2013/10/27 16:44:03.303] INFO  job.download-html.81 - Html content - schedule processing
+[2013/10/27 16:44:03.306] INFO  jobs - schedule job process-html with {"uri":"http://stackoverflow.com","path":"public/screenshots/cm74joatzmxvr3xd6ot3938z/index.html","uniqueId":"cm74joatzmxvr3xd6ot3938z"}
+[2013/10/27 16:44:03.306] INFO  job.download-html.81 - finish job download-html within 523 ms
+[2013/10/27 16:44:03.311] INFO  job.process-html.91 - start job process-html with data {"uri":"http://stackoverflow.com","path":"public/screenshots/cm74joatzmxvr3xd6ot3938z/index.html","uniqueId":"cm74joatzmxvr3xd6ot3938z"}
+[2013/10/27 16:44:03.407] ERROR root - Uncaught exception handled
+ReferenceError: links is not defined
+    at /Users/den/Projects/listboard.it/jobs/jobs/process-html.js:73:25
+    at fs.js:266:14
+    at Object.oncomplete (fs.js:107:15)
+[2013/10/27 16:48:36.849] INFO  jobs - schedule job check-url with {"uri":"http://stackoverflow.com"}
+[2013/10/27 16:48:36.868] INFO  job.check-url.92 - start job check-url with data {"uri":"http://stackoverflow.com"}
+[2013/10/27 16:49:35.152] INFO  jobs - schedule job check-url with {"uri":"http://stackoverflow.com"}
+[2013/10/27 16:49:35.172] INFO  job.check-url.93 - start job check-url with data {"uri":"http://stackoverflow.com"}
+[2013/10/27 16:49:35.659] INFO  job.check-url.93 - Got request check content-type: text/html; charset=utf-8
+[2013/10/27 16:49:35.659] INFO  job.check-url.93 - Html content - schedule download
+[2013/10/27 16:49:35.660] INFO  jobs - schedule job download-html with {"uri":"http://stackoverflow.com","uniqueId":"p169ruwehqtkgo4mwg2z4x2d"}
+[2013/10/27 16:49:35.660] INFO  job.check-url.93 - finish job check-url within 488 ms
+[2013/10/27 16:49:35.667] INFO  job.download-html.84 - start job download-html with data {"uri":"http://stackoverflow.com","uniqueId":"vd1db2os4o1ilgmu2h31gn1v"}
+[2013/10/27 16:49:35.669] INFO  job.download-html.84 - Prepare location for file: public/screenshots/vd1db2os4o1ilgmu2h31gn1v/index.html
+[2013/10/27 16:49:36.207] INFO  job.download-html.84 - Finish download: public/screenshots/vd1db2os4o1ilgmu2h31gn1v/index.html
+[2013/10/27 16:49:36.207] INFO  job.download-html.84 - Html content - schedule processing
+[2013/10/27 16:49:36.210] INFO  jobs - schedule job process-html with {"uri":"http://stackoverflow.com","path":"public/screenshots/vd1db2os4o1ilgmu2h31gn1v/index.html","uniqueId":"vd1db2os4o1ilgmu2h31gn1v"}
+[2013/10/27 16:49:36.210] INFO  job.download-html.84 - finish job download-html within 543 ms
+[2013/10/27 16:49:36.215] INFO  job.process-html.95 - start job process-html with data {"uri":"http://stackoverflow.com","path":"public/screenshots/vd1db2os4o1ilgmu2h31gn1v/index.html","uniqueId":"vd1db2os4o1ilgmu2h31gn1v"}
+[2013/10/27 16:49:36.338] INFO  job.process-html.95 - favicon
+[2013/10/27 16:49:36.338] INFO  jobs - schedule job download with {"uri":"http://cdn.sstatic.net/stackoverflow/img/favicon.ico","path":"/Users/den/Projects/listboard.it/public/screenshots/vd1db2os4o1ilgmu2h31gn1v/favicon.ico"}
+[2013/10/27 16:49:36.341] INFO  job.process-html.95 - script removed
+[2013/10/27 16:49:36.342] INFO  job.process-html.95 - object removed
+[2013/10/27 16:49:36.343] INFO  job.process-html.95 - iframe removed
+[2013/10/27 16:49:36.344] INFO  job.process-html.95 - audio removed
+[2013/10/27 16:49:36.345] INFO  job.process-html.95 - video removed
+[2013/10/27 16:49:36.403] INFO  job.process-html.95 - finish job process-html within 188 ms
+[2013/10/27 16:49:36.411] INFO  job.download.96 - start job download with data {"uri":"http://cdn.sstatic.net/stackoverflow/img/favicon.ico","path":"/Users/den/Projects/listboard.it/public/screenshots/vd1db2os4o1ilgmu2h31gn1v/favicon.ico"}
+[2013/10/27 16:49:36.412] INFO  job.download.96 - Prepare location for file: /Users/den/Projects/listboard.it/public/screenshots/vd1db2os4o1ilgmu2h31gn1v/favicon.ico
+[2013/10/27 16:49:36.412] INFO  job.process-html.95 - file public/screenshots/vd1db2os4o1ilgmu2h31gn1v/index.html processed
+[2013/10/27 16:49:36.412] INFO  job.process-html.95 - finish job process-html within 197 ms
+[2013/10/27 16:49:37.302] INFO  job.download.96 - Finish download: /Users/den/Projects/listboard.it/public/screenshots/vd1db2os4o1ilgmu2h31gn1v/favicon.ico
+[2013/10/27 16:49:37.302] INFO  job.download.96 - finish job download within 891 ms
+[2013/10/27 17:16:18.187] INFO  jobs - schedule job check-url with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:16:18.190] INFO  jobs - schedule job screenshot with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:16:18.209] INFO  job.check-url.97 - start job check-url with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:16:18.228] INFO  job.screenshot.98 - start job screenshot with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:16:19.883] INFO  job.check-url.97 - Got request check content-type: text/html
+[2013/10/27 17:16:19.884] INFO  job.check-url.97 - Html content - schedule download
+[2013/10/27 17:16:19.884] INFO  jobs - schedule job download-html with {"uri":"https://news.ycombinator.com/item?id=6468945","uniqueId":"g1vppkhpsyh7plq8fz73j7pu"}
+[2013/10/27 17:16:19.884] INFO  job.check-url.97 - finish job check-url within 1675 ms
+[2013/10/27 17:16:19.890] INFO  job.download-html.87 - start job download-html with data {"uri":"http://stackoverflow.com","uniqueId":"qed6h45fvftc5r9dx9v4mybz"}
+[2013/10/27 17:16:19.892] INFO  job.download-html.87 - Prepare location for file: public/screenshots/qed6h45fvftc5r9dx9v4mybz/index.html
+[2013/10/27 17:16:21.282] INFO  job.screenshot.98 - Screenshot of https://news.ycombinator.com/item?id=6468945 saved public/screenshots/59mg89e1yvtcytwqq9gjtcuv/screenshot.jpg
+[2013/10/27 17:16:21.282] INFO  job.screenshot.98 - finish job screenshot within 3054 ms
+[2013/10/27 17:16:24.654] INFO  job.download-html.87 - Finish download: public/screenshots/qed6h45fvftc5r9dx9v4mybz/index.html
+[2013/10/27 17:16:24.655] INFO  job.download-html.87 - Html content - schedule processing
+[2013/10/27 17:16:24.655] INFO  jobs - schedule job process-html with {"uri":"http://stackoverflow.com","path":"public/screenshots/qed6h45fvftc5r9dx9v4mybz/index.html","uniqueId":"qed6h45fvftc5r9dx9v4mybz"}
+[2013/10/27 17:16:24.655] INFO  job.download-html.87 - finish job download-html within 4765 ms
+[2013/10/27 17:16:24.661] INFO  job.process-html.100 - start job process-html with data {"uri":"http://stackoverflow.com","path":"public/screenshots/qed6h45fvftc5r9dx9v4mybz/index.html","uniqueId":"qed6h45fvftc5r9dx9v4mybz"}
+[2013/10/27 17:16:24.800] INFO  job.process-html.100 - favicon
+[2013/10/27 17:16:24.800] INFO  jobs - schedule job download with {"uri":"http://cdn.sstatic.net/stackoverflow/img/favicon.ico","path":"/Users/den/Projects/listboard.it/public/screenshots/qed6h45fvftc5r9dx9v4mybz/favicon.ico"}
+[2013/10/27 17:16:24.802] INFO  job.process-html.100 - script removed
+[2013/10/27 17:16:24.803] INFO  job.process-html.100 - object removed
+[2013/10/27 17:16:24.804] INFO  job.process-html.100 - iframe removed
+[2013/10/27 17:16:24.805] INFO  job.process-html.100 - audio removed
+[2013/10/27 17:16:24.805] INFO  job.process-html.100 - video removed
+[2013/10/27 17:16:24.841] INFO  job.process-html.100 - finish job process-html within 180 ms
+[2013/10/27 17:16:24.849] INFO  job.download.101 - start job download with data {"uri":"http://cdn.sstatic.net/stackoverflow/img/favicon.ico","path":"/Users/den/Projects/listboard.it/public/screenshots/qed6h45fvftc5r9dx9v4mybz/favicon.ico"}
+[2013/10/27 17:16:24.850] INFO  job.download.101 - Prepare location for file: /Users/den/Projects/listboard.it/public/screenshots/qed6h45fvftc5r9dx9v4mybz/favicon.ico
+[2013/10/27 17:16:24.850] INFO  job.process-html.100 - file public/screenshots/qed6h45fvftc5r9dx9v4mybz/index.html processed
+[2013/10/27 17:16:24.850] INFO  job.process-html.100 - finish job process-html within 189 ms
+[2013/10/27 17:16:25.589] INFO  job.download.101 - Finish download: /Users/den/Projects/listboard.it/public/screenshots/qed6h45fvftc5r9dx9v4mybz/favicon.ico
+[2013/10/27 17:16:25.589] INFO  job.download.101 - finish job download within 740 ms
+[2013/10/27 17:17:45.792] INFO  jobs - schedule job check-url with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:17:45.796] INFO  jobs - schedule job screenshot with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:17:45.815] INFO  job.check-url.102 - start job check-url with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:17:45.833] INFO  job.screenshot.103 - start job screenshot with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:17:46.908] INFO  job.check-url.102 - Got request check content-type: text/html
+[2013/10/27 17:17:46.909] INFO  job.check-url.102 - Html content - schedule download
+[2013/10/27 17:17:46.909] INFO  jobs - schedule job download-html with {"uri":"https://news.ycombinator.com/item?id=6468945","uniqueId":"4dwpy4zoszwdoc12w94cl68j"}
+[2013/10/27 17:17:46.909] INFO  job.check-url.102 - finish job check-url within 1094 ms
+[2013/10/27 17:17:46.915] INFO  job.download-html.104 - start job download-html with data {"uri":"https://news.ycombinator.com/item?id=6468945","uniqueId":"4dwpy4zoszwdoc12w94cl68j"}
+[2013/10/27 17:17:46.917] INFO  job.download-html.104 - Prepare location for file: public/screenshots/4dwpy4zoszwdoc12w94cl68j/item
+[2013/10/27 17:17:48.352] INFO  job.download-html.104 - Finish download: public/screenshots/4dwpy4zoszwdoc12w94cl68j/item
+[2013/10/27 17:17:48.353] INFO  job.download-html.104 - Html content - schedule processing
+[2013/10/27 17:17:48.353] INFO  jobs - schedule job process-html with {"uri":"https://news.ycombinator.com/item?id=6468945","path":"public/screenshots/4dwpy4zoszwdoc12w94cl68j/item","uniqueId":"4dwpy4zoszwdoc12w94cl68j"}
+[2013/10/27 17:17:48.354] INFO  job.download-html.104 - finish job download-html within 1438 ms
+[2013/10/27 17:17:48.360] INFO  job.process-html.105 - start job process-html with data {"uri":"https://news.ycombinator.com/item?id=6468945","path":"public/screenshots/4dwpy4zoszwdoc12w94cl68j/item","uniqueId":"4dwpy4zoszwdoc12w94cl68j"}
+[2013/10/27 17:17:48.472] ERROR root - Uncaught exception handled
+Error: URI is already relative
+    at URI.p.relativeTo (/Users/den/Projects/listboard.it/node_modules/URIjs/src/URI.js:1815:15)
+    at /Users/den/Projects/listboard.it/jobs/jobs/process-html.js:64:53
+    at fs.js:266:14
+    at Object.oncomplete (fs.js:107:15)
+[2013/10/27 17:18:50.577] INFO  jobs - schedule job check-url with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:18:50.581] INFO  jobs - schedule job screenshot with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:18:50.602] INFO  job.check-url.106 - start job check-url with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:18:50.620] INFO  job.screenshot.107 - start job screenshot with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:18:51.671] INFO  job.check-url.106 - Got request check content-type: text/html
+[2013/10/27 17:18:51.671] INFO  job.check-url.106 - Html content - schedule download
+[2013/10/27 17:18:51.672] INFO  jobs - schedule job download-html with {"uri":"https://news.ycombinator.com/item?id=6468945","uniqueId":"cuuz88bk8vrmk21k8cyvmjp8"}
+[2013/10/27 17:18:51.672] INFO  job.check-url.106 - finish job check-url within 1071 ms
+[2013/10/27 17:18:51.677] INFO  job.download-html.108 - start job download-html with data {"uri":"https://news.ycombinator.com/item?id=6468945","uniqueId":"cuuz88bk8vrmk21k8cyvmjp8"}
+[2013/10/27 17:18:51.680] INFO  job.download-html.108 - Prepare location for file: public/screenshots/cuuz88bk8vrmk21k8cyvmjp8/item
+[2013/10/27 17:18:54.147] INFO  job.download-html.108 - Finish download: public/screenshots/cuuz88bk8vrmk21k8cyvmjp8/item
+[2013/10/27 17:18:54.147] INFO  job.download-html.108 - Html content - schedule processing
+[2013/10/27 17:18:54.147] INFO  jobs - schedule job process-html with {"uri":"https://news.ycombinator.com/item?id=6468945","path":"public/screenshots/cuuz88bk8vrmk21k8cyvmjp8/item","uniqueId":"cuuz88bk8vrmk21k8cyvmjp8"}
+[2013/10/27 17:18:54.148] INFO  job.download-html.108 - finish job download-html within 2471 ms
+[2013/10/27 17:18:54.155] INFO  job.process-html.109 - start job process-html with data {"uri":"https://news.ycombinator.com/item?id=6468945","path":"public/screenshots/cuuz88bk8vrmk21k8cyvmjp8/item","uniqueId":"cuuz88bk8vrmk21k8cyvmjp8"}
+[2013/10/27 17:18:54.240] ERROR root - Uncaught exception handled
+Error: URI is already relative
+    at URI.p.relativeTo (/Users/den/Projects/listboard.it/node_modules/URIjs/src/URI.js:1815:15)
+    at /Users/den/Projects/listboard.it/jobs/jobs/process-html.js:65:53
+    at fs.js:266:14
+    at Object.oncomplete (fs.js:107:15)
+[2013/10/27 17:34:35.543] INFO  jobs - schedule job check-url with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:34:35.547] INFO  jobs - schedule job screenshot with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:34:35.566] INFO  job.check-url.110 - start job check-url with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:34:35.585] INFO  job.screenshot.111 - start job screenshot with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:34:37.727] INFO  job.check-url.110 - Got request check content-type: text/html
+[2013/10/27 17:34:37.727] INFO  job.check-url.110 - Html content - schedule download
+[2013/10/27 17:34:37.727] INFO  jobs - schedule job download-html with {"uri":"https://news.ycombinator.com/item?id=6468945","uniqueId":"y4k25y7k3ioziykk4du8h375"}
+[2013/10/27 17:34:37.728] INFO  job.check-url.110 - finish job check-url within 2163 ms
+[2013/10/27 17:34:37.734] INFO  job.download-html.112 - start job download-html with data {"uri":"https://news.ycombinator.com/item?id=6468945","uniqueId":"y4k25y7k3ioziykk4du8h375"}
+[2013/10/27 17:34:37.736] INFO  job.download-html.112 - Prepare location for file: public/screenshots/y4k25y7k3ioziykk4du8h375/item
+[2013/10/27 17:34:38.688] INFO  job.screenshot.111 - Screenshot of https://news.ycombinator.com/item?id=6468945 saved public/screenshots/a4odjaabdjpupbv8ewngum5f/screenshot.jpg
+[2013/10/27 17:34:38.689] INFO  job.screenshot.111 - finish job screenshot within 3104 ms
+[2013/10/27 17:34:39.044] INFO  job.download-html.112 - Finish download: public/screenshots/y4k25y7k3ioziykk4du8h375/item
+[2013/10/27 17:34:39.044] INFO  job.download-html.112 - Html content - schedule processing
+[2013/10/27 17:34:39.045] INFO  jobs - schedule job process-html with {"uri":"https://news.ycombinator.com/item?id=6468945","path":"public/screenshots/y4k25y7k3ioziykk4du8h375/item","uniqueId":"y4k25y7k3ioziykk4du8h375"}
+[2013/10/27 17:34:39.045] INFO  job.download-html.112 - finish job download-html within 1312 ms
+[2013/10/27 17:34:39.052] INFO  job.process-html.113 - start job process-html with data {"uri":"https://news.ycombinator.com/item?id=6468945","path":"public/screenshots/y4k25y7k3ioziykk4du8h375/item","uniqueId":"y4k25y7k3ioziykk4du8h375"}
+[2013/10/27 17:34:39.125] ERROR root - Uncaught exception handled
+TypeError: Cannot call method 'path' of undefined
+    at /Users/den/Projects/listboard.it/jobs/jobs/process-html.js:70:58
+    at fs.js:266:14
+    at Object.oncomplete (fs.js:107:15)
+[2013/10/27 17:34:55.356] INFO  jobs - schedule job check-url with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:34:55.359] INFO  jobs - schedule job screenshot with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:34:55.379] INFO  job.check-url.114 - start job check-url with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:34:55.396] INFO  job.screenshot.115 - start job screenshot with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:34:56.460] INFO  job.check-url.114 - Got request check content-type: text/html
+[2013/10/27 17:34:56.460] INFO  job.check-url.114 - Html content - schedule download
+[2013/10/27 17:34:56.460] INFO  jobs - schedule job download-html with {"uri":"https://news.ycombinator.com/item?id=6468945","uniqueId":"ghq553gv1depapq2dqqmr7fq"}
+[2013/10/27 17:34:56.461] INFO  job.check-url.114 - finish job check-url within 1083 ms
+[2013/10/27 17:34:56.466] INFO  job.download-html.116 - start job download-html with data {"uri":"https://news.ycombinator.com/item?id=6468945","uniqueId":"ghq553gv1depapq2dqqmr7fq"}
+[2013/10/27 17:34:56.469] INFO  job.download-html.116 - Prepare location for file: public/screenshots/ghq553gv1depapq2dqqmr7fq/item
+[2013/10/27 17:34:57.996] INFO  job.download-html.116 - Finish download: public/screenshots/ghq553gv1depapq2dqqmr7fq/item
+[2013/10/27 17:34:57.997] INFO  job.download-html.116 - Html content - schedule processing
+[2013/10/27 17:34:57.997] INFO  jobs - schedule job process-html with {"uri":"https://news.ycombinator.com/item?id=6468945","path":"public/screenshots/ghq553gv1depapq2dqqmr7fq/item","uniqueId":"ghq553gv1depapq2dqqmr7fq"}
+[2013/10/27 17:34:57.997] INFO  job.download-html.116 - finish job download-html within 1531 ms
+[2013/10/27 17:34:58.004] INFO  job.process-html.117 - start job process-html with data {"uri":"https://news.ycombinator.com/item?id=6468945","path":"public/screenshots/ghq553gv1depapq2dqqmr7fq/item","uniqueId":"ghq553gv1depapq2dqqmr7fq"}
+[2013/10/27 17:34:58.079] INFO  job.process-html.117 - favicon
+[2013/10/27 17:34:58.080] INFO  jobs - schedule job download with {"uri":"/Users/den/Projects/listboard.it/favicon.ico","path":"/Users/den/Projects/listboard.it/public/screenshots/ghq553gv1depapq2dqqmr7fq/favicon.ico"}
+[2013/10/27 17:34:58.081] INFO  job.process-html.117 - script removed
+[2013/10/27 17:34:58.082] INFO  job.process-html.117 - object removed
+[2013/10/27 17:34:58.083] INFO  job.process-html.117 - iframe removed
+[2013/10/27 17:34:58.083] INFO  job.process-html.117 - audio removed
+[2013/10/27 17:34:58.084] INFO  job.process-html.117 - video removed
+[2013/10/27 17:34:58.100] INFO  job.process-html.117 - finish job process-html within 96 ms
+[2013/10/27 17:34:58.107] INFO  job.download.118 - start job download with data {"uri":"/Users/den/Projects/listboard.it/favicon.ico","path":"/Users/den/Projects/listboard.it/public/screenshots/ghq553gv1depapq2dqqmr7fq/favicon.ico"}
+[2013/10/27 17:36:06.018] INFO  jobs - schedule job check-url with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:36:06.022] INFO  jobs - schedule job screenshot with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:36:06.041] INFO  job.check-url.119 - start job check-url with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:36:06.060] INFO  job.screenshot.120 - start job screenshot with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:36:07.550] INFO  job.check-url.119 - Got request check content-type: text/html
+[2013/10/27 17:36:07.551] INFO  job.check-url.119 - Html content - schedule download
+[2013/10/27 17:36:07.551] INFO  jobs - schedule job download-html with {"uri":"https://news.ycombinator.com/item?id=6468945","uniqueId":"mwkrq8268zj6b6fa9c4mcr18"}
+[2013/10/27 17:36:07.552] INFO  job.check-url.119 - finish job check-url within 1512 ms
+[2013/10/27 17:36:07.558] INFO  job.download-html.121 - start job download-html with data {"uri":"https://news.ycombinator.com/item?id=6468945","uniqueId":"mwkrq8268zj6b6fa9c4mcr18"}
+[2013/10/27 17:36:07.560] INFO  job.download-html.121 - Prepare location for file: public/screenshots/mwkrq8268zj6b6fa9c4mcr18/item
+[2013/10/27 17:36:09.787] INFO  job.screenshot.120 - Screenshot of https://news.ycombinator.com/item?id=6468945 saved public/screenshots/s35x57p34so83qa6ry4sgb9b/screenshot.jpg
+[2013/10/27 17:36:09.787] INFO  job.screenshot.120 - finish job screenshot within 3727 ms
+[2013/10/27 17:36:10.415] INFO  job.download-html.121 - Finish download: public/screenshots/mwkrq8268zj6b6fa9c4mcr18/item
+[2013/10/27 17:36:10.415] INFO  job.download-html.121 - Html content - schedule processing
+[2013/10/27 17:36:10.416] INFO  jobs - schedule job process-html with {"uri":"https://news.ycombinator.com/item?id=6468945","path":"public/screenshots/mwkrq8268zj6b6fa9c4mcr18/item","uniqueId":"mwkrq8268zj6b6fa9c4mcr18"}
+[2013/10/27 17:36:10.416] INFO  job.download-html.121 - finish job download-html within 2858 ms
+[2013/10/27 17:36:10.423] INFO  job.process-html.122 - start job process-html with data {"uri":"https://news.ycombinator.com/item?id=6468945","path":"public/screenshots/mwkrq8268zj6b6fa9c4mcr18/item","uniqueId":"mwkrq8268zj6b6fa9c4mcr18"}
+[2013/10/27 17:36:10.496] INFO  job.process-html.122 - favicon
+[2013/10/27 17:36:10.497] INFO  jobs - schedule job download with {"uri":"./favicon.ico","path":"/Users/den/Projects/listboard.it/public/screenshots/mwkrq8268zj6b6fa9c4mcr18/favicon.ico"}
+[2013/10/27 17:36:10.499] INFO  job.process-html.122 - script removed
+[2013/10/27 17:36:10.499] INFO  job.process-html.122 - object removed
+[2013/10/27 17:36:10.500] INFO  job.process-html.122 - iframe removed
+[2013/10/27 17:36:10.501] INFO  job.process-html.122 - audio removed
+[2013/10/27 17:36:10.501] INFO  job.process-html.122 - video removed
+[2013/10/27 17:39:54.663] INFO  jobs - schedule job check-url with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:39:54.667] INFO  jobs - schedule job screenshot with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:39:54.686] INFO  job.check-url.124 - start job check-url with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:39:54.707] INFO  job.screenshot.125 - start job screenshot with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:39:57.115] INFO  job.check-url.124 - Got request check content-type: text/html
+[2013/10/27 17:39:57.115] INFO  job.check-url.124 - Html content - schedule download
+[2013/10/27 17:39:57.115] INFO  jobs - schedule job download-html with {"uri":"https://news.ycombinator.com/item?id=6468945","uniqueId":"vczxxjloqlb2vhhsagxmpe3g"}
+[2013/10/27 17:39:57.116] INFO  job.check-url.124 - finish job check-url within 2430 ms
+[2013/10/27 17:39:57.121] INFO  job.download-html.126 - start job download-html with data {"uri":"https://news.ycombinator.com/item?id=6468945","uniqueId":"vczxxjloqlb2vhhsagxmpe3g"}
+[2013/10/27 17:39:57.124] INFO  job.download-html.126 - Prepare location for file: public/screenshots/vczxxjloqlb2vhhsagxmpe3g/item
+[2013/10/27 17:39:58.334] INFO  job.screenshot.125 - Screenshot of https://news.ycombinator.com/item?id=6468945 saved public/screenshots/e7yyz11a3ol5efz9q4ajaxau/screenshot.jpg
+[2013/10/27 17:39:58.334] INFO  job.screenshot.125 - finish job screenshot within 3627 ms
+[2013/10/27 17:39:59.031] INFO  job.download-html.126 - Finish download: public/screenshots/vczxxjloqlb2vhhsagxmpe3g/item
+[2013/10/27 17:39:59.031] INFO  job.download-html.126 - Html content - schedule processing
+[2013/10/27 17:39:59.031] INFO  jobs - schedule job process-html with {"uri":"https://news.ycombinator.com/item?id=6468945","path":"public/screenshots/vczxxjloqlb2vhhsagxmpe3g/item","uniqueId":"vczxxjloqlb2vhhsagxmpe3g"}
+[2013/10/27 17:39:59.032] INFO  job.download-html.126 - finish job download-html within 1910 ms
+[2013/10/27 17:39:59.039] INFO  job.process-html.127 - start job process-html with data {"uri":"https://news.ycombinator.com/item?id=6468945","path":"public/screenshots/vczxxjloqlb2vhhsagxmpe3g/item","uniqueId":"vczxxjloqlb2vhhsagxmpe3g"}
+[2013/10/27 17:39:59.115] INFO  job.process-html.127 - favicon
+[2013/10/27 17:39:59.116] INFO  jobs - schedule job download with {"uri":"favicon.ico","path":"/Users/den/Projects/listboard.it/public/screenshots/vczxxjloqlb2vhhsagxmpe3g/favicon.ico"}
+[2013/10/27 17:39:59.117] INFO  job.process-html.127 - script removed
+[2013/10/27 17:39:59.118] INFO  job.process-html.127 - object removed
+[2013/10/27 17:39:59.119] INFO  job.process-html.127 - iframe removed
+[2013/10/27 17:39:59.119] INFO  job.process-html.127 - audio removed
+[2013/10/27 17:39:59.120] INFO  job.process-html.127 - video removed
+[2013/10/27 17:39:59.137] INFO  job.process-html.127 - finish job process-html within 98 ms
+[2013/10/27 17:39:59.143] INFO  job.download.128 - start job download with data {"uri":"favicon.ico","path":"/Users/den/Projects/listboard.it/public/screenshots/vczxxjloqlb2vhhsagxmpe3g/favicon.ico"}
+[2013/10/27 17:39:59.144] INFO  job.download.128 - Prepare location for file: /Users/den/Projects/listboard.it/public/screenshots/vczxxjloqlb2vhhsagxmpe3g/favicon.ico
+[2013/10/27 17:39:59.144] INFO  job.process-html.127 - file public/screenshots/vczxxjloqlb2vhhsagxmpe3g/item processed
+[2013/10/27 17:39:59.144] INFO  job.process-html.127 - finish job process-html within 105 ms
+[2013/10/27 17:39:59.283] ERROR root - Uncaught exception handled
+Error: getaddrinfo ENOTFOUND
+    at errnoException (dns.js:37:11)
+    at Object.onanswer [as oncomplete] (dns.js:124:16)
+[2013/10/27 17:41:44.581] INFO  jobs - schedule job check-url with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:41:44.585] INFO  jobs - schedule job screenshot with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:41:44.604] INFO  job.check-url.129 - start job check-url with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:41:44.624] INFO  job.screenshot.130 - start job screenshot with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:41:46.175] INFO  job.check-url.129 - Got request check content-type: text/html
+[2013/10/27 17:41:46.176] INFO  job.check-url.129 - Html content - schedule download
+[2013/10/27 17:41:46.176] INFO  jobs - schedule job download-html with {"uri":"https://news.ycombinator.com/item?id=6468945","uniqueId":"mxcaim3nw6gauaf6w296p95x"}
+[2013/10/27 17:41:46.176] INFO  job.check-url.129 - finish job check-url within 1572 ms
+[2013/10/27 17:41:46.182] INFO  job.download-html.131 - start job download-html with data {"uri":"https://news.ycombinator.com/item?id=6468945","uniqueId":"mxcaim3nw6gauaf6w296p95x"}
+[2013/10/27 17:41:46.185] INFO  job.download-html.131 - Prepare location for file: public/screenshots/mxcaim3nw6gauaf6w296p95x/item
+[2013/10/27 17:41:48.129] INFO  job.download-html.131 - Finish download: public/screenshots/mxcaim3nw6gauaf6w296p95x/item
+[2013/10/27 17:41:48.129] INFO  job.download-html.131 - Html content - schedule processing
+[2013/10/27 17:41:48.130] INFO  jobs - schedule job process-html with {"uri":"https://news.ycombinator.com/item?id=6468945","path":"public/screenshots/mxcaim3nw6gauaf6w296p95x/item","uniqueId":"mxcaim3nw6gauaf6w296p95x"}
+[2013/10/27 17:41:48.130] INFO  job.download-html.131 - finish job download-html within 1948 ms
+[2013/10/27 17:41:48.138] INFO  job.process-html.132 - start job process-html with data {"uri":"https://news.ycombinator.com/item?id=6468945","path":"public/screenshots/mxcaim3nw6gauaf6w296p95x/item","uniqueId":"mxcaim3nw6gauaf6w296p95x"}
+[2013/10/27 17:41:48.217] INFO  job.process-html.132 - favicon
+[2013/10/27 17:41:48.217] INFO  jobs - schedule job download with {"uri":"favicon.ico","path":"/Users/den/Projects/listboard.it/public/screenshots/mxcaim3nw6gauaf6w296p95x/favicon.ico"}
+[2013/10/27 17:41:48.219] INFO  job.process-html.132 - script removed
+[2013/10/27 17:41:48.220] INFO  job.process-html.132 - object removed
+[2013/10/27 17:41:48.221] INFO  job.process-html.132 - iframe removed
+[2013/10/27 17:41:48.221] INFO  job.process-html.132 - audio removed
+[2013/10/27 17:41:48.222] INFO  job.process-html.132 - video removed
+[2013/10/27 17:43:01.057] INFO  jobs - schedule job check-url with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:43:01.060] INFO  jobs - schedule job screenshot with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:43:01.079] INFO  job.check-url.134 - start job check-url with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:43:01.096] INFO  job.screenshot.135 - start job screenshot with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:43:02.285] INFO  job.check-url.134 - Got request check content-type: text/html
+[2013/10/27 17:43:02.285] INFO  job.check-url.134 - Html content - schedule download
+[2013/10/27 17:43:02.285] INFO  jobs - schedule job download-html with {"uri":"https://news.ycombinator.com/item?id=6468945","uniqueId":"rvla1zv68vl8sf7k8a1fjuec"}
+[2013/10/27 17:43:02.286] INFO  job.check-url.134 - finish job check-url within 1207 ms
+[2013/10/27 17:43:02.291] INFO  job.download-html.136 - start job download-html with data {"uri":"https://news.ycombinator.com/item?id=6468945","uniqueId":"rvla1zv68vl8sf7k8a1fjuec"}
+[2013/10/27 17:43:02.293] INFO  job.download-html.136 - Prepare location for file: public/screenshots/rvla1zv68vl8sf7k8a1fjuec/item
+[2013/10/27 17:43:03.662] INFO  job.download-html.136 - Finish download: public/screenshots/rvla1zv68vl8sf7k8a1fjuec/item
+[2013/10/27 17:43:03.662] INFO  job.download-html.136 - Html content - schedule processing
+[2013/10/27 17:43:03.663] INFO  jobs - schedule job process-html with {"uri":"https://news.ycombinator.com/item?id=6468945","path":"public/screenshots/rvla1zv68vl8sf7k8a1fjuec/item","uniqueId":"rvla1zv68vl8sf7k8a1fjuec"}
+[2013/10/27 17:43:03.663] INFO  job.download-html.136 - finish job download-html within 1372 ms
+[2013/10/27 17:43:03.670] INFO  job.process-html.137 - start job process-html with data {"uri":"https://news.ycombinator.com/item?id=6468945","path":"public/screenshots/rvla1zv68vl8sf7k8a1fjuec/item","uniqueId":"rvla1zv68vl8sf7k8a1fjuec"}
+[2013/10/27 17:43:03.747] INFO  job.process-html.137 - favicon
+[2013/10/27 17:43:03.747] INFO  jobs - schedule job download with {"uri":"favicon.ico","path":"/Users/den/Projects/listboard.it/public/screenshots/rvla1zv68vl8sf7k8a1fjuec/favicon.ico"}
+[2013/10/27 17:43:03.749] INFO  job.process-html.137 - script removed
+[2013/10/27 17:43:03.750] INFO  job.process-html.137 - object removed
+[2013/10/27 17:43:03.751] INFO  job.process-html.137 - iframe removed
+[2013/10/27 17:43:03.751] INFO  job.process-html.137 - audio removed
+[2013/10/27 17:43:03.752] INFO  job.process-html.137 - video removed
+[2013/10/27 17:43:16.377] INFO  jobs - schedule job check-url with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:43:16.381] INFO  jobs - schedule job screenshot with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:43:16.404] INFO  job.check-url.139 - start job check-url with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:43:16.427] INFO  job.screenshot.140 - start job screenshot with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:43:17.964] INFO  job.check-url.139 - Got request check content-type: text/html
+[2013/10/27 17:43:17.965] INFO  job.check-url.139 - Html content - schedule download
+[2013/10/27 17:43:17.965] INFO  jobs - schedule job download-html with {"uri":"https://news.ycombinator.com/item?id=6468945","uniqueId":"76hpyhbj8qdzji8b1kynp2ap"}
+[2013/10/27 17:43:17.965] INFO  job.check-url.139 - finish job check-url within 1561 ms
+[2013/10/27 17:43:17.971] INFO  job.download-html.141 - start job download-html with data {"uri":"https://news.ycombinator.com/item?id=6468945","uniqueId":"76hpyhbj8qdzji8b1kynp2ap"}
+[2013/10/27 17:43:17.973] INFO  job.download-html.141 - Prepare location for file: public/screenshots/76hpyhbj8qdzji8b1kynp2ap/item
+[2013/10/27 17:43:20.808] INFO  job.download-html.141 - Finish download: public/screenshots/76hpyhbj8qdzji8b1kynp2ap/item
+[2013/10/27 17:43:20.809] INFO  job.download-html.141 - Html content - schedule processing
+[2013/10/27 17:43:20.809] INFO  jobs - schedule job process-html with {"uri":"https://news.ycombinator.com/item?id=6468945","path":"public/screenshots/76hpyhbj8qdzji8b1kynp2ap/item","uniqueId":"76hpyhbj8qdzji8b1kynp2ap"}
+[2013/10/27 17:43:20.809] INFO  job.download-html.141 - finish job download-html within 2838 ms
+[2013/10/27 17:43:20.817] INFO  job.process-html.142 - start job process-html with data {"uri":"https://news.ycombinator.com/item?id=6468945","path":"public/screenshots/76hpyhbj8qdzji8b1kynp2ap/item","uniqueId":"76hpyhbj8qdzji8b1kynp2ap"}
+[2013/10/27 17:43:20.895] INFO  job.process-html.142 - favicon
+[2013/10/27 17:43:20.895] INFO  jobs - schedule job download with {"uri":"favicon.ico","path":"/Users/den/Projects/listboard.it/public/screenshots/76hpyhbj8qdzji8b1kynp2ap/favicon.ico"}
+[2013/10/27 17:43:20.897] INFO  job.process-html.142 - script removed
+[2013/10/27 17:43:20.898] INFO  job.process-html.142 - object removed
+[2013/10/27 17:43:20.898] INFO  job.process-html.142 - iframe removed
+[2013/10/27 17:43:20.899] INFO  job.process-html.142 - audio removed
+[2013/10/27 17:43:20.899] INFO  job.process-html.142 - video removed
+[2013/10/27 17:43:30.966] INFO  jobs - schedule job check-url with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:43:30.971] INFO  jobs - schedule job screenshot with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:43:31.002] INFO  job.check-url.144 - start job check-url with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:43:31.027] INFO  job.screenshot.145 - start job screenshot with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:43:32.060] INFO  job.check-url.144 - Got request check content-type: text/html
+[2013/10/27 17:43:32.061] INFO  job.check-url.144 - Html content - schedule download
+[2013/10/27 17:43:32.061] INFO  jobs - schedule job download-html with {"uri":"https://news.ycombinator.com/item?id=6468945","uniqueId":"y2azg1txefz3rvor483re4wl"}
+[2013/10/27 17:43:32.061] INFO  job.check-url.144 - finish job check-url within 1059 ms
+[2013/10/27 17:43:32.067] INFO  job.download-html.146 - start job download-html with data {"uri":"https://news.ycombinator.com/item?id=6468945","uniqueId":"y2azg1txefz3rvor483re4wl"}
+[2013/10/27 17:43:32.069] INFO  job.download-html.146 - Prepare location for file: public/screenshots/y2azg1txefz3rvor483re4wl/item
+[2013/10/27 17:43:33.357] INFO  job.download-html.146 - Finish download: public/screenshots/y2azg1txefz3rvor483re4wl/item
+[2013/10/27 17:43:33.357] INFO  job.download-html.146 - Html content - schedule processing
+[2013/10/27 17:43:33.358] INFO  jobs - schedule job process-html with {"uri":"https://news.ycombinator.com/item?id=6468945","path":"public/screenshots/y2azg1txefz3rvor483re4wl/item","uniqueId":"y2azg1txefz3rvor483re4wl"}
+[2013/10/27 17:43:33.358] INFO  job.download-html.146 - finish job download-html within 1291 ms
+[2013/10/27 17:43:33.365] INFO  job.process-html.147 - start job process-html with data {"uri":"https://news.ycombinator.com/item?id=6468945","path":"public/screenshots/y2azg1txefz3rvor483re4wl/item","uniqueId":"y2azg1txefz3rvor483re4wl"}
+[2013/10/27 17:43:33.441] INFO  job.process-html.147 - favicon
+[2013/10/27 17:43:33.442] INFO  jobs - schedule job download with {"uri":"favicon.ico","path":"/Users/den/Projects/listboard.it/public/screenshots/y2azg1txefz3rvor483re4wl/favicon.ico"}
+[2013/10/27 17:43:33.443] INFO  job.process-html.147 - script removed
+[2013/10/27 17:43:33.444] INFO  job.process-html.147 - object removed
+[2013/10/27 17:43:33.445] INFO  job.process-html.147 - iframe removed
+[2013/10/27 17:43:33.445] INFO  job.process-html.147 - audio removed
+[2013/10/27 17:43:33.446] INFO  job.process-html.147 - video removed
+[2013/10/27 17:44:04.134] INFO  jobs - schedule job check-url with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:44:04.138] INFO  jobs - schedule job screenshot with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:44:04.157] INFO  job.check-url.149 - start job check-url with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:44:04.176] INFO  job.screenshot.150 - start job screenshot with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:44:06.046] INFO  job.check-url.149 - Got request check content-type: text/html
+[2013/10/27 17:44:06.047] INFO  job.check-url.149 - Html content - schedule download
+[2013/10/27 17:44:06.047] INFO  jobs - schedule job download-html with {"uri":"https://news.ycombinator.com/item?id=6468945","uniqueId":"wokv8ndstqvonrodtwy21f2c"}
+[2013/10/27 17:44:06.047] INFO  job.check-url.149 - finish job check-url within 1890 ms
+[2013/10/27 17:44:06.053] INFO  job.download-html.151 - start job download-html with data {"uri":"https://news.ycombinator.com/item?id=6468945","uniqueId":"wokv8ndstqvonrodtwy21f2c"}
+[2013/10/27 17:44:06.055] INFO  job.download-html.151 - Prepare location for file: public/screenshots/wokv8ndstqvonrodtwy21f2c/item
+[2013/10/27 17:44:07.337] INFO  job.download-html.151 - Finish download: public/screenshots/wokv8ndstqvonrodtwy21f2c/item
+[2013/10/27 17:44:07.338] INFO  job.download-html.151 - Html content - schedule processing
+[2013/10/27 17:44:07.338] INFO  jobs - schedule job process-html with {"uri":"https://news.ycombinator.com/item?id=6468945","path":"public/screenshots/wokv8ndstqvonrodtwy21f2c/item","uniqueId":"wokv8ndstqvonrodtwy21f2c"}
+[2013/10/27 17:44:07.338] INFO  job.download-html.151 - finish job download-html within 1285 ms
+[2013/10/27 17:44:07.345] INFO  job.process-html.152 - start job process-html with data {"uri":"https://news.ycombinator.com/item?id=6468945","path":"public/screenshots/wokv8ndstqvonrodtwy21f2c/item","uniqueId":"wokv8ndstqvonrodtwy21f2c"}
+[2013/10/27 17:44:07.426] INFO  job.process-html.152 - favicon
+[2013/10/27 17:44:07.427] INFO  jobs - schedule job download with {"uri":"favicon.ico","path":"/Users/den/Projects/listboard.it/public/screenshots/wokv8ndstqvonrodtwy21f2c/favicon.ico"}
+[2013/10/27 17:44:07.429] INFO  job.process-html.152 - script removed
+[2013/10/27 17:44:07.430] INFO  job.process-html.152 - object removed
+[2013/10/27 17:44:07.430] INFO  job.process-html.152 - iframe removed
+[2013/10/27 17:44:07.431] INFO  job.process-html.152 - audio removed
+[2013/10/27 17:44:07.431] INFO  job.process-html.152 - video removed
+[2013/10/27 17:44:45.301] INFO  jobs - schedule job check-url with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:44:45.305] INFO  jobs - schedule job screenshot with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:44:45.326] INFO  job.check-url.154 - start job check-url with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:44:45.348] INFO  job.screenshot.155 - start job screenshot with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:44:46.555] INFO  job.check-url.154 - Got request check content-type: text/html
+[2013/10/27 17:44:46.556] INFO  job.check-url.154 - Html content - schedule download
+[2013/10/27 17:44:46.556] INFO  jobs - schedule job download-html with {"uri":"https://news.ycombinator.com/item?id=6468945","uniqueId":"w8bd2ybzsstdaqgyr8gyy9pf"}
+[2013/10/27 17:44:46.556] INFO  job.check-url.154 - finish job check-url within 1230 ms
+[2013/10/27 17:44:46.561] INFO  job.download-html.156 - start job download-html with data {"uri":"https://news.ycombinator.com/item?id=6468945","uniqueId":"w8bd2ybzsstdaqgyr8gyy9pf"}
+[2013/10/27 17:44:46.564] INFO  job.download-html.156 - Prepare location for file: public/screenshots/w8bd2ybzsstdaqgyr8gyy9pf/item
+[2013/10/27 17:44:49.946] INFO  job.download-html.156 - Finish download: public/screenshots/w8bd2ybzsstdaqgyr8gyy9pf/item
+[2013/10/27 17:44:49.946] INFO  job.download-html.156 - Html content - schedule processing
+[2013/10/27 17:44:49.946] INFO  jobs - schedule job process-html with {"uri":"https://news.ycombinator.com/item?id=6468945","path":"public/screenshots/w8bd2ybzsstdaqgyr8gyy9pf/item","uniqueId":"w8bd2ybzsstdaqgyr8gyy9pf"}
+[2013/10/27 17:44:49.947] INFO  job.download-html.156 - finish job download-html within 3386 ms
+[2013/10/27 17:44:49.953] INFO  job.process-html.157 - start job process-html with data {"uri":"https://news.ycombinator.com/item?id=6468945","path":"public/screenshots/w8bd2ybzsstdaqgyr8gyy9pf/item","uniqueId":"w8bd2ybzsstdaqgyr8gyy9pf"}
+[2013/10/27 17:44:50.028] INFO  job.process-html.157 - favicon
+[2013/10/27 17:44:50.029] INFO  jobs - schedule job download with {"uri":"favicon.ico","path":"/Users/den/Projects/listboard.it/public/screenshots/w8bd2ybzsstdaqgyr8gyy9pf/favicon.ico"}
+[2013/10/27 17:44:50.031] INFO  job.process-html.157 - script removed
+[2013/10/27 17:44:50.031] INFO  job.process-html.157 - object removed
+[2013/10/27 17:44:50.032] INFO  job.process-html.157 - iframe removed
+[2013/10/27 17:44:50.032] INFO  job.process-html.157 - audio removed
+[2013/10/27 17:44:50.033] INFO  job.process-html.157 - video removed
+[2013/10/27 17:49:41.688] INFO  jobs - schedule job check-url with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:49:41.691] INFO  jobs - schedule job screenshot with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:49:41.711] INFO  job.check-url.159 - start job check-url with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:49:41.730] INFO  job.screenshot.160 - start job screenshot with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:49:52.725] ERROR root - Uncaught exception handled
+Error: getaddrinfo ENOTFOUND
+    at errnoException (dns.js:37:11)
+    at Object.onanswer [as oncomplete] (dns.js:124:16)
+[2013/10/27 17:50:18.226] INFO  jobs - schedule job check-url with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:50:18.229] INFO  jobs - schedule job screenshot with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:50:18.249] INFO  job.check-url.161 - start job check-url with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:50:18.267] INFO  job.screenshot.162 - start job screenshot with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:50:19.421] INFO  job.check-url.161 - Got request check content-type: text/html
+[2013/10/27 17:50:19.421] INFO  job.check-url.161 - Html content - schedule download
+[2013/10/27 17:50:19.421] INFO  jobs - schedule job download-html with {"uri":"https://news.ycombinator.com/item?id=6468945","uniqueId":"y4n6hiinl7xbwv6plziit297"}
+[2013/10/27 17:50:19.422] INFO  job.check-url.161 - finish job check-url within 1173 ms
+[2013/10/27 17:50:19.427] INFO  job.download-html.163 - start job download-html with data {"uri":"https://news.ycombinator.com/item?id=6468945","uniqueId":"y4n6hiinl7xbwv6plziit297"}
+[2013/10/27 17:50:19.430] INFO  job.download-html.163 - Prepare location for file: public/screenshots/y4n6hiinl7xbwv6plziit297/item
+[2013/10/27 17:50:21.091] INFO  job.download-html.163 - Finish download: public/screenshots/y4n6hiinl7xbwv6plziit297/item
+[2013/10/27 17:50:21.091] INFO  job.download-html.163 - Html content - schedule processing
+[2013/10/27 17:50:21.091] INFO  jobs - schedule job process-html with {"uri":"https://news.ycombinator.com/item?id=6468945","path":"public/screenshots/y4n6hiinl7xbwv6plziit297/item","uniqueId":"y4n6hiinl7xbwv6plziit297"}
+[2013/10/27 17:50:21.092] INFO  job.download-html.163 - finish job download-html within 1665 ms
+[2013/10/27 17:50:21.099] INFO  job.process-html.164 - start job process-html with data {"uri":"https://news.ycombinator.com/item?id=6468945","path":"public/screenshots/y4n6hiinl7xbwv6plziit297/item","uniqueId":"y4n6hiinl7xbwv6plziit297"}
+[2013/10/27 17:50:21.157] ERROR root - Uncaught exception handled
+TypeError: Parameter 'url' must be a string, not undefined
+    at Url.parse (url.js:107:11)
+    at Object.urlParse [as parse] (url.js:101:5)
+    at /Users/den/Projects/listboard.it/jobs/jobs/process-html.js:65:31
+    at fs.js:266:14
+    at Object.oncomplete (fs.js:107:15)
+[2013/10/27 17:51:16.571] INFO  jobs - schedule job check-url with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:51:16.574] INFO  jobs - schedule job screenshot with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:51:16.594] INFO  job.check-url.165 - start job check-url with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:51:16.612] INFO  job.screenshot.166 - start job screenshot with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:51:17.678] INFO  job.check-url.165 - Got request check content-type: text/html
+[2013/10/27 17:51:17.679] INFO  job.check-url.165 - Html content - schedule download
+[2013/10/27 17:51:17.679] INFO  jobs - schedule job download-html with {"uri":"https://news.ycombinator.com/item?id=6468945","uniqueId":"6krm5j77e2b8a8435pdzdchg"}
+[2013/10/27 17:51:17.679] INFO  job.check-url.165 - finish job check-url within 1085 ms
+[2013/10/27 17:51:17.685] INFO  job.download-html.167 - start job download-html with data {"uri":"https://news.ycombinator.com/item?id=6468945","uniqueId":"6krm5j77e2b8a8435pdzdchg"}
+[2013/10/27 17:51:17.688] INFO  job.download-html.167 - Prepare location for file: public/screenshots/6krm5j77e2b8a8435pdzdchg/item
+[2013/10/27 17:51:18.984] INFO  job.download-html.167 - Finish download: public/screenshots/6krm5j77e2b8a8435pdzdchg/item
+[2013/10/27 17:51:18.984] INFO  job.download-html.167 - Html content - schedule processing
+[2013/10/27 17:51:18.984] INFO  jobs - schedule job process-html with {"uri":"https://news.ycombinator.com/item?id=6468945","path":"public/screenshots/6krm5j77e2b8a8435pdzdchg/item","uniqueId":"6krm5j77e2b8a8435pdzdchg"}
+[2013/10/27 17:51:18.985] INFO  job.download-html.167 - finish job download-html within 1300 ms
+[2013/10/27 17:51:18.992] INFO  job.process-html.168 - start job process-html with data {"uri":"https://news.ycombinator.com/item?id=6468945","path":"public/screenshots/6krm5j77e2b8a8435pdzdchg/item","uniqueId":"6krm5j77e2b8a8435pdzdchg"}
+[2013/10/27 17:51:19.069] ERROR root - Uncaught exception handled
+TypeError: Object #<Url> has no method 'filename'
+    at /Users/den/Projects/listboard.it/jobs/jobs/process-html.js:82:81
+    at fs.js:266:14
+    at Object.oncomplete (fs.js:107:15)
+[2013/10/27 17:52:36.304] INFO  jobs - schedule job check-url with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:52:36.308] INFO  jobs - schedule job screenshot with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:52:36.328] INFO  job.check-url.169 - start job check-url with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:52:36.347] INFO  job.screenshot.170 - start job screenshot with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:52:37.520] INFO  job.check-url.169 - Got request check content-type: text/html
+[2013/10/27 17:52:37.520] INFO  job.check-url.169 - Html content - schedule download
+[2013/10/27 17:52:37.521] INFO  jobs - schedule job download-html with {"uri":"https://news.ycombinator.com/item?id=6468945","uniqueId":"l5oymtrj6wtgxm8j6yiuuzp7"}
+[2013/10/27 17:52:37.521] INFO  job.check-url.169 - finish job check-url within 1193 ms
+[2013/10/27 17:52:37.527] INFO  job.download-html.171 - start job download-html with data {"uri":"https://news.ycombinator.com/item?id=6468945","uniqueId":"l5oymtrj6wtgxm8j6yiuuzp7"}
+[2013/10/27 17:52:37.530] INFO  job.download-html.171 - Prepare location for file: public/screenshots/l5oymtrj6wtgxm8j6yiuuzp7/item
+[2013/10/27 17:52:39.241] INFO  job.download-html.171 - Finish download: public/screenshots/l5oymtrj6wtgxm8j6yiuuzp7/item
+[2013/10/27 17:52:39.242] INFO  job.download-html.171 - Html content - schedule processing
+[2013/10/27 17:52:39.242] INFO  jobs - schedule job process-html with {"uri":"https://news.ycombinator.com/item?id=6468945","path":"public/screenshots/l5oymtrj6wtgxm8j6yiuuzp7/item","uniqueId":"l5oymtrj6wtgxm8j6yiuuzp7"}
+[2013/10/27 17:52:39.242] INFO  job.download-html.171 - finish job download-html within 1715 ms
+[2013/10/27 17:52:39.249] INFO  job.process-html.172 - start job process-html with data {"uri":"https://news.ycombinator.com/item?id=6468945","path":"public/screenshots/l5oymtrj6wtgxm8j6yiuuzp7/item","uniqueId":"l5oymtrj6wtgxm8j6yiuuzp7"}
+[2013/10/27 17:52:39.258] ERROR root - Uncaught exception handled
+TypeError: Property 'protocol' of object #<Url> is not a function
+    at /Users/den/Projects/listboard.it/jobs/jobs/process-html.js:67:77
+    at fs.js:266:14
+    at Object.oncomplete (fs.js:107:15)
+[2013/10/27 17:53:00.030] INFO  jobs - schedule job check-url with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:53:00.034] INFO  jobs - schedule job screenshot with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:53:00.054] INFO  job.check-url.173 - start job check-url with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:53:00.073] INFO  job.screenshot.174 - start job screenshot with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:53:01.110] INFO  job.check-url.173 - Got request check content-type: text/html
+[2013/10/27 17:53:01.111] INFO  job.check-url.173 - Html content - schedule download
+[2013/10/27 17:53:01.111] INFO  jobs - schedule job download-html with {"uri":"https://news.ycombinator.com/item?id=6468945","uniqueId":"a2glovcyx7jrapiqrwx1pfk7"}
+[2013/10/27 17:53:01.111] INFO  job.check-url.173 - finish job check-url within 1057 ms
+[2013/10/27 17:53:01.117] INFO  job.download-html.175 - start job download-html with data {"uri":"https://news.ycombinator.com/item?id=6468945","uniqueId":"a2glovcyx7jrapiqrwx1pfk7"}
+[2013/10/27 17:53:01.120] INFO  job.download-html.175 - Prepare location for file: public/screenshots/a2glovcyx7jrapiqrwx1pfk7/item
+[2013/10/27 17:53:32.390] ERROR root - Uncaught exception handled
+Error: socket hang up
+    at createHangUpError (http.js:1472:15)
+    at CleartextStream.socketCloseListener (http.js:1522:23)
+    at CleartextStream.EventEmitter.emit (events.js:95:17)
+    at tls.js:686:10
+    at process._tickCallback (node.js:415:13)
+[2013/10/27 17:53:42.190] INFO  jobs - schedule job check-url with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:53:42.194] INFO  jobs - schedule job screenshot with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:53:42.213] INFO  job.check-url.176 - start job check-url with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:53:42.231] INFO  job.screenshot.177 - start job screenshot with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:54:12.244] INFO  jobs - schedule job check-url with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:54:12.247] INFO  jobs - schedule job screenshot with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:54:12.269] INFO  job.check-url.178 - start job check-url with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:54:12.290] INFO  job.screenshot.179 - start job screenshot with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:54:43.909] ERROR root - Uncaught exception handled
+Error: socket hang up
+    at createHangUpError (http.js:1472:15)
+    at CleartextStream.socketCloseListener (http.js:1522:23)
+    at CleartextStream.EventEmitter.emit (events.js:95:17)
+    at tls.js:686:10
+    at process._tickCallback (node.js:415:13)
+[2013/10/27 17:54:51.434] INFO  jobs - schedule job check-url with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:54:51.455] INFO  job.check-url.180 - start job check-url with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:56:44.227] INFO  jobs - schedule job check-url with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 17:56:44.247] INFO  job.check-url.181 - start job check-url with data {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 18:01:22.351] INFO  jobs - schedule job check-url with {"uri":"https://news.ycombinator.com/item?id=6468945"}
+[2013/10/27 18:01:22.371] INFO  job.check-url.182 - start job check-url with data {"uri":"https://news.ycombinator.com/item?id=6468945"}

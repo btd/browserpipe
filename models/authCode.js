@@ -1,6 +1,6 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
-    config = require('../../config/config');
+    config = require('../config');
 
 var AuthCodeSchema = new Schema({
     application: { type: Schema.ObjectId, ref: 'Application'},

@@ -2,7 +2,7 @@ var express = require('express'),
     _ = require('lodash'),
     error = require('./error');
 
-var AccessToken = require('../app/models/accessToken');
+var AccessToken = require('../models/accessToken');
 
 
 var hasValidAccessToken = function (req, res, next) {

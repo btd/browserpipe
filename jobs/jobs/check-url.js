@@ -14,14 +14,16 @@ var CheckUrlJob = function (options, instance, jobs) {
     Job.call(this, options, instance, jobs);
 
     this.uri = options.uri;
-    this.uniqueId = options.uniqueId;    
+    this.uniqueId = options.uniqueId || utils.uid(24);
     this.userAgent = options.userAgent || utils.userAgent.default;
 
     if (!this.uri) throw new Error('uri required');
-    if (!this.uniqueId) throw new Error('uniqueId required');
+    //if (!this.uniqueId) throw new Error('uniqueId required');
 };
 
 CheckUrlJob.prototype = Object.create(Job.prototype);
+
+CheckUrlJob.prototype.name = 'check-url';
 
 CheckUrlJob.prototype.constructor = CheckUrlJob;
 

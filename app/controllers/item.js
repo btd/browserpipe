@@ -3,8 +3,8 @@
 var _ = require('lodash'),
     mongoose = require('mongoose'),
     Item = mongoose.model('Item'),
-    responses = require('../util/responses.js'),
-    errors = require('../util/errors.js'),
+    responses = require('.././responses.js'),
+    errors = require('.././errors.js'),
     jobs = new (require('../../jobs/manager'));
 
 var saveItem = function(req, res, item, delta) {
@@ -48,7 +48,7 @@ var launchItemJobs = function(req, res, item) {
             type: 'update.item',
             data: item
         }        
-        jobs.schedule('check url', {
+        jobs.schedule('check-url', {
             uri: item.url,
             uniqueId: item._id.toString()
         }).on('complete', function() {
