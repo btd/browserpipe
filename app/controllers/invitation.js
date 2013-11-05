@@ -2,8 +2,8 @@
 
 var mongoose = require('mongoose'),
     Invitation = mongoose.model('Invitation'),
-    responses = require('../util/responses.js'),
-    errors = require('../util/errors.js');
+    responses = require('.././responses.js'),
+    errors = require('.././errors.js');
 
 //Create invitation
 exports.create = function (req, res) {

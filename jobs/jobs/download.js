@@ -25,6 +25,8 @@ var DownloadJob = function (options, instance, jobs) {
 
 DownloadJob.prototype = Object.create(Job.prototype);
 
+DownloadJob.prototype.name = 'download';
+
 DownloadJob.prototype.constructor = DownloadJob;
 
 DownloadJob.prototype.exec = function (done) {

@@ -2,15 +2,16 @@ var should = require('should');
 var request = require('supertest');
 var mongoose = require('mongoose');
 
-var User = require('../../app/models/user');
-var Application = require('../../app/models/application');
+var User = require('../../models/user');
+var Application = require('../../models/application');
 
-var security = require('../../app/util/security');
+var security = require('../../util/security');
 
 var jsdom = require('jsdom');
 var Cookie = require('cookiejar').Cookie;
 
 var app = require('../../api/express');
+require('../../logger');
 
 var goodUser = { email: 'a@a.com', password: '123', name: 'User' };
 

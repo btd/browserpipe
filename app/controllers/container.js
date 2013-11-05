@@ -1,8 +1,8 @@
 /* jshint node: true */
 
 var _ = require('lodash'),
-    responses = require('../util/responses.js'),
-    errors = require('../util/errors.js');    
+    responses = require('.././responses.js'),
+    errors = require('.././errors.js');
 
 var saveContainer = function(req, res, containerId, delta){
     req.user.saveWithPromise()

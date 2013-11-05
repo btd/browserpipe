@@ -76,8 +76,8 @@ Object.keys(config).forEach(function (key) {
         collection: 'sessions',
         url: config[key].db.uri
     }
-});
 
-config[environment].env = environment;
+    config[key].env = key;
+});
 
 module.exports = config[environment];

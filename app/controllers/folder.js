@@ -6,8 +6,8 @@ var _ = require('lodash'),
     Folder = mongoose.model('Folder'),
     Item = mongoose.model('Item'),
     Folder = mongoose.model('Folder'),
-    responses = require('../util/responses.js'),
-    errors = require('../util/errors.js');
+    responses = require('.././responses.js'),
+    errors = require('.././errors.js');
 
 var saveFolder = function(req, res, folder, delta){
     folder.saveWithPromise()

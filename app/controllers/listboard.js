@@ -4,8 +4,8 @@ var _ = require('lodash'),
     q = require('q'),
     mongoose = require('mongoose'),    
     Item = mongoose.model('Item'),
-    responses = require('../util/responses.js'),
-    errors = require('../util/errors.js');
+    responses = require('.././responses.js'),
+    errors = require('.././errors.js');
 
 //Find listboard by id
 exports.listboard = function (req, res, next, id) {    

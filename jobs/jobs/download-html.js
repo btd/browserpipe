@@ -1,5 +1,4 @@
 var request = require('superagent'),
-    mkdirp = require('mkdirp'),
     URL = require('URIjs');
 
 var fs = require('fs'),
@@ -14,6 +13,8 @@ var DownloadHtmlJob = function (options, instance, jobs) {
 };
 
 DownloadHtmlJob.prototype = Object.create(DonwloadJob.prototype);
+
+DownloadHtmlJob.prototype.name = 'download-html';
 
 DownloadHtmlJob.prototype.constructor = DownloadHtmlJob;
 

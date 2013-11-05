@@ -1,5 +1,6 @@
 var _ = require('lodash');
 var myUtil = require('./util');
+var logger = require('rufus').getLogger('api.error');
 
 var errors = {
     InvalidRequest: {
@@ -17,6 +18,10 @@ var errors = {
     UnauthorizedClient: {
         code: 400,
         msg: 'unauthorized_client'
+    },
+    NotFound: {
+        code: 404,
+        msg: 'not_found'
     }
 };
 
@@ -53,7 +58,7 @@ module.exports.sendError = sendError;
 module.exports.sendIfFailed = function(res, errorType) {
     errorType = errorType || errors.ServerError;
     return function(err) {
-        console.error('You had an error: ', err.stack);
+        logger.error('Api throw error', err);
         sendError(res, new errorType(err.message));
     }
 }

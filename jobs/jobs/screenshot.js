@@ -19,13 +19,15 @@ var ScreenShotJob = function (options, instance, jobs) {
     Job.call(this, options, instance, jobs);
 
     this.uri = options.uri;
-    this.uniqueId = options.uniqueId
+    this.uniqueId = options.uniqueId || utils.uid(24);
 
     if (!this.uri) throw new Error('uri required');
     if (!this.uniqueId) throw new Error('uniqueId required');
 };
 
 ScreenShotJob.prototype = Object.create(Job.prototype);
+
+ScreenShotJob.prototype.name = 'screenshot';
 
 ScreenShotJob.prototype.constructor = ScreenShotJob;
 
