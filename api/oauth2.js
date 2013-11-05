@@ -2,16 +2,16 @@ var express = require('express'),
     _ = require('lodash'),
     mongoStore = require('connect-mongo')(express);
 
-var config = require('../config/config'),
+var config = require('../config'),
     util = require('./util'),
     error = require('./error');
 
-var Application = require('../app/models/application'),
-    User = require('../app/models/user'),
-    AuthCode = require('../app/models/authCode'),
-    AccessToken = require('../app/models/accessToken');
+var Application = require('../models/application'),
+    User = require('../models/user'),
+    AuthCode = require('../models/authCode'),
+    AccessToken = require('../models/accessToken');
 
-var generateRandomString = require('../app/util/security').generateRandomString;
+var generateRandomString = require('../util/security').generateRandomString;
 
 //middleware required for authorization part
 var cookieParser = express.cookieParser();

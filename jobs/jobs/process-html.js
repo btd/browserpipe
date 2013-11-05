@@ -1,8 +1,9 @@
 var Job = require('../job'),
     utils = require('../utils');
 
-var jsdom = require('jsdom'),
+var cheerio = require('cheerio'),
     URL = require('URIjs'),
+    url = require('url'),
     _ = require('lodash');
 
 var path = require('path'),
@@ -34,6 +35,8 @@ var ProcessHtmlJob = function (options, instance, jobs) {
 
 ProcessHtmlJob.prototype = Object.create(Job.prototype);
 
+ProcessHtmlJob.prototype.name = 'process-html';
+
 ProcessHtmlJob.prototype.constructor = ProcessHtmlJob;
 
 ProcessHtmlJob.prototype.exec = function (done) {
@@ -43,87 +46,56 @@ ProcessHtmlJob.prototype.exec = function (done) {
         that.jobs.schedule('download', { uri: url, path: path, uniqueId: uniqueId });
     };
 
-    var removeAllTags = function(window, tagName) {
-        var tags = window.document.getElementsByTagName(tagName);
-
-        //remove scripts at all
-        _.each(tags, function(tag) {
-            tag.parentNode.removeChild(tag);
-        });
-
-        that.log(tagName + ' removed');
-    };
-
     //TODO we can download and interpret scripts, but if server does not support cors this, will not help at all
 
     if(this.favicon || this.styles || this.images || this.js) {
-        jsdom.env({
-            url: this.uri,
-            path: this.path,
-            uniqueId: this.uniqueId,
-            done: function(err, window) {
-                
-                if (err) return done(err);
+        fs.readFile(this.path, function(err, data) {
+            if(err) throw err; // rethrow to try restart job
 
-                var links = window.document.getElementsByTagName('link');
+            var $ = cheerio.load(data);
 
-                that.log('found links', links.length);
+            var link = $('link[rel="icon"],link[rel="shortcut icon"]');
 
-                _.each(links, function(link) {
-                    switch(link.getAttribute('rel')) {
-                        case 'icon':
-                        case 'shortcut icon':
-                            var href = link.getAttribute('href');
+            var baseUrl = URL(that.uri);
+            var _faviconUrl = URL(link.attr('href'));
+            if(!_faviconUrl.protocol().length) _faviconUrl.protocol(baseUrl.protocol());
+            if(!_faviconUrl.host().length) _faviconUrl.host(baseUrl.host());
+            if(_faviconUrl.path()[0] !== '/') faviconUrl.directory(baseUrl.directory());
 
-                            var _url = (new URL(href)).relativeTo(that.uri);
-                            if(!_url.protocol()) _url.protocol('http');
+            var faviconUrl = _faviconUrl.toString();
+            var faviconPath = path.resolve(path.dirname(that.path), _faviconUrl.filename());
+            that.log('favicon %s %s', faviconUrl, faviconPath);
 
-                            var faviconUrl = _url.toString();
-                            var faviconPath = path.resolve(path.dirname(that.path), _url.filename());
-                            that.log('favicon', faviconUrl, faviconPath);
+            link.attr('href', _faviconUrl.filename());
 
-                            link.setAttribute('href', _url.filename());
+            addDownload(faviconUrl, faviconPath);
 
-                            addDownload(faviconUrl, faviconPath);
+            $('script,object,iframe,audio,video').remove();
+            $('[onclick]').removeAttr('onclick');
 
-                            break;
-                    }
-                });
+            fs.writeFile(that.path + '.buf', $.html(), function(err) {
 
-                removeAllTags(window, 'script');
-                removeAllTags(window, 'object');
-                removeAllTags(window, 'iframe');
-                removeAllTags(window, 'audio');
-                removeAllTags(window, 'video');
-                //TODO need to review which we should delete also
+                if (err) throw err;
 
-                //TODO need to remove a[href=^javascript:], [on*=]
+                fs.unlink(that.path, function(err) {
 
-                //now save changed file near old
-                //TODO it seems better to use write stream there
-                fs.writeFile(that.path + '.buf', window.document.doctype + window.document.innerHTML, function(err) {
-                    
-                    if (err) return done(err);
+                    if (err) throw err;
 
-                    fs.unlink(that.path, function(err) {
-                        
-                        if (err) return done(err);
+                    fs.rename(that.path + '.buf', that.path, function(err) {
 
-                        fs.rename(that.path + '.buf', that.path, function(err) {
-                            
-                            if (err) return done(err);
+                        if (err) throw err;
 
-                            that.log('file ' + that.path + ' processed');
+                        that.log('file ' + that.path + ' processed');
 
-                            done();
-                        });
-
+                        done();
                     });
-                });
 
-                window.close();
-            }
+                });
+            });
+
+            done();
         });
+
     }
 };
 

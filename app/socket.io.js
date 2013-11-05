@@ -1,10 +1,10 @@
 var _ = require('lodash'),
     express = require('express'),
     mongoStore = require('connect-mongo')(express),
-    config = require('./config'),
+    config = require('../config'),
     io = require('socket.io');
 
-var userUpdate = require('../app/controllers/user_update');
+var userUpdate = require('./controllers/user_update');
 
 module.exports = function () {
 

@@ -3,8 +3,8 @@ var _ = require('lodash'),
     Q = require('q'),
     userUpdate = require('../../app/controllers/user_update');
 
-var User = require('../../app/models/user'),
-    Item = require('../../app/models/item');
+var User = require('../../models/user'),
+    Item = require('../../models/item');
 
 // used after hasValidAccessToken
 var loadUser = function (req, res, next) {
