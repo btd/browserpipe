@@ -52,7 +52,7 @@ var launchItemJobs = function(req, res, item) {
             uri: item.url,
             uniqueId: item._id.toString()
         }).on('complete', function() {
-            item.favicon = "/screenshots/" + item._id.toString() + "/favicon.png";
+            item.favicon = "/screenshots/" + item._id.toString() + "/favicon.ico";
             saveItem(req, res, item, delta)
                 .done();
         })

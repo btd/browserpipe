@@ -84,7 +84,7 @@
       }
 
       var col = cb.socket.mongo.database.collection("items");
-      return col.find({user:  ObjectID.createFromHexString(command.userId) ,favicon: null}).toArray(function(err, res) {
+      return col.find({user:  ObjectID.createFromHexString(command.userId)}).toArray(function(err, res) {
         if (err != null) {
           return cb(err);
         }
@@ -94,12 +94,13 @@
 
         for (_i = 0, _len = res.length; _i < _len; _i++) {
           var item = res[_i];
-          jobs.schedule('check url', {
+          console.log(item.url);
+          jobs.schedule('check-url', {
             uri: item.url,
             uniqueId: item._id.toString()
           }).on('complete', function() {
-              item.favicon = "/screenshots/" + item._id.toString() + "/favicon.png";              
-              col.save(item);
+              item.favicon = "/screenshots/" + item._id.toString() + "/favicon.ico";              
+              col.save(item, cb);
           })
         }
 
@@ -128,7 +129,7 @@
             uniqueId: item._id.toString()
           }).on('complete', function() {
               item.screenshot = "/screenshots/" + item._id.toString() + "/screenshot.jpg";            
-              col.save(item);
+              col.save(item, cb);
           })
         }
 

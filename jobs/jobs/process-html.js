@@ -54,19 +54,25 @@ ProcessHtmlJob.prototype.exec = function (done) {
 
             var $ = cheerio.load(data);
 
-            var link = $('link[rel="icon"],link[rel="shortcut icon"]');
+            var link = $('link[rel="icon"],link[rel="shortcut icon"],link[rel="apple-touch-icon"]');
+            var href = link.attr('href');
+
+            //We try convention URL if not found
+            if(!href)
+                href = that.uri + '/favicon.ico';
 
             var baseUrl = URL(that.uri);
-            var _faviconUrl = URL(link.attr('href'));
+            var _faviconUrl = URL(href);
             if(!_faviconUrl.protocol().length) _faviconUrl.protocol(baseUrl.protocol());
             if(!_faviconUrl.host().length) _faviconUrl.host(baseUrl.host());
             if(_faviconUrl.path()[0] !== '/') faviconUrl.directory(baseUrl.directory());
 
             var faviconUrl = _faviconUrl.toString();
-            var faviconPath = path.resolve(path.dirname(that.path), _faviconUrl.filename());
+            var faviconPath = path.resolve(path.dirname(that.path), 'favicon.ico');
             that.log('favicon %s %s', faviconUrl, faviconPath);
 
-            link.attr('href', _faviconUrl.filename());
+            that.log('faviconUrl:  ' + faviconUrl)
+            that.log('faviconPath:  ' + faviconPath)
 
             addDownload(faviconUrl, faviconPath);
 

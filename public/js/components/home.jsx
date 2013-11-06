@@ -41,7 +41,7 @@ var HomeComponent = React.createClass({
   },
   getCenterWidth: function() {
     //TODO: change this when collapsing the folder panel
-    return this.state.docWidth - 260; //(260 = folder panel)
+    return this.state.docWidth - 261; //(261 = folder panel)
   },  
   handleListboardClick: function(e) {
       e.preventDefault();

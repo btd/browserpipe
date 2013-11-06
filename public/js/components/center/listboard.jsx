@@ -47,13 +47,14 @@ var ListboardComponent = React.createClass({
         <div className="listboard" style={this.getListboardStyle()} >
           <div className="navbar sub-bar">
             <div className="navbar-inner">
-              <ul className="nav">                
-                <li>
+              <ul className="nav">                                  
+                <li>                  
                   <LabelEditorComponent 
                     onSaveLabel= {this.saveListboardLabel} 
                     labelValue= {this.props.selectedListboard.label} 
                     defaultLabelValue= "Unnamed" />
-                  </li>                
+                  <span className="last-sync-time">(last sync 2 min ago)</span>
+                </li>                                  
               </ul>              
               <ul className="nav pull-right">              
                 <li>
