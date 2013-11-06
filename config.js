@@ -4,6 +4,13 @@ var _ = require('lodash'),
     path = require('path');
 
 var common = {
+    'storePath': './public/screenshots', // path where jobs server will store all its content, maybe we will need to separate it
+    'screenshot': { // default screenshot settings
+        format: 'jpg',
+        width: 800,
+        height: 600,
+        defaultName: 'screenshot'
+    },
     oauth2: {
         authCode: {
             length: 256,

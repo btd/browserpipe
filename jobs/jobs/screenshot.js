@@ -4,7 +4,7 @@ var screenshot = require('url-to-screenshot'),
 var fs = require('fs'),
     path = require('path');
 
-var config = require('../config'),
+var config = require('../../config'),
     utils = require('../utils'),
     Job = require('../job');
 
