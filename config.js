@@ -4,6 +4,13 @@ var _ = require('lodash'),
     path = require('path');
 
 var common = {
+    'storePath': './public/screenshots', // path where jobs server will store all its content, maybe we will need to separate it
+    'screenshot': { // default screenshot settings
+        format: 'jpg',
+        width: 800,
+        height: 600,
+        defaultName: 'screenshot'
+    },
     oauth2: {
         authCode: {
             length: 256,
@@ -63,8 +70,8 @@ var config = {
         mincer: {
             url: '/public',
             roots: './public',
-            preprocess: ['img/index/**', 'font/**', 'css/index.css', 'js/apps/index.js'],
-            manifest: path.join(__dirname, '..', 'compiled-assets')
+            preprocess: ['img/index/**', 'font/**', 'css/index.css', 'js/index.js'],
+            manifest: path.join(__dirname, 'compiled-assets')
         }
     }
 };

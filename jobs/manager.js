@@ -2,7 +2,7 @@ var kue = require('kue'),
     redis = require('redis'),
     rufus = require('rufus');
 
-var config = require('./config');
+var config = require('../config');
 var logger = rufus.getLogger('jobs');
 
 

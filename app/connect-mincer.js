@@ -77,10 +77,15 @@ ConnectMincer.prototype._findAssetPaths = function (logicalPath, options, ext) {
     var parsedUrl = _.pick(url.parse(logicalPath, true), 'query', 'hash', 'pathname');
     logicalPath = parsedUrl.pathname;
 
-    var assetInManifest = this.manifest && this.manifest.assets[logicalPath];
-    if(assetInManifest) {
-        parsedUrl.pathname = this.options.url + '/' + rewriteExtension(assetInManifest, ext);
-        return [ url.format(parsedUrl) ];
+    if(this.manifest) {
+        // try to locate everything inside manifest
+        // if something missing probably we do not precompile them
+
+        var assetInManifest = this.manifest.assets[logicalPath] || this.manifest.assets[logicalPath + ext];
+        if(assetInManifest) {
+            parsedUrl.pathname = this.options.url + '/' + rewriteExtension(assetInManifest, ext);
+            return [ url.format(parsedUrl) ];
+        }
     }
 
     var asset = this.environment.findAsset(logicalPath, options);
