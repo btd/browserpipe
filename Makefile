@@ -40,7 +40,7 @@ test-cov:
 		$(MOCHA_OPTS)
 
 start-prod: clean
-	@NODE_ENV=production ./node_modules/.bin/nodemon --watch app --watch config server.js
+	@NODE_ENV=production ./node_modules/.bin/nodemon --watch app server.js
 
 lint:
 	./node_modules/.bin/jshint --show-non-errors app config public/js api
@@ -49,11 +49,6 @@ lint:
 jshint-jenkins:
 	./node_modules/.bin/jshint --reporter=checkstyle app config public/js 1> results/checkstyle.xml || exit 0
 
-watch-main:
-	watchify -t reactify --extension .jsx --debug public/js/main.js -o ./public/js/apps/main.js
-
-build-main:
-	browserify -t reactify --extension .jsx --debug public/js/main.js -o ./public/js/apps/main.js
 
 install:
 	bower install

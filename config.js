@@ -70,8 +70,8 @@ var config = {
         mincer: {
             url: '/public',
             roots: './public',
-            preprocess: ['img/index/**', 'font/**', 'css/index.css', 'js/apps/index.js'],
-            manifest: path.join(__dirname, '..', 'compiled-assets')
+            preprocess: ['img/index/**', 'font/**', 'css/index.css', 'js/index.js'],
+            manifest: path.join(__dirname, 'compiled-assets')
         }
     }
 };
