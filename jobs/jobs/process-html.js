@@ -57,7 +57,7 @@ ProcessHtmlJob.prototype.exec = function (done) {
             var link = $('link[rel="icon"],link[rel="shortcut icon"],link[rel="apple-touch-icon"]');
             var href = link.attr('href');
 
-            //We try convention URL if not found
+            //We try convention URL if not found (some sites do not add link tag but have the favicon.ico)
             if(!href)
                 href = that.uri + '/favicon.ico';
 
@@ -68,6 +68,8 @@ ProcessHtmlJob.prototype.exec = function (done) {
             if(_faviconUrl.path()[0] !== '/') faviconUrl.directory(baseUrl.directory());
 
             var faviconUrl = _faviconUrl.toString();
+            //TODO: review this. we call them all favicon.ico to be accesed by the item
+            //if not we need to pass it to the item or update the item and save it here
             var faviconPath = path.resolve(path.dirname(that.path), 'favicon.ico');
             that.log('favicon %s %s', faviconUrl, faviconPath);
 
@@ -75,6 +77,8 @@ ProcessHtmlJob.prototype.exec = function (done) {
             that.log('faviconPath:  ' + faviconPath)
 
             addDownload(faviconUrl, faviconPath);
+
+            //TODO: extract the title to title tag and pass it to the item or save the item here
 
             $('script,object,iframe,audio,video').remove();
             $('[onclick]').removeAttr('onclick');

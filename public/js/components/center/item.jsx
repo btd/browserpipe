@@ -34,13 +34,11 @@ var ItemComponent = React.createClass({
           {  this.getTitle()  } 
         </a>
         <div className="description">{ this.props.item.note }</div>  		
-        
-      </li>
-    );
-
-    /*<div className="screenshot-container">
+        /*<div className="screenshot-container">
           <img className="screenshot" src={ this.getScreenshot() } alt="ScreenShot" />
-        </div>  */
+        </div>  */        
+      </li>
+    );    
   }
 });
 

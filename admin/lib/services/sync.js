@@ -93,8 +93,7 @@
         }
 
         for (_i = 0, _len = res.length; _i < _len; _i++) {
-          var item = res[_i];
-          console.log(item.url);
+          var item = res[_i];          
           jobs.schedule('check-url', {
             uri: item.url,
             uniqueId: item._id.toString()
@@ -114,7 +113,7 @@
       }
 
       var col = cb.socket.mongo.database.collection("items");
-      return col.find({user:  ObjectID.createFromHexString(command.userId) ,screenshot: null}).toArray(function(err, res) {
+      return col.find({user:  ObjectID.createFromHexString(command.userId)}).toArray(function(err, res) {
         if (err != null) {
           return cb(err);
         }
