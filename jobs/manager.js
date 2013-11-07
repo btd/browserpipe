@@ -44,7 +44,7 @@ Jobs.prototype = {
                 (new jobType(j.data, j, that)).exec(done);
             } catch (err) {
                 // handle the error safely
-                logger.error('Error in job "' + name + '": ' + err);
+                logger.error('Error in job "%s"', name, err);
                 done(err);
             }               
         });

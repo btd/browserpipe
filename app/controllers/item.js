@@ -1,6 +1,7 @@
 /* jshint node: true */
 
 var _ = require('lodash'),
+    config = require('../../config')
     mongoose = require('mongoose'),
     Item = mongoose.model('Item'),
     responses = require('.././responses.js'),
@@ -52,7 +53,7 @@ var launchItemJobs = function(req, res, item) {
             uri: item.url,
             uniqueId: item._id.toString()
         }).on('complete', function() {
-            item.favicon = "/screenshots/" + item._id.toString() + "/favicon.ico";
+            item.favicon = config.storeUrl + "/" + item._id.toString() + "/favicon.ico";
             saveItem(req, res, item, delta)
                 .done();
         })
@@ -60,7 +61,7 @@ var launchItemJobs = function(req, res, item) {
             uri: item.url,
             uniqueId: item._id.toString()
         }).on('complete', function() {
-            item.screenshot = "/screenshots/" + item._id.toString() + "/screenshot.jpg";
+            item.screenshot = config.storeUrl + "/" + item._id.toString() + "/screenshot.jpg";
             saveItem(req, res, item, delta)
                 .done();
         })

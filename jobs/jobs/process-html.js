@@ -70,7 +70,7 @@ ProcessHtmlJob.prototype.exec = function (done) {
             var faviconUrl = _faviconUrl.toString();
             //TODO: review this. we call them all favicon.ico to be accesed by the item
             //if not we need to pass it to the item or update the item and save it here
-            var faviconPath = path.resolve(path.dirname(that.path), 'favicon.ico');
+            var faviconPath = path.resolve(path.dirname(that.path),  _faviconUrl.filename());
             that.log('favicon %s %s', faviconUrl, faviconPath);
 
             that.log('faviconUrl:  ' + faviconUrl)
