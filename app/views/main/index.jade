@@ -6,7 +6,7 @@ block content
     h3 NO MORE 1000 TABS IN YOUR BROWSER!
     h3 SYNC THEM WITH LISTBOARD.IT
     h3 DRAG AND DROP FOR LATER USE
-    h3 IS THAT EASY!
+    h3 SEARCH ACROSS ALL OPEN TABS
   .box.register-box.border
     #thanks_box.hide
       h2 Thank you!
@@ -38,33 +38,38 @@ block center
           #demoappcont
             != image_tag('img/index/capture.png')
           
-          .box.features-box
+          .box.features-box.clearfix
             h2 You will love it!
-            br    
-            h4 
-              i.icon-check-sign
-              | &nbsp;&nbsp; Real time updates      
-            h4 
-              i.icon-check-sign
-              | &nbsp;&nbsp; Save full browser sessions
-            h4 
-              i.icon-check-sign
-              | &nbsp;&nbsp; Drag and drop specific tabs for later user    
-            h4 
-              i.icon-check-sign
-              | &nbsp;&nbsp; Archive tabs for future use (bookmark)
-            h4 
-              i.icon-check-sign
-              | &nbsp;&nbsp; Organize archived tabs within folders
-            h4 
-              i.icon-check-sign
-              | &nbsp;&nbsp; Import URLs from external sources
-            h4 
-              i.icon-check-sign
-              | &nbsp;&nbsp; Export data to different formats
-            h4 
-              i.icon-check-sign
-              | &nbsp;&nbsp; Single page application
+            #container-capture
+              != image_tag('img/index/container-capture.png')                                     
+            .features          
+              h4 
+                i.icon-check-sign
+                | &nbsp;&nbsp; Sync your browsers between different machines
+              h4 
+                i.icon-check-sign
+                | &nbsp;&nbsp; Search content across all your opened tabs              
+              h4 
+                i.icon-check-sign
+                | &nbsp;&nbsp; Drag and drop specific tabs for later user    
+              h4 
+                i.icon-check-sign
+                | &nbsp;&nbsp; Save full browser sessions
+              h4 
+                i.icon-check-sign
+                | &nbsp;&nbsp; Archive tabs for future use (bookmark)
+              h4 
+                i.icon-check-sign
+                | &nbsp;&nbsp; Organize archived tabs within folders and tags
+              h4 
+                i.icon-check-sign
+                | &nbsp;&nbsp; Import URLs from external sources
+              h4 
+                i.icon-check-sign
+                | &nbsp;&nbsp; Export data to different formats              
+              h4 
+                i.icon-check-sign
+                | &nbsp;&nbsp; Real time updates   
             
           .box.register-box    
             form#form_invitation2(action="/invites", method="post")

@@ -50,7 +50,7 @@ ProcessHtmlJob.prototype.exec = function (done) {
 
     if(this.favicon || this.styles || this.images || this.js) {
         fs.readFile(this.path, function(err, data) {
-            if(err) throw err; // rethrow to try restart job
+            if (err) return done(err); // rethrow to try restart job
 
             var $ = cheerio.load(data);
 
@@ -81,15 +81,15 @@ ProcessHtmlJob.prototype.exec = function (done) {
 
             fs.writeFile(that.path + '.buf', $.html(), function(err) {
 
-                if (err) throw err;
+                if (err) return done(err);
 
                 fs.unlink(that.path, function(err) {
 
-                    if (err) throw err;
+                    if (err) return done(err);
 
                     fs.rename(that.path + '.buf', that.path, function(err) {
 
-                        if (err) throw err;
+                        if (err) return done(err);
 
                         that.log('file ' + that.path + ' processed');
 
