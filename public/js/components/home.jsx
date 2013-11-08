@@ -43,9 +43,8 @@ var HomeComponent = React.createClass({
     //TODO: change this when collapsing the folder panel
     return this.state.docWidth - 261; //(261 = folder panel)
   },  
-  handleListboardClick: function(e) {
-      e.preventDefault();
-      page('/listboard/' + e.target.id.substring(3));
+  navigateToListboard: function(listboardId) {
+      page('/listboard/' + listboardId);
   },
   handleBodyClick: function(e) {
       if(this.state.dialogItemVisible)      
@@ -61,7 +60,7 @@ var HomeComponent = React.createClass({
       visible = { this.state.listboardsVisible }
       width={ this.getCenterWidth() } 
       height={ this.state.docHeight } 
-      handleListboardClick={ this.handleListboardClick } 
+      navigateToListboard={ this.navigateToListboard } 
       selectedListboard= { this.state.selectedListboard } 
       isExtensionInstalled={ this.state.isExtensionInstalled }
       listboards= { this.state.listboards } />

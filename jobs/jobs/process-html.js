@@ -42,8 +42,11 @@ ProcessHtmlJob.prototype.constructor = ProcessHtmlJob;
 ProcessHtmlJob.prototype.exec = function (done) {
     var that = this;
 
-    var addDownload = function(url, path, uniqueId) {
-        that.jobs.schedule('download', { uri: url, path: path, uniqueId: uniqueId });
+    var addDownload = function(url, path, done) {
+        that.jobs.schedule('download', { uri: url, path: path })
+            .on('complete', function() {                            
+                done();
+            });
     };
 
     //TODO we can download and interpret scripts, but if server does not support cors this, will not help at all
@@ -76,8 +79,6 @@ ProcessHtmlJob.prototype.exec = function (done) {
             that.log('faviconUrl:  ' + faviconUrl)
             that.log('faviconPath:  ' + faviconPath)
 
-            addDownload(faviconUrl, faviconPath);
-
             //TODO: extract the title to title tag and pass it to the item or save the item here
 
             $('script,object,iframe,audio,video').remove();
@@ -97,13 +98,11 @@ ProcessHtmlJob.prototype.exec = function (done) {
 
                         that.log('file ' + that.path + ' processed');
 
-                        done();
+                        addDownload(faviconUrl, faviconPath, done);
                     });
 
                 });
             });
-
-            done();
         });
 
     }

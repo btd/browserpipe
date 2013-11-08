@@ -52,11 +52,18 @@ var ListboardsPanelComponent = React.createClass({
             page('/listboard/' + listboard._id);
         })
     },
+    handleListboardClick: function(e) {
+        e.preventDefault();
+        var listboardId = e.target.id;
+        if(!listboardId)
+            listboardId = $(e.target).parents('.listboard:first').attr('id');
+        this.props.navigateToListboard(listboardId.substring(3));
+    },    
     renderListboardOption: function(listboard) {
         return <li 
             className={this.props.selectedListboard._id === listboard._id ? "listboard selected" : "listboard"}
             id={'li_' + listboard._id}
-            onClick={this.props.handleListboardClick}
+            onClick={this.handleListboardClick}
             title={listboard.label? listboard.label : 'Unnamed'}> 
                 { listboard.type === 0 ? <img src="/img/common/chrome-logo.png" alt="Chrome Logo" /> : null }
                 <span>{listboard.label? listboard.label : 'Unnamed'}</span>

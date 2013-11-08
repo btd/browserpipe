@@ -57,14 +57,6 @@ var launchItemJobs = function(req, res, item) {
             saveItem(req, res, item, delta)
                 .done();
         })
-        jobs.schedule('screenshot', {
-            uri: item.url,
-            uniqueId: item._id.toString()
-        }).on('complete', function() {
-            item.screenshot = config.storeUrl + "/" + item._id.toString() + "/screenshot.jpg";
-            saveItem(req, res, item, delta)
-                .done();
-        })
     }
 }
 
