@@ -1,8 +1,10 @@
 //Application scripts
 :js
-    var initialOptions = {
-        listboards: !{JSON.stringify(listboards)},
-        folders: !{JSON.stringify(folders)},
-        items: !{JSON.stringify(items)}
-    }
+    // <![CDATA[
+        var initialOptions = {
+            listboards: !{JSON.stringify(listboards)},
+            folders: !{JSON.stringify(folders)},
+            items: !{JSON.stringify(items)}
+        }
+    // ]]>
 != javascript_tag ('js/apps/main')
