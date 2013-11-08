@@ -1,6 +1,6 @@
 var listboarditAuth = new OAuth2('listboard_it', {
-    client_id: 'c1ac6c64c0e5b3d89742ca0b0c21f17a6ad09653cbc5485445205ff62d46f744b653edbcf44a789a7c08d46878fba68dc039a56eda99104bc2de8a6a953bf217',
-    client_secret: '0010b153d6ab89f94ada6650745c2ec579de72cf41facdc0441f20cf6d080aacd3d9dd302886cbc8bb78fc067805bd65a2f7ab1fdc2ca93ef5b4eaf2d94e54f6'
+    client_id: 'bfb3d6aa4fb7fd30d8ba8bbcda8ddf4257eb8e7c479aae81e10659ea09692a697c80f6e0dbb23e3a9a9d4ec777bee6dfcd0edb142afbac6d7df582672604d483',
+    client_secret: 'd753a4c7711a34339bb5586b5c6059098aa65f132242e567f71a5a4b03949fd3aa37bd2e969b5e03c958ea201af3497270eb7233ed0645c49a9220c4c453cfa1'
 });
 
 var xobj = function(){
@@ -82,7 +82,7 @@ chrome.browserAction.onClicked.addListener(function (tab) {
 
         var key = browserKey();
 
-        var url = 'http://api-local.listboard.it:4001/v1/browsers/' + key + '?access_token=' + access_token;
+        var url = 'http://api.local.listboard.it:4001/v1/browsers/' + key + '?access_token=' + access_token;
 
         chrome.windows.getAll({populate: true}, function (windows) {
 
