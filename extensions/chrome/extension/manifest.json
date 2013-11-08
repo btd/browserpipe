@@ -24,7 +24,7 @@
 
     "content_scripts": [
         {
-            "matches": ["http://api-local.listboard.it:4001/nothing*"],
+            "matches": ["http://api.local.listboard.it:4001/nothing*"],
             "js": ["oauth2/oauth2_inject.js"],
             "run_at": "document_start"
         }
