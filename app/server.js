@@ -1,4 +1,8 @@
+require('../logger');
 /* Listboard.it main application entry file. */
+
+var Q = require('q');
+Q.longStackSupport = true;
 
 var express = require('express'),
     fs = require('fs'),

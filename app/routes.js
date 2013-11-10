@@ -1,13 +1,14 @@
 var auth = require('./middlewares/authorization');
 var env = require('../config').env;
 
+
 var isProd = env === 'production';
 if(isProd) {
     module.exports = function(app) {
-        var main = require('./controllers/main')
+        var main = require('./controllers/main');
         app.get('/', main.home);
 
-        var invitation = require('./controllers/invitation')
+        var invitation = require('./controllers/invitation');
         app.post(  '/invitations', invitation.create)
     }
 } else {
