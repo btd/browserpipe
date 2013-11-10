@@ -8,9 +8,19 @@ var $ = require('jquery'),
     React = require('react');
 
 var FolderComponent = React.createClass({   
-  navigateToFolder: function(e) {    
+  folderClicked: function(e) {    
+    e.stopPropagation();        
     e.stopPropagation();
-    this.props.navigateToChildFolder(this.refs.folder.getDOMNode().id.substring(7));
+    if(e.ctrlKey){      
+      var added = _state.addOrRemoveSelectedFolder(this.props.folder._id);
+      var $el = $(this.refs.folder.getDOMNode());
+      if(added)
+        $el.addClass('selection-selected');
+      else
+        $el.removeClass('selection-selected');
+    }
+    else   
+      this.props.navigateToChildFolder(this.props.folder._id);
   },
   mouseEnter: function() {
     this.refs.btnRemoveChildFolder.getDOMNode().className = "icon-remove remove-child-folder";   
@@ -24,8 +34,8 @@ var FolderComponent = React.createClass({
   },
   render: function() {
     return ( 
-      <li ref="folder" onMouseEnter={this.mouseEnter} onMouseLeave={this.mouseLeave} onClick={ this.navigateToFolder } id={'folder_' + this.props.folder._id} className="folder">
-        <span onClick={ this.navigateToFolder }>{ this.props.folder.label }</span>
+      <li ref="folder" onMouseEnter={this.mouseEnter} onMouseLeave={this.mouseLeave} onClick={ this.folderClicked } id={'folder_' + this.props.folder._id} className="folder">
+        <span onClick={ this.folderClicked }>{ this.props.folder.label }</span>
         <i ref='btnRemoveChildFolder' onClick={this.removeFolder} className="icon-remove remove-child-folder hide" />
       </li>
     );

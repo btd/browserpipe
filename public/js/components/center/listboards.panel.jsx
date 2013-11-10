@@ -7,6 +7,8 @@ var _state = require('../../state'),
     page = require('page'),
     React = require('react');
 
+require('jquery-ui');
+
 var ListboardsPanelComponent = React.createClass({    
     getListboardsPanelWidth: function() {
         return this.props.width;
@@ -53,15 +55,84 @@ var ListboardsPanelComponent = React.createClass({
         })
     },
     handleListboardClick: function(e) {
-        e.preventDefault();
-        var listboardId = e.target.id;
-        if(!listboardId)
-            listboardId = $(e.target).parents('.listboard:first').attr('id');
-        this.props.navigateToListboard(listboardId.substring(3));
-    },    
+        e.preventDefault();        
+        e.stopPropagation();
+        var elementId = e.target.id;
+        if(!elementId)
+            elementId = $(e.target).parents('.listboard-selector:first').attr('id');
+        var listboardId = elementId.substring(3);
+        if(e.ctrlKey){      
+          var added = _state.addOrRemoveSelectedListboard(listboardId);
+          var $el = $("#" + elementId);
+          if(added)
+            $el.addClass('selection-selected');
+          else
+            $el.removeClass('selection-selected');
+        }
+        else            
+            this.props.navigateToListboard(listboardId);
+    },
+
+
+    ///DRAG AND DROPPPPPPP
+    componentDidMount: function() {      
+      this.configureSortable();
+      this.configureDroppable();    
+    },  
+    componentDidUpdate: function(prevProps, prevState, rootNode) {
+       // this.removeDraggable();
+        //this.configureDraggable();
+    },
+    configureSortable: function() {
+        $( '.browser-listboards' ).sortable({
+            connectWith: '.custom-listboards',
+            helper: function(event, el) {
+                var myclone = el.clone();
+                $('body').append(myclone);
+                return myclone;
+            }
+        });
+        $( '.custom-listboards' ).sortable({
+            connectWith: '.browser-listboards',
+            helper: function(event, el) {
+                var myclone = el.clone();
+                $('body').append(myclone);
+                return myclone;
+            }
+        });
+    },
+    configureDroppable: function() {    
+        var that = this;
+        $(".listboard-selector").droppable({
+            over: function(event, ui) {
+                var listboardId = $(this).attr('id');                          
+                that.props.navigateToListboard(listboardId.substring(3));
+            },
+            tolerance: 'pointer'
+        }); 
+    },
+    configureDraggable: function() {
+        /*$('.listboard-selector').draggable({
+            //appendTo: 'body',
+            //scroll: false,
+            //revert: 'invalid',
+            //helper: 'clone',
+            zIndex: 3000
+        });*/
+    },
+    ///DRAG AND DROPPPPPPP
+
+
+    removeDraggable: function() {
+        $('.listboards-panel .ui-draggable').draggable( "destroy" );
+    },
+    getListboardClass: function(listboard) {
+        if(listboard.type === 0) return "browser-listboard-selector";
+        else return "custom-listboard-selector";
+    },
     renderListboardOption: function(listboard) {
-        return <li 
-            className={this.props.selectedListboard._id === listboard._id ? "listboard selected" : "listboard"}
+        return <li             
+            className={(this.props.selectedListboard._id === listboard._id ? "listboard-selector selected " : "listboard-selector ") + this.getListboardClass(listboard) }            
             id={'li_' + listboard._id}
             onClick={this.handleListboardClick}
             title={listboard.label? listboard.label : 'Unnamed'}> 
@@ -84,6 +155,9 @@ var ListboardsPanelComponent = React.createClass({
                             })
                     }
                     </ul>
+                    <a className="add-listboard btn" onClick={this.addEmptyListboardAndSelectIt}  href="#" title="Add listboard" data-toggle="tooltip">
+                        <i className="icon-plus"></i>
+                    </a>
                     <ul className="custom-listboards">
                     {                    
                         this.props.listboards
@@ -92,10 +166,7 @@ var ListboardsPanelComponent = React.createClass({
                                 return self.renderListboardOption(listboard)
                             })
                     }
-                    </ul>
-                    <a className="add-listboard btn" onClick={this.addEmptyListboardAndSelectIt}  href="#" title="Add listboard" data-toggle="tooltip">
-                        <i className="icon-plus"></i>
-                    </a>
+                    </ul>                    
                 </div>
                 
                 <div id="installExtensionModal" className="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

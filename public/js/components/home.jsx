@@ -22,6 +22,7 @@ var HomeComponent = React.createClass({
           selectedListboard: this.props.selectedListboard,
           selectedItem: this.props.selectedItem,
           selectedFolder: this.props.selectedFolder,
+          selection: this.props.selection,
           isExtensionInstalled: this.props.isExtensionInstalled,
           listboardsVisible: this.props.listboardsVisible,
           listboardSettingsVisible: this.props.listboardSettingsVisible,
@@ -49,6 +50,23 @@ var HomeComponent = React.createClass({
   handleBodyClick: function(e) {
       if(this.state.dialogItemVisible)      
         page('/listboard/' + this.state.selectedListboard._id);
+  },
+  getSelectionText: function(count, singularText, pluralText) {
+    return count > 0 ? (" (" + count + " " + (count > 1 ? pluralText : singularText) + ")") : "";
+  },
+  getSelectionsText: function() {
+    var listboardCount = this.state.selection.listboards.length;    
+    var containerCount = this.state.selection.containers.length;
+    var itemCount = this.state.selection.items.length;
+    var folderCount = this.state.selection.folders.length;
+    if((listboardCount + containerCount + itemCount + folderCount) > 0) {
+      var listboardText = this.getSelectionText(listboardCount, "listboard",  "listboards");
+      var containerText = this.getSelectionText(containerCount, "container",  "containers");
+      var itemText = this.getSelectionText(itemCount, "item",  "items");
+      var folderText = this.getSelectionText(folderCount, "folder",  "folders");
+      return "selected" + listboardText + containerText + itemText + folderText;
+    }
+    else return "";
   },
   render: function() {
 
@@ -93,6 +111,7 @@ var HomeComponent = React.createClass({
             {this.dialogItemComponent}
         </div>
         <div className="main-footer">
+          <span className="selection">{this.getSelectionsText()}</span>
           <small>@Listboard.it</small>
         </div>
         {this.state.dialogItemVisible? <div className="modal-backdrop fade in"></div> : null}
@@ -109,6 +128,7 @@ module.exports.render = function (
     selectedListboard, 
     selectedItem,
     selectedFolder,
+    selection,
     isExtensionInstalled,
     listboardsVisible,
     listboardSettingsVisible,
@@ -122,6 +142,7 @@ module.exports.render = function (
       selectedListboard={selectedListboard}
       selectedItem={selectedItem}
       selectedFolder={selectedFolder}
+      selection={selection}
       isExtensionInstalled={isExtensionInstalled}
       listboardsVisible={listboardsVisible}
       listboardSettingsVisible={listboardSettingsVisible}

@@ -23,6 +23,7 @@ var loadHomeView = function(listboardsVisible, listboardSettingsVisible, dialogI
                 _state.getSelectedListboard(),
                 _state.getSelectedItem(),
                 _state.getSelectedFolder(),
+                _state.getSelection(),
                 installed,
                 listboardsVisible,
                 listboardSettingsVisible,
@@ -38,6 +39,7 @@ var loadHomeView = function(listboardsVisible, listboardSettingsVisible, dialogI
             selectedListboard: selectedListboard,
             selectedItem: selectedItem,
             selectedFolder: selectedFolder,
+            selection: _state.getSelection(),
             listboardsVisible: listboardsVisible,
             listboardSettingsVisible: listboardSettingsVisible,
             dialogItemVisible: dialogItemVisible
@@ -167,6 +169,14 @@ var onSelectedFolderChange = function () {
     }
 }
 
+var onSelectionChange = function () {
+    if(homeView) {
+        homeView.setState({
+            selection: _state.getSelection()
+        });
+    }
+}
+
 var stateChanges = function() {
     _state.on('change:selectedListboard', onSelectedListboardChange);
 
@@ -181,6 +191,8 @@ var stateChanges = function() {
 
         value.on('change', onSelectedFolderChange);
     });
+
+    _state.on('change:selection', onSelectionChange);
 
     var addedOrDeletedListboard = function() {
         homeView.setState({

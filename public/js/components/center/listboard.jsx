@@ -38,6 +38,26 @@ var ListboardComponent = React.createClass({
       var visible = this.props.visible? "block" : "none";
       return { width: this.getListboardWidth(), display: visible };
   },
+
+
+  ///DRAG AND DROPPPPPPP
+  configureSortable: function() {
+      $( '.containers' ).sortable({
+          connectWith: '.containers',
+          helper: function(event, el) {
+              var myclone = el.clone();
+              $('body').append(myclone);
+              return myclone;
+          }
+      });
+  },
+  componentDidMount: function() {      
+    this.configureSortable();
+  },  
+  ///DRAG AND DROPPPPPPP
+
+
+
   render: function() {
     var self = this;  
     var containersHeight = this.getListboardHeight();

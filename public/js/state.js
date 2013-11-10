@@ -15,6 +15,9 @@ var item = require('./data/item'),
     Item = item.Item,
     Items = item.Items;
 
+var selection = require('./data/selection'),
+    Selection = selection.Selection;
+
 $.ajaxSetup({
     dataType: 'json',
     contentType: 'application/json'
@@ -30,6 +33,7 @@ var State1 = model()
     .attr('selectedListboard', { model: Listboard })
     .attr('selectedItem', { model: Item })
     .attr('selectedFolder', { model: Folder })
+    .attr('selection', { model: Selection })
     .use(model.nestedObjects);
 
 _.extend(State1.prototype, {
@@ -44,6 +48,9 @@ _.extend(State1.prototype, {
 
         //Load items
         this.loadItems(initialOptions.items || []);
+
+        //Init selection
+        this.initSelection();
     },
 
 
@@ -443,8 +450,67 @@ _.extend(State1.prototype, {
             );
 
         }
-    }
+    },
     //////////////////////////////////////////EXTENSION//////////////////////////////////////
+
+
+    //////////////////////////////////////////SELECTED OBJECTS//////////////////////////////////////
+
+    initSelection: function() {
+        this.selection.listboards = new Array();
+        this.selection.containers = new Array();
+        this.selection.items = new Array();
+        this.selection.folders = new Array();
+    },
+    getSelection: function() {
+        return this.selection;
+    },
+    addOrRemoveSelectedListboard: function(listboardId) {        
+        if(_.contains(this.selection.listboards, listboardId)){
+            this.selection.listboards = _.without(this.selection.listboards, listboardId);
+            return false;
+        }
+        else {
+            //TODO: this is done to trigger moco change, push does not trigger
+            this.selection.listboards = _.union(this.selection.listboards, [listboardId]);
+            return true;
+        }
+    },
+    addOrRemoveSelectedContainer: function(containerId) {        
+        if(_.contains(this.selection.containers, containerId)){
+            this.selection.containers = _.without(this.selection.containers, containerId);
+            return false;
+        }
+        else {
+            //TODO: this is done to trigger moco change, push does not trigger
+            this.selection.containers = _.union(this.selection.containers, [containerId]);
+            return true;
+        }
+    },
+    addOrRemoveSelectedItem: function(itemId) {        
+        if(_.contains(this.selection.items, itemId)){
+            this.selection.items = _.without(this.selection.items, itemId);
+            return false;
+        }
+        else {
+            //TODO: this is done to trigger moco change, push does not trigger
+            this.selection.items = _.union(this.selection.items, [itemId]);
+            return true;
+        }
+    },
+    addOrRemoveSelectedFolder: function(folderId) {        
+        if(_.contains(this.selection.folders, folderId)){
+            this.selection.folders = _.without(this.selection.folders, folderId);
+            return false;
+        }
+        else {
+            //TODO: this is done to trigger moco change, push does not trigger
+            this.selection.folders = _.union(this.selection.folders, [folderId]);
+            return true;
+        }
+    }
+
+    //////////////////////////////////////////SELECTED OBJECTS//////////////////////////////////////
 
 
 });

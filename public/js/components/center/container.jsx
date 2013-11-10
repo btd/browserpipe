@@ -9,6 +9,8 @@ var _state = require('../../state'),
     Item = require('./item'),    
     LabelEditorComponent = require('../util/label.editor');
 
+require('jquery-ui');
+
 var ContainerComponent = React.createClass({ 
 	getContainerTitle: function() {		
 		if(!this.props.container.title || this.props.container.title.trim() === '')			
@@ -31,7 +33,8 @@ var ContainerComponent = React.createClass({
 			maxHeight = maxHeight - 18; //(18 = horizontal scrollbar)
 	    return maxHeight;
 	},
-	closeContainer: function() {
+	closeContainer: function(e) {		
+    	e.stopPropagation();
 		_state.serverRemoveContainer(this.props.selectedListboard._id, this.props.container);
 	},
 	saveContainerLabel: function(newTitle, success) {    
@@ -83,6 +86,40 @@ var ContainerComponent = React.createClass({
         	errors.push(this.refs.itemURLInvalidError)
         return errors
     },
+    containerClicked: function(e) {
+		e.preventDefault();
+    	e.stopPropagation();
+		if(e.ctrlKey){      
+			var added = _state.addOrRemoveSelectedContainer(this.props.container._id);
+			var $el = $(this.refs.container.getDOMNode());
+			if(added)
+				$el.addClass('selection-selected');
+			else
+			$el.removeClass('selection-selected');
+		}
+	},
+    getItemId : function() {
+		return "co-" + this.props.container._id;
+	},
+
+
+
+	///DRAG AND DROPPPPPPP
+	componentDidMount: function() {      
+	  /*$( '#' + this.getItemId() ).draggable({
+	    //containment: ".listboard",
+	    revert: "invalid",
+	    snap: ".listboard",
+	    //stack: ".main, .container, .listboard",
+	    helper: 'clone'/*,
+	    helper: function( event ) {
+	      return $( "<div class='ui-widget-header'>I'm a custom helper</div>" );
+	    }
+	  });  */
+	},
+	///DRAG AND DROPPPPPPP
+
+
 	renderHeader: function() {
 		return (
 			<div>				
@@ -141,7 +178,7 @@ var ContainerComponent = React.createClass({
 	},
 	render: function() {
 		return (
-			<li className="container">
+			<li ref="container" id={ this.getItemId() } className="container" onClick={this.containerClicked}>
 				<div className="container-header">{ this.renderHeader() }</div>				
 				{ this.renderBox() }
 				{ this.renderFooter() }
