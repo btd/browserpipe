@@ -27,10 +27,10 @@ var updateClients = function(req, delta) {
 exports.create = function(req, res) {
     var item = new Item(_.pick(req.body, 'type', 'folders', 'containers', 'title', 'note'));
 
-    item.url = encodeURIComponent(req.body.url)
+    item.url = req.body.url;
 
-    if (!item.title)
-        item.title = item.url; //TODO: reduce the size of the title if URL is too long adding "..."
+    //if (!item.title)
+    //    item.title = item.url; //TODO: reduce the size of the title if URL is too long adding "..."
  
     item.user = req.user;
 

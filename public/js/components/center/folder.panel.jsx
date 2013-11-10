@@ -117,12 +117,17 @@ var FolderPanelComponent = React.createClass({
 			</div>
 		);
 	},
+
+	onEnterSaveFolder: function(e) {
+	    if(e.keyCode === 13) this.saveFolder();
+	},
+
 	renderFolders: function() {		
 		var self = this;
 		return (
 			<div>
 				<ul className="folders">	
-					{                    
+					{
 	                	this.props.folder.children.map(function(folder) {
 		                    return <Folder folder= {folder} navigateToChildFolder= {self.navigateToChildFolder} />
 		                })
@@ -131,7 +136,7 @@ var FolderPanelComponent = React.createClass({
 				<div ref="folderEditor" className="input-append add-folder hide">
 					<div className="control-group">    
 				    	<div className="controls">
-							<input ref="folderInput" type="text"/>
+							<input ref="folderInput" type="text" onKeyPress={this.onEnterSaveFolder}/>
 							<div>
 							  	<button onClick={this.saveFolder} className="btn add-folder-save" type="button"><i className="icon-ok save-icon">&nbsp;Add folder</i></button>
 							  	<button onClick={this.hideFolderInput} className="btn add-folder-cancel" type="button"><i className="icon-remove cancel-icon"></i></button>

@@ -1,10 +1,9 @@
 //Application scripts
-:js
-    // <![CDATA[
-        var initialOptions = {
-            listboards: !{JSON.stringify(listboards)},
-            folders: !{JSON.stringify(folders)},
-            items: !{JSON.stringify(items)}
-        }
-    // ]]>
+script.
+    var initialOptions = {
+        listboards: !{JSON.stringify(listboards).replace(/\//g, '\\/')},
+        folders: !{JSON.stringify(folders).replace(/\//g, '\\/')},
+        items: !{JSON.stringify(items).replace(/\//g, '\\/')}
+    };
+
 != javascript_tag ('js/apps/main')

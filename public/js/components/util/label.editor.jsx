@@ -25,6 +25,11 @@ var LabelEditorComponent = React.createClass({
       this.hideInput
     );
   },
+
+  ifEnterSave: function(e) {
+    if(e.keyCode === 13) this.saveLabel();
+  },
+
   render: function() {
     var self = this;
     return ( 
@@ -36,7 +41,7 @@ var LabelEditorComponent = React.createClass({
             {this.props.labelValue? this.props.labelValue : this.props.defaultLabelValue}
         </div>                
         <div ref="labelEditor" className="input-append le-editor hide">
-          <input ref="labelInput" type="text" defaultValue={this.props.labelValue} />
+          <input ref="labelInput" type="text" defaultValue={this.props.labelValue} onKeyPress={this.ifEnterSave} />
           <button onClick={this.saveLabel} className="btn edit-title-save" type="button"><i className="icon-ok"></i></button>
           <button onClick={this.hideInput} className="btn edit-title-cancel" type="button"><i className="icon-remove"></i></button>
         </div>
