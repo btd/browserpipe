@@ -12,13 +12,13 @@ var rewriteExtension = function (source, ext) {
     return (!ext || path.extname(source) === ext) ? source : (source + ext);
 };
 
-var makeTag = function(name, attributes, selfClose, sanitaze) {
+var makeTag = function(name, attributes, selfClose, sanitize) {
     var tag = '<' + name;
     Object.keys(attributes).forEach(function(attrName) {
         tag += ' ' + attrName + '="' +  attributes[attrName] + '"';
     });
 
-    tag += selfClose ? sanitaze ? '>' : '/>' : '></' + name + '>';
+    tag += selfClose ? sanitize ? '>' : '/>' : '></' + name + '>';
     return tag;
 };
 
@@ -104,6 +104,10 @@ ConnectMincer.prototype.middleware = function() {
             res.locals.stylesheet_tag = that.stylesheet_tag.bind(that);
             res.locals.javascript_tag = that.javascript_tag.bind(that);
             res.locals.image_tag = that.image_tag.bind(that);
+
+            res.locals.asset_url = function(path) {
+              return this._findAssetPaths(path);
+            }.bind(that);
         }
 
         next();
