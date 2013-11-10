@@ -1,6 +1,7 @@
 /* jshint node: true */
 
 var _ = require('lodash'),
+    config = require('../../config')
     mongoose = require('mongoose'),
     Item = mongoose.model('Item'),
     responses = require('.././responses.js'),
@@ -24,11 +25,13 @@ var updateClients = function(req, delta) {
 
 //Create item
 exports.create = function(req, res) {
-    var item = new Item(_.pick(req.body, 'type', 'folders', 'containers', 'title', 'url', 'note'));
+    var item = new Item(_.pick(req.body, 'type', 'folders', 'containers', 'title', 'note'));
+
+    item.url = encodeURIComponent(req.body.url)
 
     if (!item.title)
-        item.title = item.url;
-
+        item.title = item.url; //TODO: reduce the size of the title if URL is too long adding "..."
+ 
     item.user = req.user;
 
     var delta = {
@@ -52,15 +55,7 @@ var launchItemJobs = function(req, res, item) {
             uri: item.url,
             uniqueId: item._id.toString()
         }).on('complete', function() {
-            item.favicon = "/screenshots/" + item._id.toString() + "/favicon.png";
-            saveItem(req, res, item, delta)
-                .done();
-        })
-        jobs.schedule('screenshot', {
-            uri: item.url,
-            uniqueId: item._id.toString()
-        }).on('complete', function() {
-            item.screenshot = "/screenshots/" + item._id.toString() + "/screenshot.jpg";
+            item.favicon = config.storeUrl + "/" + item._id.toString() + "/favicon.ico";
             saveItem(req, res, item, delta)
                 .done();
         })
@@ -74,7 +69,7 @@ exports.update = function(req, res) {
     //TODO: add addcontainer/addfolder/removecontainer/removefolder rest calls to optimize    
     item.markModified('containers');
     item.markModified('folders');
-    _.merge(item, _.pick(req.body, 'type', 'folders', 'containers', 'title', 'url', 'note'));
+    _.merge(item, _.pick(req.body, 'type', 'folders', 'containers', 'title', 'note'));
     //We need to merge array manually, because empty arrays are not merged
     if (req.body.containers)
         item.containers = req.body.containers;

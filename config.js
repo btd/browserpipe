@@ -5,6 +5,7 @@ var _ = require('lodash'),
 
 var common = {
     'storePath': './public/screenshots', // path where jobs server will store all its content, maybe we will need to separate it
+    'storeUrl' : '/screenshots', // url to access the store
     'screenshot': { // default screenshot settings
         format: 'jpg',
         width: 800,

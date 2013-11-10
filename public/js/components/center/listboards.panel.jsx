@@ -52,23 +52,45 @@ var ListboardsPanelComponent = React.createClass({
             page('/listboard/' + listboard._id);
         })
     },
+    handleListboardClick: function(e) {
+        e.preventDefault();
+        var listboardId = e.target.id;
+        if(!listboardId)
+            listboardId = $(e.target).parents('.listboard:first').attr('id');
+        this.props.navigateToListboard(listboardId.substring(3));
+    },    
+    renderListboardOption: function(listboard) {
+        return <li 
+            className={this.props.selectedListboard._id === listboard._id ? "listboard selected" : "listboard"}
+            id={'li_' + listboard._id}
+            onClick={this.handleListboardClick}
+            title={listboard.label? listboard.label : 'Unnamed'}> 
+                { listboard.type === 0 ? <img src="/img/common/chrome-logo.png" alt="Chrome Logo" /> : null }
+                <span>{listboard.label? listboard.label : 'Unnamed'}</span>
+            </li > 
+    },
     render: function() {
         var self = this;
         return  (
             <div className="listboards-panel" style={ this.getListboardsPanelStyle() }>                                 
                 <div className="listboards" style={ this.getListboardStyle() }>                
                     { this.getExtensionButton() }
-                    <ul>
+                    <ul className="browser-listboards">
                     {                    
-                        this.props.listboards.map(function(listboard) {
-                            return <li 
-                                className={self.props.selectedListboard._id === listboard._id ? "listboard selected" : "listboard"}
-                                id={'li_' + listboard._id}
-                                onClick={self.props.handleListboardClick}
-                                title={listboard.label? listboard.label : 'Unnamed'}> 
-                                    {listboard.label? listboard.label : 'Unnamed'}
-                                </li > 
-                        })
+                        this.props.listboards
+                            .filter(function(l) {return l.type === 0 } )
+                            .map(function(listboard) {
+                                return self.renderListboardOption(listboard)
+                            })
+                    }
+                    </ul>
+                    <ul className="custom-listboards">
+                    {                    
+                        this.props.listboards
+                            .filter(function(l) { return l.type === 1 } )
+                            .map(function(listboard) {
+                                return self.renderListboardOption(listboard)
+                            })
                     }
                     </ul>
                     <a className="add-listboard btn" onClick={this.addEmptyListboardAndSelectIt}  href="#" title="Add listboard" data-toggle="tooltip">

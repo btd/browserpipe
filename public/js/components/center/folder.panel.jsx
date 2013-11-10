@@ -179,7 +179,10 @@ var FolderPanelComponent = React.createClass({
 	},
 	render: function() {  
 		return (
-			<div className="folder-panel" style={{ height: this.props.folderPanelHeight }}>
+			<div className="folder-panel" style={{ height: this.props.folderPanelHeight }}>				
+    			<a href="#" className="folder-panel-hide-btn">
+    				<i className="icon-chevron-right"></i>
+    			</a>
 				{ this.renderHeader() }
 				{ this.renderBox() }			
 				{ this.renderFooter() }				

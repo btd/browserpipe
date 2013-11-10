@@ -16,6 +16,18 @@ var Jobs = function(options) {
     this.options = options || {};
 
     this.options.attempts = this.options.attempts || 5;
+
+    //Removed job upon completion
+    this.queue.on('job complete', function(id){
+        kue.Job.get(id, function(err, job){
+            if (err) return;
+            if(job)
+                job.remove(function(err){
+                    if (err) throw err;
+                        logger.info('removed completed job #%d', job.id);
+                });
+        });
+    });
 };
 
 Jobs.prototype = {
@@ -27,8 +39,14 @@ Jobs.prototype = {
     add: function(name, jobType) {
         var that = this;
 
-        this.queue.process(name, function(j, done) {
-            (new jobType(j.data, j, that)).run(done);
+        this.queue.process(name, function(j, done) {            
+            try {                
+                (new jobType(j.data, j, that)).exec(done);
+            } catch (err) {
+                // handle the error safely
+                logger.error('Error in job "%s"', name, err);
+                done(err);
+            }               
         });
     },
 
