@@ -136,10 +136,12 @@ var initialize = function () {
 var loadWindowEvent = function() {
     //TODO: view is there is a better way to capture and pass events
     $(window).resize(function () {
-        homeView.setState({
-            docHeight: getDocHeight(),
-            docWidth: getDocWidth()
-        });
+        if(homeView) {
+            homeView.setState({
+                docHeight: getDocHeight(),
+                docWidth: getDocWidth()
+            });
+        }
     });
 };
 
@@ -172,15 +174,7 @@ var stateChanges = function() {
 
     _state.on('change:selectedItem', onSelectedItemChange);
 
-    _state.on('change:selectedFolder', function(value, prev) {
-        if(prev) {//first time of course it is undefined
-            prev.off('change', onSelectedFolderChange);
-        }
-
-        onSelectedFolderChange(); //because it changed on state
-
-        value.on('change', onSelectedFolderChange);
-    });
+    _state.on('change:selectedFolder', onSelectedFolderChange);
 
     var addedOrDeletedListboard = function() {
         homeView.setState({

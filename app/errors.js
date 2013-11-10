@@ -1,4 +1,6 @@
-var errorCodes = {	
+var logger = require('rufus').getLogger('app.errors');
+
+var errorCodes = {
 	BadRequest: [400, { error: 'Bad Request' }],
 	InternalServer: [500, { error: 'Internal Server Error' }],
 	NotFound: [404, { error: 'Not Found' }],
@@ -21,7 +23,7 @@ Object.keys(errorCodes).forEach(function(errorName) {
 Object.keys(errorCodes).forEach(function(errorName) {
     module.exports['ifErrorSend' + errorName] = function(res) {
         return function(err) {
-            console.log(err)
+            logger.error('Error happen', err);
             module.exports['send' + errorName](res);
         }
 

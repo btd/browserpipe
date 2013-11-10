@@ -3,7 +3,8 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     _ = require('lodash'),    
-    q = require('q')
+    q = require('q'),
+    Item = require('./item');
 
 var FolderSchema = new Schema({
     //Generic fields
@@ -80,7 +81,6 @@ FolderSchema.statics.updateFoldersPath = function(user,  oldPath, newPath, delta
 
 
 FolderSchema.statics.removeFolderAndDescendants = function(user, folder, deltaFolders, deltaItems) {
-    var Item = mongoose.model('Item');
     return Folder.findAllDescendant(user, folder.fullPath)
         .then(function(folders) {   
             var folderIds = [];
@@ -99,7 +99,9 @@ FolderSchema.statics.removeFolderAndDescendants = function(user, folder, deltaFo
 }
 
 var qfindOne = function (obj) {
-    return Folder.findOne(obj).execWithPromise();
+  return Folder.findOne(obj).execWithPromise();
 };
+
+FolderSchema.statics.by = qfindOne;
 
 module.exports = Folder = mongoose.model('Folder', FolderSchema);

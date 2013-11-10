@@ -100,7 +100,7 @@ module.exports = function () {
 
             this.sio.set("authorization", authorize({
                 cookieParser: express.cookieParser, //or connect.cookieParser
-                secret: 'd5bSD5N0dl3Vs1SwXw6pMkxS', //the session secret to parse the cookie
+                secret: config.cookieSecret, //the session secret to parse the cookie
                 store: new mongoStore(config["connect-mongo"]), //the session store that express uses
                 fail: function (data, accept) { // *optional* callbacks on success or fail
                     accept(null, false); // second param takes boolean on whether or not to allow handshake
