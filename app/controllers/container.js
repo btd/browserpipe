@@ -14,6 +14,14 @@ var saveContainer = function(req, res, container){
 
 //Create container
 exports.create = function (req, res) {
+    //req.checkBody('title').notEmpty(); it can be empty
+    req.checkBody('type').notEmpty().isInt();
+
+    var errs = req.validationErrors();
+    if(errs) {
+        return errors.sendBadRequest(res);
+    }
+
     var container = req.listboard.addContainer(_.pick(req.body, 'title', 'type')).last();
 
     saveContainer(req, res, container)
