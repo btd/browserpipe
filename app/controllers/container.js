@@ -1,81 +1,59 @@
 /* jshint node: true */
 
 var _ = require('lodash'),
-    responses = require('.././responses.js'),
-    errors = require('.././errors.js');
+    responses = require('../responses'),
+    errors = require('../errors');
 
-var saveContainer = function(req, res, containerId, delta){
-    req.user.saveWithPromise()
-        .then(responses.sendModelId(res, containerId))
-        .fail(errors.ifErrorSendBadRequest(res))
-        .then(updateClients(req, delta))      
-        .done();
-}
+var userUpdate = require('./user_update');
 
-var updateClients = function(req, delta) {
-    return function(){
-        req.sockets.forEach(function(s) {
-            s.emit(delta.type, delta.data);
-        });
-    }
+var saveContainer = function(req, res, container){
+    return req.user.saveWithPromise()
+        .then(responses.sendModelId(res, container._id))
+        .fail(errors.ifErrorSendBadRequest(res));
 }
 
 //Create container
 exports.create = function (req, res) {
-    var container = req.listboard.addContainer(_.pick(req.body, 'title', 'type')).last();
-    var delta = {
-        type: 'create.container',
-        data: {
-            listboardId: req.listboard._id,
-            container: container
-        }
-    }
-    saveContainer(req, res, container._id, delta);
+    //req.checkBody('title').notEmpty(); it can be empty
+    req.checkBody('type').notEmpty().isInt();
 
+    var errs = req.validationErrors();
+    if(errs) {
+        return errors.sendBadRequest(res);
+    }
+
+    var container = req.listboard.addContainer(_.pick(req.body, 'title', 'type')).last();
+
+    saveContainer(req, res, container)
+      .then(userUpdate.createContainer.bind(null, req.user._id, req.listboard._id, container))
+      .done();
 }
 
 //Update container
 exports.update = function (req, res) {
-    var containerIdx = _.findIndex(req.listboard.containers, function (c) {
-        return c._id.toString() === req.params.containerId;
-    });
-    if (containerIdx >= 0) {
-        var container = req.listboard.containers[containerIdx];
-        _.merge(container, _.pick(req.body, 'title'));
-        req.listboard.containers.set(containerIdx, container);
-        var delta = {
-            type: 'update.container',
-            data: { 
-                listboardId: req.listboard._id,
-                container: container
-            }   
-        }
-        saveContainer(req, res, container._id, delta);
-    } 
-    else 
+    var container = req.listboard.containers.id(req.params.containerId);
+
+    if (container) {
+        _.merge(container, _.pick(req.body, 'title')); //it works because by reference it is the same object!
+
+        saveContainer(req, res, container)
+          .then(userUpdate.updateContainer.bind(null, req.user._id, req.listboard._id, container))
+          .done();
+    } else
         errors.sendNotFound(res);
 }
 
 
 //Delete container
 exports.destroy = function (req, res) {
-    var containerId = req.params.containerId;
-    var containerIdx = _.findIndex(req.listboard.containers, function (c) {
-        return c._id.toString() === containerId;
-    });
-    if (containerIdx >= 0) {
-        var container = req.listboard.containers[containerIdx]
+    var container = req.listboard.containers.id(req.params.containerId);
+    if (container) {
         container.remove();
-        var delta = {
-            type: 'delete.container',
-            data: { 
-                listboardId: req.listboard._id,
-                containerId: containerId
-            }   
-        }
-        saveContainer(req, res, containerId, delta);
-    } 
-    else 
+
+        saveContainer(req, res, container)
+          .then(userUpdate.deleteContainer.bind(null, req.user._id, req.listboard._id, container))
+          .done();
+    } else
         errors.sendNotFound(res);
 }
     

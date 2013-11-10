@@ -1,8 +1,6 @@
 require('../logger');
 
-var rufus = require('rufus'),
-	logger = rufus.getLogger('jobs'),
-	Jobs = require('./manager');
+var Jobs = require('./manager');
 
 var jobs = new Jobs();
 

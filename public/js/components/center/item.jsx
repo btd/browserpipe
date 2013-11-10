@@ -2,8 +2,7 @@
  * @jsx React.DOM
  */
 
-var $ = require('jquery'),
-    _state = require('../../state'),
+var _state = require('../../state'),
     page = require('page'),
     _ = require('lodash'),
     React = require('react');
@@ -12,8 +11,8 @@ require('jquery-ui');
 
 var ItemComponent = React.createClass({   
   getTitle: function() {
-    if(this.props.item.title.trim() != "")
-      return this.props.item.title;
+    if(this.props.item.title)
+      return this.props.item.title.trim();
     else
       return this.props.item.url;
   }, 
@@ -68,7 +67,7 @@ var ItemComponent = React.createClass({
       <li ref='item' id={ this.getItemId() } ref="item"  onClick={ this.navigateToItem } className="item"> 
         <i className="icon-remove remove-item" title="Close"></i>
         <img className="favicon" src={ this.props.item.favicon } alt="Favicon" />
-        <a onClick={ this.stopPropagation } className="title" target="_blank" href={ decodeURIComponent(this.props.item.url) }>
+        <a onClick={ this.stopPropagation } className="title" target="_blank" href={this.props.item.url}>
           {  this.getTitle()  } 
         </a>
         <div className="description">{ this.props.item.note }</div>  		
