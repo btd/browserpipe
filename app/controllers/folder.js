@@ -2,86 +2,130 @@
 
 var _ = require('lodash'),
     q = require('q'),
-    mongoose = require('mongoose'),
-    Folder = mongoose.model('Folder'),
-    Item = mongoose.model('Item'),
-    Folder = mongoose.model('Folder'),
-    responses = require('.././responses.js'),
-    errors = require('.././errors.js');
+    Folder = require('../../models/folder'),
+    Item = require('../../models/item'),
+    responses = require('../responses'),
+    errors = require('../errors');
 
-var saveFolder = function(req, res, folder, delta){
-    folder.saveWithPromise()
+var userUpdate = require('./user_update');
+
+var saveFolder = function(req, res, folder){
+    return folder.saveWithPromise()
         .then(responses.sendModelId(res, folder._id))
-        .fail(errors.ifErrorSendBadRequest(res))  //TODO: what happen when you have then.fail.then??
-        .then(updateClients(req, delta))      
-        .done();
+        .fail(errors.ifErrorSendBadRequest(res))
 }
 
-var updateClients = function(req, delta) {
-    return function(){
-        req.sockets.forEach(function(s) {
-            s.emit(delta.type, delta.data);
-        });
-    }
+function splitFullPath(fullPath) {
+  var idx = fullPath.lastIndexOf('/');
+  return idx > 0 ? {
+    label: fullPath.substring(idx + 1),
+    path: fullPath.substring(0, idx)
+  } : {
+    label: fullPath,
+    path: ''
+  };
 }
 
 //Create folder
-exports.create = function (req, res) {
-    findByFullPath(req.body.path, function() {
-        var folder = new Folder(_.pick(req.body, 'label', 'path'));
-        folder.user = req.user;
-        var delta = {
-            type: 'create.folder',
-            data: folder
-        }
-        
-        saveFolder(req, res, folder, delta);
-            
-    }, function() {
-        errors.sendBadRequest(res);
-    });
+exports.create = function (req, res, next) {
+    req.checkBody('label').notEmpty();
+    req.checkBody('path').notEmpty();
+
+    var errs = req.validationErrors();
+    if(errs) {
+      return errors.sendBadRequest(res);
+    }
+
+    //parent folder should exist
+    var parentFolder = splitFullPath(req.body.path);
+    parentFolder.user = req.user;
+
+    Folder
+      .by(parentFolder)
+      .then(function(folder) {
+          if(!folder) //parent folder does not exists we cannot create its subfolder
+              errors.sendForbidden(res);
+          else {
+              // check that we already does not have the same folder
+              Folder
+                .by({ user: req.user, label: req.body.label, path: req.body.path })
+                .then(function(subFolder) {
+                  if(!subFolder) {
+                    subFolder = folder.createChildFolder(req.body.label);
+                    saveFolder(req, res, subFolder)
+                      .then(userUpdate.createFolder.bind(null, req.user._id, subFolder));
+                  } else {
+                    errors.sendForbidden(res);
+                  }
+                })
+                .fail(next);
+          }
+      })
+      .fail(next)// go next to got 500
+      .done();
 }
 
 //Update folder
-exports.update = function (req, res) {    
-    var folder = req.currentFolder;    
-    var oldPath = folder.fullPath; 
-    _.merge(folder, _.pick(req.body, 'label', 'path'));
-    var newPath = folder.fullPath;
-    
-    //Folder and descendants folders and descendant folders path are updated
-    var deltaFolders = { type: 'bulk.update.folder', data: [folder] } 
+exports.update = function (req, res) {
+    req.checkBody('label').notEmpty();
+    req.checkBody('path').notEmpty();
 
-    folder.saveWithPromise()
-        .then(Folder.updateFoldersPath(req.user,  oldPath, newPath, deltaFolders))
-        .then(responses.sendModelId(res, folder._id))
-        .fail(errors.ifErrorSendBadRequest(res))
-        .then(updateClients(req, deltaFolders))             
-        .done();
+    var errs = req.validationErrors();
+    if(errs) {
+      return errors.sendBadRequest(res);
+    }
+    var folder = req.currentFolder;
 
+    // TODO validation
+
+    Folder.findAllDescendant(req.user, folder.fullPath)
+      .then(function(folders) {
+        _.merge(folder, _.pick(req.body, 'label', 'path'));
+
+        folders = folders.map(function(f) {
+          f.path = folder.fullPath;
+          return f;
+        });
+
+        return q.all(folders.map(function(f) { return f.saveWithPromise(); }))
+          .then(userUpdate.bulkUpdateFolder.bind(null, req.user._id, folders));
+      })
+      .then(responses.sendModelId(res, folder._id))
+      .fail(errors.ifErrorSendBadRequest(res))
+      .done();
 }
 
 //Delete folder, all its childs folders and remove tag from item
 exports.destroy = function (req, res) {
     var folder = req.currentFolder;  
 
-    var delta = {
-        type: 'delete.folder',
-        data: folder
-    }
+    Folder.findAllDescendant(req.user, folder.fullPath)
+      .then(function(allSubFolders) {
+        allSubFolders.push(folder);
 
-    //Folder and descendants folders and descendant folders path are deleted
-    var deltaFolders = { type: 'bulk.delete.folder', data: [folder] } 
+        //need to find all items that uses this folders
+        var removeItems = Item.where('user').equals(req.user).where('folders').in(allSubFolders).execWithPromise()
+          .then(function(items) {
+            items = items.map(function(i) {
+              allSubFolders.forEach(function(f) {
+                i.folders.remove(f._id);
+              })
+              return i;
+            });
 
-    //Items with all folders and descendant folders are updated
-    var deltaItems = { type: 'bulk.update.item', data: [] } 
+            userUpdate.bulkUpdateItem(req.user._id, items);
+            return q.all(items.map(function(i) {
+              return i.saveWithPromise(); }));
+          });
 
-    Folder.removeFolderAndDescendants(req.user, folder, deltaFolders, deltaItems)
-        .then(responses.sendModelId(res, folder._id))
-        .fail(errors.ifErrorSendBadRequest(res))
-        .then(updateClients(req, deltaFolders))          
-        .then(updateClients(req, deltaItems))  
-        .done()
+        var removeFolders = q.all(allSubFolders.map(function(f) { return f.removeWithPromise(); }))
+
+        return q.all([ removeItems, removeFolders ])
+          .then(userUpdate.bulkDeleteFolder.bind(null, req.user._id, allSubFolders));
+      })
+      .then(responses.sendModelId(res, folder._id))
+      .fail(errors.ifErrorSendBadRequest(res))
+      .done()
 }
 
 //Find folder by id
@@ -97,32 +141,7 @@ exports.folder = function (req, res, next, id) {
                 req.currentFolder = folder;
                 next()
             }}
-        }).fail(function(err) {
-            next(err);
-        });
+        })
+        .fail(next);
 }
 
-
-//Find folder by full path; returns success for empty path
-var findByFullPath = function (fullpath, success, failure) {
-    if(fullpath.trim() === "") {
-        success();
-    }
-    else {      
-        var label = fullpath; var path = '';
-        var index = fullpath.lastIndexOf('/');        
-        if(index > 0) {
-            path = fullpath.substring(0, index);
-            label = fullpath.substring(index + 1);
-        }
-        Folder
-            .findOne({ label: label, path: path })
-            .exec(function (err, folder) {
-                if (err) return failure(err)
-                if (!folder) return failure("Not found")
-                success(folder)
-            })        
-    }
-}
-
-exports.findByFullPath = findByFullPath
