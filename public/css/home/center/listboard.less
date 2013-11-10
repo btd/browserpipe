@@ -5,17 +5,26 @@
         margin: 0;      
         background: @grey1;
 
-        .le-label {            
-            font-weight: bold;
-            font-size: 16px;
-            margin: 6px 18px 0 12px;
+        .label-editor {
+            display: inline-block;
 
-            &:hover {
-                cursor: pointer;
+            .le-label {            
+                font-weight: bold;
+                font-size: 16px;
+                margin: 6px 18px 0 12px;
+
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+            .le-editor {
+                margin-left: 12px;
             }
         }
-        .le-editor {
-            margin-left: 12px;
+
+        .last-sync-time {
+            font-size: 10px;
+            font-style: italic;
         }
 
         .navbar-inner {   

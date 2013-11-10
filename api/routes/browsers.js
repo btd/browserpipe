@@ -116,7 +116,8 @@ module.exports = function (app) {
                                 var item = new Item({
                                     externalId: tab.externalId,
                                     title: tab.title,
-                                    url: tab.url,
+                                    url: encodeURIComponent(tab.url),
+                                    //TODO: we need to download favicon and no use external URL
                                     favicon: tab.favicon,
                                     type: 0,
                                     user: user._id,

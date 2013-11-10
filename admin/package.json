@@ -17,7 +17,8 @@
     "mongo-ton": ">=0.0.2",
     "ton": ">=0.0.2",
     "uglify-js": "1.x.x",
-    "mongodb": "*"
+    "mongodb": "*",
+    "kue": "~0.6.2"
   },
   "optionalDependencies": {
     "pane": "*"

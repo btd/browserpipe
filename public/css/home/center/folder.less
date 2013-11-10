@@ -1,10 +1,23 @@
 .folder-panel {
 	width: 260px;
-	background-color: #1f3659;
+	background-color: @blue3;
 	margin: 0;
     float:right;
 	z-index: 100;
     position: relative;
+    height: 258px;
+    border-left: 1px solid darken(@blue3, 3%);
+
+    .folder-panel-hide-btn {
+        width: 20px;
+        height: 20px;
+        color: @white;
+        position: absolute;
+        left: -30px;
+        background-color: @blue3;
+        padding: 14px 6px;
+        text-align: center;
+    }
 
     .folder-panel-header {
         height: 36px;
@@ -13,6 +26,7 @@
             color: @white; 
             font-weight: bold;
             margin: 6px;
+            text-align: right;
 
             .le-label {  
                 white-space: nowrap;
@@ -96,7 +110,7 @@
         .opt-add-item {            
             float: right;
             margin-right: 18px;
-            color: #777;
+            color: @white;
             font-size: 12px;
 
             &:hover {

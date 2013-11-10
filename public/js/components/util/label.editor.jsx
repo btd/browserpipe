@@ -28,7 +28,7 @@ var LabelEditorComponent = React.createClass({
   render: function() {
     var self = this;
     return ( 
-      <div>               
+      <div className="label-editor">               
         <div ref="label" 
           className={"le-label" + (this.props.labelValue? '' : ' default')} 
           onClick={this.showAndFocusInput}

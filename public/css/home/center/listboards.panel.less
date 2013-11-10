@@ -33,9 +33,30 @@
             margin: 0;
             padding: 0;
 
+            &.browser-listboards {
+                li.listboard {
+                   background-color: @grey2;
+                   position: relative;
+
+                   img {
+                        .opacity(60);    
+                        position: absolute;
+                        left: 3px;
+                   }
+                   span {
+                        margin-left: 12px;
+                        display: block;
+                   }
+                }
+            }
+            &.custom-listboards {
+                li.listboard {
+                   background-color: @blue2;
+                }
+            }
             li.listboard {            
                 width: 90px;
-                background-color: @blue2;
+                
                 max-width: 90px;    
                 text-align: center;         
                 overflow: hidden;
