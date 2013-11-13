@@ -15,8 +15,19 @@ module.exports = (function () {
                 _state.clearSelection();
                 _state.addOrRemoveSelectedContainer(containerId);
                 $('.selection-selected').removeClass('selection-selected');
-                $el.addClass('selection-selected');                
+                $el.addClass('selection-selected selection-dragged');                
             }
+            else
+                $('.selection-selected').addClass('selection-dragged');
+        },
+        end: function(el) {
+            $('.selection-selected').removeClass('selection-selected selection-dragged');
+            _state.clearSelection();
+        },
+        canBeDropped: function(el) {
+            var $el = $(el);
+            return !$el.hasClass('selection-selected') &&
+                $el.parents('.selection-selected').length === 0
         }
     }
 

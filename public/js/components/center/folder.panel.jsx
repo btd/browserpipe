@@ -97,8 +97,7 @@ var FolderPanelComponent = React.createClass({
     renderHeader: function() {
     	return (
     		<div className="folder-panel-header">
-    			<a draggable="false"  href="#" onClick={this.showAndFocusAddFolderInput} className="add-folder-icon">&nbsp;Add folder</a>
-				{ !this.props.folder.isRoot? <i onClick={this.navigateToParentFolder} className="icon-arrow-up folder-icon" title="Navigate folders up"></i> : null }
+    			<a draggable="false"  href="#" onClick={this.showAndFocusAddFolderInput} className="add-folder-icon">&nbsp;Add folder</a>				
 				<div className="folder-label">
 					{	this.props.folder.isRoot? 
 							this.props.folder.label : 
@@ -112,8 +111,8 @@ var FolderPanelComponent = React.createClass({
     },
     renderBox: function() {
 		return (
-			<div className="box" style={{ height: this.getBoxHeight() }}>				
-            	{ this.renderFolders() }
+			<div className="box" style={{ height: this.getBoxHeight() }}>								
+            	{ this.renderFolders() }            	
 				{ this.renderItems() }
 			</div>
 		);
@@ -121,6 +120,15 @@ var FolderPanelComponent = React.createClass({
 
 	onEnterSaveFolder: function(e) {
 	    if(e.keyCode === 13) this.saveFolder();
+	},
+
+	renderUpFolder: function() {
+		if(!this.props.folder.isRoot)
+			return <li ref="folder"  onClick={this.navigateToParentFolder} className="folder">
+		    	<span onClick={ this.folderClicked }>...</span>				        
+		    </li>
+		else 
+			return null;
 	},
 
 	renderFolders: function() {		
@@ -132,10 +140,11 @@ var FolderPanelComponent = React.createClass({
 	                onEnter={folderDraggable.parentDragEnter}
 	                onDragLeave={folderDraggable.parentDragLeave}
 	                onDrop={folderDraggable.parentDrop}
-				>	
+				>
+					{ this.renderUpFolder() }	
 					{
 	                	this.props.folder.children.map(function(folder) {
-		                    return <Folder folder= {folder} folderDraggable={folderDraggable} navigateToChildFolder= {self.navigateToChildFolder} />
+		                    return <Folder folder= {folder} folderDraggable={folderDraggable} folderClicked= {self.navigateToChildFolder} />
 		                })
 		            }
 				</ul>

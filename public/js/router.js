@@ -7,6 +7,9 @@ var _state = require('./state'),
     io = require('socket.io'),
     $ = require('jquery');
 
+//Notification system
+require('messenger');
+
 var homeView, //react home component instance
     socket; //socket.io client socket
 
@@ -45,6 +48,7 @@ var loadHomeView = function(listboardsVisible, listboardSettingsVisible, dialogI
             dialogItemVisible: dialogItemVisible
         }); 
     }
+
 }
 
 page('/', function () {

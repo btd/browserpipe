@@ -1,13 +1,17 @@
 var _ = require('lodash');
 
+//Parent: where the draggable objects are and accept drop of them and other draggable objects
+//Object: are the draggable objects and accept drop of other objects
+
 module.exports = function (options) {
 
     options = _.extend({
-        horizontal: true,
+        horizontal: true, //Defines how the parents display it objects
+        objDroppable: true, //Defines if the object accept drop of other objects
         connectWith: false //TODO: Not used, I leave it here to evaluate the use of it in the future.
-    }, options);      
+    }, options);  
 
-    var dragging, placeholder;
+    var placeholder;
     var isHandle, index;
 
     //Detects if CTRL key is pressed
@@ -58,34 +62,37 @@ module.exports = function (options) {
         }           
         dt.effectAllowed = 'all';           
         dt.setData('Text', 'dummy');
-        index = (dragging = $this).addClass('sortable-dragging').index();
     }
 
-    var objDragEnd = function(e) {          
-        if (!dragging) {
-            return;
-        }           
+    var objDragEnd = function(e) {     
         var $this = getDraggable(e); 
-        if(!$this) return false;
-        dragging.removeClass('sortable-dragging').show();        
-        //TODO: Call server dragging.index()        
-        dragging = null;
+        if(!$this) return false;                
+        if (options.end) {            
+            options.end(e.target);
+        }         
     }
-    var objDragOverOrEnter = function(e) {                  
+    var objDragOverOrEnter = function(e) {           
         e.preventDefault();     
         e.stopPropagation();  
-        var $this = getDraggable(e); 
-        if(!$this) return false;         
-        $('.selection-droppable').removeClass('selection-droppable selection-droppable-copy selection-droppable-move')        
-        $this.addClass('selection-droppable')
-        if(isCopying(e))
-            $this.addClass('selection-droppable-copy');
+        if(options.objDroppable) {
+            var $this = getDraggable(e); 
+            if(!$this) return false;   
+            $('.selection-droppable').removeClass('selection-droppable selection-droppable-copy selection-droppable-move')                
+            if(options.canBeDropped && options.canBeDropped(e.target)) {
+                $this.addClass('selection-droppable')
+                if(isCopying(e))
+                    $this.addClass('selection-droppable-copy');
+                else
+                    $this.addClass('selection-droppable-move');               
+            }
+            return false;
+        }
         else
-            $this.addClass('selection-droppable-move');               
-        return false;
+            return true;
     }
 
-    var objDragLeave = function(e) {        
+    var objDragLeave = function(e) {           
+        e.preventDefault();  
         e.stopPropagation();
         if(!isDraggable(e.target)) return false;
         var $this = getDraggable(e);         
@@ -93,49 +100,57 @@ module.exports = function (options) {
     };
 
     var objDrop = function(e) {        
+        e.preventDefault();
         e.stopPropagation();
+        $('.selection-droppable').removeClass('selection-droppable selection-droppable-copy selection-droppable-move');
         var $this = getDraggable(e); 
-        if(!$this) return false;
-        e.preventDefault();             
-        //dragging.trigger('dragend.h5s');
-        //TODO: call server
+        if(!$this) return false;        
+        if(options.dropOverObject)
+            options.dropOverObject($this);
         return false;
     }
 
     var parentDragOverOrEnter = function(e) {                 
         e.stopPropagation(); 
-        e.preventDefault();         
-        if(!isDraggableParent(e.target)) return false;                   
-        var $this = $(e.target);                        
-        if(!placeholder)
-            placeholder = $('<' + (/^ul|ol$/i.test(e.target.tagName) ? 'li' : 'div') + ' class="sortable-placeholder"><div class="text"></div></' + (/^ul|ol$/i.test(e.target.tagName) ? 'li' : 'div')  + '>');                                                               
-        if(!isPlaceHolderAttached()){
-            var leftItem = $this.children().filter(function () {
-               return (
-                        (options.horizontal && $(this).offset().left > e.nativeEvent.pageX) ||
-                        (!options.horizontal && $(this).offset().top  > e.nativeEvent.pageY)
-                    );
-            });        
-            if(leftItem.length > 0){                            
-                if(isCopying(e))
-                    placeholder.children('.text').html('copy here');
-                else
-                    placeholder.children('.text').html('move here');
-                $(leftItem[0]).before(placeholder);            
-            }
+        e.preventDefault();       
+        if(placeholder)
+            if(isCopying(e))
+                placeholder.children('.text').html('copy here');
             else
-                $this.append(placeholder);            
+                placeholder.children('.text').html('move here');  
+        if(!isDraggableParent(e.target)) return false;                           
+        if(options.canBeDropped && options.canBeDropped(e.target)) {
+            var $this = $(e.target);                        
+            if(!placeholder)
+                placeholder = $('<' + (/^ul|ol$/i.test(e.target.tagName) ? 'li' : 'div') + ' class="sortable-placeholder"><div class="text"></div></' + (/^ul|ol$/i.test(e.target.tagName) ? 'li' : 'div')  + '>');                                                               
+            if(!isPlaceHolderAttached()){
+                var leftItem = $this.children().filter(function () {
+                   return (
+                            (options.horizontal && $(this).offset().left > e.nativeEvent.pageX) ||
+                            (!options.horizontal && $(this).offset().top  > e.nativeEvent.pageY)
+                        );
+                });        
+                if(leftItem.length > 0)                
+                    $(leftItem[0]).before(placeholder);            
+                else
+                    $this.append(placeholder);            
+            }        
         }
     }
 
-    var parentDragLeave =  function(e) {        
+    var parentDragLeave =  function(e) {     
+        e.preventDefault();   
         e.stopPropagation(); 
         if(!isInsidePlaceHolder(e)) 
             removePlaceHolder();      
     }
 
     var parentDrop = function(e) {
-        e.stopPropagation();
+        e.preventDefault();
+        e.stopPropagation();    
+        if(options.dropOverParent)
+            options.dropOverParent(placeholder.index());
+        removePlaceHolder();
     }
 
 	return  {        

@@ -108,7 +108,13 @@
             }
         }   
         &.selection-selected {
-            background-color: @yellow1;
+            border: 2px solid @blue4;
+            background-color: @blue4;
+
+            &.selection-dragged {
+                background-color: @grey1;
+                .opacity(15);
+            }
         }     
         &.selection-droppable {
             border: 2px dashed #000;

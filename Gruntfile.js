@@ -30,7 +30,8 @@ var browserifyAliases = [
     bowerAlias('lodash/dist/lodash.js', 'lodash'),
     bowerAlias('emitter/index.js', 'emitter'),
     bowerAlias('indexof/index.js', 'indexof'),
-    bowerAlias('moco/index.js', 'moco')
+    bowerAlias('moco/index.js', 'moco'),
+    bowerAlias('messenger/build/js/messenger.js', 'messenger')
 ];
 
 module.exports = function(grunt) {

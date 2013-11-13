@@ -31,7 +31,6 @@
             .le-label {  
                 white-space: nowrap;
                 text-overflow: ellipsis;
-                width: 200px;
                 display: block;
                 overflow: hidden;
             }   
@@ -56,7 +55,8 @@
             color: @white; 
             position: absolute;
             right: 6px;
-            top: 24px;            
+            top: 42px;
+            z-index: 100;           
         }
     }    
     .box {                
@@ -105,9 +105,12 @@
                     } 
                 }                
                 &.selection-selected {
-                    color: @grey3; 
-                    border: 2px solid @yellow1;
-                    background-color: @yellow1;
+                    border: 2px dashed @blue4;
+                    background-color: @blue4;
+
+                    &.selection-dragged {
+                        .opacity(30);
+                    }
                 }                
                 &.selection-droppable {
                     border: 2px dashed #000;

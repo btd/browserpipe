@@ -20,7 +20,7 @@ var FolderComponent = React.createClass({
         $el.removeClass('selection-selected');
     }
     else   
-      this.props.navigateToChildFolder(this.props.folder._id);
+      this.props.folderClicked(this.props.folder._id);
   },
   mouseEnter: function() {
     this.refs.btnRemoveChildFolder.getDOMNode().className = "icon-remove remove-child-folder";   

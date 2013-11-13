@@ -15,11 +15,6 @@
 
         &:hover {
             cursor: pointer;
-            border: 2px solid @blue;
-        }
-        &.selection-selected {
-            border: 2px solid @yellow1;
-            background-color: @yellow1;
         }
         a {
             color: @grey3;     
@@ -60,6 +55,13 @@
                 cursor:pointer; 
                 .opacity(100);
             } 
+        }
+        &.selection-selected {
+            background-color: @blue4;
+
+            &.selection-dragged {
+                .opacity(30);
+            }
         }
         &.selection-droppable {
             border: 2px dashed #000;

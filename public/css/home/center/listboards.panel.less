@@ -72,9 +72,12 @@
                 background-color: @blue2;
             }
             &.selection-selected {
-                color: @grey3; 
-                border: 2px solid @yellow1;
-                background-color: @yellow1;
+                border: 2px solid @blue4;
+                background-color: @blue4;
+
+                &.selection-dragged {
+                    .opacity(30);
+                }
             }
             &.selection-droppable {
                 border: 2px dashed #000;
