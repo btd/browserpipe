@@ -30,8 +30,7 @@ var browserifyAliases = [
     bowerAlias('lodash/dist/lodash.js', 'lodash'),
     bowerAlias('emitter/index.js', 'emitter'),
     bowerAlias('indexof/index.js', 'indexof'),
-    bowerAlias('moco/index.js', 'moco'),
-    bowerAlias('jquery-ui/ui/jquery-ui.js', 'jquery-ui')
+    bowerAlias('moco/index.js', 'moco')
 ];
 
 module.exports = function(grunt) {
@@ -73,8 +72,7 @@ module.exports = function(grunt) {
                         extensions: [".jsx"],
                         external: ['emitter-component'],
                         shim: {                            
-                            jquery: { path: "./public/bower_components/jquery/jquery.js", exports: "$" },
-                            'jquery-ui' : { path: './public/bower_components/jquery-ui/ui/jquery-ui.js', depends: { jquery: '$' }, exports: null },
+                            jquery: { path: "./public/bower_components/jquery/jquery.js", exports: "$" }
                         },
                         debug: true,
                         transform: ['reactify']
@@ -90,8 +88,7 @@ module.exports = function(grunt) {
                         external: ['emitter-component'],
                         extensions: [".jsx"],
                         shim: {                            
-                            jquery: { path: "./public/bower_components/jquery/jquery.js", exports: "$" },
-                            'jquery-ui' : { path: './public/bower_components/jquery-ui/ui/jquery-ui.js', depends: { jquery: '$' }, exports: null },
+                            jquery: { path: "./public/bower_components/jquery/jquery.js", exports: "$" }
                         },
                         debug: true,
                         transform: ['reactify']

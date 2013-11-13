@@ -165,10 +165,10 @@ var ContainerComponent = React.createClass({
 			<li draggable="true" 
 				onDragStart={this.props.containerDraggable.objDragStart} 
 				onDragEnd={this.props.containerDraggable.objDragEnd}
-		        onDragOver={this.props.containerDraggable.objDragOver}
-		        onDragEnter={this.props.containerDraggable.objDragEnter}
-		        onDragLeave={this.props.containerDraggable.objDragLeave}
-		        onDrop={this.props.containerDraggable.objDrop}
+				onDragOver={this.props.containerDraggable.objDragOver}
+				onDragEnter={this.props.containerDraggable.objDragEnter}
+				onDragLeave={this.props.containerDraggable.objDragLeave}
+				onDrop={this.props.containerDraggable.objDrop}
 				ref="container" id={ this.getItemId() } className="container" onClick={this.containerClicked}>
 				<div className="container-header">{ this.renderHeader() }</div>				
 				{ this.renderBox() }
