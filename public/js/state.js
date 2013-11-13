@@ -50,7 +50,7 @@ _.extend(State1.prototype, {
         this.loadItems(initialOptions.items || []);
 
         //Init selection
-        this.initSelection();
+        this.clearSelection();
     },
 
 
@@ -456,14 +456,14 @@ _.extend(State1.prototype, {
 
     //////////////////////////////////////////SELECTED OBJECTS//////////////////////////////////////
 
-    initSelection: function() {
+    getSelection: function() {
+        return this.selection;
+    },
+    clearSelection: function() {        
         this.selection.listboards = new Array();
         this.selection.containers = new Array();
         this.selection.items = new Array();
         this.selection.folders = new Array();
-    },
-    getSelection: function() {
-        return this.selection;
     },
     addOrRemoveSelectedListboard: function(listboardId) {        
         if(_.contains(this.selection.listboards, listboardId)){

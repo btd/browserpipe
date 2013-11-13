@@ -34,7 +34,20 @@ var FolderComponent = React.createClass({
   },
   render: function() {
     return ( 
-      <li ref="folder" onMouseEnter={this.mouseEnter} onMouseLeave={this.mouseLeave} onClick={ this.folderClicked } id={'folder_' + this.props.folder._id} className="folder">
+      <li ref="folder" 
+        onMouseEnter={this.mouseEnter} 
+        onMouseLeave={this.mouseLeave} 
+        onClick={ this.folderClicked } 
+        id={'folder_' + this.props.folder._id} 
+        className="folder"
+        draggable="true" 
+        onDragStart={this.props.folderDraggable.objDragStart} 
+        onDragEnd={this.props.folderDraggable.objDragEnd}
+        onDragOver={this.props.folderDraggable.objDragOver}
+        onDragEnter={this.props.folderDraggable.objDragEnter}
+        onDragLeave={this.props.folderDraggable.objDragLeave}
+        onDrop={this.props.folderDraggable.objDrop}
+      >
         <span onClick={ this.folderClicked }>{ this.props.folder.label }</span>
         <i ref='btnRemoveChildFolder' onClick={this.removeFolder} className="icon-remove remove-child-folder hide" />
       </li>

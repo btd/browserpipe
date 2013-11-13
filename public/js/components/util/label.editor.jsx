@@ -8,7 +8,11 @@ var _state = require('../../state'),
     Container = require('../center/container');
 
 var LabelEditorComponent = React.createClass({ 
-  showAndFocusInput: function() {      
+  showAndFocusInput: function(e) {  
+    if(e.ctrlKey)
+      return; //User may be selecting
+    e.preventDefault();
+    e.stopPropagation();
     this.refs.label.getDOMNode().className = "hide";
     this.refs.labelEditor.getDOMNode().className = "input-append le-editor" 
     this.refs.labelInput.getDOMNode().value = this.props.labelValue;

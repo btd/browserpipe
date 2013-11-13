@@ -42,7 +42,7 @@ var ListboardSettingsComponent = React.createClass({
         var self = this;
         return  (
             <div className="listboard-settings" style={ this.getListboardSettingsStyle() }>                                             
-                <a onClick={this.goToHome} className="back-icon" href="#">
+                <a draggable="false"  onClick={this.goToHome} className="back-icon" href="#">
                     <i className="icon-arrow-left">&nbsp;&nbsp;go back</i>
                 </a>
                 <div className="name-editor">             
@@ -51,7 +51,7 @@ var ListboardSettingsComponent = React.createClass({
                         labelValue= {this.props.selectedListboard.label} />
                     <small><i>(click to edit)</i></small>
                 </div>
-                <a ref="deleteOption" onClick={this.showDeleteWarning} href="#" className="delete-option">delete listboard</a>
+                <a draggable="false"  ref="deleteOption" onClick={this.showDeleteWarning} href="#" className="delete-option">delete listboard</a>
                 <div ref="deleteWarning" className="alert alert-error hide">
                     <div>All data from this listboard that was not archived in folders will be deleted.</div>
                     <div>Do you want to continue?</div>

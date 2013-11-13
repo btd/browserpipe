@@ -23,25 +23,81 @@
             .opacity(100);
             text-decoration: none;
         }
-    }          
-
+    }    
     .listboards {
     	margin: 0;
     	padding: 0;
+        display: table;
+        border-collapse: separate;
+        border-spacing: 6px 3px;
 
         ul {
             margin: 0;
-            padding: 0;
-
-            &.custom-listboards {
-                float: left;
-            }
+            padding: 0;            
         }
+        .listboard-selector {  
+            display: table-cell;
+            font-size: 13px;
+            list-style: none;
+            .opacity(80); 
+            color: @white;
+            text-align: center;         
+            overflow: hidden;        
+            
+            div {        
+                width: 86px;    
+                max-width: 86px;    
+                height: 30px;
+                font-weight: bold;
+                text-overflow: ellipsis;     
+            }
 
+            &.browser-listboard-selector { 
+               border: 2px solid @grey2;       
+               background-color: @grey2;
+               position: relative;
+
+               img {
+                    .opacity(60);    
+                    position: absolute;
+                    left: 3px;
+               }
+               span {
+                    margin-left: 12px;
+                    display: block;
+               }
+            }
+            &.custom-listboard-selector {
+                border: 2px solid @blue2;
+                background-color: @blue2;
+            }
+            &.selection-selected {
+                color: @grey3; 
+                border: 2px solid @yellow1;
+                background-color: @yellow1;
+            }
+            &.selection-droppable {
+                border: 2px dashed #000;
+            }
+            
+        }
+        .sortable-placeholder {            
+            display: table-cell;
+            border: 2px dashed #000;
+            list-style: none;            
+            height: 30px;
+            .opacity(80);             
+            overflow: hidden;
+
+            .text {                
+                text-align: center;
+                width: 86px;    
+                max-width: 86px;    
+            }   
+        }
     }
-
     .add-listboard {      
-        float: left;  
+        display: table-cell;
         margin-top: 9px;
         background-color: #1f3659;
         color: #fff;
@@ -52,47 +108,10 @@
             text-decoration: none;
             cursor:pointer; 
             .opacity(100);
+        }        
+        &.drop-hover {
+            background-color: @red;
         }
     }
 
-}
-
-/* Outside for draggable to be possible */
-.listboard-selector {  
-    font-size: 13px;
-    list-style: none;
-    width: 90px;    
-    max-width: 90px;    
-    height: 30px;
-    text-align: center;         
-    overflow: hidden;
-    float: left;
-    .opacity(80);     
-    color: @white;
-    font-weight: bold;
-    overflow: hidden;
-    text-overflow: ellipsis;     
-
-    &.browser-listboard-selector {        
-       background-color: @grey2;
-       position: relative;
-
-       img {
-            .opacity(60);    
-            position: absolute;
-            left: 3px;
-       }
-       span {
-            margin-left: 12px;
-            display: block;
-       }
-    }
-    &.custom-listboard-selector {
-        background-color: @blue2;
-    }
-    &.selection-selected {
-        color: @grey3; 
-        background-color: @yellow1;
-    }
-    
 }

@@ -11,6 +11,7 @@ var _state = require('../state'),
     ListboardComponent = require('./center/listboard'),
     ListboardSettingsComponent = require('./center/listboard.settings'),
     FolderPanelComponent = require('./center/folder.panel'),
+    Selector = require('./center/selector'),
     DialogItemComponent = require('./dialog/item.view.dialog');
 
 var HomeComponent = React.createClass({  
@@ -50,23 +51,6 @@ var HomeComponent = React.createClass({
   handleBodyClick: function(e) {
       if(this.state.dialogItemVisible)      
         page('/listboard/' + this.state.selectedListboard._id);
-  },
-  getSelectionText: function(count, singularText, pluralText) {
-    return count > 0 ? (" (" + count + " " + (count > 1 ? pluralText : singularText) + ")") : "";
-  },
-  getSelectionsText: function() {
-    var listboardCount = this.state.selection.listboards.length;    
-    var containerCount = this.state.selection.containers.length;
-    var itemCount = this.state.selection.items.length;
-    var folderCount = this.state.selection.folders.length;
-    if((listboardCount + containerCount + itemCount + folderCount) > 0) {
-      var listboardText = this.getSelectionText(listboardCount, "listboard",  "listboards");
-      var containerText = this.getSelectionText(containerCount, "container",  "containers");
-      var itemText = this.getSelectionText(itemCount, "item",  "items");
-      var folderText = this.getSelectionText(folderCount, "folder",  "folders");
-      return "selected" + listboardText + containerText + itemText + folderText;
-    }
-    else return "";
   },
   render: function() {
 
@@ -109,9 +93,9 @@ var HomeComponent = React.createClass({
             {this.listboardComponent}
             {this.listboardSettingsComponent}
             {this.dialogItemComponent}
-        </div>
+        </div>        
         <div className="main-footer">
-          <span className="selection">{this.getSelectionsText()}</span>
+          <Selector selection={this.state.selection} />          
           <small>@Listboard.it</small>
         </div>
         {this.state.dialogItemVisible? <div className="modal-backdrop fade in"></div> : null}

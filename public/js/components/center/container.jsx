@@ -7,9 +7,8 @@ var _state = require('../../state'),
     util = require('../../util'),
     React = require('react'),
     Item = require('./item'),    
-    LabelEditorComponent = require('../util/label.editor');
-
-require('jquery-ui');
+    LabelEditorComponent = require('../util/label.editor'),
+    itemDraggable = require('../../dragging/item');    
 
 var ContainerComponent = React.createClass({ 
 	getContainerTitle: function() {		
@@ -28,9 +27,8 @@ var ContainerComponent = React.createClass({
 			return null;
 	},
 	getBoxMaxHeight: function() {
-		var maxHeight = this.props.containersHeight - 4 - 24 - 36 - 21 ; //(4 = container border) (24 = 12 + 12 = container margin and padding) (36 = cont header height) (21 =  cont footer height)    
-		if(this.props.hasHorizontalScrollbar)
-			maxHeight = maxHeight - 18; //(18 = horizontal scrollbar)
+		//TODO: scrollbar should be floating to not bother height change
+		var maxHeight = this.props.containersHeight - 4 - 24 - 36 - 21 - 18 ; //(4 = container border) (24 = 12 + 12 = container margin and padding) (36 = cont header height) (21 =  cont footer height) (18 = horizontal scrollbar)   		
 	    return maxHeight;
 	},
 	closeContainer: function(e) {		
@@ -101,25 +99,6 @@ var ContainerComponent = React.createClass({
     getItemId : function() {
 		return "co-" + this.props.container._id;
 	},
-
-
-
-	///DRAG AND DROPPPPPPP
-	componentDidMount: function() {      
-	  /*$( '#' + this.getItemId() ).draggable({
-	    //containment: ".listboard",
-	    revert: "invalid",
-	    snap: ".listboard",
-	    //stack: ".main, .container, .listboard",
-	    helper: 'clone'/*,
-	    helper: function( event ) {
-	      return $( "<div class='ui-widget-header'>I'm a custom helper</div>" );
-	    }
-	  });  */
-	},
-	///DRAG AND DROPPPPPPP
-
-
 	renderHeader: function() {
 		return (
 			<div>				
@@ -140,24 +119,7 @@ var ContainerComponent = React.createClass({
 		return (
 			<div className="box" style={{ maxHeight: this.getBoxMaxHeight() }}>				
             	{ this.renderItems() }
-			</div>
-		);
-	},
-	renderItems: function() {				
-		return (
-			<ul className="items">
-			{                    
-                this.props.container.items.map(function(item) {
-                    return <Item item= {item} />
-                })
-            }
-			</ul>
-		);
-	},
-	renderFooter: function() {
-		return (
-			<div className="container-footer">
-				<div ref="itemEditor" className="input-append add-item hide">
+            	<div ref="itemEditor" className="input-append add-item hide">
 					<div className="control-group">    
 				      <div className="controls">
 						  <textarea ref="itemInput" className="item-url" cols="2"></textarea>
@@ -172,13 +134,42 @@ var ContainerComponent = React.createClass({
 					</div>
 				  </div>
 				</div>
-				<a onClick={this.showAndFocusAddItemInput} className="opt-add-item">Add URL</a>			
+			</div>
+		);
+	},
+	renderItems: function() {				
+		return (
+			<ul className="items"
+				onDragOver={itemDraggable.parentDragOver}
+                onEnter={itemDraggable.parentDragEnter}
+                onDragLeave={itemDraggable.parentDragLeave}
+                onDrop={itemDraggable.parentDrop}
+			>
+			{                    
+                this.props.container.items.map(function(item) {
+                    return <Item item= {item} itemDraggable={itemDraggable} />
+                })
+            }
+			</ul>
+		);
+	},
+	renderFooter: function() {
+		return (
+			<div className="container-footer">				
+				<a draggable="false" onClick={this.showAndFocusAddItemInput} className="opt-add-item">Add URL</a>			
 			</div>
 		);
 	},
 	render: function() {
 		return (
-			<li ref="container" id={ this.getItemId() } className="container" onClick={this.containerClicked}>
+			<li draggable="true" 
+				onDragStart={this.props.containerDraggable.objDragStart} 
+				onDragEnd={this.props.containerDraggable.objDragEnd}
+		        onDragOver={this.props.containerDraggable.objDragOver}
+		        onDragEnter={this.props.containerDraggable.objDragEnter}
+		        onDragLeave={this.props.containerDraggable.objDragLeave}
+		        onDrop={this.props.containerDraggable.objDrop}
+				ref="container" id={ this.getItemId() } className="container" onClick={this.containerClicked}>
 				<div className="container-header">{ this.renderHeader() }</div>				
 				{ this.renderBox() }
 				{ this.renderFooter() }

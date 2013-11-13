@@ -9,7 +9,8 @@ var $ = require('jquery'),
     React = require('react'),
     Folder = require('./folder'), 
     Item = require('./item'),    
-    LabelEditorComponent = require('../util/label.editor');
+    LabelEditorComponent = require('../util/label.editor'),
+    folderDraggable = require('../../dragging/folder');
 
 var FolderPanelComponent = React.createClass({  
 	getBoxHeight: function() {
@@ -96,7 +97,7 @@ var FolderPanelComponent = React.createClass({
     renderHeader: function() {
     	return (
     		<div className="folder-panel-header">
-    			<a href="#" onClick={this.showAndFocusAddFolderInput} className="add-folder-icon">&nbsp;Add folder</a>
+    			<a draggable="false"  href="#" onClick={this.showAndFocusAddFolderInput} className="add-folder-icon">&nbsp;Add folder</a>
 				{ !this.props.folder.isRoot? <i onClick={this.navigateToParentFolder} className="icon-arrow-up folder-icon" title="Navigate folders up"></i> : null }
 				<div className="folder-label">
 					{	this.props.folder.isRoot? 
@@ -126,10 +127,15 @@ var FolderPanelComponent = React.createClass({
 		var self = this;
 		return (
 			<div>
-				<ul className="folders">	
+				<ul className="folders"
+					onDragOver={folderDraggable.parentDragOver}
+	                onEnter={folderDraggable.parentDragEnter}
+	                onDragLeave={folderDraggable.parentDragLeave}
+	                onDrop={folderDraggable.parentDrop}
+				>	
 					{
 	                	this.props.folder.children.map(function(folder) {
-		                    return <Folder folder= {folder} navigateToChildFolder= {self.navigateToChildFolder} />
+		                    return <Folder folder= {folder} folderDraggable={folderDraggable} navigateToChildFolder= {self.navigateToChildFolder} />
 		                })
 		            }
 				</ul>
@@ -178,14 +184,14 @@ var FolderPanelComponent = React.createClass({
 	renderFooter: function() {
 		return (
 			<div className="folder-panel-footer">				
-				<a onClick={this.showAndFocusAddItemInput} className="opt-add-item">Add URL</a>			
+				<a draggable="false"  onClick={this.showAndFocusAddItemInput} className="opt-add-item">Add URL</a>			
 			</div>
 		);
 	},
 	render: function() {  
 		return (
 			<div className="folder-panel" style={{ height: this.props.folderPanelHeight }}>				
-    			<a href="#" className="folder-panel-hide-btn">
+    			<a draggable="false"  href="#" className="folder-panel-hide-btn">
     				<i className="icon-chevron-right"></i>
     			</a>
 				{ this.renderHeader() }

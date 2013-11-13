@@ -7,8 +7,6 @@ var _state = require('../../state'),
     _ = require('lodash'),
     React = require('react');
 
-require('jquery-ui');
-
 var ItemComponent = React.createClass({   
   getTitle: function() {
     if(this.props.item.title)
@@ -39,35 +37,24 @@ var ItemComponent = React.createClass({
   getItemId : function() {
     return "it-" + this.props.item._id;
   },
-
-  ///DRAG AND DROPPPPPPP
-  componentDidMount: function() {      
-    $( '#' + this.getItemId() ).draggable({
-      //containment: ".listboard",
-      revert: "invalid",
-      drag: function() {
-        //$(this).css({ position: 'fixed'});
-      },
-      zIndex: 3000
-      //snap: ".listboard",
-      //stack: ".main, .container, .listboard",
-      //helper: 'clone'
-      /*,
-      helper: function( event ) {
-        return $( "<div class='ui-widget-header'>I'm a custom helper</div>" );
-      }*/
-    });  
-  },
-  ///DRAG AND DROPPPPPPP
-
-
-
   render: function() {
     return (          
-      <li ref='item' id={ this.getItemId() } ref="item"  onClick={ this.navigateToItem } className="item"> 
+      <li ref='item' 
+          id={ this.getItemId() } 
+          ref="item"  
+          onClick={ this.navigateToItem } 
+          className="item"
+          draggable="true"
+          onDragStart={this.props.itemDraggable.objDragStart} 
+          onDragEnd={this.props.itemDraggable.objDragEnd}
+          onDragOver={this.props.itemDraggable.objDragOver}
+          onDragEnter={this.props.itemDraggable.objDragEnter}
+          onDragLeave={this.props.itemDraggable.objDragLeave}
+          onDrop={this.props.itemDraggable.objDrop}
+        > 
         <i className="icon-remove remove-item" title="Close"></i>
-        <img className="favicon" src={ this.props.item.favicon } alt="Favicon" />
-        <a onClick={ this.stopPropagation } className="title" target="_blank" href={this.props.item.url}>
+        <img draggable="false" className="favicon" src={ this.props.item.favicon } alt="Favicon" />
+        <a draggable="false"  onClick={ this.stopPropagation } className="title" target="_blank" href={this.props.item.url}>
           {  this.getTitle()  } 
         </a>
         <div className="description">{ this.props.item.note }</div>  		
