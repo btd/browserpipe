@@ -417,44 +417,7 @@ _.extend(State1.prototype, {
     },
     //////////////////////////////////////////ITEMS//////////////////////////////////////
 
-    //////////////////////////////////////////EXTENSION//////////////////////////////////////
-    isExtensionInstalled: function (callback) {
-        //window.chrome.app.isInstalled does not work for extensions
-        //Only way I found is this
-        var self = this;
-        if (!this.extensionInstalled) {
-            var s = document.createElement('script');
-            s.onload = function () {
-                self.extensionInstalled = true;
-                callback(true);
-            };
-            s.onerror = function () {
-                self.extensionInstalled = true;
-                callback(false);
-            };
-            s.src = 'chrome-extension://jhlmlfahjekacljfabgbcoanjooeccmm/manifest.json';
-            document.body.appendChild(s);
-        }
-    },
-    installChromeExtension: function () {
-        var self = this;
-        if (typeof window.chrome !== "undefined") {
-            window.chrome.webstore.install(
-                'https://chrome.google.com/webstore/detail/jhlmlfahjekacljfabgbcoanjooeccmm',
-                function () {
-                    self.emit('extension.possible.installed');
-                    $('#installExtensionModal').modal('hide');
-                },
-                function () {
-                    //TODO: manage when it fails
-                }
-            );
-
-        }
-    },
-    //////////////////////////////////////////EXTENSION//////////////////////////////////////
-
-
+    
     //////////////////////////////////////////SELECTED OBJECTS//////////////////////////////////////
 
     getSelection: function() {

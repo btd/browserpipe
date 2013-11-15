@@ -4,6 +4,7 @@
 
 var _state = require('../../state'),
     _ = require('lodash'),
+    extension = require('../../extension/extension'),
     util = require('../../util'),
     React = require('react'),
     Item = require('./item'),    
@@ -33,8 +34,11 @@ var ContainerComponent = React.createClass({
 	    return maxHeight;
 	},
 	closeContainer: function(e) {		
-    	e.stopPropagation();
-		_state.serverRemoveContainer(this.props.selectedListboard._id, this.props.container);
+    	e.stopPropagation();    	
+    	if(this.props.container.type === 0)
+    		extension.closeTabs([this.props.container.externalId]);
+    	else
+			_state.serverRemoveContainer(this.props.selectedListboard._id, this.props.container);
 	},
 	saveContainerLabel: function(newTitle, success) {    
 	   _state.serverUpdateContainer(

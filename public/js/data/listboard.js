@@ -10,6 +10,7 @@ var Container = model()
     .attr('title') // String
     .attr('items', { collection: Items }) // collection of items    
     .attr('type') // integer; usually 1*/
+    .attr('externalId') // id of the window, for type == 0
     .attr('listboardId') // listboard id that contains it
     .use(model.nestedObjects);
 

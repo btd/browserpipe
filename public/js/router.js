@@ -3,12 +3,16 @@
 var _state = require('./state'),
     _ = require('lodash'),
     page = require('page'),
+    extension = require('./extension/extension')
     HomeView = require('./components/home'),
     io = require('socket.io'),
     $ = require('jquery');
 
 //Notification system
 require('messenger');
+Messenger.options = {
+    extraClasses: 'messenger-fixed messenger-on-top messenger-on-right'
+}
 
 var homeView, //react home component instance
     socket; //socket.io client socket
@@ -18,7 +22,7 @@ var homeView, //react home component instance
 var loadHomeView = function(listboardsVisible, listboardSettingsVisible, dialogItemVisible) {
     if(!homeView){
         var that = this;
-        _state.isExtensionInstalled(function(installed) {
+        extension.isExtensionInstalled(function(installed) {
             homeView = HomeView.render(
                 getDocHeight(),
                 getDocWidth(),

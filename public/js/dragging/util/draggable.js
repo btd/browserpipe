@@ -43,8 +43,8 @@ module.exports = function (options) {
             (placeholder.offset().top + placeholder.height()) >= e.pageY            
         );
     }
-    var removePlaceHolder = function() { if(placeholder) placeholder.detach(); }
-   
+    var deAttachPlaceHolder = function() { if(placeholder) placeholder.detach(); }
+    var deAttachAllPlaceHolders = function() { $('.sortable-placeholder').detach(); }       
     
     //Drag and drop functions   
 
@@ -103,6 +103,7 @@ module.exports = function (options) {
         e.preventDefault();
         e.stopPropagation();
         $('.selection-droppable').removeClass('selection-droppable selection-droppable-copy selection-droppable-move');
+        deAttachAllPlaceHolders();
         var $this = getDraggable(e); 
         if(!$this) return false;        
         if(options.dropOverObject)
@@ -142,15 +143,16 @@ module.exports = function (options) {
         e.preventDefault();   
         e.stopPropagation(); 
         if(!isInsidePlaceHolder(e)) 
-            removePlaceHolder();      
+            deAttachPlaceHolder();      
     }
 
     var parentDrop = function(e) {
         e.preventDefault();
         e.stopPropagation();    
+        $('.selection-droppable').removeClass('selection-droppable selection-droppable-copy selection-droppable-move');
         if(options.dropOverParent)
             options.dropOverParent(placeholder.index());
-        removePlaceHolder();
+        deAttachAllPlaceHolders();
     }
 
 	return  {        

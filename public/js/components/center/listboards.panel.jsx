@@ -4,6 +4,7 @@
 
 var _state = require('../../state'),    
     _ = require('lodash'),
+    extension = require('../../extension/extension'),
     page = require('page'),
     React = require('react');
     listboardSelectorDraggable = require('../../dragging/listboard.selector'),
@@ -28,7 +29,7 @@ var ListboardsPanelComponent = React.createClass({
             return null;
     },
     installChromeExtension: function() {        
-        _state.installChromeExtension();
+        extension.installChromeExtension();
     },
     addEmptyListboardAndSelectIt: function(e) {
         e.preventDefault();

@@ -3,7 +3,7 @@ var _state = require('../state'),
 
 module.exports = (function () {  
 
-    var className = 'selection-selected';
+    var msg, className = 'selection-selected';
 
     var unSelectContainerItemsOfListboard = function(listboard) {
         _.each(listboard.containers, function(container) {
@@ -37,6 +37,39 @@ module.exports = (function () {
                 _state.addItemToSelection(it);
         });
     };
+
+    var hideMessage = function() {
+        msg.hide();
+    };
+
+    var showMessage = function(text) {        
+        if(!msg){
+            var that = this;
+            msg = Messenger().post({
+              message: text,
+              type: 'info',
+              actions: {
+                cancel: {
+                  label: 'cancel selection',
+                  action: function() {
+                    _state.clearSelection();
+                    hideMessage();
+                  }
+                }
+              }
+            });
+        }
+        else
+            msg.update({
+              message: text
+            });
+    }
+
+    var getSelectionText =  function(count, singularText, pluralText) {
+        return count > 0 ? (" (" + count + " " + (count > 1 ? pluralText : singularText) + ")") : "";
+    };
+
+
     
     return {        
         getSelectedListboardById: function(id) {
@@ -53,21 +86,25 @@ module.exports = (function () {
         },
         clearSelection: function() {
             _state.clearSelection();
+            this.updateSelectionMessage();
         },
         selectListboard: function(id){            
             var listboard = _state.getListboardById(id);
             //As we select the listboard, no need to its containers and items on the selection
             unSelectContainerItemsOfListboard(listboard);
             _state.addListboardToSelection(listboard);
+            this.updateSelectionMessage();
         },
         unSelectListboard: function(id){
             _state.removeListboardFromSelection(id);
+            this.updateSelectionMessage();
         },
         selectContainer: function(id){       
             var container = _state.getContainerById(id);                
             //As we select the container, no need to have its items on the selection
             unSelectItemsContainer(container);
             _state.addContainerToSelection(container);
+            this.updateSelectionMessage();
         },
         unSelectContainer: function(id){
             var container = this.getSelectedContainerById(id);                
@@ -80,10 +117,12 @@ module.exports = (function () {
                     //select the all but container in listboard                    
                     selectAllButContainer(listboard, container);
             }
+            this.updateSelectionMessage();
         },
         selectItem: function(id){
             var item = _state.getItemById(id);
             _state.addItemToSelection(item);
+            this.updateSelectionMessage();
         },
         unSelectItem: function(id){
             var item = this.getSelectedItemById(id);                
@@ -110,33 +149,40 @@ module.exports = (function () {
                     }                    
                 });
             }
+            this.updateSelectionMessage();
         },
         selectFolder: function(id){
             var folder = _state.getFolderById(id);
             _state.addFolderToSelection(folder);
+            this.updateSelectionMessage();
         },
         unSelectFolder: function(id){            
             _state.removeFolderFromSelection(id);
+            this.updateSelectionMessage();
         },
         selectSingleListboard: function(id) {
             this.clearSelection();
             var listboard = _state.getListboardById(id);      
             _state.addListboardToSelection(listboard);
+            this.updateSelectionMessage();
         },
         selectSingleContainer: function(id) {
             this.clearSelection();
             var container = _state.getContainerById(id);      
             _state.addContainerToSelection(container);
+            this.updateSelectionMessage();
         },
         selectSingleItem: function(id) {
             this.clearSelection();
             var item = _state.getItemById(id);      
             _state.addItemToSelection(item);
+            this.updateSelectionMessage();
         },
         selectSingleFolder: function(id) {
             this.clearSelection();
             var folder = _state.getFolderById(id);      
             _state.addFolderToSelection(folder);
+            this.updateSelectionMessage();
         },         
         getClassName: function() {
             return className;
@@ -154,10 +200,38 @@ module.exports = (function () {
             return this.getSelectedFolderById(id)? true : false;
         },
         isElemSelected: function(el) {
-            return $(el).hasClass(className);
+            return $(el).hasClass(this.getClassName());
         },
         isElemParentSelected: function(el) {
-            return $(el).parents('.' + className).length === 0;
+            return $(el).parents('.' + this.getClassName()).length > 0;
+        },        
+        getSelectionsText: function() {    
+            var selection = _state.getSelection();
+            var listboardText = '', containerText = '', itemText = '', folderText = '';
+            var listboardCount = selection.listboards.length;    
+            var containerCount = selection.containers.length;
+            var itemCount = selection.items.length;
+            var folderCount = selection.folders.length;
+            if((listboardCount + containerCount + itemCount + folderCount) > 0) {
+                listboardText = getSelectionText(listboardCount, "listboard",  "listboards");
+                containerText = getSelectionText(containerCount, "container",  "containers");
+                itemText = getSelectionText(itemCount, "item",  "items");
+                folderText = getSelectionText(folderCount, "folder",  "folders");
+            }
+            return [listboardText, containerText, itemText, folderText]
+        },
+        updateSelectionMessage: function() {
+            var result = this.getSelectionsText();
+            var listboardText = result[0];
+            var containerText = result[1];
+            var itemText = result[2];
+            var folderText = result[3];
+            var text = listboardText + containerText + itemText + folderText;
+            if(text)
+                showMessage("Selected: " + text);
+            else
+                hideMessage();           
+    
         }
         
     }
