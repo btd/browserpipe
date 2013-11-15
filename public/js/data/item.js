@@ -1,5 +1,6 @@
 var _ = require('lodash'),
     moco = require('moco'),
+    util = require('./util/util'),
     collection = moco.collection,
     model = moco.model;
 
@@ -18,7 +19,8 @@ var Item = model()
 
 var Items = collection(Item)
     .use(collection.byId)
-    .use(collection.modelsChanges);
+    .use(collection.modelsChanges)
+    .use(util.collectionClear);
 
 module.exports.Item = Item;
 module.exports.Items = Items;

@@ -454,28 +454,16 @@ _.extend(State1.prototype, {
         this.clearFolderSelection();               
     },
     clearListboardSelection: function() {    
-        //TODO: can we add a method clear() to the collections to moco    
-        //I know is not the best way, but as I do not know the internals of moco.. I will use the method I know "removeById"
-        var len = this.selection.listboards.length;
-        while (len--) { this.selection.listboards.splice(len, 1) }
+        this.selection.listboards.clear();
     },
     clearContainerSelection: function() {    
-        //TODO: can we add a method clear() to the collections to moco    
-        //I know is not the best way, but as I do not know the internals of moco.. I will use the method I know "removeById"
-        var len = this.selection.containers.length;
-        while (len--) { this.selection.containers.splice(len, 1) }
+        this.selection.containers.clear();
     },
     clearItemSelection: function() {    
-        //TODO: can we add a method clear() to the collections to moco    
-        //I know is not the best way, but as I do not know the internals of moco.. I will use the method I know "removeById"        
-        var len = this.selection.items.length;
-        while (len--) { this.selection.items.splice(len, 1) }
+        this.selection.items.clear();
     },
     clearFolderSelection: function() {    
-        //TODO: can we add a method clear() to the collections to moco    
-        //I know is not the best way, but as I do not know the internals of moco.. I will use the method I know "removeById"      
-        var len = this.selection.folders.length;
-        while (len--) { this.selection.folders.splice(len, 1) }
+        this.selection.folders.clear();
     },
     addListboardToSelection: function(listboard) {           
         this.selection.listboards.push(listboard);     

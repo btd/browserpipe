@@ -1,5 +1,6 @@
 var _ = require('lodash'),
     moco = require('moco'),
+    util = require('./util/util'),
     collection = moco.collection,
     model = moco.model,
 
@@ -16,7 +17,8 @@ var Container = model()
 
 var Containers = collection(Container)
     .use(collection.byId)
-    .use(collection.modelsChanges);
+    .use(collection.modelsChanges)
+    .use(util.collectionClear);
 
 module.exports.Container = Container;
 module.exports.Containers = Containers;
@@ -31,7 +33,8 @@ var Listboard = model()
 
 var Listboards = collection(Listboard)
     .use(collection.byId)
-    .use(collection.modelsChanges);
+    .use(collection.modelsChanges)
+    .use(util.collectionClear);
 
 module.exports.Listboard = Listboard;
 module.exports.Listboards = Listboards;
