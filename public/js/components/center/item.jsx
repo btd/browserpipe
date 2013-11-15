@@ -5,7 +5,8 @@
 var _state = require('../../state'),
     page = require('page'),
     _ = require('lodash'),
-    React = require('react');
+    React = require('react'),
+    selection = require('../../selection/selection');
 
 var ItemComponent = React.createClass({   
   getTitle: function() {
@@ -17,16 +18,18 @@ var ItemComponent = React.createClass({
   getScreenshot: function() {
     return this.props.item.screenshot || "/img/no_screenshot.png";
   },
+  isSelected: function() {
+    return this.props.forceSelected || 
+          selection.isItemSelected(this.props.item._id);
+  },
   navigateToItem: function(e) {
     e.preventDefault();
     e.stopPropagation();
-    if(e.ctrlKey){      
-      var added = _state.addOrRemoveSelectedItem(this.props.item._id);
-      var $el = $(this.refs.item.getDOMNode());
-      if(added)
-        $el.addClass('selection-selected');
-      else
-        $el.removeClass('selection-selected');
+    if(e.ctrlKey){
+        if(!this.isSelected())
+          selection.selectItem(this.props.item._id);
+        else
+          selection.unSelectItem(this.props.item._id);
     }
     else    
       page('/item/' + this.props.item._id);
@@ -37,13 +40,17 @@ var ItemComponent = React.createClass({
   getItemId : function() {
     return "it-" + this.props.item._id;
   },
+  getItemClass: function() {
+    return "item " + 
+        (this.isSelected()? selection.getClassName() : '');
+  },
   render: function() {
     return (          
       <li ref='item' 
           id={ this.getItemId() } 
           ref="item"  
           onClick={ this.navigateToItem } 
-          className="item"
+          className={ this.getItemClass() }
           draggable="true"
           onDragStart={this.props.itemDraggable.objDragStart} 
           onDragEnd={this.props.itemDraggable.objDragEnd}

@@ -5,19 +5,20 @@
 var $ = require('jquery'),
     _state = require('../../state'),
     _ = require('lodash'),
-    React = require('react');
+    React = require('react'),
+    selection = require('../../selection/selection');
 
 var FolderComponent = React.createClass({   
+  isSelected: function() {
+    return selection.isFolderSelected(this.props.folder._id);
+  },
   folderClicked: function(e) {    
-    e.stopPropagation();        
     e.stopPropagation();
-    if(e.ctrlKey){      
-      var added = _state.addOrRemoveSelectedFolder(this.props.folder._id);
-      var $el = $(this.refs.folder.getDOMNode());
-      if(added)
-        $el.addClass('selection-selected');
+    if(e.ctrlKey){
+      if(!this.isSelected())
+          selection.selectFolder(this.props.folder._id);
       else
-        $el.removeClass('selection-selected');
+          selection.unSelectFolder(this.props.folder._id);
     }
     else   
       this.props.folderClicked(this.props.folder._id);
@@ -32,6 +33,9 @@ var FolderComponent = React.createClass({
     e.stopPropagation();
     _state.serverRemoveFolder(this.props.folder);
   },
+  getFolderClass: function() {
+    return "folder " + (this.isSelected()? selection.getClassName() : '');
+  },
   render: function() {
     return ( 
       <li ref="folder" 
@@ -39,7 +43,7 @@ var FolderComponent = React.createClass({
         onMouseLeave={this.mouseLeave} 
         onClick={ this.folderClicked } 
         id={'folder_' + this.props.folder._id} 
-        className="folder"
+        className={ this.getFolderClass() }
         draggable="true" 
         onDragStart={this.props.folderDraggable.objDragStart} 
         onDragEnd={this.props.folderDraggable.objDragEnd}

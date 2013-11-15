@@ -241,6 +241,7 @@ _.extend(State1.prototype, {
     addContainer: function (listboardId, container) {
         var listboard = this.getListboardById(listboardId);
         if (listboard) {
+            container.listboardId = listboardId;
             container = new Container(container); // this is required to have the same reference in both collections
             listboard.containers.push(container);
             this.containers.push(container);
@@ -459,55 +460,83 @@ _.extend(State1.prototype, {
     getSelection: function() {
         return this.selection;
     },
-    clearSelection: function() {        
-        this.selection.listboards = new Array();
-        this.selection.containers = new Array();
-        this.selection.items = new Array();
-        this.selection.folders = new Array();
+    getSelectedListboards: function() {
+        return this.selection.listboards;
+    },    
+    getSelectedContainers: function() {
+        return this.selection.containers;
+    },    
+    getSelectedItems: function() {
+        return this.selection.items;
+    },    
+    getSelectedFolders: function() {
+        return this.selection.folders;
+    },    
+    getSelectedListboardById: function(listboardId) {
+        return this.selection.listboards.byId(listboardId);
     },
-    addOrRemoveSelectedListboard: function(listboardId) {        
-        if(_.contains(this.selection.listboards, listboardId)){
-            this.selection.listboards = _.without(this.selection.listboards, listboardId);
-            return false;
-        }
-        else {
-            //TODO: this is done to trigger moco change, push does not trigger
-            this.selection.listboards = _.union(this.selection.listboards, [listboardId]);
-            return true;
-        }
+    getSelectedContainerById: function(containerId) {
+        return this.selection.containers.byId(containerId);
     },
-    addOrRemoveSelectedContainer: function(containerId) {        
-        if(_.contains(this.selection.containers, containerId)){
-            this.selection.containers = _.without(this.selection.containers, containerId);
-            return false;
-        }
-        else {
-            //TODO: this is done to trigger moco change, push does not trigger
-            this.selection.containers = _.union(this.selection.containers, [containerId]);
-            return true;
-        }
+    getSelectedItemById: function(itemId) {
+        return this.selection.items.byId(itemId);
     },
-    addOrRemoveSelectedItem: function(itemId) {        
-        if(_.contains(this.selection.items, itemId)){
-            this.selection.items = _.without(this.selection.items, itemId);
-            return false;
-        }
-        else {
-            //TODO: this is done to trigger moco change, push does not trigger
-            this.selection.items = _.union(this.selection.items, [itemId]);
-            return true;
-        }
+    getSelectedFolderById: function(folderId) {
+        return this.selection.folders.byId(folderId);
     },
-    addOrRemoveSelectedFolder: function(folderId) {        
-        if(_.contains(this.selection.folders, folderId)){
-            this.selection.folders = _.without(this.selection.folders, folderId);
-            return false;
-        }
-        else {
-            //TODO: this is done to trigger moco change, push does not trigger
-            this.selection.folders = _.union(this.selection.folders, [folderId]);
-            return true;
-        }
+    clearSelection: function() {    
+        this.clearListboardSelection();
+        this.clearContainerSelection();
+        this.clearItemSelection();
+        this.clearFolderSelection();               
+    },
+    clearListboardSelection: function() {    
+        //TODO: can we add a method clear() to the collections to moco    
+        //I know is not the best way, but as I do not know the internals of moco.. I will use the method I know "removeById"
+        var len = this.selection.listboards.length;
+        while (len--) { this.selection.listboards.splice(len, 1) }
+    },
+    clearContainerSelection: function() {    
+        //TODO: can we add a method clear() to the collections to moco    
+        //I know is not the best way, but as I do not know the internals of moco.. I will use the method I know "removeById"
+        var len = this.selection.containers.length;
+        while (len--) { this.selection.containers.splice(len, 1) }
+    },
+    clearItemSelection: function() {    
+        //TODO: can we add a method clear() to the collections to moco    
+        //I know is not the best way, but as I do not know the internals of moco.. I will use the method I know "removeById"        
+        var len = this.selection.items.length;
+        while (len--) { this.selection.items.splice(len, 1) }
+    },
+    clearFolderSelection: function() {    
+        //TODO: can we add a method clear() to the collections to moco    
+        //I know is not the best way, but as I do not know the internals of moco.. I will use the method I know "removeById"      
+        var len = this.selection.folders.length;
+        while (len--) { this.selection.folders.splice(len, 1) }
+    },
+    addListboardToSelection: function(listboard) {           
+        this.selection.listboards.push(listboard);     
+    },
+    removeListboardFromSelection: function(listboardId) {        
+        this.selection.listboards.removeById(listboardId);
+    },
+    addContainerToSelection: function(container) {            
+        this.selection.containers.push(container);     
+    },
+    removeContainerFromSelection: function(containerId) {        
+        this.selection.containers.removeById(containerId);
+    },
+    addItemToSelection: function(item) {            
+        this.selection.items.push(item);     
+    },
+    removeItemFromSelection: function(itemId) {        
+        this.selection.items.removeById(itemId);
+    },
+    addFolderToSelection: function(folder) {        
+        this.selection.folders.push(folder);  
+    },
+    removeFolderFromSelection: function(folderId) {        
+        this.selection.folders.removeById(folderId);
     }
 
     //////////////////////////////////////////SELECTED OBJECTS//////////////////////////////////////

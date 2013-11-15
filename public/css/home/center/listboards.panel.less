@@ -20,7 +20,7 @@
 
          &:hover {
             cursor:pointer; 
-            .opacity(100);
+            .opacity(90);
             text-decoration: none;
         }
     }    
@@ -44,6 +44,13 @@
             text-align: center;         
             overflow: hidden;        
             
+            &:hover {
+                cursor:pointer; 
+                .opacity(90);
+            } 
+            &.selected {
+                .opacity(100);
+            } 
             div {        
                 width: 86px;    
                 max-width: 86px;    

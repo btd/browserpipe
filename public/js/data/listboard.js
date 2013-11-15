@@ -10,6 +10,7 @@ var Container = model()
     .attr('title') // String
     .attr('items', { collection: Items }) // collection of items    
     .attr('type') // integer; usually 1*/
+    .attr('listboardId') // listboard id that contains it
     .use(model.nestedObjects);
 
 var Containers = collection(Container)

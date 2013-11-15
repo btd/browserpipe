@@ -6,7 +6,8 @@ var _state = require('../../state'),
     _ = require('lodash'),
     page = require('page'),
     React = require('react');
-    listboardSelectorDraggable = require('../../dragging/listboard.selector');
+    listboardSelectorDraggable = require('../../dragging/listboard.selector'),
+    selection = require('../../selection/selection');
 
 var ListboardsPanelComponent = React.createClass({    
     getListboardsPanelWidth: function() {
@@ -37,6 +38,9 @@ var ListboardsPanelComponent = React.createClass({
             page('/listboard/' + listboard._id);
         })
     },
+    isSelected: function(listboardId) {
+        return selection.isListboardSelected(listboardId);
+    },
     handleListboardClick: function(e) {
         e.preventDefault();        
         e.stopPropagation();
@@ -44,26 +48,26 @@ var ListboardsPanelComponent = React.createClass({
         if(!elementId)
             elementId = $(e.target).parents('.listboard-selector:first').attr('id');
         var listboardId = elementId.substring(3);
-        if(e.ctrlKey){      
-          var added = _state.addOrRemoveSelectedListboard(listboardId);
-          var $el = $("#" + elementId);
-          if(added)
-            $el.addClass('selection-selected');
-          else
-            $el.removeClass('selection-selected');
-        }
+        if(e.ctrlKey){
+            if(!this.isSelected(listboardId))
+                selection.selectListboard(listboardId);
+            else
+                selection.unSelectListboard(listboardId);
+        }            
         else            
             this.props.navigateToListboard(listboardId);
-    },    
+    }, 
     getListboardClass: function(listboard) {
-        if(listboard.type === 0) return "browser-listboard-selector";
-        else return "custom-listboard-selector";
+        return 'listboard-selector ' +
+        (this.props.selectedListboard._id === listboard._id ?  'selected ' : 'listboard-selector ') + 
+        (listboard.type === 0 ? 'browser-listboard-selector ' : 'custom-listboard-selector ') +
+        (this.isSelected(listboard._id)? selection.getClassName() : '');
     },
     renderListboardOption: function(listboard) {
         return <li             
-            className={(this.props.selectedListboard._id === listboard._id ? "listboard-selector selected " : "listboard-selector ") + this.getListboardClass(listboard) }            
+            className={ this.getListboardClass(listboard) }            
             id={'li_' + listboard._id}
-            draggable="true" 
+            draggable="true"             
             onClick={this.handleListboardClick}
             onDragStart={listboardSelectorDraggable.objDragStart} 
             onDragEnd={listboardSelectorDraggable.objDragEnd}

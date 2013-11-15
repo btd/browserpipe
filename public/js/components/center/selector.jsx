@@ -36,7 +36,7 @@ var Selector = React.createClass({
     var itemText = result[2];
     var folderText = result[3];
 
-    var text = "selected" + listboardText + containerText + itemText + folderText;
+    var text = listboardText + containerText + itemText + folderText;
     return (
         <span>
             <div id="selection-draggable">
@@ -47,7 +47,7 @@ var Selector = React.createClass({
                   <li>{ folderText }</li>
               </ul>
             </div>
-            <span className="selection">{ text }</span>
+            <span className="selection">{ text? "selected" + text : '' }</span>
         </span>
     );
   }

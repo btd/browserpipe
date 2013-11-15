@@ -8,7 +8,8 @@ var _state = require('../../state'),
     React = require('react'),
     Container = require('./container'),    
     LabelEditorComponent = require('../util/label.editor'),
-    containerDraggable = require('../../dragging/container');
+    containerDraggable = require('../../dragging/container'),
+    selection = require('../../selection/selection');
 
 var ListboardComponent = React.createClass({ 
   getListboardHeight: function() {
@@ -39,6 +40,7 @@ var ListboardComponent = React.createClass({
   render: function() {
     var self = this;  
     var containersHeight = this.getListboardHeight();        
+    var forceSelected = selection.isListboardSelected(this.props.selectedListboard._id);
     return (               
         <div className="listboard" style={this.getListboardStyle()} >
           <div className="navbar sub-bar">
@@ -80,7 +82,8 @@ var ListboardComponent = React.createClass({
                       container= { container } 
                       selectedListboard= { self.props.selectedListboard } 
                       containersHeight= { containersHeight }
-                      containerDraggable= { containerDraggable } />
+                      containerDraggable= { containerDraggable }
+                      forceSelected={forceSelected} />
                 })
             }
             </ul>

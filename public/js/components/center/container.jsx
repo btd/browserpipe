@@ -8,7 +8,8 @@ var _state = require('../../state'),
     React = require('react'),
     Item = require('./item'),    
     LabelEditorComponent = require('../util/label.editor'),
-    itemDraggable = require('../../dragging/item');    
+    itemDraggable = require('../../dragging/item'),
+    selection = require('../../selection/selection');   
 
 var ContainerComponent = React.createClass({ 
 	getContainerTitle: function() {		
@@ -84,20 +85,25 @@ var ContainerComponent = React.createClass({
         	errors.push(this.refs.itemURLInvalidError)
         return errors
     },
+    isSelected: function() {
+    	return this.props.forceSelected || selection.isContainerSelected(this.props.container._id);
+    },
     containerClicked: function(e) {
 		e.preventDefault();
     	e.stopPropagation();
-		if(e.ctrlKey){      
-			var added = _state.addOrRemoveSelectedContainer(this.props.container._id);
-			var $el = $(this.refs.container.getDOMNode());
-			if(added)
-				$el.addClass('selection-selected');
+    	if(e.ctrlKey){
+    		if(!this.isSelected())
+				selection.selectContainer(this.props.container._id);
 			else
-			$el.removeClass('selection-selected');
-		}
+				selection.unSelectContainer(this.props.container._id);
+    	}
 	},
     getItemId : function() {
 		return "co-" + this.props.container._id;
+	},
+	getContainerClass: function() {
+		return "container " + 
+				(this.isSelected()? selection.getClassName() : '');
 	},
 	renderHeader: function() {
 		return (
@@ -137,7 +143,8 @@ var ContainerComponent = React.createClass({
 			</div>
 		);
 	},
-	renderItems: function() {				
+	renderItems: function() {	
+		var forceSelected = this.props.forceSelected || selection.isContainerSelected(this.props.container._id);			
 		return (
 			<ul className="items"
 				onDragOver={itemDraggable.parentDragOver}
@@ -147,7 +154,10 @@ var ContainerComponent = React.createClass({
 			>
 			{                    
                 this.props.container.items.map(function(item) {
-                    return <Item item= {item} itemDraggable={itemDraggable} />
+                    return <Item 
+            			item= {item} 
+            			itemDraggable={itemDraggable} 
+            			forceSelected={forceSelected} />
                 })
             }
 			</ul>
@@ -162,14 +172,17 @@ var ContainerComponent = React.createClass({
 	},
 	render: function() {
 		return (
-			<li draggable="true" 
+			<li ref="container" 
+				id={ this.getItemId() } 
+				className={this.getContainerClass()}
+				onClick={this.containerClicked}
+				draggable="true" 
 				onDragStart={this.props.containerDraggable.objDragStart} 
 				onDragEnd={this.props.containerDraggable.objDragEnd}
 				onDragOver={this.props.containerDraggable.objDragOver}
 				onDragEnter={this.props.containerDraggable.objDragEnter}
 				onDragLeave={this.props.containerDraggable.objDragLeave}
-				onDrop={this.props.containerDraggable.objDrop}
-				ref="container" id={ this.getItemId() } className="container" onClick={this.containerClicked}>
+				onDrop={this.props.containerDraggable.objDrop}>
 				<div className="container-header">{ this.renderHeader() }</div>				
 				{ this.renderBox() }
 				{ this.renderFooter() }
