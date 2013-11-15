@@ -55,7 +55,7 @@ var config = {
             uri: 'mongodb://localhost/listboardit-stage'
         },
         mincer: {
-            preprocess: ['img/index/**', 'font/**', 'css/index.css', 'js/apps/index.js'],
+            preprocess: ['img/index/**', 'font/**', 'css/index.css', 'js/index.js'],
             manifest: path.join(__dirname, 'compiled-assets')
         }
     },
