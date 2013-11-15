@@ -39,7 +39,8 @@ module.exports = (function () {
     };
 
     var hideMessage = function() {
-        msg.hide();
+        if(msg)
+            msg.hide();
     };
 
     var showMessage = function(text) {        

@@ -11,7 +11,7 @@ var _state = require('../state'),
     ListboardComponent = require('./center/listboard'),
     ListboardSettingsComponent = require('./center/listboard.settings'),
     FolderPanelComponent = require('./center/folder.panel'),
-    Selector = require('./center/selector'),
+    SelectionDraggable = require('./center/selection.draggable'),
     DialogItemComponent = require('./dialog/item.view.dialog');
 
 var HomeComponent = React.createClass({  
@@ -95,7 +95,7 @@ var HomeComponent = React.createClass({
             {this.dialogItemComponent}
         </div>        
         <div className="main-footer">
-          <Selector selection={this.state.selection} />          
+          <SelectionDraggable selection={this.state.selection} />          
           <small>@Listboard.it</small>
         </div>
         {this.state.dialogItemVisible? <div className="modal-backdrop fade in"></div> : null}
