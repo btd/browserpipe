@@ -1,5 +1,6 @@
 var _ = require('lodash'),
     moco = require('moco'),
+    util = require('./util/util'),
     collection = moco.collection,
     model = moco.model,
 
@@ -10,11 +11,14 @@ var Container = model()
     .attr('title') // String
     .attr('items', { collection: Items }) // collection of items    
     .attr('type') // integer; usually 1*/
+    .attr('externalId') // id of the window, for type == 0
+    .attr('listboardId') // listboard id that contains it
     .use(model.nestedObjects);
 
 var Containers = collection(Container)
     .use(collection.byId)
-    .use(collection.modelsChanges);
+    .use(collection.modelsChanges)
+    .use(util.collectionClear);
 
 module.exports.Container = Container;
 module.exports.Containers = Containers;
@@ -29,7 +33,8 @@ var Listboard = model()
 
 var Listboards = collection(Listboard)
     .use(collection.byId)
-    .use(collection.modelsChanges);
+    .use(collection.modelsChanges)
+    .use(util.collectionClear);
 
 module.exports.Listboard = Listboard;
 module.exports.Listboards = Listboards;

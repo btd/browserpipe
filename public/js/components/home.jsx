@@ -11,6 +11,7 @@ var _state = require('../state'),
     ListboardComponent = require('./center/listboard'),
     ListboardSettingsComponent = require('./center/listboard.settings'),
     FolderPanelComponent = require('./center/folder.panel'),
+    SelectionDraggable = require('./center/selection.draggable'),
     DialogItemComponent = require('./dialog/item.view.dialog');
 
 var HomeComponent = React.createClass({  
@@ -22,6 +23,7 @@ var HomeComponent = React.createClass({
           selectedListboard: this.props.selectedListboard,
           selectedItem: this.props.selectedItem,
           selectedFolder: this.props.selectedFolder,
+          selection: this.props.selection,
           isExtensionInstalled: this.props.isExtensionInstalled,
           listboardsVisible: this.props.listboardsVisible,
           listboardSettingsVisible: this.props.listboardSettingsVisible,
@@ -91,8 +93,9 @@ var HomeComponent = React.createClass({
             {this.listboardComponent}
             {this.listboardSettingsComponent}
             {this.dialogItemComponent}
-        </div>
+        </div>        
         <div className="main-footer">
+          <SelectionDraggable selection={this.state.selection} />          
           <small>@Listboard.it</small>
         </div>
         {this.state.dialogItemVisible? <div className="modal-backdrop fade in"></div> : null}
@@ -109,6 +112,7 @@ module.exports.render = function (
     selectedListboard, 
     selectedItem,
     selectedFolder,
+    selection,
     isExtensionInstalled,
     listboardsVisible,
     listboardSettingsVisible,
@@ -122,6 +126,7 @@ module.exports.render = function (
       selectedListboard={selectedListboard}
       selectedItem={selectedItem}
       selectedFolder={selectedFolder}
+      selection={selection}
       isExtensionInstalled={isExtensionInstalled}
       listboardsVisible={listboardsVisible}
       listboardSettingsVisible={listboardSettingsVisible}

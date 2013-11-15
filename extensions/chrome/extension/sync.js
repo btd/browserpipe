@@ -1,6 +1,6 @@
 var listboarditAuth = new OAuth2('listboard_it', {
-    client_id: 'd1252f6f84b7a7369fcd600c59ff3b8965d77b6ea6554aee98e42c717003c1f724de7a4c2840c4db3860627f1b483eb6dc0088bb5914cac3e3d249d4e61cbaf2',
-    client_secret: '2fb1a00cdcc13060e1d450fad35616b749e1a5b6692b06e4273a955bcd4efc8ffb32aabbe098ef3b0c62f5d236cfc6361517a601cf49a0ee012687dc37f6fa77'
+    client_id: '4f7f61bfee670bf9d326f78c5866c1480ad3ecdc99a3485427ad798b6cf898002414753aee18fae0e85d6991c8843a1fcf5b8a9281c1d400ac347f2d505c44fa',
+    client_secret: '1d8f24ac906662ea6932429bd16b7342170a6e054b72c899451ae90c9ecf8418289c1b82b5b833b0e5eaa3d719a6d227dafbc7b9c739d4260aacd29953f08005'
 });
 
 var xobj = function(){
@@ -143,4 +143,3 @@ chrome.browserAction.onClicked.addListener(function (tab) {
 
     });
 });
-

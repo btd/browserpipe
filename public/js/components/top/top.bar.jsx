@@ -33,30 +33,30 @@ var TobBarComponent = React.createClass({
                     <div className="container-fluid">
                         <ul id="account-nav" className="nav pull-right">
                             <li className="dropdown nav-option">
-                                <a href="#" data-toggle="dropdown" className="dropdown-toggle">
+                                <a draggable="false"  href="#" data-toggle="dropdown" className="dropdown-toggle">
                                     <i className="icon-user"></i>
                                 </a>
                                 <ul className="dropdown-menu">
                                     <li>
-                                        <a tabindex="-1" href="/settings">
+                                        <a draggable="false"  tabindex="-1" href="/settings">
                                             <i className="icon-none"><span>Settings</span></i>
                                         </a>
                                     </li>
                                     <li>
-                                    <a tabindex="-1" href="/help">
+                                    <a draggable="false"  tabindex="-1" href="/help">
                                         <i className="icon-none"> <span>Help</span></i>
                                     </a>
                                     </li>
                                     <li className="divider"></li>
                                     <li>
-                                        <a tabindex="-1" href="/logout">
+                                        <a draggable="false"  tabindex="-1" href="/logout">
                                             <i className="icon-none"><span>Logout </span></i>
                                         </a>
                                     </li>
                                 </ul>
                             </li>
                         </ul>
-                        <a href="/" data-original-title="" className="pull-left brand">
+                        <a draggable="false"  href="/" data-original-title="" className="pull-left brand">
                             <h1>{this.props.docWidth > 575 ? 'Listboard.it' : 'L'}</h1>
                         </a>
                         <div id="search-cont">

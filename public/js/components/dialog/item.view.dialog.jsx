@@ -42,26 +42,26 @@ var DialogItemComponent = React.createClass({
 	        	<div className="modal-header">
 	        		<button onClick={this.closeDialogClick} type="button" className="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 					<h4>
-						<img className="favicon" src={ this.props.item.favicon } alt="Favicon" /> 						
+						<img draggable="false" className="favicon" src={ this.props.item.favicon } alt="Favicon" /> 						
 						<span className="edit-item-title">
 							<LabelEditorComponent 
 			                    onSaveLabel= {this.saveItemTitle} 
 			                    labelValue= { this.props.item.title? this.props.item.title : this.props.item.url } />
 						</span>
 						<div> 
-							<a target="_blank" href={  decodeURIComponent(this.props.item.url)  }>{ decodeURIComponent(this.props.item.url) }</a>
+							<a draggable="false" target="_blank" href={  decodeURIComponent(this.props.item.url)  }>{ decodeURIComponent(this.props.item.url) }</a>
 						</div>
 					</h4>
 				</div>
 				<div className="modal-body">
 					<ul className="nav nav-tabs"> 
-						<li><a href="#lists" data-toggle="tab">Lists</a></li>
-						<li><a href="#general" data-toggle="tab">General</a></li> 
+						<li><a draggable="false" href="#lists" data-toggle="tab">Lists</a></li>
+						<li><a draggable="false" href="#general" data-toggle="tab">General</a></li> 
 					</ul>
 					<div className="tab-content">
 						<div className="tab-pane active" id="general"> 
 							<div className="item-screenshot-container">
-								<img className="item-screenshot img-polaroid" data-src="holder.js/300x200" alt="300x200" src={ this.getScreenshot() } /> 							
+								<img draggable="false" className="item-screenshot img-polaroid" data-src="holder.js/300x200" alt="300x200" src={ this.getScreenshot() } /> 							
 							</div>
 							<span className="edit-item-note">
 								<LabelEditorComponent 

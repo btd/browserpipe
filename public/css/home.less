@@ -24,6 +24,7 @@
 @import "home/footer/footer.less";
 
 html, body {
+    overflow: hidden;
     height: 100%;
     width: 100%;
     margin: 0;
@@ -59,4 +60,20 @@ i.save-icon, i.cancel-icon {
 
 .le-editor {
     margin: 0;
+}
+
+#selection-draggable {
+    text-align: center;
+    color: black;
+    position: fixed;
+    z-index: -3000;
+    background-color: @blue4;
+    .opacity(80);
+    font-size: 12px;
+    font-weight: bold;
+
+    ul {
+        margin: 6px 12px;
+        padding: 0;
+    }
 }

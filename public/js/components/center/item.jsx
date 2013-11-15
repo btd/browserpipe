@@ -5,7 +5,8 @@
 var _state = require('../../state'),
     page = require('page'),
     _ = require('lodash'),
-    React = require('react');
+    React = require('react'),
+    selection = require('../../selection/selection');
 
 var ItemComponent = React.createClass({   
   getTitle: function() {
@@ -17,19 +18,50 @@ var ItemComponent = React.createClass({
   getScreenshot: function() {
     return this.props.item.screenshot || "/img/no_screenshot.png";
   },
+  isSelected: function() {
+    return this.props.forceSelected || 
+          selection.isItemSelected(this.props.item._id);
+  },
   navigateToItem: function(e) {
     e.preventDefault();
-    page('/item/' + this.props.item._id);
+    e.stopPropagation();
+    if(e.ctrlKey){
+        if(!this.isSelected())
+          selection.selectItem(this.props.item._id);
+        else
+          selection.unSelectItem(this.props.item._id);
+    }
+    else    
+      page('/item/' + this.props.item._id);
   },
   stopPropagation: function(e) {
     e.stopPropagation();      
   },
+  getItemId : function() {
+    return "it-" + this.props.item._id;
+  },
+  getItemClass: function() {
+    return "item " + 
+        (this.isSelected()? selection.getClassName() : '');
+  },
   render: function() {
     return (          
-      <li onClick={ this.navigateToItem } className="item"> 
+      <li ref='item' 
+          id={ this.getItemId() } 
+          ref="item"  
+          onClick={ this.navigateToItem } 
+          className={ this.getItemClass() }
+          draggable="true"
+          onDragStart={this.props.itemDraggable.objDragStart} 
+          onDragEnd={this.props.itemDraggable.objDragEnd}
+          onDragOver={this.props.itemDraggable.objDragOver}
+          onDragEnter={this.props.itemDraggable.objDragEnter}
+          onDragLeave={this.props.itemDraggable.objDragLeave}
+          onDrop={this.props.itemDraggable.objDrop}
+        > 
         <i className="icon-remove remove-item" title="Close"></i>
-        <img className="favicon" src={ this.props.item.favicon } alt="Favicon" />
-        <a onClick={ this.stopPropagation } className="title" target="_blank" href={this.props.item.url}>
+        <img draggable="false" className="favicon" src={ this.props.item.favicon } alt="Favicon" />
+        <a draggable="false"  onClick={ this.stopPropagation } className="title" target="_blank" href={this.props.item.url}>
           {  this.getTitle()  } 
         </a>
         <div className="description">{ this.props.item.note }</div>  		

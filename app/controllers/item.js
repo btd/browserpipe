@@ -29,9 +29,9 @@ exports.create = function(req, res) {
 
     item.url = req.body.url;
 
-    //if (!item.title)
-    //    item.title = item.url; //TODO: reduce the size of the title if URL is too long adding "..."
- 
+    //We create default favicon that then will be update by job
+    item.favicon = 'http://www.google.com/s2/favicons?domain=' + encodeURIComponent(item.url);
+     
     item.user = req.user;
 
     var delta = {
