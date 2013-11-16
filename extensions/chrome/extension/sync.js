@@ -130,6 +130,28 @@ chrome.browserAction.onClicked.addListener(function (tab) {
     sync();
 });
 
+//bind tab events
+chrome.tabs.onCreated.addListener(function(tab) {
+    sync();
+})
+chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+    sync();
+})
+chrome.tabs.onMoved.addListener(function(tabId, moveInfo) {
+    sync();
+})
+chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
+    sync();
+})
+
+//bind window events
+chrome.windows.onCreated.addListener(function(win) {
+    sync();
+})
+chrome.windows.onRemoved.addListener(function(winId) {
+    sync();
+})
+
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {  
     switch(message.name){
         case 'FocusTab': {
@@ -155,7 +177,10 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
         }
         case 'CloseWindow': {            
             chrome.windows.remove(message.id, function() {
-                sync();
+                //We wait 2 seconds for fully closed
+                setTimeout(function(){
+                  sync();
+                },100);                
             })
             break;
         }        
