@@ -72,9 +72,7 @@ function browserKey() {
     return key;
 }
 
-
-// bind to click on extension button if i understand right
-chrome.browserAction.onClicked.addListener(function (tab) {
+var sync = function() {
     listboarditAuth.authorize(function() {
 
         // Ready for action, can now make requests with
@@ -86,26 +84,8 @@ chrome.browserAction.onClicked.addListener(function (tab) {
 
         chrome.windows.getAll({populate: true}, function (windows) {
 
-            /*
-
-             Will send this data to the server
-
-             {
-             windows: [
-             {
-             externalId:
-             tabs:[
-             {
-             externalId:
-             url:
-             title:
-             favicon:
-             }
-             ]
-             }
-
-             ]
-             }*/
+            /* Will send this data to the server
+            { windows: [  {  externalId:,  tabs:[ { externalId:, url:, title:, favicon: }] } ] }*/
 
             var result = {
                 browserName: 'chrome',
@@ -136,10 +116,50 @@ chrome.browserAction.onClicked.addListener(function (tab) {
                 },
                 data: JSON.stringify(result)
             }, function(data) {
-                console.log(data);
+                //console.log(data);
             });
         });
 
 
     });
+}
+
+
+// bind to click on extension button if i understand right
+chrome.browserAction.onClicked.addListener(function (tab) {
+    sync();
+});
+
+chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {  
+    switch(message.name){
+        case 'FocusTab': {
+            chrome.tabs.get(message.id, function(tab){
+                chrome.tabs.update(tab.id, {active: true});    
+                chrome.windows.update(tab.windowId, {focused: true});    
+            });            
+            break;
+        }
+        case 'OpenTabs': {
+            alert(message);
+            break;
+        }
+        case 'CloseTabs': {
+            chrome.tabs.remove(message.ids, function() {
+                sync();
+            })
+            break;
+        }
+        case 'OpenWindow': {
+            alert(message);
+            break;
+        }
+        case 'CloseWindow': {            
+            chrome.windows.remove(message.id, function() {
+                sync();
+            })
+            break;
+        }        
+        default: alert('no data')
+    }
+    return true;
 });

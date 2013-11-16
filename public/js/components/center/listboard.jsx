@@ -37,6 +37,10 @@ var ListboardComponent = React.createClass({
       var visible = this.props.visible? "block" : "none";
       return { width: this.getListboardWidth(), display: visible };
   },
+  getNavInnerClass: function(listboard) {
+      return 'navbar-inner ' +      
+      (this.props.selectedListboard.type === 0 ? 'browser' : 'custom')
+  },
   render: function() {
     var self = this;  
     var containersHeight = this.getListboardHeight();        
@@ -44,7 +48,7 @@ var ListboardComponent = React.createClass({
     return (               
         <div className="listboard" style={this.getListboardStyle()} >
           <div className="navbar sub-bar">
-            <div className="navbar-inner">
+            <div className={ this.getNavInnerClass() }>
               <ul className="nav">                                  
                 <li>                  
                   <LabelEditorComponent 

@@ -13,10 +13,12 @@ module.exports = (function () {
             if(!$el.hasClass(selection.getClassName())){
                 var containerId = $el.attr('id').substring(3);                   
                 selection.selectSingleContainer(containerId);
-            }        
+            }     
+            $('.' + selection.getClassName()).addClass('selection-dragged');   
         },
-        end: function(el) {
+        end: function(el) {            
             selection.clearSelection();
+            $('.' + selection.getClassName()).removeClass('selection-dragged');
         },
         canBeDropped: function(el) {
             return !selection.isElemSelected(el) && !selection.isElemParentSelected(el);                

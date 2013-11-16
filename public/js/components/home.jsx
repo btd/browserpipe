@@ -131,6 +131,6 @@ module.exports.render = function (
       listboardsVisible={listboardsVisible}
       listboardSettingsVisible={listboardSettingsVisible}
       dialogItemVisible={dialogItemVisible}/>,
-    document.body
+    document.getElementById('body-inner')
   );
 };

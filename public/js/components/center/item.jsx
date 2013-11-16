@@ -4,6 +4,7 @@
 
 var _state = require('../../state'),
     page = require('page'),
+    extension = require('../../extension/extension'),
     _ = require('lodash'),
     React = require('react'),
     selection = require('../../selection/selection');
@@ -34,8 +35,12 @@ var ItemComponent = React.createClass({
     else    
       page('/item/' + this.props.item._id);
   },
-  stopPropagation: function(e) {
+  urlClicked: function(e) {
     e.stopPropagation();      
+    if(this.props.isTab) {
+      e.preventDefault();
+      extension.focusTab(this.props.item.externalId);
+    }    
   },
   getItemId : function() {
     return "it-" + this.props.item._id;
@@ -43,7 +48,7 @@ var ItemComponent = React.createClass({
   getItemClass: function() {
     return "item " + 
         (this.isSelected()? selection.getClassName() : '');
-  },
+  },  
   render: function() {
     return (          
       <li ref='item' 
@@ -61,7 +66,7 @@ var ItemComponent = React.createClass({
         > 
         <i className="icon-remove remove-item" title="Close"></i>
         <img draggable="false" className="favicon" src={ this.props.item.favicon } alt="Favicon" />
-        <a draggable="false"  onClick={ this.stopPropagation } className="title" target="_blank" href={this.props.item.url}>
+        <a draggable="false"  onClick={ this.urlClicked } className="title" target="_blank" href={this.props.item.url}>
           {  this.getTitle()  } 
         </a>
         <div className="description">{ this.props.item.note }</div>  		
