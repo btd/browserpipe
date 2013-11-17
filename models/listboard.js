@@ -7,7 +7,7 @@ var Schema = require('mongoose').Schema,
 var ListboardSchema = new Schema({
     type: {type: Number, required: true}, //0: browser, 1: custom listboard
     label: { type: String, trim: true },
-    index: type: {type: Number, required: true},
+    index: {type: Number, required: true},
     containers: [ require('./container') ],
     
 
