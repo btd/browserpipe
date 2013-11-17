@@ -3,6 +3,7 @@ var Schema = require('mongoose').Schema
 var ContainerSchema = new Schema({
     type: {type: Number, required: true},  //0: window, 1: empty
     title: {type: String, trim: true},
+    index: type: {type: Number, required: true},
     
     //For 0 container (associated with a window)
     externalId: {type: String, trim: true}    

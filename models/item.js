@@ -15,6 +15,7 @@ var ItemSchema = new Schema({
         {type: Schema.ObjectId, ref: 'Container'}
     ],
     user: {type: Schema.ObjectId, ref: 'User'},
+    index: type: {type: Number, required: true}
     favicon: {type: String, trim: true},
     screenshot: {type: String, trim: true},
     title: {type: String, trim: true},
