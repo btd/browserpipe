@@ -29,17 +29,17 @@ var common = {
         host: '127.0.0.1',
         port: 6379,
         options: {}
-    }
+    },
+    mincer: {
+        url: '/public',
+        roots: './public'
+    },
 };
 
 var config = {
     test: {
         db: {
             uri: 'mongodb://localhost/listboardit-test'
-        },
-        mincer: {
-            url: '/public',
-            roots: './public'
         },
         'socket-io': {
             'log level': 1
@@ -48,10 +48,6 @@ var config = {
     development: {
         db: {
             uri: 'mongodb://localhost/listboardit-dev'
-        },
-        mincer: {
-            url: '/public',
-            roots: './public'
         }
     },
     staging: {
@@ -59,10 +55,8 @@ var config = {
             uri: 'mongodb://localhost/listboardit-stage'
         },
         mincer: {
-            url: '/public',
-            roots: './public',
-            preprocess: ['img/index/**', 'font/**', 'css/index.css', 'js/apps/index.js'],
-            manifest: path.join(__dirname, '..', 'compiled-assets')
+            preprocess: ['img/index/**', 'font/**', 'css/index.css', 'js/index.js'],
+            manifest: path.join(__dirname, 'compiled-assets')
         }
     },
     production: {
@@ -70,8 +64,6 @@ var config = {
             uri: 'mongodb://localhost/listboardit'
         },
         mincer: {
-            url: '/public',
-            roots: './public',
             preprocess: ['img/index/**', 'font/**', 'css/index.css', 'js/index.js'],
             manifest: path.join(__dirname, 'compiled-assets')
         }
@@ -80,6 +72,7 @@ var config = {
 
 Object.keys(config).forEach(function (key) {
     config[key] = _.merge(config[key], common);
+
     config[key]["connect-mongo"] = {
         auto_reconnect: true,
         collection: 'sessions',

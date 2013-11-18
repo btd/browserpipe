@@ -180,7 +180,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
                 //We wait 2 seconds for fully closed
                 setTimeout(function(){
                   sync();
-                },100);                
+                },1000);                
             })
             break;
         }        
