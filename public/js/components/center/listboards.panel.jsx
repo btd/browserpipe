@@ -79,6 +79,23 @@ var ListboardsPanelComponent = React.createClass({
             title={listboard.label? listboard.label : 'Unnamed'}> 
                 { listboard.type === 0 ? <img draggable="false" src="/img/common/chrome-logo.png" alt="Chrome Logo" /> : null }
                 <div>{listboard.label? listboard.label : 'Unnamed'}</div>
+                <ul className="containers" 
+                onDragOver={containerDraggable.parentDragOver}
+                onEnter={containerDraggable.parentDragEnter}
+                onDragLeave={containerDraggable.parentDragLeave}
+                onDrop={containerDraggable.parentDrop}
+                >
+                {   
+                    listboard.containers.map(function(container) {                  
+                        return <Container 
+                          container= { container } 
+                          selectedListboard= { self.props.selectedListboard } 
+                          containersHeight= { containersHeight }
+                          containerDraggable= { containerDraggable }
+                          forceSelected={forceSelected} />
+                    })
+                }
+                </ul>
             </li > 
     },
     render: function() {

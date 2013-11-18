@@ -51,13 +51,14 @@ exports.create = function (req, res, next) {
     //Creates initial data
 
     //Create a listboard
-    user.addListboard({ type: 1, label: 'Example listboard'});
+    var listboard = user.addListboard({ type: 1, label: 'Later windows'});
+    listboard.addContainer({type: 1, title: 'Example window' });
 
     //Create a root folder
     var rootFolder = new Folder({ label: 'Archive', user: user });
 
     //Create child folders
-    var readLaterFolder = rootFolder.createChildFolder("Read Later");
+    var readLaterFolder = rootFolder.createChildFolder("Fun videos");
     var coolSitesFolder = rootFolder.createChildFolder("Cool Sites");
    
     User.byEmail(user.email)
