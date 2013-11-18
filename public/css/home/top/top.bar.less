@@ -4,12 +4,12 @@
     border: none;
     width: 100%;
 
-    .navbar-inner {
-        background: @blue1;
+    .navbar-inner {        
         padding-bottom: 6px;
         padding-left: 15px;
         padding-right: 15px;
         border: none;
+        background:@blue2 !important;
         .flatten();
 
         .dropdown-menu, .modal, .btn {    
@@ -19,7 +19,7 @@
             a {
                 padding: 8px 15px;
                 color: @white;
-                background-color: @blue2;
+                background-color: @blue1;                
 
                 &:hover {
                     background-color: @blue3;
@@ -87,7 +87,7 @@
                 margin-bottom: 0; 
                 .flatten();
                 font-weight: bold;
-                .tobutton(@blue2, @blue3)
+                .tobutton(@blue1, @blue3)
             }
             #search-span {
                 display: block;

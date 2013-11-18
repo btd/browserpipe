@@ -14,9 +14,11 @@ module.exports = (function () {
                 var folderId = $el.attr('id').substring(7);
                 selection.selectSingleFolder(folderId);
             }
+            $('.' + selection.getClassName()).addClass('selection-dragged');
         },
         end: function(el) {
             selection.clearSelection();
+            $('.' + selection.getClassName()).removeClass('selection-dragged');
         },
         canBeDropped: function(el) {
             return !selection.isElemSelected(el) && !selection.isElemParentSelected(el);                

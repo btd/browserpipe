@@ -36,7 +36,7 @@ var ContainerComponent = React.createClass({
 	closeContainer: function(e) {		
     	e.stopPropagation();    	
     	if(this.props.container.type === 0)
-    		extension.closeTabs([this.props.container.externalId]);
+    		extension.closeWindows([this.props.container.externalId]);
     	else
 			_state.serverRemoveContainer(this.props.selectedListboard._id, this.props.container);
 	},
@@ -149,6 +149,7 @@ var ContainerComponent = React.createClass({
 	},
 	renderItems: function() {	
 		var forceSelected = this.props.forceSelected || selection.isContainerSelected(this.props.container._id);			
+		var isTab = this.props.container.type === 0;
 		return (
 			<ul className="items"
 				onDragOver={itemDraggable.parentDragOver}
@@ -160,6 +161,7 @@ var ContainerComponent = React.createClass({
                 this.props.container.items.map(function(item) {
                     return <Item 
             			item= {item} 
+            			isTab= {isTab}
             			itemDraggable={itemDraggable} 
             			forceSelected={forceSelected} />
                 })

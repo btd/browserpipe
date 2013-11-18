@@ -14,9 +14,11 @@ module.exports = (function () {
                 var listboardId = $el.attr('id').substring(3);            
                 selection.selectSingleListboard(listboardId);       
             }                
+            $('.' + selection.getClassName()).addClass('selection-dragged');
         },
         end: function(el) {
             selection.clearSelection();
+            $('.' + selection.getClassName()).removeClass('selection-dragged');
         },
         canBeDropped: function(el) {
             return !selection.isElemSelected(el) && !selection.isElemParentSelected(el);                

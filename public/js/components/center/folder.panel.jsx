@@ -10,7 +10,8 @@ var $ = require('jquery'),
     Folder = require('./folder'), 
     Item = require('./item'),    
     LabelEditorComponent = require('../util/label.editor'),
-    folderDraggable = require('../../dragging/folder');
+    folderDraggable = require('../../dragging/folder'),
+    itemDraggable = require('../../dragging/item');
 
 var FolderPanelComponent = React.createClass({  
 	getBoxHeight: function() {
@@ -165,10 +166,16 @@ var FolderPanelComponent = React.createClass({
 	renderItems: function() {				
 		return (
 			<div>
-				<ul className="items">
+				<ul 
+					className="items"
+					onDragOver={itemDraggable.parentDragOver}
+	                onEnter={itemDraggable.parentDragEnter}
+	                onDragLeave={itemDraggable.parentDragLeave}
+	                onDrop={itemDraggable.parentDrop}
+				>
 				{                    
 	                this.props.folder.items.map(function(item) {
-	                    return <Item item= {item} />
+	                    return <Item item= {item} itemDraggable={itemDraggable} />
 	                })
 	            }
 				</ul>

@@ -15,9 +15,11 @@ module.exports = (function () {
                 var itemId = $el.attr('id').substring(3);
                 selection.selectSingleItem(itemId);
             }
+            $('.' + selection.getClassName()).addClass('selection-dragged');
         },
         end: function(el) {
             selection.clearSelection();
+            $('.' + selection.getClassName()).removeClass('selection-dragged');
         },
         canBeDropped: function(el) {
             return !selection.isElemSelected(el) && !selection.isElemParentSelected(el);                

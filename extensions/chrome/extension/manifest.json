@@ -27,6 +27,11 @@
             "matches": ["http://api.local.listboard.it:4001/nothing*"],
             "js": ["oauth2/oauth2_inject.js"],
             "run_at": "document_start"
+        },
+        {
+            "matches": ["*://*.listboard.it/*"],
+            "js": ["message/message.js"],
+            "run_at": "document_end"
         }
     ]
 }

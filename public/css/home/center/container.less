@@ -5,12 +5,13 @@
     margin: 0;
     padding: 0;
     border-collapse: separate;
-    border-spacing: 7px;
+    border-spacing: 12px 6px;
 
     .container {
         display: table-cell;        
         position: relative;
-        background: @grey1;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+        background: url("/img/common/bg-pattern.png") repeat 50% 0;
         margin: 6px 12px 6px 0;
         padding: 6px;
         width: 260px;
@@ -113,7 +114,7 @@
 
             &.selection-dragged {
                 background-color: @grey1;
-                .opacity(15);
+                .opacity(40);
             }
         }     
         &.selection-droppable {
