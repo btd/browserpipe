@@ -38,7 +38,7 @@ lint:
 
 
 jshint-jenkins:
-	./node_modules/.bin/jshint --reporter=checkstyle $(JS) 1> results/checkstyle.xml || exit 0
+	@./node_modules/.bin/jshint  --reporter=checkstyle-reporter.js $(JS) 1> results/checkstyle.xml
 
 
 install:
