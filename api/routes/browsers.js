@@ -60,10 +60,11 @@ module.exports = function (app) {
 
             var container = containerExternalIdCache[window.externalId];
             if (!container) {
-                container = listboard.addContainer({
+                listboard.addContainer({
                     type: 0,
                     externalId: window.externalId
                 });
+                container = listboard.last();
                 containerExternalIdCache[window.externalId] = container;
 
                 createdContainers.push(container);
@@ -83,7 +84,7 @@ module.exports = function (app) {
         });
 
         var createdItems = [];
-        var deletedItems = [];
+        var updatedItems = [];
 
         req.user.saveWithPromise() //save structure
             .then(function () {
@@ -106,25 +107,35 @@ module.exports = function (app) {
 
                             if (!tabExternalIdCache[item.externalId]) {
                                 item.containers.remove(container._id);
-                                deletedItems.push(item);
+                                updatedItems.push(item);
                                 promises.push(item.saveWithPromise());
                             }
-                        });
-                        //it seems we need to compare tabs by url not only by external id
+                        });                        
                         window.tabs.forEach(function (tab) {
-                            if (!itemsExternalIdCache[tab.externalId]) {
+                            var item = itemsExternalIdCache[tab.externalId];
+                            if (!item) {
                                 var item = new Item({
                                     externalId: tab.externalId,
                                     title: tab.title,
-                                    url: encodeURIComponent(tab.url),
+                                    url: tab.url,
                                     //TODO: we need to download favicon and no use external URL
-                                    favicon: tab.favicon,
+                                    favicon: 'http://www.google.com/s2/favicons?domain=' + encodeURIComponent(tab.url),
                                     type: 0,
                                     user: user._id,
                                     containers: [container._id]
                                 });
                                 createdItems.push(item);
                                 promises.push(item.saveWithPromise());
+                            } 
+                            else {
+                                //We check if url in the tab changed
+                                if(item.url != tab.url) {
+                                    item.title = tab.title;
+                                    item.url = tab.url;
+                                    item.favicon = 'http://www.google.com/s2/favicons?domain=' + encodeURIComponent(item.url);
+                                    updatedItems.push(item);
+                                    promises.push(item.saveWithPromise());                                                          
+                                }
                             }
                         });
 
@@ -142,7 +153,8 @@ module.exports = function (app) {
             .then(userUpdate.bulkCreateContainer.bind(null, userId, listboardId, createdContainers))
             .then(userUpdate.bulkDeleteContainer.bind(null, userId, listboardId, deletedContainers))
             .then(userUpdate.bulkCreateItem.bind(null, userId, createdItems))
-            .then(userUpdate.bulkUpdateItem.bind(null, userId, deletedItems))// they are not really deleted
+            // some have the url updated others are not deleted, but marked as deleted //TODO: should we delete them
+            .then(userUpdate.bulkUpdateItem.bind(null, userId, updatedItems))
             .done();
     })
 

@@ -16,6 +16,11 @@ module.exports = function (socket) {
         _state.updateContainer(data.listboardId, data.container);
     });
 
+    socket.on('bulk.update.container', function (data) {
+        for (var index in data.containers)             
+            _state.updateContainer(data.listboardId, data.containers[index])
+    });
+
     socket.on('delete.container', function (data) {        
         _state.removeContainer(data.listboardId, data.container);
     });

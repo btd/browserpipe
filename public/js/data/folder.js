@@ -1,5 +1,6 @@
 var _ = require('lodash'),
     moco = require('moco'),
+    util = require('./util/util'),
     collection = moco.collection,
     model = moco.model,
     Items = require('./item').Items;
@@ -8,6 +9,7 @@ var Folders = collection()// i will define model later
     .use(collection.byId)
     .use(collection.byField('filter'))
     .use(collection.modelsChanges)
+    .use(util.collectionClear)
 
 var Folder = model()
     .attr('_id', { primary: true }) // ObjectId text representation

@@ -7,7 +7,9 @@ var _state = require('../../state'),
     page = require('page'),
     React = require('react'),
     Container = require('./container'),    
-    LabelEditorComponent = require('../util/label.editor');
+    LabelEditorComponent = require('../util/label.editor'),
+    containerDraggable = require('../../dragging/container'),
+    selection = require('../../selection/selection');
 
 var ListboardComponent = React.createClass({ 
   getListboardHeight: function() {
@@ -15,10 +17,7 @@ var ListboardComponent = React.createClass({
   },
   getListboardWidth: function() {    
     return this.props.width; 
-  },  
-  getContainersWidth: function() {
-    return this.props.selectedListboard.containers.length * 266; //(260px; = container width) + (12 = container margin)
-  }, 
+  },
   saveListboardLabel: function(newLabel, success) {    
     _state.serverUpdateListboard({
       _id: this.props.selectedListboard._id,
@@ -38,15 +37,18 @@ var ListboardComponent = React.createClass({
       var visible = this.props.visible? "block" : "none";
       return { width: this.getListboardWidth(), display: visible };
   },
+  getNavInnerClass: function(listboard) {
+      return 'navbar-inner ' +      
+      (this.props.selectedListboard.type === 0 ? 'browser' : 'custom')
+  },
   render: function() {
     var self = this;  
-    var containersHeight = this.getListboardHeight();
-    var containersWidth = this.getContainersWidth();
-    var hasHorizontalScrollbar = containersWidth > this.getListboardWidth();
+    var containersHeight = this.getListboardHeight();        
+    var forceSelected = selection.isListboardSelected(this.props.selectedListboard._id);
     return (               
         <div className="listboard" style={this.getListboardStyle()} >
           <div className="navbar sub-bar">
-            <div className="navbar-inner">
+            <div className={ this.getNavInnerClass() }>
               <ul className="nav">                                  
                 <li>                  
                   <LabelEditorComponent 
@@ -58,13 +60,13 @@ var ListboardComponent = React.createClass({
               </ul>              
               <ul className="nav pull-right">              
                 <li>
-                  <a className="add-container btn" onClick={this.addEmptyContainer} href="#" title="Add empty container" data-toggle="tooltip">
+                  <a draggable="false"  className="add-container btn" onClick={this.addEmptyContainer} href="#" title="Add empty container" data-toggle="tooltip">
                     <i className="icon-plus"></i>
                   </a>
                 </li>                
                 <li className="divider"></li>
                 <li>
-                  <a className="btn" onClick={this.goToSettings} href="#" title="Settings" data-toggle="tooltip">
+                  <a draggable="false"  className="btn" onClick={this.goToSettings} href="#" title="Settings" data-toggle="tooltip">
                     <i className="icon-cog"></i>
                   </a>
                 </li>
@@ -72,14 +74,20 @@ var ListboardComponent = React.createClass({
             </div>
           </div>          
           <div className="listboard-center" style= {{ height: this.getListboardHeight() }} >
-            <ul className="containers" style= {{ width: containersWidth }} >
+            <ul className="containers" 
+                onDragOver={containerDraggable.parentDragOver}
+                onEnter={containerDraggable.parentDragEnter}
+                onDragLeave={containerDraggable.parentDragLeave}
+                onDrop={containerDraggable.parentDrop}
+            >
             {   
-                this.props.selectedListboard.containers.map(function(container) {
+                this.props.selectedListboard.containers.map(function(container) {                  
                     return <Container 
                       container= { container } 
                       selectedListboard= { self.props.selectedListboard } 
-                      containersHeight= { containersHeight } 
-                      hasHorizontalScrollbar= { hasHorizontalScrollbar }/>
+                      containersHeight= { containersHeight }
+                      containerDraggable= { containerDraggable }
+                      forceSelected={forceSelected} />
                 })
             }
             </ul>

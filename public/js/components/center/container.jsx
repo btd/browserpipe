@@ -4,10 +4,13 @@
 
 var _state = require('../../state'),
     _ = require('lodash'),
+    extension = require('../../extension/extension'),
     util = require('../../util'),
     React = require('react'),
     Item = require('./item'),    
-    LabelEditorComponent = require('../util/label.editor');
+    LabelEditorComponent = require('../util/label.editor'),
+    itemDraggable = require('../../dragging/item'),
+    selection = require('../../selection/selection');   
 
 var ContainerComponent = React.createClass({ 
 	getContainerTitle: function() {		
@@ -26,13 +29,16 @@ var ContainerComponent = React.createClass({
 			return null;
 	},
 	getBoxMaxHeight: function() {
-		var maxHeight = this.props.containersHeight - 4 - 24 - 36 - 21 ; //(4 = container border) (24 = 12 + 12 = container margin and padding) (36 = cont header height) (21 =  cont footer height)    
-		if(this.props.hasHorizontalScrollbar)
-			maxHeight = maxHeight - 18; //(18 = horizontal scrollbar)
+		//TODO: scrollbar should be floating to not bother height change
+		var maxHeight = this.props.containersHeight - 4 - 24 - 36 - 21 - 18 ; //(4 = container border) (24 = 12 + 12 = container margin and padding) (36 = cont header height) (21 =  cont footer height) (18 = horizontal scrollbar)   		
 	    return maxHeight;
 	},
-	closeContainer: function() {
-		_state.serverRemoveContainer(this.props.selectedListboard._id, this.props.container);
+	closeContainer: function(e) {		
+    	e.stopPropagation();    	
+    	if(this.props.container.type === 0)
+    		extension.closeWindows([this.props.container.externalId]);
+    	else
+			_state.serverRemoveContainer(this.props.selectedListboard._id, this.props.container);
 	},
 	saveContainerLabel: function(newTitle, success) {    
 	   _state.serverUpdateContainer(
@@ -83,6 +89,26 @@ var ContainerComponent = React.createClass({
         	errors.push(this.refs.itemURLInvalidError)
         return errors
     },
+    isSelected: function() {
+    	return this.props.forceSelected || selection.isContainerSelected(this.props.container._id);
+    },
+    containerClicked: function(e) {
+		e.preventDefault();
+    	e.stopPropagation();
+    	if(e.ctrlKey){
+    		if(!this.isSelected())
+				selection.selectContainer(this.props.container._id);
+			else
+				selection.unSelectContainer(this.props.container._id);
+    	}
+	},
+    getItemId : function() {
+		return "co-" + this.props.container._id;
+	},
+	getContainerClass: function() {
+		return "container " + 
+				(this.isSelected()? selection.getClassName() : '');
+	},
 	renderHeader: function() {
 		return (
 			<div>				
@@ -103,24 +129,7 @@ var ContainerComponent = React.createClass({
 		return (
 			<div className="box" style={{ maxHeight: this.getBoxMaxHeight() }}>				
             	{ this.renderItems() }
-			</div>
-		);
-	},
-	renderItems: function() {				
-		return (
-			<ul className="items">
-			{                    
-                this.props.container.items.map(function(item) {
-                    return <Item item= {item} />
-                })
-            }
-			</ul>
-		);
-	},
-	renderFooter: function() {
-		return (
-			<div className="container-footer">
-				<div ref="itemEditor" className="input-append add-item hide">
+            	<div ref="itemEditor" className="input-append add-item hide">
 					<div className="control-group">    
 				      <div className="controls">
 						  <textarea ref="itemInput" className="item-url" cols="2"></textarea>
@@ -135,13 +144,51 @@ var ContainerComponent = React.createClass({
 					</div>
 				  </div>
 				</div>
-				<a onClick={this.showAndFocusAddItemInput} className="opt-add-item">Add URL</a>			
+			</div>
+		);
+	},
+	renderItems: function() {	
+		var forceSelected = this.props.forceSelected || selection.isContainerSelected(this.props.container._id);			
+		var isTab = this.props.container.type === 0;
+		return (
+			<ul className="items"
+				onDragOver={itemDraggable.parentDragOver}
+                onEnter={itemDraggable.parentDragEnter}
+                onDragLeave={itemDraggable.parentDragLeave}
+                onDrop={itemDraggable.parentDrop}
+			>
+			{                    
+                this.props.container.items.map(function(item) {
+                    return <Item 
+            			item= {item} 
+            			isTab= {isTab}
+            			itemDraggable={itemDraggable} 
+            			forceSelected={forceSelected} />
+                })
+            }
+			</ul>
+		);
+	},
+	renderFooter: function() {
+		return (
+			<div className="container-footer">				
+				<a draggable="false" onClick={this.showAndFocusAddItemInput} className="opt-add-item">Add URL</a>			
 			</div>
 		);
 	},
 	render: function() {
 		return (
-			<li className="container">
+			<li ref="container" 
+				id={ this.getItemId() } 
+				className={this.getContainerClass()}
+				onClick={this.containerClicked}
+				draggable="true" 
+				onDragStart={this.props.containerDraggable.objDragStart} 
+				onDragEnd={this.props.containerDraggable.objDragEnd}
+				onDragOver={this.props.containerDraggable.objDragOver}
+				onDragEnter={this.props.containerDraggable.objDragEnter}
+				onDragLeave={this.props.containerDraggable.objDragLeave}
+				onDrop={this.props.containerDraggable.objDrop}>
 				<div className="container-header">{ this.renderHeader() }</div>				
 				{ this.renderBox() }
 				{ this.renderFooter() }

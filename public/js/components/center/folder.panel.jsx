@@ -9,7 +9,9 @@ var $ = require('jquery'),
     React = require('react'),
     Folder = require('./folder'), 
     Item = require('./item'),    
-    LabelEditorComponent = require('../util/label.editor');
+    LabelEditorComponent = require('../util/label.editor'),
+    folderDraggable = require('../../dragging/folder'),
+    itemDraggable = require('../../dragging/item');
 
 var FolderPanelComponent = React.createClass({  
 	getBoxHeight: function() {
@@ -96,8 +98,7 @@ var FolderPanelComponent = React.createClass({
     renderHeader: function() {
     	return (
     		<div className="folder-panel-header">
-    			<a href="#" onClick={this.showAndFocusAddFolderInput} className="add-folder-icon">&nbsp;Add folder</a>
-				{ !this.props.folder.isRoot? <i onClick={this.navigateToParentFolder} className="icon-arrow-up folder-icon" title="Navigate folders up"></i> : null }
+    			<a draggable="false"  href="#" onClick={this.showAndFocusAddFolderInput} className="add-folder-icon">&nbsp;Add folder</a>				
 				<div className="folder-label">
 					{	this.props.folder.isRoot? 
 							this.props.folder.label : 
@@ -111,8 +112,8 @@ var FolderPanelComponent = React.createClass({
     },
     renderBox: function() {
 		return (
-			<div className="box" style={{ height: this.getBoxHeight() }}>				
-            	{ this.renderFolders() }
+			<div className="box" style={{ height: this.getBoxHeight() }}>								
+            	{ this.renderFolders() }            	
 				{ this.renderItems() }
 			</div>
 		);
@@ -122,14 +123,29 @@ var FolderPanelComponent = React.createClass({
 	    if(e.keyCode === 13) this.saveFolder();
 	},
 
+	renderUpFolder: function() {
+		if(!this.props.folder.isRoot)
+			return <li ref="folder"  onClick={this.navigateToParentFolder} className="folder">
+		    	<span onClick={ this.folderClicked }>...</span>				        
+		    </li>
+		else 
+			return null;
+	},
+
 	renderFolders: function() {		
 		var self = this;
 		return (
 			<div>
-				<ul className="folders">	
+				<ul className="folders"
+					onDragOver={folderDraggable.parentDragOver}
+	                onEnter={folderDraggable.parentDragEnter}
+	                onDragLeave={folderDraggable.parentDragLeave}
+	                onDrop={folderDraggable.parentDrop}
+				>
+					{ this.renderUpFolder() }	
 					{
 	                	this.props.folder.children.map(function(folder) {
-		                    return <Folder folder= {folder} navigateToChildFolder= {self.navigateToChildFolder} />
+		                    return <Folder folder= {folder} folderDraggable={folderDraggable} folderClicked= {self.navigateToChildFolder} />
 		                })
 		            }
 				</ul>
@@ -150,10 +166,16 @@ var FolderPanelComponent = React.createClass({
 	renderItems: function() {				
 		return (
 			<div>
-				<ul className="items">
+				<ul 
+					className="items"
+					onDragOver={itemDraggable.parentDragOver}
+	                onEnter={itemDraggable.parentDragEnter}
+	                onDragLeave={itemDraggable.parentDragLeave}
+	                onDrop={itemDraggable.parentDrop}
+				>
 				{                    
 	                this.props.folder.items.map(function(item) {
-	                    return <Item item= {item} />
+	                    return <Item item= {item} itemDraggable={itemDraggable} />
 	                })
 	            }
 				</ul>
@@ -178,14 +200,14 @@ var FolderPanelComponent = React.createClass({
 	renderFooter: function() {
 		return (
 			<div className="folder-panel-footer">				
-				<a onClick={this.showAndFocusAddItemInput} className="opt-add-item">Add URL</a>			
+				<a draggable="false"  onClick={this.showAndFocusAddItemInput} className="opt-add-item">Add URL</a>			
 			</div>
 		);
 	},
 	render: function() {  
 		return (
 			<div className="folder-panel" style={{ height: this.props.folderPanelHeight }}>				
-    			<a href="#" className="folder-panel-hide-btn">
+    			<a draggable="false"  href="#" className="folder-panel-hide-btn">
     				<i className="icon-chevron-right"></i>
     			</a>
 				{ this.renderHeader() }

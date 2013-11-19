@@ -15,6 +15,9 @@ var item = require('./data/item'),
     Item = item.Item,
     Items = item.Items;
 
+var selection = require('./data/selection'),
+    Selection = selection.Selection;
+
 $.ajaxSetup({
     dataType: 'json',
     contentType: 'application/json'
@@ -30,6 +33,7 @@ var State1 = model()
     .attr('selectedListboard', { model: Listboard })
     .attr('selectedItem', { model: Item })
     .attr('selectedFolder', { model: Folder })
+    .attr('selection', { model: Selection })
     .use(model.nestedObjects);
 
 _.extend(State1.prototype, {
@@ -44,6 +48,9 @@ _.extend(State1.prototype, {
 
         //Load items
         this.loadItems(initialOptions.items || []);
+
+        //Init selection
+        this.clearSelection();
     },
 
 
@@ -234,6 +241,7 @@ _.extend(State1.prototype, {
     addContainer: function (listboardId, container) {
         var listboard = this.getListboardById(listboardId);
         if (listboard) {
+            container.listboardId = listboardId;
             container = new Container(container); // this is required to have the same reference in both collections
             listboard.containers.push(container);
             this.containers.push(container);
@@ -409,42 +417,80 @@ _.extend(State1.prototype, {
     },
     //////////////////////////////////////////ITEMS//////////////////////////////////////
 
-    //////////////////////////////////////////EXTENSION//////////////////////////////////////
-    isExtensionInstalled: function (callback) {
-        //window.chrome.app.isInstalled does not work for extensions
-        //Only way I found is this
-        var self = this;
-        if (!this.extensionInstalled) {
-            var s = document.createElement('script');
-            s.onload = function () {
-                self.extensionInstalled = true;
-                callback(true);
-            };
-            s.onerror = function () {
-                self.extensionInstalled = true;
-                callback(false);
-            };
-            s.src = 'chrome-extension://jhlmlfahjekacljfabgbcoanjooeccmm/manifest.json';
-            document.body.appendChild(s);
-        }
-    },
-    installChromeExtension: function () {
-        var self = this;
-        if (typeof window.chrome !== "undefined") {
-            window.chrome.webstore.install(
-                'https://chrome.google.com/webstore/detail/jhlmlfahjekacljfabgbcoanjooeccmm',
-                function () {
-                    self.emit('extension.possible.installed');
-                    $('#installExtensionModal').modal('hide');
-                },
-                function () {
-                    //TODO: manage when it fails
-                }
-            );
+    
+    //////////////////////////////////////////SELECTED OBJECTS//////////////////////////////////////
 
-        }
+    getSelection: function() {
+        return this.selection;
+    },
+    getSelectedListboards: function() {
+        return this.selection.listboards;
+    },    
+    getSelectedContainers: function() {
+        return this.selection.containers;
+    },    
+    getSelectedItems: function() {
+        return this.selection.items;
+    },    
+    getSelectedFolders: function() {
+        return this.selection.folders;
+    },    
+    getSelectedListboardById: function(listboardId) {
+        return this.selection.listboards.byId(listboardId);
+    },
+    getSelectedContainerById: function(containerId) {
+        return this.selection.containers.byId(containerId);
+    },
+    getSelectedItemById: function(itemId) {
+        return this.selection.items.byId(itemId);
+    },
+    getSelectedFolderById: function(folderId) {
+        return this.selection.folders.byId(folderId);
+    },
+    clearSelection: function() {    
+        this.clearListboardSelection();
+        this.clearContainerSelection();
+        this.clearItemSelection();
+        this.clearFolderSelection();               
+    },
+    clearListboardSelection: function() {    
+        this.selection.listboards.clear();
+    },
+    clearContainerSelection: function() {    
+        this.selection.containers.clear();
+    },
+    clearItemSelection: function() {    
+        this.selection.items.clear();
+    },
+    clearFolderSelection: function() {    
+        this.selection.folders.clear();
+    },
+    addListboardToSelection: function(listboard) {           
+        this.selection.listboards.push(listboard);     
+    },
+    removeListboardFromSelection: function(listboardId) {        
+        this.selection.listboards.removeById(listboardId);
+    },
+    addContainerToSelection: function(container) {            
+        this.selection.containers.push(container);     
+    },
+    removeContainerFromSelection: function(containerId) {        
+        this.selection.containers.removeById(containerId);
+    },
+    addItemToSelection: function(item) {            
+        this.selection.items.push(item);     
+    },
+    removeItemFromSelection: function(itemId) {        
+        this.selection.items.removeById(itemId);
+    },
+    addFolderToSelection: function(folder) {        
+        this.selection.folders.push(folder);  
+    },
+    removeFolderFromSelection: function(folderId) {        
+        this.selection.folders.removeById(folderId);
     }
-    //////////////////////////////////////////EXTENSION//////////////////////////////////////
+
+    //////////////////////////////////////////SELECTED OBJECTS//////////////////////////////////////
 
 
 });

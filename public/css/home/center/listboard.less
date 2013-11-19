@@ -2,8 +2,8 @@
     float: left;
     
     .sub-bar {
-        margin: 0;      
-        background: @grey1;
+        margin: 0;              
+        color: white;
 
         .label-editor {
             display: inline-block;
@@ -30,8 +30,7 @@
         .navbar-inner {   
             margin: 0;
             padding: 0;
-            padding-top: 3px;
-            background: @grey1;
+            padding-top: 3px;            
             min-height: 33px;
             .flatten();  
             overflow: hidden;
@@ -41,20 +40,17 @@
                 text-shadow: none;
                 padding: 4px 12px;
             }
+            &.browser {                   
+                background: @blue3;
+            }
+            &.custom {                   
+                background:@grey2 !important;
+            }
         }
     }
 
     .listboard-center {
-        overflow-x: auto;  
-        padding-left: 6px;
-
-        .containers {            
-            padding: 0 3px;
-            -webkit-overflow-scrolling: touch;    
-            margin: 0;
-            padding: 0;
-            width: 5000px;
-        }
+        overflow-x: auto;            
     }
    
 
