@@ -39,13 +39,12 @@ exports.create = function (req, res, next) {
     //parent folder should exist
     var parentFolder = splitFullPath(req.body.path);
     parentFolder.user = req.user;
-
     Folder
       .by(parentFolder)
       .then(function(folder) {
-          if(!folder) //parent folder does not exists we cannot create its subfolder
+          if(!folder) {//parent folder does not exists we cannot create its subfolder
               errors.sendForbidden(res);
-          else {
+          } else {
               // check that we already does not have the same folder
               Folder
                 .by({ user: req.user, label: req.body.label, path: req.body.path })
@@ -57,11 +56,9 @@ exports.create = function (req, res, next) {
                   } else {
                     errors.sendForbidden(res);
                   }
-                })
-                .fail(next);
+                }, next);
           }
-      })
-      .fail(next)// go next to got 500
+      }, next)// go next to got 500
       .done();
 }
 
@@ -75,8 +72,6 @@ exports.update = function (req, res) {
       return errors.sendBadRequest(res);
     }
     var folder = req.currentFolder;
-
-    // TODO validation
 
     Folder.findAllDescendant(req.user, folder.fullPath)
       .then(function(folders) {

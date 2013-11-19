@@ -4,41 +4,42 @@ var should = require('should'),
 
 var app = require('../../../app/server');
 
-var testUser = { name: 'Test', email: 'a@a.com', password: '123' };
+var helper = require('../helper')(app);
 
-describe('user controller create', function () {
-    before(function () {
-        mongoose.connection.db.dropCollection('users', function (err, result) {
-            //i really dont worry about result i just need clean db
-        });
-    });
+describe('/users', function () {
+    describe('POST', function () {
 
-    it('should create user with POST on /users when send good data', function (done) {
-        request(app)
-            .post('/users')
-            .send(testUser)
-            .set('Accept', 'application/json')
-            .expect('Content-Type', /json/)
-            .expect(200)
-            .end(function (err, res) {
-                if (err) done(err);
-                else {
-                    res.body.should.not.have.property('errors');
-                    //console.log(res.body);
-                    res.body.should.have.property('_id');
+        it('should create user', function (done) {
+            var testUser = helper.user();
 
-                    var userId = res.body._id;
+            request(app)
+                .post('/users')
+                .send(testUser)
+                .type('form')
+                .expect(302)
+                .end(function (err, res) {
+                    if (err) return done(err);
+                    res.headers.location.should.be.equal('/listboards');
+
                     var User = mongoose.model('User');
-
-                    User.byId(userId)
+                    User.byEmail(testUser.email)
                         .then(function (user) {
-                            user.name.should.be.equal(testUser.name);
-                            user.email.should.be.equal(testUser.email);
-                            user.authenticate(testUser.password).should.be.true;
-                            done();
-                        })
-                        .fail(done);
-                }
-            });
-    });
+                            if (!user) done(new Error('User does not exists'));
+
+                            user.should.include({
+                                name: testUser.name,
+                                email: testUser.email.toLowerCase()
+                            });
+
+                            user.authenticate(testUser.password, function(err, res) {
+                                if(err) return done(err);
+
+                                res.should.be.true;
+                                done();
+                            });
+                        }, done)
+                        .done();
+                });
+        })
+    })
 });

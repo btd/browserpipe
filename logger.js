@@ -24,7 +24,8 @@ var loggerConfig = {
 
 switch(config.env) {
     case 'test':
-        loggerConfig.loggers.root.level = rufus.CRITICAL;
+        //loggerConfig.loggers.root.level = rufus.CRITICAL;
+        loggerConfig.loggers.root.handleExceptions = false;
 
         break;
     case 'development':
@@ -33,5 +34,7 @@ switch(config.env) {
         break;
     default:
 }
+
+//TODO output socket.io logs via rufus
 
 rufus.config(loggerConfig);

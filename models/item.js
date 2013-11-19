@@ -62,33 +62,6 @@ ItemSchema.statics.findAllByFolders = function (user, folderIds) {
         .execWithPromise();
 }
 
-ItemSchema.statics.removeAllByContainers = function(user, containerIds) {
-    return Item.findAllByContainers(user, containerIds)
-        .then(function(items) {
-            var promises = _.map(items, function(item) {                            
-                _.each(containerIds, function(containerId) {
-                    item.containers.remove(containerId);
-                });                 
-                return item.saveWithPromise();
-            });
-            return q.all(promises);
-        });
-}
-
-ItemSchema.statics.removeAllByFolders = function(user, folderIds, deltaItems) {
-    return Item.findAllByFolders(user, folderIds)
-        .then(function(items) {
-            var promises = _.map(items, function(item) {                            
-                deltaItems.data.push(item);
-                _.each(folderIds, function(folderId) {
-                    item.folders.remove(folderId);
-                });                 
-                return item.saveWithPromise();
-            });
-            return q.all(promises);
-        });
-}
-
 ItemSchema.statics.byId = function (id) {
     return qfindOne({ _id: id});
 }

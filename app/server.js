@@ -1,5 +1,4 @@
 require('../logger');
-/* Listboard.it main application entry file. */
 
 var Q = require('q');
 Q.longStackSupport = true;
@@ -18,7 +17,6 @@ require('../util/mongoose-q');
 
 // Bootstrap db connection
 mongoose.connect(config.db.uri);
-
 // Bootstrap models
 var models_path = __dirname + '/../models'
 fs.readdirSync(models_path).forEach(function (file) {

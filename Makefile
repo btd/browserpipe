@@ -1,13 +1,11 @@
 MOCHA_OPTS= ./test
 REPORTER = spec
+JS= api app jobs models util logger.js config.js public/js
 
 clean:
 	@rm -fr ./cache
 	@rm -fr ./compiled-assets
 	@rm -fr ./coverage
-
-start: clean
-	@NODE_ENV=development ./node_modules/.bin/nodemon --watch app --watch config server.js
 
 test: test-unit
 
@@ -32,22 +30,15 @@ test-unit:
 		--reporter $(REPORTER) \
 		$(MOCHA_OPTS)
 
-test-cov:
-	@NODE_ENV=test ./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- \
-		--recursive \
-		--check-leaks \
-		--reporter $(REPORTER) \
-		$(MOCHA_OPTS)
-
 start-prod: clean
-	@NODE_ENV=production ./node_modules/.bin/nodemon --watch app server.js
+	@NODE_ENV=production ./node_modules/.bin/nodemon server.js
 
 lint:
-	./node_modules/.bin/jshint --show-non-errors app config public/js api
+	./node_modules/.bin/jshint --show-non-errors $(JS)
 
 
 jshint-jenkins:
-	./node_modules/.bin/jshint --reporter=checkstyle app config public/js 1> results/checkstyle.xml || exit 0
+	./node_modules/.bin/jshint --reporter=checkstyle $(JS) 1> results/checkstyle.xml || exit 0
 
 
 install:
@@ -55,4 +46,4 @@ install:
 	npm install
 
 
-.PHONY: test test-unit test-cov
+.PHONY: test test-unit
