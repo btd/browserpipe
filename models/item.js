@@ -74,4 +74,6 @@ var qfindOne = function (obj) {
             .execWithPromise();
 };
 
+ItemSchema.statics.by = qfindOne;
+
 module.exports = Item = mongoose.model('Item', ItemSchema);

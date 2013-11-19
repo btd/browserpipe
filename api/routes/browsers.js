@@ -114,7 +114,7 @@ module.exports = function (app) {
                         window.tabs.forEach(function (tab) {
                             var item = itemsExternalIdCache[tab.externalId];
                             if (!item) {
-                                var item = new Item({
+                                item = new Item({
                                     externalId: tab.externalId,
                                     title: tab.title,
                                     url: tab.url,
@@ -126,8 +126,7 @@ module.exports = function (app) {
                                 });
                                 createdItems.push(item);
                                 promises.push(item.saveWithPromise());
-                            } 
-                            else {
+                            } else {
                                 //We check if url in the tab changed
                                 if(item.url != tab.url) {
                                     item.title = tab.title;

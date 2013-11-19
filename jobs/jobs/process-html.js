@@ -42,17 +42,17 @@ ProcessHtmlJob.prototype.constructor = ProcessHtmlJob;
 ProcessHtmlJob.prototype.exec = function (done) {
     var that = this;
 
-    var addDownload = function(url, path, done) {
+    var addDownload = function (url, path, done) {
         that.jobs.schedule('download', { uri: url, path: path })
-            .on('complete', function() {                            
+            .on('complete', function () {
                 done();
             });
     };
 
     //TODO we can download and interpret scripts, but if server does not support cors this, will not help at all
 
-    if(this.favicon || this.styles || this.images || this.js) {
-        fs.readFile(this.path, function(err, data) {
+    if (this.favicon || this.styles || this.images || this.js) {
+        fs.readFile(this.path, function (err, data) {
             if (err) return done(err); // rethrow to try restart job
 
             var $ = cheerio.load(data);
@@ -61,19 +61,19 @@ ProcessHtmlJob.prototype.exec = function (done) {
             var href = link.attr('href');
 
             //We try convention URL if not found (some sites do not add link tag but have the favicon.ico)
-            if(!href)
+            if (!href)
                 href = that.uri + '/favicon.ico';
 
             var baseUrl = URL(that.uri);
             var _faviconUrl = URL(href);
-            if(!_faviconUrl.protocol().length) _faviconUrl.protocol(baseUrl.protocol());
-            if(!_faviconUrl.host().length) _faviconUrl.host(baseUrl.host());
-            if(_faviconUrl.path()[0] !== '/') faviconUrl.directory(baseUrl.directory());
+            if (!_faviconUrl.protocol().length) _faviconUrl.protocol(baseUrl.protocol());
+            if (!_faviconUrl.host().length) _faviconUrl.host(baseUrl.host());
+            if (_faviconUrl.path()[0] !== '/') faviconUrl.directory(baseUrl.directory());
 
             var faviconUrl = _faviconUrl.toString();
             //TODO: review this. we call them all favicon.ico to be accesed by the item
             //if not we need to pass it to the item or update the item and save it here
-            var faviconPath = path.resolve(path.dirname(that.path),  _faviconUrl.filename());
+            var faviconPath = path.resolve(path.dirname(that.path), _faviconUrl.filename());
             that.log('favicon %s %s', faviconUrl, faviconPath);
 
             that.log('faviconUrl:  ' + faviconUrl)
@@ -84,15 +84,15 @@ ProcessHtmlJob.prototype.exec = function (done) {
             $('script,object,iframe,audio,video').remove();
             $('[onclick]').removeAttr('onclick');
 
-            fs.writeFile(that.path + '.buf', $.html(), function(err) {
+            fs.writeFile(that.path + '.buf', $.html(), function (err) {
 
                 if (err) return done(err);
 
-                fs.unlink(that.path, function(err) {
+                fs.unlink(that.path, function (err) {
 
                     if (err) return done(err);
 
-                    fs.rename(that.path + '.buf', that.path, function(err) {
+                    fs.rename(that.path + '.buf', that.path, function (err) {
 
                         if (err) return done(err);
 

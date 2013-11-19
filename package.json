@@ -45,7 +45,6 @@
     "nodemon": "latest",
     "should": "latest",
     "supertest": "latest",
-    "cookiejar": "latest",
     "istanbul": "latest",
     "jshint": "latest",
     "jsdom": "*",

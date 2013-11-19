@@ -137,7 +137,7 @@ module.exports = function(app) {
                         if (!user) return res.redirect('../login?error=invalid_user');
 
                         user.authenticate(req.body.password, function(err, result) {
-                            if(err) return res.redirect('../login?error=invalid_user');
+                            if(err || !result) return res.redirect('../login?error=invalid_user');
 
                             req.session.username = req.body.username;
                             res.redirect('../requestAccess');

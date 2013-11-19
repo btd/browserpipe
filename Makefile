@@ -34,7 +34,7 @@ start-prod: clean
 	@NODE_ENV=production ./node_modules/.bin/nodemon server.js
 
 lint:
-	./node_modules/.bin/jshint --show-non-errors $(JS)
+	@./node_modules/.bin/jshint --show-non-errors $(JS)
 
 
 jshint-jenkins:

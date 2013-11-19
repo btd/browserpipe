@@ -42,19 +42,19 @@ ScreenShotJob.prototype.exec = function (done) {
         .width(config.screenshot.width || 800)
         .height(config.screenshot.height || 600)
         .format(format)
-        .capture(function(err, img) {
-            
+        .capture(function (err, img) {
+
             if (err) return done(err);
 
-            mkdirp(path.dirname(that.path), function(err) {
-                
+            mkdirp(path.dirname(that.path), function (err) {
+
                 if (err) return done(err);
 
-                fs.writeFile(that.path, img, function(err) {
+                fs.writeFile(that.path, img, function (err) {
 
                     if (err) return done(err);
 
-                    that.log('Screenshot of ' + that.uri + ' saved '+ that.path);
+                    that.log('Screenshot of ' + that.uri + ' saved ' + that.path);
 
                     done();
                 });
