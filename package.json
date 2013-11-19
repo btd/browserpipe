@@ -53,6 +53,7 @@
     "grunt-contrib-watch": "~0.5.3",
     "grunt-develop": "~0.2.1",
     "reactify": "~0.4.0",
-    "grunt-browserify": "~1.2.6"
+    "grunt-browserify": "~1.2.6",
+    "Faker": "~0.5.11"
   }
 }
