@@ -154,8 +154,8 @@ var FolderPanelComponent = React.createClass({
 				    	<div className="controls">
 							<input ref="folderInput" type="text" onKeyPress={this.onEnterSaveFolder}/>
 							<div>
-							  	<button onClick={this.saveFolder} className="btn add-folder-save" type="button"><i className="icon-ok save-icon">&nbsp;Add folder</i></button>
-							  	<button onClick={this.hideFolderInput} className="btn add-folder-cancel" type="button"><i className="icon-remove cancel-icon"></i></button>
+							  	<button onClick={this.saveFolder} className="btn add-folder-save" type="button"><i className="icon-ok small-font">&nbsp;Add folder</i></button>
+							  	<button onClick={this.hideFolderInput} className="btn add-folder-cancel" type="button"><i className="icon-remove small-font"></i></button>
 							</div>
 						</div>
 					</div>

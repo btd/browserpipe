@@ -56,13 +56,13 @@ var ItemComponent = React.createClass({
           ref="item"  
           onClick={ this.navigateToItem } 
           className={ this.getItemClass() }
-          draggable="true"
+          /*draggable="true"
           onDragStart={this.props.itemDraggable.objDragStart} 
           onDragEnd={this.props.itemDraggable.objDragEnd}
           onDragOver={this.props.itemDraggable.objDragOver}
           onDragEnter={this.props.itemDraggable.objDragEnter}
           onDragLeave={this.props.itemDraggable.objDragLeave}
-          onDrop={this.props.itemDraggable.objDrop}
+          onDrop={this.props.itemDraggable.objDrop}*/
         > 
         <i className="icon-remove remove-item" title="Close"></i>
         <img draggable="false" className="favicon" src={ this.props.item.favicon } alt="Favicon" />

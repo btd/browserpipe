@@ -11,22 +11,26 @@ var _state = require('../../state'),
     selection = require('../../selection/selection');
 
 var ListboardsPanelComponent = React.createClass({    
-    getListboardsPanelWidth: function() {
+    /*getListboardsPanelWidth: function() {
         return this.props.width;
     },       
     getListboardsPanelStyle: function() {
         var visible = this.props.visible? "block" : "none";
         return { width: this.getListboardsPanelWidth(), display: visible };
-    },
-    getExtensionButton: function() {
-        if(!this.props.isExtensionInstalled)
+    },*/
+    renderExtensionButton: function() {
+        /*if(!this.props.isExtensionInstalled)
             return (
-                <a draggable="false"  className="chrome-extension-warning" href="#installExtensionModal" data-toggle="modal">
-                    You have not installed the sync extension in this browser, click here to install it
-                </a>
+                <ul className="extension-button">
+                    <li>
+                        <a draggable="false"  className="chrome-extension-warning" href="#installExtensionModal" data-toggle="modal">
+                            You have not installed the sync extension in this browser, click here to install it
+                        </a>
+                    </li>
+                </ul>
             );
         else
-            return null;
+            return null;*/
     },
     installChromeExtension: function() {        
         extension.installChromeExtension();
@@ -39,33 +43,119 @@ var ListboardsPanelComponent = React.createClass({
             page('/listboard/' + listboard._id);
         })
     },
-    isSelected: function(listboardId) {
+    isListboardSelected: function(listboardId) {
         return selection.isListboardSelected(listboardId);
+    },
+    isContainerSelected: function(containerId) {
+        return selection.isContainerSelected(containerId);
     },
     handleListboardClick: function(e) {
         e.preventDefault();        
         e.stopPropagation();
         var elementId = e.target.id;
         if(!elementId)
-            elementId = $(e.target).parents('.listboard-selector:first').attr('id');
+            elementId = $(e.target).parents('.listboard-option:first').attr('id');
         var listboardId = elementId.substring(3);
         if(e.ctrlKey){
-            if(!this.isSelected(listboardId))
+            if(!this.isListboardSelected(listboardId))
                 selection.selectListboard(listboardId);
             else
                 selection.unSelectListboard(listboardId);
         }            
         else            
             this.props.navigateToListboard(listboardId);
-    }, 
+    },
+    handleContainerClick: function(e) {
+        e.preventDefault();        
+        e.stopPropagation();
+        var elementId = e.target.id;
+        if(!elementId)
+            elementId = $(e.target).parents('.container-option:first').attr('id');
+        var containerId = elementId.substring(5);
+        /*if(e.ctrlKey){
+            if(!this.isContainerSelected(containerId))
+                selection.selectListboard(containerId);
+            else
+                selection.unSelectListboard(containerId);
+        }            
+        else     */       
+            this.props.navigateToContainer(containerId);
+    },
     getListboardClass: function(listboard) {
-        return 'listboard-selector ' +
-        (this.props.selectedListboard._id === listboard._id ?  'selected ' : 'listboard-selector ') + 
-        (listboard.type === 0 ? 'browser-listboard-selector ' : 'custom-listboard-selector ') +
-        (this.isSelected(listboard._id)? selection.getClassName() : '');
+        return 'listboard-option ' +
+        (this.props.selectedListboard._id === listboard._id ?  'selected ' : '') + 
+        (listboard.type === 0 ? 'browser-listboard-option ' : 'custom-listboard-option ') +
+        (this.isListboardSelected(listboard._id)? selection.getClassName() : '');
+    },
+    getContainerClass: function(container) {
+        return 'container-option ' +
+        (this.props.selectedContainer && this.props.selectedContainer._id === container._id ?  'selected ' : '') + 
+        (this.isContainerSelected(container._id)? selection.getClassName() : '');
+    },
+    getContainerTitle: function(container) {     
+        if(!container.title || container.title.trim() === '')                     
+                return container.items.length + " Tabs";
+        else
+            return container.title;
+    },
+    getContainerFavicon: function(container, index) {   
+        var item = container.items[index];
+        var style = {};
+        if(item)
+            style.backgroundImage = "url('" + item.favicon + "')"; //TODO: make sure this is secure        
+        return <div className="favicon" style = {style}></div>;
+    },
+    getContainerFavicons: function(container) {   
+        return  <div className= "favicons clearfix">
+                    {this.getContainerFavicon(container, 0)}
+                    {this.getContainerFavicon(container, 1)}
+                    {this.getContainerFavicon(container, 2)}
+                    {this.getContainerFavicon(container, 3)}
+                    {this.getContainerFavicon(container, 4)}
+                    {this.getContainerFavicon(container, 5)}
+                </div>
+    },
+    renderContainerOption: function(container) {
+        return <li                    
+                    className={ this.getContainerClass(container) } 
+                    onClick={this.handleContainerClick}
+                    id={'cont_' + container._id}
+                >
+                    <div className="title">{this.getContainerTitle(container)}</div>
+                    {this.getContainerFavicons(container)}
+                </li>;
     },
     renderListboardOption: function(listboard) {
-        return <li             
+        var self = this;
+        return  <div 
+                    className={ this.getListboardClass(listboard) } 
+                    onClick={this.handleListboardClick}
+                    id={'li_' + listboard._id}
+                >
+                    <div className="listboard-option-header" >
+                        { listboard.type === 0 ? <img draggable="false" src="/img/common/chrome-logo.png" alt="Chrome Logo" /> : null }
+                        <span>{listboard.label? listboard.label : 'Unnamed'}</span>
+                    </div>
+                    <ul className="listboard-option-containers">
+                    {                    
+                        listboard.containers
+                            .map(function(container) {
+                                return self.renderContainerOption(container)
+                            })
+                    }               
+                    </ul>     
+                </div>                   
+    },
+
+    componentDidMount: function(){
+        $('.listboards-panel').perfectScrollbar({
+        });
+    },  
+
+     //className="browser-listboards"
+                    //className="custom-listboards"
+
+        /*return <li             
             className={ this.getListboardClass(listboard) }            
             id={'li_' + listboard._id}
             draggable="true"             
@@ -96,43 +186,28 @@ var ListboardsPanelComponent = React.createClass({
                     })
                 }
                 </ul>
-            </li > 
-    },
+            </li > */
+
+
     render: function() {
         var self = this;
         return  (
-            <div className="listboards-panel" style={ this.getListboardsPanelStyle() }>                                 
-                <div className="listboards">                
-                    { this.getExtensionButton() }
-                    <ul className="browser-listboards">
-                    {                    
-                        this.props.listboards
-                            .filter(function(l) {return l.type === 0 } )
-                            .map(function(listboard) {
-                                return self.renderListboardOption(listboard)
-                            })
-                    }
-                    </ul>
-                    <a draggable="false"  className="add-listboard btn" onClick={this.addEmptyListboardAndSelectIt}  href="#" title="Add listboard" data-toggle="tooltip">
-                        <i className="icon-plus"></i>
-                    </a>
-                    <ul className="custom-listboards"
-                        onDragOver={listboardSelectorDraggable.parentDragOver}
-                        onEnter={listboardSelectorDraggable.parentDragEnter}
-                        onDragLeave={listboardSelectorDraggable.parentDragLeave}
-                        onDrop={listboardSelectorDraggable.parentDrop}
-                    >
-                    {                    
-                        this.props.listboards
-                            .filter(function(l) { return l.type === 1 } )
-                            .map(function(listboard) {
-                                return self.renderListboardOption(listboard)
-                            })
-                    }
-                    </ul>                    
-                </div>
-                
-                <div id="installExtensionModal" className="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div  className="listboards-panel scrollable-parent" /*style={ this.getListboardsPanelStyle() }*/>                                 
+
+                    <div className="listboards" > 
+                        { this.renderExtensionButton() }                    
+                        {                    
+                            this.props.listboards                            
+                                .map(function(listboard) {
+                                    return self.renderListboardOption(listboard)
+                                })
+                        }
+                        <a draggable="false"  className="add-listboard btn" onClick={this.addEmptyListboardAndSelectIt}  href="#" title="Add listboard" data-toggle="tooltip">
+                            <i className="icon-plus"></i>
+                        </a>                                   
+                    </div>     
+
+                /*<div id="installExtensionModal" className="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                   <div className="modal-header">
                     <button type="button" className="close" data-dismiss="modal" aria-hidden="true">×</button>
                     <h3 id="myModalLabel">Install Listboard.it Extension</h3>
@@ -145,7 +220,7 @@ var ListboardsPanelComponent = React.createClass({
                     <button className="btn" data-dismiss="modal" aria-hidden="true">Close</button>
                     <button className="btn btn-primary">Save changes</button>
                   </div>
-                </div>
+                </div>*/
         </div>);
     }
 });

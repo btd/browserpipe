@@ -1,91 +1,109 @@
 .listboards-panel {
+    height: 124px;    
+    position: absolute; 
+    top: 46px;
     width: 100%;
-    position: relative;        
-    overflow-x: auto;
-	background: url("/img/common/bg-pattern.png") repeat 50% 0;
+    overflow-x: hidden;
+    background: url("/img/common/bg-pattern.png") repeat 50% 0;
     .flatten();   
 
-     a.chrome-extension-warning{
-        width: 270px;
-        background-color: red; 
-        color: @white;
-        text-align: center;         
-        overflow: hidden;
-        float: left;
-        .opacity(80);     
-        color: @white;
-        font-weight: bold;
-        overflow: hidden;
-        text-overflow: ellipsis;  
-
-         &:hover {
-            cursor:pointer; 
-            .opacity(90);
-            text-decoration: none;
-        }
-    }    
+    .ps-scrollbar-y-rail {
+        display: none;
+    }       
     .listboards {
+        height: 124px;
+        display: table;
     	margin: 0;
     	padding: 0;
-        display: table;
         border-collapse: separate;
-        border-spacing: 6px 3px;
+        border-spacing: 6px 3px;    
 
         ul {
             margin: 0;
             padding: 0;            
         }
-        .listboard-selector {  
-            display: table-cell;
+        .listboard-option {  
+            display: table-cell;                           
             font-size: 13px;
             list-style: none;
             color: @white;
             text-align: center;         
             overflow: hidden;        
-            .opacity(80);    
-            
+            font-weight: bold;   
+
             &:hover {
                 cursor:pointer; 
-                .opacity(100);
-            }             
-            div {        
-                width: 86px;    
-                max-width: 86px;    
-                height: 30px;
-                font-weight: bold;
-                text-overflow: ellipsis;     
-            }
-
-            &.browser-listboard-selector { 
-               border: 2px solid @blue3;       
-               background-color: @blue3;
+            }                                                    
+            &.browser-listboard-option {                
+               background-color: lighten(@blue3, 10%);
                position: relative;
 
-               img {                    
-                    position: absolute;
-                    left: 3px;
-               }
-               span {
-                    margin-left: 12px;
-                    display: block;
-               }
-               &.selected {
-                    .opacity(100);
-                    border: 2px solid @blue3;       
+                &:hover, &.selected {
                     background-color: @blue3;
                 } 
+               img {                    
+                    float: left;
+                    margin-right: 6px;
+               }
             }
-            &.custom-listboard-selector {
-                border: 2px solid @grey4;
-                background-color: @grey4;
+            &.custom-listboard-option {
+                background-color: lighten(@grey2, 10%);
 
-                &.selected {
-                    .opacity(100);
-                    border: 2px solid @grey2;
+                &:hover, &.selected {
                     background-color: @grey2;
                 } 
             }
-            &.selection-selected {
+            .listboard-option-header {
+                display: table-caption;
+                text-align: left;
+                margin-left: 12px;
+                text-overflow: ellipsis;
+                /*max-height: 22px;*/
+                display: block;
+                overflow: hidden;
+                max-width: 300px;
+                white-space: nowrap;
+            }
+            .listboard-option-containers {
+                display: table-row;                
+                color: @grey2;
+
+                .container-option {
+                    display: table-cell;                                        
+                    width: 106px; 
+                    box-shadow: 0 2px 6px rgba(0,0,0,0.4);      
+                    background-color: lighten(@grey1, 10%);
+
+                    &:hover {
+                        cursor:pointer; 
+                        background-color: @grey1;
+                    }  
+                    .title {        
+                        width: 100px;    
+                        height: 18px;
+                        font-weight: bold;
+                        text-overflow: ellipsis;                             
+                        padding-top: 6px;
+                        line-height: 12px;
+                        display: block;
+                        overflow: hidden;
+                        max-width: 100px;
+                        white-space: nowrap;
+                    }
+                    .favicons {
+                        margin: 6px 12px;
+
+                        .favicon {
+                            width: 16px;
+                            height: 16px;
+                            float: left;
+                            margin: 3px;
+                        }
+                    }
+                }
+            }
+
+           /* &.selection-selected {
                 color: @grey3;    
                 border: 2px solid @blue4 !important;
                 background-color: @blue4 !important;
@@ -96,7 +114,7 @@
             }
             &.selection-droppable {
                 border: 2px dashed #000;
-            }
+            }*/
             
         }
         .sortable-placeholder {            
@@ -129,4 +147,24 @@
         }        
     }
 
+
+    /* a.chrome-extension-warning{
+        width: 270px;
+        background-color: red; 
+        color: @white;
+        text-align: center;         
+        overflow: hidden;
+        float: left;
+        .opacity(80);     
+        color: @white;
+        font-weight: bold;
+        overflow: hidden;
+        text-overflow: ellipsis;  
+
+         &:hover {
+            cursor:pointer; 
+            .opacity(90);
+            text-decoration: none;
+        }
+    }    */
 }

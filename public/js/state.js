@@ -30,7 +30,9 @@ var State1 = model()
     .attr('listboards', { collection: Listboards })
     .attr('containers', { collection: Containers })
     .attr('items', { collection: Items })
+    .attr('isContainerSelected')
     .attr('selectedListboard', { model: Listboard })
+    .attr('selectedContainer', { model: Container })
     .attr('selectedItem', { model: Item })
     .attr('selectedFolder', { model: Folder })
     .attr('selection', { model: Selection })
@@ -234,6 +236,17 @@ _.extend(State1.prototype, {
     },
     getContainerByIdAndListboard: function (listboard, containerId) {
         return listboard.containers.byId(containerId);
+    },
+
+    // selected listboard
+    getSelectedContainer: function () {
+        return this.selectedContainer;
+    },
+    getSelectedContainerId: function () {
+        return this.getSelectedContainer() && this.getSelectedContainer()._id;
+    },
+    setSelectedContainer: function (containerId) {
+        this.selectedContainer = this.getContainerById(containerId);
     },
     
 

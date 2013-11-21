@@ -31,7 +31,9 @@ var browserifyAliases = [
     bowerAlias('emitter/index.js', 'emitter'),
     bowerAlias('indexof/index.js', 'indexof'),
     bowerAlias('moco/index.js', 'moco'),
-    bowerAlias('messenger/build/js/messenger.js', 'messenger')
+    bowerAlias('messenger/build/js/messenger.js', 'messenger'),
+    bowerAlias('perfect.scrollbar/src/jquery.mousewheel.js', 'jquery.mousewheel'),
+    bowerAlias('perfect.scrollbar/src/perfect-scrollbar.js', 'perfect.scrollbar')
 ];
 
 module.exports = function(grunt) {

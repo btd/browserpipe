@@ -31,22 +31,35 @@ html, body {
     background-color: white;
     font-family: Arial, Helvetica, sans-serif;
 }
-.wrapper {
-    display: table;   
-    height: 100%;
-    width: 100%;
 
-    .main-header {
-        display: table-row;        
-        background-color:@blue3;
+#body-inner {
+    height: 100%;
+
+    .wrapper {
+        height: 100%;
+
+        .main-header { 
+            height: 170px;            
+        }
+        .main-content {        
+            height: 100%;  
+             overflow:hidden;
+            -webkit-box-sizing:border-box;
+            -moz-box-sizing:border-box;
+            -ms-box-sizing:border-box;
+            box-sizing:border-box;
+            margin:-170px 0 -21px 0;
+            padding:170px 0 21px 0;            
+        }
+        .main-footer {
+            height: 21px;
+        }
+
     }
-    .main-content {        
-        display: table-row;  /* height is dynamic, and will expand... */
-        height: 100%;        /* ...as content is added (won't scroll) */
-    }
-    .main-footer {
-        display: table-row;
-    }
+}
+
+.small-font {           
+    font-size: 13px;
 }
 
 i.save-icon, i.cancel-icon {			

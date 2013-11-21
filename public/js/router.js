@@ -13,6 +13,9 @@ require('messenger');
 Messenger.options = {
     extraClasses: 'messenger-fixed messenger-on-top messenger-on-right'
 }
+//Scrollbar
+require('jquery.mousewheel');
+require('perfect.scrollbar');
 
 var homeView, //react home component instance
     socket; //socket.io client socket
@@ -27,7 +30,9 @@ var loadHomeView = function(listboardsVisible, listboardSettingsVisible, dialogI
                 getDocHeight(),
                 getDocWidth(),
                 _state.getAllListboards(),
+                _state.isContainerSelected,
                 _state.getSelectedListboard(),
+                _state.getSelectedContainer(),
                 _state.getSelectedItem(),
                 _state.getSelectedFolder(),
                 _state.getSelection(),
@@ -39,11 +44,14 @@ var loadHomeView = function(listboardsVisible, listboardSettingsVisible, dialogI
         })
     } else {        
        var selectedListboard = _state.getSelectedListboard();
+       var selectedContainer = _state.getSelectedContainer();
        var selectedItem = _state.getSelectedItem();
        var selectedFolder = _state.getSelectedFolder();
 
         homeView.setState({ 
+            isContainerSelected: _state.isContainerSelected,
             selectedListboard: selectedListboard,
+            selectedContainer: selectedContainer,
             selectedItem: selectedItem,
             selectedFolder: selectedFolder,
             selection: _state.getSelection(),
@@ -64,6 +72,7 @@ page('/', function () {
 page('/listboards', function () {
     setTimeout(function() {
         _state.selectFirstListboard();
+        _state.isContainerSelected = false;
         var selectedListboard = _state.getSelectedListboard();
         if(selectedListboard)
             page('/listboard/' + selectedListboard._id);
@@ -76,7 +85,8 @@ page('/listboard/:id', function (ctx) {
     setTimeout(function() {
         var id = ctx.params.id;
         if(_state.getListboardById(id)){
-            _state.setSelectedListboard(id);        
+            _state.isContainerSelected = false;     
+            _state.setSelectedListboard(id);            
             loadHomeView(true, false, false);
         }
         else
@@ -88,12 +98,26 @@ page('/listboard/:id/settings', function (ctx) {
     setTimeout(function() {
         var id = ctx.params.id;
         if(_state.getListboardById(id)){
-            _state.setSelectedListboard(id);        
+            _state.isContainerSelected = false;
+            _state.setSelectedListboard(id);           
             loadHomeView(false, true, false);    
         }
         else
             loadNotFoundView();
      }, 0);    
+});
+
+page('/container/:id', function (ctx) {    
+    setTimeout(function() {
+        var id = ctx.params.id;
+        if(_state.getContainerById(id)){            
+            _state.isContainerSelected = true;
+            _state.setSelectedContainer(id);    
+            loadHomeView(true, false, false);
+        }
+        else
+            loadNotFoundView();
+     }, 0);
 });
 
 page('/item/:id', function (ctx) {    
@@ -146,12 +170,16 @@ var initialize = function () {
 var loadWindowEvent = function() {
     //TODO: view is there is a better way to capture and pass events
     $(window).resize(function () {
-        if(homeView) {
+        /*if(homeView) {
             homeView.setState({
                 docHeight: getDocHeight(),
                 docWidth: getDocWidth()
             });
-        }
+        }*/
+
+        //We reset scrollbars
+        $('.scrollable-parent').scrollTop(0);
+        $('.scrollable-parent').perfectScrollbar('update');
     });
 };
 
@@ -159,6 +187,14 @@ var onSelectedListboardChange = function() {
     if(homeView) {
         homeView.setState({
             selectedListboard: _state.getSelectedListboard()
+        });
+    }
+};
+
+var onSelectedContainerChange = function() {
+    if(homeView) {
+        homeView.setState({
+            selectedContainer: _state.getSelectedContainer()
         });
     }
 };
@@ -189,6 +225,8 @@ var onSelectionChange = function () {
 
 var stateChanges = function() {
     _state.on('change:selectedListboard', onSelectedListboardChange);
+
+    _state.on('change:selectedContainer', onSelectedContainerChange);
 
     _state.on('change:selectedItem', onSelectedItemChange);
 

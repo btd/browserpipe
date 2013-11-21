@@ -40,6 +40,7 @@ module.exports = function (app, passport) {
   var listboard = require('./controllers/listboard');
   app.get(    '/listboards',              auth.ensureLoggedIn('/login'), main.home);
   app.get(    '/listboard/:listboardId',  auth.ensureLoggedIn('/login'), main.home);
+  app.get(    '/container/:containerId',  auth.ensureLoggedIn('/login'), main.home);
   app.get(    '/listboard/:listboardId/settings',      auth.ensureLoggedIn('/login'), main.home);
 
   //Listboards routes
