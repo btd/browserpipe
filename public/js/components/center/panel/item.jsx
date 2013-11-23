@@ -23,34 +23,35 @@ var ItemPanel = React.createClass({
   getClassName: function() {
     return 'item-panel panel' + 
       (this.props.fullWidth?' full-width': ' half-width');
+  },
+  getSubBarClassName: function() {
+    return 'navbar sub-bar' + 
+      (this.props.active?' border': '');
   }, 
   render: function() {
     var self = this;  
     return (               
-        <div ref="itemPanel" className={ this.getClassName() }>
-          <div className="navbar sub-bar">
-            <div className="navbar-inner">
-              <ul className="nav">                                  
+        <div ref="itemPanel" 
+            className={ this.getClassName() } 
+            onClick= { this.props.activatePanel } >
+          <div className={ this.getSubBarClassName() } >
+            <div className="navbar-inner" >             
+              <ul className="nav pull-right">              
+                <li>
+                  <a draggable="false"  className="btn" onClick={this.goToSettings} href="#" title="Settings" data-toggle="tooltip">
+                    <i className="icon-cog">Settings</i>
+                  </a>
+                </li>
+              </ul>      
+              <ul className="nav nav-left">                                  
                 <li>                  
                   <LabelEditorComponent 
                     onSaveLabel= {this.saveItemLabel} 
                     labelValue= {this.props.item.title} 
-                    defaultLabelValue= "Unnamed" />                  
+                    defaultLabelValue= "Unnamed" />   
+                    <span className="sub-title">(url item)</span>               
                 </li>                                  
-              </ul>              
-              <ul className="nav pull-right">              
-                <li>
-                  <a draggable="false"  className="add-item btn" onClick={this.addEmptyItem} href="#" title="Add empty item" data-toggle="tooltip">
-                    <i className="icon-plus"></i>
-                  </a>
-                </li>                
-                <li className="divider"></li>
-                <li>
-                  <a draggable="false"  className="btn" onClick={this.goToSettings} href="#" title="Settings" data-toggle="tooltip">
-                    <i className="icon-cog"></i>
-                  </a>
-                </li>
-              </ul>                
+              </ul>           
             </div>
           </div>          
           <div className="panel-center">

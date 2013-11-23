@@ -28,19 +28,19 @@ var loadHomeView = function() {
         extension.isExtensionInstalled(function(installed) {
             homeView = HomeView.render(
                 _state.getAllListboards(),                
-                _state.getPanel1SelectedTypeId(),
-                _state.getPanel2SelectedTypeId(),
+                _state.getPanel1SelectedTypeObject(),
+                _state.getPanel2SelectedTypeObject(),
                 _state.getSelection(),
                 installed
             );
         })
     } else {        
-       var panel1SelectedTypeId = _state.getPanel1SelectedTypeId();
-       var panel2SelectedTypeId = _state.getPanel2SelectedTypeId();
+       var panel1SelectedTypeObject = _state.getPanel1SelectedTypeObject();
+       var panel2SelectedTypeObject = _state.getPanel2SelectedTypeObject();
 
         homeView.setState({ 
-            panel1SelectedTypeId: panel1SelectedTypeId,
-            panel2SelectedTypeId: panel2SelectedTypeId,
+            panel1SelectedTypeObject: panel1SelectedTypeObject,
+            panel2SelectedTypeObject: panel2SelectedTypeObject,
             selection: _state.getSelection()
         }); 
     }
@@ -48,37 +48,41 @@ var loadHomeView = function() {
 }
 
 var unSetPanels = function() {
-    _state.unSetPanel1SelectedTypeId();
-    _state.unSetPanel2SelectedTypeId();
+    _state.unSetPanel1SelectedTypeObject();
+    _state.unSetPanel2SelectedTypeObject();
 }
 
-var selectTypeId = function(type, id, callback) {
+var selectTypeObject = function(type, id, callback) {
     //We do the switch to avoid injections
     switch(type){
         case 'listboard' : {             
-            if(_state.getListboardById(id)){
-                callback('listboard', id); 
+            var listboard = _state.getListboardById(id);
+            if(listboard){
+                callback('listboard', listboard); 
                 return true;
             }
             break;
         }
-        case 'container' : {                
-            if(_state.getContainerById(id)){
-                callback('container', id); 
+        case 'container' : {  
+            var container = _state.getContainerById(id);
+            if(container){
+                callback('container', container); 
                 return true;
             }
             break;
         }
         case 'item' : {                
-            if(_state.getItemById(id)){
-                callback('item', id); 
+            var item = _state.getItemById(id);
+            if(item){
+                callback('item', item); 
                 return true;
             }
             break;
         }
         case 'folder' : {                
-            if(_state.getFolderById(id)){
-                callback('folder', id); 
+            var folder = _state.getFolderById(id);
+            if(folder){
+                callback('folder', folder); 
                 return true;
             }
             break;
@@ -104,8 +108,8 @@ page('/panel1/:type1/:id1', function (ctx) {
         var type1 = ctx.params.type1;
         var id1 = ctx.params.id1;
         unSetPanels();        
-        var result = selectTypeId(type1, id1, function(type, id) {
-            _state.setPanel1SelectedTypeId(type, id)
+        var result = selectTypeObject(type1, id1, function(type, object) {
+            _state.setPanel1SelectedTypeObject(type, object)
         });        
         if(result)
             loadHomeView();
@@ -121,11 +125,11 @@ page('/panel1/:type1/:id1/panel2/:type2/:id2', function (ctx) {
         var id1 = ctx.params.id1;
         var id2 = ctx.params.id2;
         unSetPanels();        
-        var result1 = selectTypeId(type1, id1, function(type, id) {
-            _state.setPanel1SelectedTypeId(type, id)
+        var result1 = selectTypeObject(type1, id1, function(type, object) {
+            _state.setPanel1SelectedTypeObject(type, object)
         });               
-        var result2 = selectTypeId(type2, id2, function(type, id) { 
-            _state.setPanel2SelectedTypeId(type, id)
+        var result2 = selectTypeObject(type2, id2, function(type, object) { 
+            _state.setPanel2SelectedTypeObject(type, object)
         });           
         if(result1 && result2)
             loadHomeView();
@@ -165,10 +169,10 @@ var loadWindowEvent = function() {
     });
 };
 
-var onSelectedPanel1Change = function() {
+var onSelectedPanel1Change = function() {    
     if(homeView) {
         homeView.setState({
-            panel1SelectedTypeId: _state.getPanel1SelectedTypeId()
+            panel1SelectedTypeObject: _state.getPanel1SelectedTypeObject()
         });
     }
 };
@@ -176,7 +180,7 @@ var onSelectedPanel1Change = function() {
 var onSelectedPanel2Change = function() {
     if(homeView) {
         homeView.setState({
-            panel2SelectedTypeId: _state.getPanel2SelectedTypeId()
+            panel2SelectedTypeObject: _state.getPanel2SelectedTypeObject()
         });
     }
 };
@@ -190,9 +194,9 @@ var onSelectionChange = function () {
 }
 
 var stateChanges = function() {
-    _state.on('change:panel1SelectedTypeId', onSelectedPanel1Change);
+    _state.on('change:panel1SelectedTypeObject', onSelectedPanel1Change);
 
-    _state.on('change:panel2SelectedTypeId', onSelectedPanel2Change);
+    _state.on('change:panel2SelectedTypeObject', onSelectedPanel2Change);
 
     var addedOrDeletedListboard = function() {
         homeView.setState({

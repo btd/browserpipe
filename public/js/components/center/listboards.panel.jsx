@@ -24,6 +24,9 @@ var ListboardsPanelComponent = React.createClass({
             );
         else
             return null;*/
+        return <a className="extension-button btn">
+            <i className="icon-plus">Install Extension</i>
+        </a>     
     },
     installChromeExtension: function() {        
         extension.installChromeExtension();
@@ -73,13 +76,7 @@ var ListboardsPanelComponent = React.createClass({
         }            
         else     */       
             this.props.navigateToContainer(containerId);
-    },    
-    handleArchiveClick: function(e){
-        e.preventDefault();        
-        e.stopPropagation();
-        var rootFolder = _state.getRootFolder();
-        this.props.navigateToFolder(rootFolder._id);
-    },
+    },  
     getListboardClass: function(listboard) {
         return 'listboard-option ' +
         /*(this.props.selectedListboard._id === listboard._id ?  'selected ' : '') + */
@@ -132,8 +129,9 @@ var ListboardsPanelComponent = React.createClass({
                     id={'li_' + listboard._id}
                 >
                     <div className="listboard-option-header" >
-                        { listboard.type === 0 ? <img draggable="false" src="/img/common/chrome-logo.png" alt="Chrome Logo" /> : null }
-                        <span>{listboard.label? listboard.label : 'Unnamed'}</span>
+                        { listboard.type === 0 ? <img className="listboard-icon" draggable="false" src="/img/common/chrome-logo.png" alt="Chrome Logo" /> : null }
+                        <div className="listboard-type">{listboard.type === 0 ? '(browser)' : '(group of later windows)'}</div>
+                        <div className="listboard-label">{listboard.label? listboard.label : 'Unnamed'}</div>
                     </div>
                     <ul className="listboard-option-containers">
                     {                    
@@ -141,7 +139,13 @@ var ListboardsPanelComponent = React.createClass({
                             .map(function(container) {
                                 return self.renderContainerOption(container)
                             })
-                    }               
+                    }     
+                    <li className="listboard-option-add-container">
+                        <div className="inner">
+                            <i className="icon-plus"></i>
+                            <div>{listboard.type === 0 ? 'Open window' : 'Add later window'}</div>
+                        </div>
+                    </li>
                     </ul>     
                 </div>                   
     },
@@ -152,23 +156,25 @@ var ListboardsPanelComponent = React.createClass({
         var self = this;
         return  (
             <div  className="listboards-panel scrollable-parent" /*style={ this.getListboardsPanelStyle() }*/>                                 
-
-                    <div className="listboards" > 
-                        { this.renderExtensionButton() }                    
+                    { this.renderExtensionButton() }                    
+                    <div className="listboards" >                         
                         {                    
-                            this.props.listboards                            
+                            this.props.listboards     
+                                //TODO: sort them in the server
+                                .sort(function(listboard){
+                                    return listboard.type;
+                                })
                                 .map(function(listboard) {
                                     return self.renderListboardOption(listboard)
                                 })
-                        }
-                        <a draggable="false"  className="add-listboard btn" onClick={this.addEmptyListboardAndSelectIt}  href="#" title="Add listboard" data-toggle="tooltip">
-                            <i className="icon-plus"></i>
-                        </a> 
-                        <a onClick={this.handleArchiveClick}>
-                            ARCHIVE
-                        </a>                                    
-                    </div>     
-
+                        }                        
+                        <a draggable="false"  className="add-listboard" onClick={this.addEmptyListboardAndSelectIt}  href="#" title="Add listboard" data-toggle="tooltip">
+                            <div className="inner">
+                                <i className="icon-plus"></i>
+                                <div>Add group of later windows</div>
+                            </div>
+                        </a>   
+                    </div>   
                 /*<div id="installExtensionModal" className="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                   <div className="modal-header">
                     <button type="button" className="close" data-dismiss="modal" aria-hidden="true">×</button>

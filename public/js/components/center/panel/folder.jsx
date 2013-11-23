@@ -25,6 +25,10 @@ var FolderPanel = React.createClass({
     return 'folder-panel panel' + 
       (this.props.fullWidth?' full-width': ' half-width');
   },
+  getSubBarClassName: function() {
+    return 'navbar sub-bar' + 
+      (this.props.active?' border': '');
+  },
   navigateToParentFolder: function() {    
     var parent = _state.getFolderByFilter(this.props.folder.path);
     this.props.navigateToFolder(parent._id);
@@ -43,31 +47,37 @@ var FolderPanel = React.createClass({
   render: function() {
     var self = this;  
     return (               
-        <div ref="folderPanel" className={ this.getClassName() }>
-          <div className="navbar sub-bar">
-            <div className="navbar-inner">
-              <ul className="nav">                                  
+        <div ref="folderPanel" 
+            className={ this.getClassName() }
+             onClick= { this.props.activatePanel }>
+          <div className={ this.getSubBarClassName() }>
+            <div className="navbar-inner">            
+              <ul className="nav pull-right">              
+                <li>
+                  <a draggable="false"  className="add-folder btn" onClick={this.addEmptyFolder} href="#" title="Add empty folder" data-toggle="tooltip">
+                    <i className="icon-plus">Add folder</i>
+                  </a>
+                </li>   
+                <li>
+                  <a draggable="false"  className="add-folder btn" onClick={this.addEmptyFolder} href="#" title="Add empty folder" data-toggle="tooltip">
+                    <i className="icon-plus">Add item</i>
+                  </a>
+                </li>                                
+                <li>
+                  <a draggable="false"  className="btn" onClick={this.goToSettings} href="#" title="Settings" data-toggle="tooltip">
+                    <i className="icon-cog">Settings</i>
+                  </a>
+                </li>
+              </ul>      
+              <ul className="nav nav-left">                                  
                 <li>                  
                   <LabelEditorComponent 
                     onSaveLabel= {this.saveFolderLabel} 
                     labelValue= {this.props.folder.label} 
                     defaultLabelValue= "Unnamed" />
-                  <span className="last-sync-time">(last sync 2 min ago)</span>
+                  <span className="sub-title">(folder)</span>
                 </li>                                  
-              </ul>              
-              <ul className="nav pull-right">              
-                <li>
-                  <a draggable="false"  className="add-folder btn" onClick={this.addEmptyFolder} href="#" title="Add empty folder" data-toggle="tooltip">
-                    <i className="icon-plus"></i>
-                  </a>
-                </li>                
-                <li className="divider"></li>
-                <li>
-                  <a draggable="false"  className="btn" onClick={this.goToSettings} href="#" title="Settings" data-toggle="tooltip">
-                    <i className="icon-cog"></i>
-                  </a>
-                </li>
-              </ul>                
+              </ul>            
             </div>
           </div>          
           <div className="panel-center">

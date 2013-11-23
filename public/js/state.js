@@ -15,8 +15,8 @@ var item = require('./data/item'),
     Item = item.Item,
     Items = item.Items;
 
-var typeId = require('./data/typeid'),
-    TypeId = typeId.TypeId;
+var typeObject = require('./data/typeobject'),
+    TypeObject = typeObject.TypeObject;
 
 var selection = require('./data/selection'),
     Selection = selection.Selection;
@@ -33,8 +33,8 @@ var State1 = model()
     .attr('listboards', { collection: Listboards })
     .attr('containers', { collection: Containers })
     .attr('items', { collection: Items })
-    .attr('panel1SelectedTypeId', { model: TypeId })
-    .attr('panel2SelectedTypeId', { model: TypeId })
+    .attr('panel1SelectedTypeObject', { model: TypeObject })
+    .attr('panel2SelectedTypeObject', { model: TypeObject })
     .attr('selection', { model: Selection })
     .use(model.nestedObjects);
 
@@ -109,10 +109,10 @@ _.extend(State1.prototype, {
             }
 
             //if we remove it from a panel, we unset it
-            if(this.hasPanel1SelectedTypeId('folder', folder._id))
-                this.unSetPanel1SelectedTypeId();
-            if(this.hasPanel2SelectedTypeId('folder', folder._id))
-                this.unSetPanel2SelectedTypeId();
+            if(this.hasPanel1SelectedTypeObject('folder', folder._id))
+                this.unSetPanel1SelectedTypeObject();
+            if(this.hasPanel2SelectedTypeObject('folder', folder._id))
+                this.unSetPanel2SelectedTypeObject();
         }
     },
 
@@ -188,10 +188,10 @@ _.extend(State1.prototype, {
             }, this);
 
             //if we remove it from a panel, we unset it
-            if(this.hasPanel1SelectedTypeId('listboard', listboard._id))
-                this.unSetPanel1SelectedTypeId();
-            if(this.hasPanel2SelectedTypeId('listboard', listboard._id))
-                this.unSetPanel2SelectedTypeId();
+            if(this.hasPanel1SelectedTypeObject('listboard', listboard._id))
+                this.unSetPanel1SelectedTypeObject();
+            if(this.hasPanel2SelectedTypeObject('listboard', listboard._id))
+                this.unSetPanel2SelectedTypeObject();
         }
     },
 
@@ -247,8 +247,9 @@ _.extend(State1.prototype, {
         var listboard = this.getListboardById(listboardId);
         if (listboard) {
             var container = listboard.containers.byId(containerUpdate._id);
-            if (container)
+            if (container){
                 _.extend(container, containerUpdate);
+            }
         }
     },
     removeContainer: function (listboardId, containerId) {
@@ -257,33 +258,33 @@ _.extend(State1.prototype, {
             this.getListboardById(listboardId).containers.removeById(containerId);
 
             //if we remove it from a panel, we unset it
-            if(this.hasPanel1SelectedTypeId('container', container._id))
-                this.unSetPanel1SelectedTypeId();
-            if(this.hasPanel2SelectedTypeId('container', container._id))
-                this.unSetPanel2SelectedTypeId();
+            if(this.hasPanel1SelectedTypeObject('container', container._id))
+                this.unSetPanel1SelectedTypeObject();
+            if(this.hasPanel2SelectedTypeObject('container', container._id))
+                this.unSetPanel2SelectedTypeObject();
         }
     },
 
     //Server calls    
-    serverSaveContainer: function (listboardId, container, success) {
+    serverSaveContainer: function (container, success) {
         return $.ajax({
-            url: '/listboards/' + listboardId + '/containers',
+            url: '/listboards/' + container.listboardId + '/containers',
             type: "POST",
             data: JSON.stringify(container),
             success: success
         });
     },
-    serverUpdateContainer: function (listboardId, container, success) {
+    serverUpdateContainer: function (container, success) {        
         return $.ajax({
-            url: '/listboards/' + listboardId + '/containers/' + container._id,
+            url: '/listboards/' + container.listboardId + '/containers/' + container._id,
             type: "PUT",
             data: JSON.stringify(container),
             success: success
         });
     },
-    serverRemoveContainer: function (listboardId, container, success) {
+    serverRemoveContainer: function (container, success) {
         return $.ajax({
-            url: '/listboards/' + listboardId + '/containers/' + container._id,
+            url: '/listboards/' + container.listboardId + '/containers/' + container._id,
             type: "DELETE",
             success: success
         });
@@ -371,10 +372,10 @@ _.extend(State1.prototype, {
             }, this);
 
             //if we remove it from a panel, we unset it
-            if(this.hasPanel1SelectedTypeId('item', item._id))
-                this.unSetPanel1SelectedTypeId();
-            if(this.hasPanel2SelectedTypeId('item', item._id))
-                this.unSetPanel2SelectedTypeId();
+            if(this.hasPanel1SelectedTypeObject('item', item._id))
+                this.unSetPanel1SelectedTypeObject();
+            if(this.hasPanel2SelectedTypeObject('item', item._id))
+                this.unSetPanel2SelectedTypeObject();
         }
     },
     removeItemFromFolder: function (folderId, itemToRemove) {
@@ -419,31 +420,47 @@ _.extend(State1.prototype, {
     //////////////////////////////////////////PANELS//////////////////////////////////////
 
     // selected listboard
-    getPanel1SelectedTypeId: function () {
-        return (this.panel1SelectedTypeId && this.panel1SelectedTypeId.type? this.panel1SelectedTypeId : null);
+    getPanel1SelectedTypeObject: function () {
+        return (this.panel1SelectedTypeObject && this.panel1SelectedTypeObject.type? this.panel1SelectedTypeObject : null);
     },
-    getPanel2SelectedTypeId: function () {
-        return (this.panel2SelectedTypeId && this.panel2SelectedTypeId.type? this.panel2SelectedTypeId : null);
-    },    
-    setPanel1SelectedTypeId: function (type, id) {
-        this.panel1SelectedTypeId = new TypeId({type: type, _id: id});
+    getPanel2SelectedTypeObject: function () {
+        return (this.panel2SelectedTypeObject && this.panel2SelectedTypeObject.type? this.panel2SelectedTypeObject : null);
+    },   
+    setObjectToTypeObject: function(typeobject, object) {
+         switch(typeobject.type){
+            case 'listboard' : typeobject.listboard = object; break;
+            case 'container' : typeobject.container = object; break;
+            case 'item' : typeobject.item = object; break;
+            case 'folder' : typeobject.folder = object; break;
+        }
     },
-    setPanel2SelectedTypeId: function (type, id) {
-        this.panel2SelectedTypeId = new TypeId({type: type, _id: id});        
+    setPanel1SelectedTypeObject: function (type, object) {       
+        var typeobject = {type: type};
+        this.setObjectToTypeObject(typeobject, object);
+        this.panel1SelectedTypeObject = new TypeObject(typeobject);
     },
-    unSetPanel1SelectedTypeId: function() {
-        //TODO: moco gives an "Cannot call method 'off' of null " if we set this.panel1SelectedTypeId = null
-        this.panel1SelectedTypeId = new TypeId({type: null, _id: null});;  
+    setPanel2SelectedTypeObject: function (type, object) {
+        var typeobject = {type: type};
+        this.setObjectToTypeObject(typeobject, object);
+        this.panel2SelectedTypeObject = new TypeObject(typeobject);        
     },
-    unSetPanel2SelectedTypeId: function() {
-        //TODO: moco gives an "Cannot call method 'off' of null " if we set this.panel2SelectedTypeId = null
-        this.panel2SelectedTypeId = new TypeId({type: null, _id: null});;  
+    unSetPanel1SelectedTypeObject: function() {
+        //TODO: moco gives an "Cannot call method 'off' of null " if we set this.panel1SelectedTypeObject = null
+        this.panel1SelectedTypeObject = new TypeObject({type: null});;  
     },
-    hasPanel1SelectedTypeId: function(type, id) {
-        return this.panel1SelectedTypeId.type === type && this.panel1SelectedTypeId._id === id;
+    unSetPanel2SelectedTypeObject: function() {
+        //TODO: moco gives an "Cannot call method 'off' of null " if we set this.panel2SelectedTypeObject = null
+        this.panel2SelectedTypeObject = new TypeObject({type: null});;  
     },
-    hasPanel2SelectedTypeId: function(type, id) {
-        return this.panel2SelectedTypeId.type === type && this.panel2SelectedTypeId._id === id;
+    hasPanel1SelectedTypeObject: function(type, id) {
+        return  this.panel1SelectedTypeObject &&
+                this.panel1SelectedTypeObject.type === type &&
+                this.panel2SelectedTypeObject.getObjectId() === id;
+    },
+    hasPanel2SelectedTypeObject: function(type, id) {
+        return  this.panel2SelectedTypeObject &&
+                this.panel2SelectedTypeObject.type === type &&
+                this.panel2SelectedTypeObject.getObjectId() === id;
     },
 
     //////////////////////////////////////////PANELS//////////////////////////////////////

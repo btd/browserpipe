@@ -4,14 +4,25 @@
 
 var React = require('react');
 
-var TobBarComponent = React.createClass({    
-
+var TobBarComponent = React.createClass({   
+    getPanelOptionText: function() {        
+        if(this.props.twoPanels)
+            return '1 Panel'
+        else
+            return '2 Panels'
+    },
     render: function() {
         return (
-            <div id="top-bar">
+            <div id="top-bar" className="navbar">
                 <div className="navbar-inner">
                     <div className="container-fluid">
                         <ul id="account-nav" className="nav pull-right">
+                            <li className="nav-option"> 
+                                <a draggable="false"  tabindex="-1" onClick={ this.props.switchPanels } >{ this.getPanelOptionText() }</a>
+                            </li>
+                            <li className="nav-option"> 
+                                <a draggable="false"  tabindex="-1" onClick={ this.props.openArchive } >Archive</a>
+                            </li>
                             <li className="dropdown nav-option">
                                 <a draggable="false"  href="#" data-toggle="dropdown" className="dropdown-toggle">
                                     <i className="icon-user"></i>

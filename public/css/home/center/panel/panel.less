@@ -1,42 +1,24 @@
 .panel {          
     height:100%;    
     float: left;
-
+    
     &.full-width {
         width:100%;
     }
     &.half-width {
         width:50%;
     }    
-    .sub-bar {
-        border-top: 12px solid #2d4c7f;
+    .sub-bar {        
+        border-top: 9px solid #fff;
         height: 36px;
         margin: 0 6px;            
         color: #444;
 
-        .label-editor {
-            display: inline-block;
-
-            .le-label {            
-                font-weight: bold;
-                font-size: 16px;
-                margin: 6px 18px 0 12px;
-
-                &:hover {
-                    cursor: pointer;
-                }
-            }
-            .le-editor {
-                margin-left: 12px;
-            }
+        &.border {
+            border-top: 9px solid #2d4c7f;
         }
 
-        .last-sync-time {
-            font-size: 10px;
-            font-style: italic;
-        }
-
-        .navbar-inner {   
+        .navbar-inner {               
             margin: 0;
             padding: 0;
             padding-top: 3px;            
@@ -45,14 +27,54 @@
             overflow: hidden;
             background: none;
 
+            .nav {
+
+                &.nav-left {
+                    float: none;
+                    overflow: hidden;
+
+                    li {
+                        width: 100%;
+                        line-height: 14px;
+
+                        .listboard-icon {
+                            float: left;
+                            margin: 6px;
+                        }
+                        .label-editor {            
+
+                            .le-label {            
+                                text-overflow: ellipsis;
+                                overflow: hidden;                
+                                white-space: nowrap;
+                                font-weight: bold;
+                                font-size: 16px;
+                                margin: 6px 12px 0 0;
+
+                                &:hover {
+                                    cursor: pointer;
+                                }
+                            }
+                            .le-editor {
+                                margin-left: 12px;
+                            }
+                        }
+                    }
+                }
+            }
+            
             a {
                 margin: 0 6px;
                 text-shadow: none;
                 padding: 4px 12px;
             }
+
+            .sub-title {
+                font-size: 10px;
+                font-style: italic;
+            }
         }
     }
-
     .panel-center {                 
         height: 100%;
         overflow-y:hidden;                  
@@ -77,6 +99,4 @@
             }    
         }
     }
-   
-
 }

@@ -1,5 +1,6 @@
 .listboards-panel {
-    height: 104px;    
+    padding: 0 120px;
+    height: 114px;    
     position: absolute; 
     top: 46px;
     width: 100%;
@@ -21,7 +22,7 @@
             margin: 0;
             padding: 0;            
         }
-        .listboard-option {  
+        .listboard-option, .add-listboard {
             display: table-cell;                           
             font-size: 13px;
             list-style: none;
@@ -34,51 +35,63 @@
             &:hover {
                 cursor:pointer; 
                 border: 1px solid #c6c6c6;
-            }                                                    
-            &.browser-listboard-option {                
-               /*background-color: lighten(@blue3, 10%);*/
+            }  
+        }
+        .listboard-option {              
+            &.selected {
+                border: 1px solid @blue3;
+            }                                                   
+            &.browser-listboard-option {                               
                position: relative;
 
-                &:hover, &.selected {
-                    /*background-color: @blue3;*/
-                } 
                img {                    
                     float: left;
                     margin-right: 6px;
                }
             }
-            &.custom-listboard-option {
-                /*background-color: lighten(@grey2, 10%);*/
-
-                &:hover, &.selected {
-                    /*background-color: @grey2;*/
-                } 
-            }
             .listboard-option-header {
                 display: table-caption;
                 text-align: left;
                 margin-left: 12px;
-                text-overflow: ellipsis;
-                /*max-height: 22px;*/
                 display: block;
                 overflow: hidden;
-                max-width: 300px;
-                white-space: nowrap;
+
+                .listboard-label {
+                    float: none;
+                    width: auto;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    text-align: right;
+                }
+
+                .listboard-type {
+                    margin: 0 6px;
+                    font-size: 10px;
+                    font-style: italic;                    
+                    float: right;
+                }
+
+                .listboard-icon {
+                    float: right;
+                }
             }
             .listboard-option-containers {
                 display: table-row;                
                 color: @grey3;                
 
-                .container-option {
+
+                .container-option, .listboard-option-add-container {
                     display: table-cell;                                        
                     width: 106px; 
                     border: 1px solid #dcdcdc;
-                    background-color: #F4F4F4;
-                    /*box-shadow: 0 2px 6px rgba(0,0,0,0.4);      
-                    background-color: lighten(@grey1, 10%);
-*/
+                    
+                }
+                .container-option {         
+                    background-color: #F4F4F4;           
+
                     &:hover {
-                        cursor:pointer; 
+                        cursor:pointer;                         
                         border: 1px solid #c6c6c6;
 
                         .favicons {
@@ -108,6 +121,20 @@
                         }
                     }
                 }
+                .listboard-option-add-container {                                        
+                    vertical-align: middle;
+                    .opacity(60);
+
+                    &:hover {
+                        cursor:pointer;                         
+                        border: 1px solid #c6c6c6;
+                        .opacity(100);
+                    }
+
+                    .inner {
+                        width: 100px; 
+                    }
+                }
             }
 
            /* &.selection-selected {
@@ -124,6 +151,20 @@
             }*/
             
         }
+        .add-listboard {                                        
+            vertical-align: middle;
+            .opacity(60);
+
+            &:hover {
+                cursor:pointer;                         
+                border: 1px solid #c6c6c6;
+                .opacity(100);
+            }
+
+            .inner {
+                width: 150px; 
+            }
+        }
         .sortable-placeholder {            
             display: table-cell;
             border: 2px dashed #000;
@@ -139,11 +180,15 @@
             }   
         }
     }
-    .add-listboard {      
-        display: table-cell;
-        margin-top: 9px;
+
+    .extension-button, .archive-button {  
+        width: 90px;
+        height: 70px;
+        z-index: 100;
+        padding-top: 24px;    
+        position: fixed;        
         background-color: @grey4;
-        color: #fff;
+        color: #fff;        
         background-image: none; 
         .opacity(80);      
 
@@ -152,6 +197,12 @@
             cursor:pointer; 
             .opacity(100);
         }        
+    }
+    .extension-button {
+        left: 0;
+    }
+    .archive-button {
+        right: 0;
     }
 
 

@@ -14,6 +14,7 @@ var ContainerPanel = React.createClass({
   saveContainerLabel: function(newTitle, success) {    
     _state.serverUpdateContainer({
       _id: this.props.container._id,
+      listboardId: this.props.container.listboardId,
       title: newTitle
     }, success );
   },
@@ -24,33 +25,39 @@ var ContainerPanel = React.createClass({
     return 'container-panel panel' + 
       (this.props.fullWidth?' full-width': ' half-width');
   },
+  getSubBarClassName: function() {
+    return 'navbar sub-bar' + 
+      (this.props.active?' border': '');
+  },
   render: function() {
     var self = this;  
     return (               
-        <div ref="containerPanel" className={ this.getClassName() }>
-          <div className="navbar sub-bar">
+        <div ref="containerPanel" 
+            className={ this.getClassName() } 
+            onClick= { this.props.activatePanel } >
+          <div className={ this.getSubBarClassName() } >
             <div className="navbar-inner">
-              <ul className="nav">                                  
+              <ul className="nav pull-right">              
+                <li>
+                  <a draggable="false"  className="add-container btn" onClick={this.addEmptyContainer} href="#" title="Add empty container" data-toggle="tooltip">
+                    <i className="icon-plus">Add item</i>
+                  </a>
+                </li>
+                <li>
+                  <a draggable="false"  className="btn" onClick={this.goToSettings} href="#" title="Settings" data-toggle="tooltip">
+                    <i className="icon-cog">Settings</i>
+                  </a>
+                </li>
+              </ul>                
+              <ul className="nav nav-left">                                  
                 <li>                  
                   <LabelEditorComponent 
                     onSaveLabel= {this.saveContainerLabel} 
                     labelValue= {this.props.container.title} 
-                    defaultLabelValue= "Unnamed" />                  
+                    defaultLabelValue= "Unnamed" />  
+                  <span className="sub-title">{this.props.container.type === 0 ? '(window)' : '(onhold window)'}</span>
                 </li>                                  
-              </ul>              
-              <ul className="nav pull-right">              
-                <li>
-                  <a draggable="false"  className="add-container btn" onClick={this.addEmptyContainer} href="#" title="Add empty container" data-toggle="tooltip">
-                    <i className="icon-plus"></i>
-                  </a>
-                </li>                
-                <li className="divider"></li>
-                <li>
-                  <a draggable="false"  className="btn" onClick={this.goToSettings} href="#" title="Settings" data-toggle="tooltip">
-                    <i className="icon-cog"></i>
-                  </a>
-                </li>
-              </ul>                
+              </ul>                            
             </div>
           </div>          
           <div className="panel-center">
@@ -64,6 +71,9 @@ var ContainerPanel = React.createClass({
           </div>
         </div>
     );
+
+
+     /**/
   }
 });
 
