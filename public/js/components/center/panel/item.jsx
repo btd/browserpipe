@@ -2,13 +2,13 @@
  * @jsx React.DOM
  */
 
-var _state = require('../../state'),
+var _state = require('../../../state'),
     _ = require('lodash'),
     page = require('page'),
     React = require('react'),
     Item = require('../common/item'),    
-    LabelEditorComponent = require('../util/label.editor'),    
-    selection = require('../../selection/selection');
+    LabelEditorComponent = require('../../util/label.editor'),    
+    selection = require('../../../selection/selection');
 
 var ItemPanel = React.createClass({ 
   saveItemLabel: function(newTitle, success) {    
@@ -18,12 +18,16 @@ var ItemPanel = React.createClass({
     }, success );
   },
   componentDidMount: function(){
-    $('.scrollable-parent').perfectScrollbar({});
-  },  
+    $('.scrollable-parent', this.refs.itemPanel.getDOMNode()).perfectScrollbar({});
+  }, 
+  getClassName: function() {
+    return 'item-panel panel' + 
+      (this.props.fullWidth?' full-width': ' half-width');
+  }, 
   render: function() {
     var self = this;  
     return (               
-        <div className="item-panel panel">
+        <div ref="itemPanel" className={ this.getClassName() }>
           <div className="navbar sub-bar">
             <div className="navbar-inner">
               <ul className="nav">                                  
@@ -49,7 +53,7 @@ var ItemPanel = React.createClass({
               </ul>                
             </div>
           </div>          
-          <div className="item-center">
+          <div className="panel-center">
             <div className="scrollable-parent">   
               Nothing here yet
             </div>

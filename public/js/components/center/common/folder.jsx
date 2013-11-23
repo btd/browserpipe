@@ -3,10 +3,10 @@
  */
 
 var $ = require('jquery'),
-    _state = require('../../state'),
+    _state = require('../../../state'),
     _ = require('lodash'),
     React = require('react'),
-    selection = require('../../selection/selection');
+    selection = require('../../../selection/selection');
 
 var FolderComponent = React.createClass({   
   isSelected: function() {
@@ -45,12 +45,12 @@ var FolderComponent = React.createClass({
         id={'folder_' + this.props.folder._id} 
         className={ this.getFolderClass() }
         draggable="true" 
-        onDragStart={this.props.folderDraggable.objDragStart} 
+        /*onDragStart={this.props.folderDraggable.objDragStart} 
         onDragEnd={this.props.folderDraggable.objDragEnd}
         onDragOver={this.props.folderDraggable.objDragOver}
         onDragEnter={this.props.folderDraggable.objDragEnter}
         onDragLeave={this.props.folderDraggable.objDragLeave}
-        onDrop={this.props.folderDraggable.objDrop}
+        onDrop={this.props.folderDraggable.objDrop}*/
       >
         <span onClick={ this.folderClicked }>{ this.props.folder.label }</span>
         <i ref='btnRemoveChildFolder' onClick={this.removeFolder} className="icon-remove remove-child-folder hide" />

@@ -7,3 +7,5 @@ var TypeId = model()
     .attr('type') // type of object: listboard, folder, container, item
     .attr('_id') // id of object
     .use(model.nestedObjects);
+
+module.exports.TypeId = TypeId;

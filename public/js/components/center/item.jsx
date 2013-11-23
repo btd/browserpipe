@@ -23,18 +23,6 @@ var ItemComponent = React.createClass({
     return this.props.forceSelected || 
           selection.isItemSelected(this.props.item._id);
   },
-  navigateToItem: function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    if(e.ctrlKey){
-        if(!this.isSelected())
-          selection.selectItem(this.props.item._id);
-        else
-          selection.unSelectItem(this.props.item._id);
-    }
-    else    
-      page('/item/' + this.props.item._id);
-  },
   urlClicked: function(e) {
     e.stopPropagation();      
     if(this.props.isTab) {
@@ -54,7 +42,6 @@ var ItemComponent = React.createClass({
       <li ref='item' 
           id={ this.getItemId() } 
           ref="item"  
-          onClick={ this.navigateToItem } 
           className={ this.getItemClass() }
           /*draggable="true"
           onDragStart={this.props.itemDraggable.objDragStart} 

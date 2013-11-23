@@ -2,12 +2,12 @@
  * @jsx React.DOM
  */
 
-var _state = require('../../state'),
+var _state = require('../../../state'),
     page = require('page'),
-    extension = require('../../extension/extension'),
+    extension = require('../../../extension/extension'),
     _ = require('lodash'),
     React = require('react'),
-    selection = require('../../selection/selection');
+    selection = require('../../../selection/selection');
 
 var ItemComponent = React.createClass({   
   getTitle: function() {
@@ -23,24 +23,21 @@ var ItemComponent = React.createClass({
     return this.props.forceSelected || 
           selection.isItemSelected(this.props.item._id);
   },
-  navigateToItem: function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    if(e.ctrlKey){
-        if(!this.isSelected())
-          selection.selectItem(this.props.item._id);
-        else
-          selection.unSelectItem(this.props.item._id);
-    }
-    else    
-      page('/item/' + this.props.item._id);
-  },
   urlClicked: function(e) {
     e.stopPropagation();      
     if(this.props.isTab) {
       e.preventDefault();
       extension.focusTab(this.props.item.externalId);
     }    
+  },
+  handleContainerClick: function(e){
+    e.preventDefault();        
+    e.stopPropagation();
+    var elementId = e.target.id;
+    if(!elementId)
+        elementId = $(e.target).parents('.item:first').attr('id');
+    var itemId = elementId.substring(3);
+    this.props.navigateToItem(itemId);
   },
   getItemId : function() {
     return "it-" + this.props.item._id;
@@ -54,7 +51,7 @@ var ItemComponent = React.createClass({
       <li ref='item' 
           id={ this.getItemId() } 
           ref="item"  
-          onClick={ this.navigateToItem } 
+          onClick={ this.handleContainerClick } 
           className={ this.getItemClass() }
           /*draggable="true"
           onDragStart={this.props.itemDraggable.objDragStart} 

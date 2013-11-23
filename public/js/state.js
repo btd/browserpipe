@@ -420,29 +420,31 @@ _.extend(State1.prototype, {
 
     // selected listboard
     getPanel1SelectedTypeId: function () {
-        return this.panel1SelectedTypeId;
+        return (this.panel1SelectedTypeId && this.panel1SelectedTypeId.type? this.panel1SelectedTypeId : null);
     },
     getPanel2SelectedTypeId: function () {
-        return this.panel2SelectedTypeId;
+        return (this.panel2SelectedTypeId && this.panel2SelectedTypeId.type? this.panel2SelectedTypeId : null);
     },    
     setPanel1SelectedTypeId: function (type, id) {
         this.panel1SelectedTypeId = new TypeId({type: type, _id: id});
     },
     setPanel2SelectedTypeId: function (type, id) {
-        this.panel2SelectedTypeId = new TypeId({type: type, _id: id});
+        this.panel2SelectedTypeId = new TypeId({type: type, _id: id});        
     },
     unSetPanel1SelectedTypeId: function() {
-        this.panel1SelectedTypeId = null;  
+        //TODO: moco gives an "Cannot call method 'off' of null " if we set this.panel1SelectedTypeId = null
+        this.panel1SelectedTypeId = new TypeId({type: null, _id: null});;  
     },
     unSetPanel2SelectedTypeId: function() {
-        this.panel1SelectedTypeId = null;  
+        //TODO: moco gives an "Cannot call method 'off' of null " if we set this.panel2SelectedTypeId = null
+        this.panel2SelectedTypeId = new TypeId({type: null, _id: null});;  
     },
     hasPanel1SelectedTypeId: function(type, id) {
         return this.panel1SelectedTypeId.type === type && this.panel1SelectedTypeId._id === id;
     },
     hasPanel2SelectedTypeId: function(type, id) {
         return this.panel2SelectedTypeId.type === type && this.panel2SelectedTypeId._id === id;
-    }
+    },
 
     //////////////////////////////////////////PANELS//////////////////////////////////////
 

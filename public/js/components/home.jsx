@@ -19,69 +19,69 @@ var HomeComponent = React.createClass({
       return {
           isPanel1Active: true,
           listboards: this.props.listboards,
-          panel1SelectedObject: this.props.panel1SelectedObject,
-          panel2SelectedObject: this.props.panel2SelectedObject,
+          panel1SelectedTypeId: this.props.panel1SelectedTypeId,
+          panel2SelectedTypeId: this.props.panel2SelectedTypeId,
           selection: this.props.selection,
           isExtensionInstalled: this.props.isExtensionInstalled
       };
   },  
   navigateToTypeId: function(type, id){
     //Check if there is a second panel
-    if(this.state.panel2SelectedObject){
+    if(this.state.panel2SelectedTypeId){
       if(this.state.isPanel1Active)
-        page('/panel1/' + type + '/' + id + '/panel2/' + this.state.panel2SelectedObject.type + '/' + this.state.panel2SelectedObject._id);
+        page('/panel1/' + type + '/' + id + '/panel2/' + this.state.panel2SelectedTypeId.type + '/' + this.state.panel2SelectedTypeId._id);
       else
-        page('/panel1/' + this.state.panel1SelectedObject.type + '/' + this.state.panel1SelectedObject._id + '/panel2/' + type + '/' + id + );
+        page('/panel1/' + this.state.panel1SelectedTypeId.type + '/' + this.state.panel1SelectedTypeId._id + '/panel2/' + type + '/' + id);
     }
     else
       page('/panel1/' + type + '/' + id);
-  }
+  },
   navigateToListboard: function(listboardId) {
-    navigateToTypeId('listboard', listboardId);
+    this.navigateToTypeId('listboard', listboardId);
   },
   navigateToContainer: function(containerId) {
-    navigateToTypeId('container', containerId);
+    this.navigateToTypeId('container', containerId);
   },
   navigateToItem: function(itemId) {
-    navigateToTypeId('item', itemId);
+    this.navigateToTypeId('item', itemId);
   },
   navigateToFolder: function(folderId) {
-    navigateToTypeId('folder', folderId);
+    this.navigateToTypeId('folder', folderId);
   },
   activatePanel1: function(){
     if(!this.state.isPanel1Active)
-      this.setState({ this.state.isPanel1Active : true });
+      this.setState({ isPanel1Active : true });
   },
   activatePanel2: function(){
     if(this.state.isPanel1Active)
-      this.setState({ this.state.isPanel1Active : false });
+      this.setState({ isPanel1Active : false });
   },
-  getSelectedComponent: function(type, id, fullWidth, active, activatePanel){
-    switch(type){
+  getSelectedComponent: function(typeid, fullWidth, active, activatePanel){    
+    switch(typeid.type){
         case 'listboard' : {                
-            var listboard = _state.getListboardById(id);
+            var listboard = _state.getListboardById(typeid._id);            
             if(listboard)
                 return <ListboardPanel 
                   listboard= { listboard } 
                   fullWidth = { fullWidth } 
                   active = { active }
                   onClickEvent = { activatePanel } 
-                  navigateToContainer = { navigateToContainer } />;
+                  navigateToContainer = { this.navigateToContainer } />;
             break;
         }
         case 'container' : {                
-            var container = _state.getListboardContainerById(id);
+            var container = _state.getContainerById(typeid._id);
             if(container)
                 return <ContainerPanel 
                   container= { container } 
                   fullWidth = { fullWidth } 
                   active = { active }
                   onClickEvent = { activatePanel } 
-                  navigateToItem = { navigateToItem } />;
+                  navigateToItem = { this.navigateToItem } />;
             break;
         }
         case 'item' : {                
-            var item = _state.getItemListboardById(id);
+            var item = _state.getItemById(typeid._id);
             if(item)
                 return <ItemPanel 
                   item= { item } 
@@ -91,15 +91,15 @@ var HomeComponent = React.createClass({
             break;
         }
         case 'folder' : {                
-            var folder = _state.getFolderById(id);
+            var folder = _state.getFolderById(typeid._id);
             if(folder)
                 return <FolderPanel 
                   folder= { folder } 
                   fullWidth = { fullWidth } 
                   active = { active }
                   onClickEvent = { activatePanel } 
-                  navigateToItem = { navigateToItem } 
-                  navigateToFolder = { navigateToFolder } />;
+                  navigateToItem = { this.navigateToItem } 
+                  navigateToFolder = { this.navigateToFolder } />;
             break;
         }
     }    
@@ -109,22 +109,23 @@ var HomeComponent = React.createClass({
     this.listboardsPanelComponent = <ListboardsPanelComponent       
       navigateToListboard={ this.navigateToListboard } 
       navigateToContainer={ this.navigateToContainer } 
-      isPanel1Active={ isPanel1Active }
-      panel1SelectedObject= { this.state.panel1SelectedObject } 
-      panel2SelectedObject= { this.state.panel2SelectedObject } 
+      navigateToFolder={ this.navigateToFolder } 
+      isPanel1Active={ this.state.isPanel1Active }
+      panel1SelectedTypeId= { this.state.panel1SelectedTypeId } 
+      panel2SelectedTypeId= { this.state.panel2SelectedTypeId } 
       isExtensionInstalled={ this.state.isExtensionInstalled }
       listboards= { this.state.listboards } />
     
-    if(this.state.panel1SelectedObject && this.state.panel2SelectedObject) {
-      this.panel1 = this.getSelectedComponent(this.state.panel1SelectedObject, false, isPanel1Active, activatePanel1);
-      this.panel2 = this.getSelectedComponent(this.state.panel2SelectedObject, false, !isPanel1Active, activatePanel2);
+    if(this.state.panel1SelectedTypeId && this.state.panel2SelectedTypeId) {
+      this.panel1 = this.getSelectedComponent(this.state.panel1SelectedTypeId, false, this.state.isPanel1Active, this.activatePanel1);
+      this.panel2 = this.getSelectedComponent(this.state.panel2SelectedTypeId, false, !this.state.isPanel1Active, this.activatePanel2);
     }
-    else if(this.state.panel1SelectedObject) {
-      this.panel1 = this.getSelectedComponent(this.state.panel1SelectedObject, true, isPanel1Active, activatePanel1);
+    else if(this.state.panel1SelectedTypeId) {
+      this.panel1 = this.getSelectedComponent(this.state.panel1SelectedTypeId, true, true, this.activatePanel1);
       this.panel2 = null;
     }
-    else if(this.state.panel2SelectedObject) {
-      this.panel1 = this.getSelectedComponent(this.state.panel2SelectedObject, true, isPanel1Active, activatePanel1);
+    else if(this.state.panel2SelectedTypeId) {
+      this.panel1 = this.getSelectedComponent(this.state.panel2SelectedTypeId, true, true, this.activatePanel1);
       this.panel2 = null; 
     }
     else {
@@ -155,16 +156,16 @@ var HomeComponent = React.createClass({
 
 module.exports.render = function (
     listboards, 
-    panel1SelectedObject,
-    panel2SelectedObject,
+    panel1SelectedTypeId,
+    panel2SelectedTypeId,
     selection,
     isExtensionInstalled
   ) {
   return React.renderComponent(
     <HomeComponent 
       listboards={listboards} 
-      panel1SelectedObject = {panel1SelectedObject}
-      panel2SelectedObject={panel2SelectedObject}
+      panel1SelectedTypeId = {panel1SelectedTypeId}
+      panel2SelectedTypeId={panel2SelectedTypeId}
       selection={selection}
       isExtensionInstalled={isExtensionInstalled}/>,
     document.getElementById('body-inner')

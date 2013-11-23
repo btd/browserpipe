@@ -73,16 +73,22 @@ var ListboardsPanelComponent = React.createClass({
         }            
         else     */       
             this.props.navigateToContainer(containerId);
+    },    
+    handleArchiveClick: function(e){
+        e.preventDefault();        
+        e.stopPropagation();
+        var rootFolder = _state.getRootFolder();
+        this.props.navigateToFolder(rootFolder._id);
     },
     getListboardClass: function(listboard) {
         return 'listboard-option ' +
-        (this.props.selectedListboard._id === listboard._id ?  'selected ' : '') + 
+        /*(this.props.selectedListboard._id === listboard._id ?  'selected ' : '') + */
         (listboard.type === 0 ? 'browser-listboard-option ' : 'custom-listboard-option ') +
         (this.isListboardSelected(listboard._id)? selection.getClassName() : '');
     },
     getContainerClass: function(container) {
         return 'container-option ' +
-        (this.props.selectedContainer && this.props.selectedContainer._id === container._id ?  'selected ' : '') + 
+        /*(this.props.selectedContainer && this.props.selectedContainer._id === container._id ?  'selected ' : '') + */
         (this.isContainerSelected(container._id)? selection.getClassName() : '');
     },
     getContainerTitle: function(container) {     
@@ -157,7 +163,10 @@ var ListboardsPanelComponent = React.createClass({
                         }
                         <a draggable="false"  className="add-listboard btn" onClick={this.addEmptyListboardAndSelectIt}  href="#" title="Add listboard" data-toggle="tooltip">
                             <i className="icon-plus"></i>
-                        </a>                                   
+                        </a> 
+                        <a onClick={this.handleArchiveClick}>
+                            ARCHIVE
+                        </a>                                    
                     </div>     
 
                 /*<div id="installExtensionModal" className="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

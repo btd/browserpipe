@@ -2,13 +2,13 @@
  * @jsx React.DOM
  */
 
-var _state = require('../../state'),
+var _state = require('../../../state'),
     _ = require('lodash'),
     page = require('page'),
     React = require('react'),
     Item = require('../common/item'),    
-    LabelEditorComponent = require('../util/label.editor'),    
-    selection = require('../../selection/selection');
+    LabelEditorComponent = require('../../util/label.editor'),    
+    selection = require('../../../selection/selection');
 
 var ContainerPanel = React.createClass({ 
   saveContainerLabel: function(newTitle, success) {    
@@ -17,13 +17,17 @@ var ContainerPanel = React.createClass({
       title: newTitle
     }, success );
   },
-  componentDidMount: function(){
-    $('.scrollable-parent').perfectScrollbar({});
+  componentDidMount: function(){    
+    $('.scrollable-parent', this.refs.containerPanel.getDOMNode()).perfectScrollbar({});
   },  
+  getClassName: function() {
+    return 'container-panel panel' + 
+      (this.props.fullWidth?' full-width': ' half-width');
+  },
   render: function() {
     var self = this;  
     return (               
-        <div className="container-panel panel">
+        <div ref="containerPanel" className={ this.getClassName() }>
           <div className="navbar sub-bar">
             <div className="navbar-inner">
               <ul className="nav">                                  
@@ -49,11 +53,11 @@ var ContainerPanel = React.createClass({
               </ul>                
             </div>
           </div>          
-          <div className="container-center">
+          <div className="panel-center">
             <ul className="items scrollable-parent">
             {                    
               this.props.container.items.map(function(item) {
-                  return <Item item= {item}/>
+                  return <Item item= {item} navigateToItem={self.props.navigateToItem} />
               })
             }
             </ul>

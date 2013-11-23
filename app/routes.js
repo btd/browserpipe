@@ -29,6 +29,10 @@ module.exports = function (app, passport) {
     
   app.param('userId', users.user);
 
+  //Home routes
+  app.get(    '/panel1/:type1/:id1',                     auth.ensureLoggedIn('/login'), main.home);
+  app.get(    '/panel1/:type1/:id1/panel2/:type2/:id2',  auth.ensureLoggedIn('/login'), main.home);
+
   //Invitation routes
   var invitation = require('./controllers/invitation');
   app.post(  '/invitations', invitation.create);
@@ -36,14 +40,8 @@ module.exports = function (app, passport) {
   //Extension
   app.get(    '/clients/chrome/extension.crx', auth.send401IfNotAuthenticated, main.chromeExtension);
 
-  //Listboard
-  var listboard = require('./controllers/listboard');
-  app.get(    '/listboards',              auth.ensureLoggedIn('/login'), main.home);
-  app.get(    '/listboard/:listboardId',  auth.ensureLoggedIn('/login'), main.home);
-  app.get(    '/container/:containerId',  auth.ensureLoggedIn('/login'), main.home);
-  app.get(    '/listboard/:listboardId/settings',      auth.ensureLoggedIn('/login'), main.home);
-
   //Listboards routes
+  var listboard = require('./controllers/listboard');
   app.post(  '/listboards',                auth.send401IfNotAuthenticated, listboard.create);
   app.put(   '/listboards/:listboardId',   auth.send401IfNotAuthenticated, listboard.update);
   app.delete('/listboards/:listboardId',   auth.send401IfNotAuthenticated, listboard.destroy);
@@ -66,8 +64,6 @@ module.exports = function (app, passport) {
 
   //Items routes
   var item = require('./controllers/item');
-  app.get(    '/item/:itemId',  auth.ensureLoggedIn('/login'), main.home);
-  
   app.post(   '/items',          item.create);
   app.put(    '/items/:itemId',  item.update);
   app.delete( '/items/:itemId',  item.destroy);
