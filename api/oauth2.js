@@ -134,12 +134,14 @@ module.exports = function(app) {
             if(req.is('application/x-www-form-urlencoded') && req.body && nonEmptyString(req.body.username) && nonEmptyString(req.body.password)) {
                 User.byEmail(req.body.username)
                     .then(function (user) {
-                        if (!user || !user.authenticate(req.body.password)) {
-                            return res.redirect('../login?error=invalid_user');
-                        }
+                        if (!user) return res.redirect('../login?error=invalid_user');
 
-                        req.session.username = req.body.username;
-                        res.redirect('../requestAccess');
+                        user.authenticate(req.body.password, function(err, result) {
+                            if(err || !result) return res.redirect('../login?error=invalid_user');
+
+                            req.session.username = req.body.username;
+                            res.redirect('../requestAccess');
+                        });
                     })
                     .fail(function() {
                         return res.redirect('../login?error=invalid_user');

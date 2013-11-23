@@ -2,7 +2,7 @@
   "name": "listboard.it",
   "version": "0.0.0",
   "dependencies": {
-    "lodash": "~2.2.1",
+    "lodash": "~2.3.0",
     "jquery": "~2.0.2",
     "bootstrap": "~2.3.2",
     "socket.io-client": "~0.9.16",

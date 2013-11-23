@@ -47,15 +47,15 @@ CheckUrlJob.prototype.exec = function (done) {
             if (utils.isHtmlContentType(mime)) {
                 that.log('Html content - schedule download');
                 that.jobs.schedule('download-html', { uri: that.uri, uniqueId: that.uniqueId })
-                    .on('complete', function() {                            
+                    .on('complete', function () {
                         done();
                     });
             }
-            else 
+            else
                 done();
 
             //TODO we can download probably not big pdfs, texts
-            
+
         })
 };
 

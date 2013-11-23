@@ -2,6 +2,13 @@
     "globals": {
         "module": true,
         "exports": true,
-        "require": true
-    }
+        "require": true,
+        "__dirname": true,
+        "console": true
+    },
+    "asi": true,
+    "smarttabs": true,
+    "expr": true,
+    "newcap": false,
+    "supernew": true
 }

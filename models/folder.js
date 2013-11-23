@@ -11,7 +11,7 @@ var FolderSchema = new Schema({
     label: {type: String, trim: true }, //name of this folder
     path: {type: String, trim: true, default: ''}, //name of parent folder, default set to '' that if we will create index by this field, we do not create sparse index
     user: {type: Schema.ObjectId, ref: 'User'},
-    index: {type: Number, required: true}
+    index: {type: Number, required: true, default: 0}
 },{
     toObject: { virtuals: true },
     toJSON: { virtuals: true }

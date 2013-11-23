@@ -146,7 +146,7 @@ module.exports.unSelectItem = function(id){
                 selectAllButItem(container, item);
             }
             else { 
-                var container = _state.getContainerById(containerId);                      
+                container = _state.getContainerById(containerId);
                 var listboard = that.getSelectedListboardById(container.listboardId);
                 if(listboard) { //listboard was selected
                     //select the all but item in listboard

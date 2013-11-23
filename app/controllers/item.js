@@ -1,30 +1,19 @@
 /* jshint node: true */
 
 var _ = require('lodash'),
-    config = require('../../config')
-    mongoose = require('mongoose'),
-    Item = mongoose.model('Item'),
-    responses = require('.././responses.js'),
-    errors = require('.././errors.js'),
+    config = require('../../config'),
+    Item = require('../../models/item'),
+    responses = require('../responses'),
+    errors = require('../errors'),
+
     jobs = new (require('../../jobs/manager'));
 
-var saveItem = function(req, res, item, delta) {
-    return item.saveWithPromise()
-        .then(responses.sendModelId(res, item._id))
-        .fail(errors.ifErrorSendBadRequest(res))
-        .then(updateClients(req, delta))
-}
+var userUpdate = require('./user_update');
 
-var updateClients = function(req, delta) {
-    return function() {
-        req.sockets.forEach(function(s) {
-            s.emit(delta.type, delta.data);
-        });
-    }
-}
 
 //Create item
 exports.create = function(req, res) {
+    //TODO add validation
     var item = new Item(_.pick(req.body, 'type', 'folders', 'containers', 'title', 'note'));
 
     item.url = req.body.url;
@@ -34,12 +23,9 @@ exports.create = function(req, res) {
      
     item.user = req.user;
 
-    var delta = {
-        type: 'create.item',
-        data: item
-    }
-
-    saveItem(req, res, item, delta)
+    item.saveWithPromise()
+        .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
+        .then(userUpdate.createItem.bind(null, req.user._id, item))
         .then(launchItemJobs(req, res, item))
         .done();
 }
@@ -56,7 +42,8 @@ var launchItemJobs = function(req, res, item) {
             uniqueId: item._id.toString()
         }).on('complete', function() {
             item.favicon = config.storeUrl + "/" + item._id.toString() + "/favicon.ico";
-            saveItem(req, res, item, delta)
+            item.saveWithPromise()
+                .then(userUpdate.createItem.bind(null, req.user._id, item))
                 .done();
         })
     }
@@ -64,6 +51,9 @@ var launchItemJobs = function(req, res, item) {
 
 //Update item
 exports.update = function(req, res) {
+    //TODO update
+    console.error('This method is broken, need to update when we move containers and folders')
+
     var item = req.currentItem;
     //We mark them so mongoose saves them
     //TODO: add addcontainer/addfolder/removecontainer/removefolder rest calls to optimize    
@@ -76,46 +66,27 @@ exports.update = function(req, res) {
     if (req.body.folders)
         item.folders = req.body.folders;
 
-    var delta = {
-        type: 'update.item',
-        data: item
-    }
-
-    saveItem(req, res, item, delta)
-        .done();
+    res.send(500);
 }
 
 //Find item by id
 exports.item = function(req, res, next, id) {
-    Item.byId(id)
+    Item.by({ id: id, user: req.user })
         .then(function(item) {
-            if (!item)
-                errors.sendNotFound(res);
-            else {
-                if (item.user != req.user._id.toString())
-                    errors.sendForbidden(res);
-                else {
-                    req.currentItem = item;
-                    next()
-                }
-            }
-        }).fail(function(err) {
-            next(err);
-        });
+            if (!item) return errors.sendNotFound(res);
+
+            req.currentItem = item;
+            next();
+        }, next)
+        .done();
 }
 
 //Delete item
 exports.destroy = function(req, res) {
-    var item = req.currentItem
-
-    var delta = {
-        type: 'delete.item',
-        data: item
-    }
+    var item = req.currentItem;
 
     item.removeWithPromise()
-        .then(responses.sendModelId(res, item._id))
-        .fail(errors.ifErrorSendBadRequest(res))
-        .then(updateClients(req, delta))
+        .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
+        .then(userUpdate.createItem.bind(null, req.user._id, item))
         .done();
 }

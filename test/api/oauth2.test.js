@@ -11,7 +11,7 @@ var jsdom = require('jsdom');
 var Cookie = require('cookiejar').Cookie;
 
 var app = require('../../api/express');
-require('../../logger');
+//require('../../logger');
 
 var goodUser = { email: 'a@a.com', password: '123', name: 'User' };
 

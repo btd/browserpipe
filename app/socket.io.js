@@ -82,7 +82,7 @@ module.exports = function () {
         };
     };
 
-    var filterSocketsByUser = function (sio, filter) {
+    /*var filterSocketsByUser = function (sio, filter) {
         var handshaken = sio.sockets.manager.handshaken;
         return Object.keys(handshaken || {})
             .filter(function (skey) {
@@ -91,7 +91,7 @@ module.exports = function () {
             .map(function (skey) {
                 return sio.sockets.manager.sockets.sockets[skey];
             });
-    };
+    };*/
 
     return {
 
@@ -121,7 +121,7 @@ module.exports = function () {
                     client.end();
                 });
             });
-        },
+        }/*,
         socketMiddleware: function () {
             var self = this;
             return function (req, res, next) {
@@ -133,6 +133,6 @@ module.exports = function () {
                 }
                 next();
             }
-        }
+        }*/
     }
 }();

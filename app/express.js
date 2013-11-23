@@ -75,7 +75,7 @@ module.exports = function (app, config, passport) {
     sio.init(server);
     
     //Add socket.io middleware
-    app.use(sio.socketMiddleware());
+    //app.use(sio.socketMiddleware());
 
     // routes should be at the last
     app.use(app.router)

@@ -2,6 +2,7 @@ var mongoose = require('mongoose'),
     LocalStrategy = require('passport-local').Strategy,
     User = mongoose.model('User');
 
+var error = { message: 'Invalid email or password' };
 
 module.exports = function (passport) {
 
@@ -12,8 +13,8 @@ module.exports = function (passport) {
 
     passport.deserializeUser(function (id, done) {
         User.byId(id)
-            .then(done.bind(undefined, null))
-            .fail(done);
+            .then(done.bind(undefined, null), done)
+            .done();
     });
 
     // use local strategy
@@ -24,12 +25,16 @@ module.exports = function (passport) {
         function (email, password, done) {
             User.byEmail(email)
                 .then(function (user) {
-                    if (!user || !user.authenticate(password)) {
-                        return done(null, false, { message: 'Invalid email or password' })
-                    }
-                    return done(null, user)
-                })
-                .fail(done);
+                    if (!user) return done(null, false, error);
+
+                    user.authenticate(password, function(err, result) {
+                        if(err) return done(err);
+
+                        if(result) done(null, false, error);
+                        else done(null, user);
+                    });
+                }, done)
+                .done();
         }
     ));
 };

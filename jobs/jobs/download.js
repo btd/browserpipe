@@ -40,7 +40,7 @@ DownloadJob.prototype.exec = function (done) {
             if (err) return done(err);
         });
 
-    if(!this.path) {
+    if (!this.path) {
         var filename = path.basename(new URL(this.uri).filename() || '/index.html');
         this.path = path.join(config.storePath, this.uniqueId, filename);
     }
@@ -48,7 +48,7 @@ DownloadJob.prototype.exec = function (done) {
     this.log('Prepare location for file: ' + this.path);
     //this.log(req.headers);
 
-    mkdirp(path.dirname(this.path), function(err) {
+    mkdirp(path.dirname(this.path), function (err) {
 
         if (err) return done(err);
 
@@ -56,7 +56,7 @@ DownloadJob.prototype.exec = function (done) {
 
         req.pipe(stream);
 
-        stream.on('finish', function() {
+        stream.on('finish', function () {
             that.log('Finish download: ' + that.path);
 
             done();

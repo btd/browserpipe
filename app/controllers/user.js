@@ -34,7 +34,8 @@ exports.create = function (req, res, next) {
 
     //Validate user input
     req.check('name', 'Please enter a first name').notEmpty();
-    req.check('email', 'Please enter a valid email.').len(6,64).isEmail();    
+    req.check('email', 'Please enter a valid email').isEmail();
+    req.check('password', 'Please enter a non empty password').notEmpty();
 
     //If errors, flash or send them
     var errors = req.validationErrors();
@@ -61,12 +62,16 @@ exports.create = function (req, res, next) {
     var readLaterFolder = rootFolder.createChildFolder("Fun videos");
     var coolSitesFolder = rootFolder.createChildFolder("Cool Sites");
    
-    User.byEmail(user.email)
+    User.byEmail(req.body.email)
         .then(function(_user) {
             if(_user) {
                 req.flash('errors', [{ msg: 'Email already used' }]);
                 res.redirect('/signup');
             } else {
+                var user = new User(_.pick(req.body, 'email', 'name', 'password'));
+                user.provider = 'local' //for passport
+
+
                 return user.saveWithPromise()
                     .then(function() {
                         return q.all([
