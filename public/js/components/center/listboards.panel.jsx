@@ -10,14 +10,7 @@ var _state = require('../../state'),
     listboardSelectorDraggable = require('../../dragging/listboard.selector'),
     selection = require('../../selection/selection');
 
-var ListboardsPanelComponent = React.createClass({    
-    /*getListboardsPanelWidth: function() {
-        return this.props.width;
-    },       
-    getListboardsPanelStyle: function() {
-        var visible = this.props.visible? "block" : "none";
-        return { width: this.getListboardsPanelWidth(), display: visible };
-    },*/
+var ListboardsPanelComponent = React.createClass({        
     renderExtensionButton: function() {
         /*if(!this.props.isExtensionInstalled)
             return (
@@ -120,9 +113,9 @@ var ListboardsPanelComponent = React.createClass({
                     className={ this.getContainerClass(container) } 
                     onClick={this.handleContainerClick}
                     id={'cont_' + container._id}
-                >
-                    <div className="title">{this.getContainerTitle(container)}</div>
+                >                    
                     {this.getContainerFavicons(container)}
+                    <div className="title">{this.getContainerTitle(container)}</div>
                 </li>;
     },
     renderListboardOption: function(listboard) {
@@ -146,49 +139,9 @@ var ListboardsPanelComponent = React.createClass({
                     </ul>     
                 </div>                   
     },
-
     componentDidMount: function(){
-        $('.listboards-panel').perfectScrollbar({
-        });
-    },  
-
-     //className="browser-listboards"
-                    //className="custom-listboards"
-
-        /*return <li             
-            className={ this.getListboardClass(listboard) }            
-            id={'li_' + listboard._id}
-            draggable="true"             
-            onClick={this.handleListboardClick}
-            onDragStart={listboardSelectorDraggable.objDragStart} 
-            onDragEnd={listboardSelectorDraggable.objDragEnd}
-            onDragOver={listboardSelectorDraggable.objDragOver}
-            onDragEnter={listboardSelectorDraggable.objDragEnter}
-            onDragLeave={listboardSelectorDraggable.objDragLeave}
-            onDrop={listboardSelectorDraggable.objDrop}
-            title={listboard.label? listboard.label : 'Unnamed'}> 
-                { listboard.type === 0 ? <img draggable="false" src="/img/common/chrome-logo.png" alt="Chrome Logo" /> : null }
-                <div>{listboard.label? listboard.label : 'Unnamed'}</div>
-                <ul className="containers" 
-                onDragOver={containerDraggable.parentDragOver}
-                onEnter={containerDraggable.parentDragEnter}
-                onDragLeave={containerDraggable.parentDragLeave}
-                onDrop={containerDraggable.parentDrop}
-                >
-                {   
-                    listboard.containers.map(function(container) {                  
-                        return <Container 
-                          container= { container } 
-                          selectedListboard= { self.props.selectedListboard } 
-                          containersHeight= { containersHeight }
-                          containerDraggable= { containerDraggable }
-                          forceSelected={forceSelected} />
-                    })
-                }
-                </ul>
-            </li > */
-
-
+        $('.listboards-panel').perfectScrollbar({});
+    },
     render: function() {
         var self = this;
         return  (

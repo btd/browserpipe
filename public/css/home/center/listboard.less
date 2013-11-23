@@ -4,9 +4,10 @@
     float: left;
     
     .sub-bar {
+        border-top: 12px solid #2d4c7f;
         height: 36px;
-        margin: 0;              
-        color: white;
+        margin: 0 6px;            
+        color: #444;
 
         .label-editor {
             display: inline-block;
@@ -37,17 +38,12 @@
             min-height: 33px;
             .flatten();  
             overflow: hidden;
+            background: none;
 
             a {
                 margin: 0 6px;
                 text-shadow: none;
                 padding: 4px 12px;
-            }
-            &.browser {                   
-                background: @blue3;
-            }
-            &.custom {                   
-                background:@grey2 !important;
             }
         }
     }
@@ -59,18 +55,17 @@
         -moz-box-sizing:border-box;
         -ms-box-sizing:border-box;
         box-sizing:border-box;
-        margin:-36px 0 0 0;
-        padding:36px 0 0 0;        
+        margin:-48px 0 0 0;
+        padding:48px 0 0 0;        
         
         .items {
-            position: relative;
-            background: url("/img/common/bg-pattern.png") repeat 50% 0;                                         
+            position: relative;            
             height: 100%;   
             overflow-y:hidden;                  
-        -webkit-box-sizing:border-box;
-        -moz-box-sizing:border-box;
-        -ms-box-sizing:border-box;
-        box-sizing:border-box;
+            -webkit-box-sizing:border-box;
+            -moz-box-sizing:border-box;
+            -ms-box-sizing:border-box;
+            box-sizing:border-box;
 
             .ps-scrollbar-x-rail {
                 display: none;

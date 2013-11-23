@@ -15,6 +15,9 @@ var item = require('./data/item'),
     Item = item.Item,
     Items = item.Items;
 
+var typeId = require('./data/typeid'),
+    TypeId = typeId.TypeId;
+
 var selection = require('./data/selection'),
     Selection = selection.Selection;
 
@@ -30,11 +33,8 @@ var State1 = model()
     .attr('listboards', { collection: Listboards })
     .attr('containers', { collection: Containers })
     .attr('items', { collection: Items })
-    .attr('isContainerSelected')
-    .attr('selectedListboard', { model: Listboard })
-    .attr('selectedContainer', { model: Container })
-    .attr('selectedItem', { model: Item })
-    .attr('selectedFolder', { model: Folder })
+    .attr('panel1SelectedTypeId', { model: TypeId })
+    .attr('panel2SelectedTypeId', { model: TypeId })
     .attr('selection', { model: Selection })
     .use(model.nestedObjects);
 
@@ -67,9 +67,6 @@ _.extend(State1.prototype, {
         }, this);
     },
 
-    getSelectedFolder: function() {
-        return this.selectedFolder;
-    },
     getFolderByFilter: function (filter) {
         return this.folders.byFilter(filter);
     },
@@ -79,8 +76,9 @@ _.extend(State1.prototype, {
     getAllFolders: function () {
         return this.folders;
     },
-    setSelectedFolder: function (folderId) {
-        this.selectedFolder = this.getFolderById(folderId);
+    getRootFolder: function () {
+        //There is always a root folder
+        return this.folders[0];
     },
 
     //CRUD
@@ -109,6 +107,12 @@ _.extend(State1.prototype, {
                 var parent = this.getFolderByFilter(folder.path);
                 parent.children.removeById(folderDelete._id);
             }
+
+            //if we remove it from a panel, we unset it
+            if(this.hasPanel1SelectedTypeId('folder', folder._id))
+                this.unSetPanel1SelectedTypeId();
+            if(this.hasPanel2SelectedTypeId('folder', folder._id))
+                this.unSetPanel2SelectedTypeId();
         }
     },
 
@@ -154,19 +158,8 @@ _.extend(State1.prototype, {
     getAllListboards: function () {
         return this.listboards;
     },
-
-    // selected listboard
-    getSelectedListboard: function () {
-        return this.selectedListboard;
-    },
-    getSelectedListboardId: function () {
-        return this.getSelectedListboard() && this.getSelectedListboard()._id;
-    },
-    selectFirstListboard: function () {
-        this.setSelectedListboard(this.listboards[0]._id);
-    },
-    setSelectedListboard: function (listboardId) {
-        this.selectedListboard = this.getListboardById(listboardId);
+    getFirstListboard: function () {
+        return (this.listboards.length > 0? this.listboards[0] : null);
     },
 
     //CRUD Listboard
@@ -194,10 +187,11 @@ _.extend(State1.prototype, {
                 this.containers.removeById(container._id); // O(N)
             }, this);
 
-            //if we remove selected listboard set new selected
-            var selectedListboardId = this.getSelectedListboardId();
-            if (selectedListboardId === listboard._id)
-                this.selectFirstListboard();
+            //if we remove it from a panel, we unset it
+            if(this.hasPanel1SelectedTypeId('listboard', listboard._id))
+                this.unSetPanel1SelectedTypeId();
+            if(this.hasPanel2SelectedTypeId('listboard', listboard._id))
+                this.unSetPanel2SelectedTypeId();
         }
     },
 
@@ -236,19 +230,7 @@ _.extend(State1.prototype, {
     },
     getContainerByIdAndListboard: function (listboard, containerId) {
         return listboard.containers.byId(containerId);
-    },
-
-    // selected listboard
-    getSelectedContainer: function () {
-        return this.selectedContainer;
-    },
-    getSelectedContainerId: function () {
-        return this.getSelectedContainer() && this.getSelectedContainer()._id;
-    },
-    setSelectedContainer: function (containerId) {
-        this.selectedContainer = this.getContainerById(containerId);
-    },
-    
+    },    
 
     //CRUD
     addContainer: function (listboardId, container) {
@@ -273,6 +255,12 @@ _.extend(State1.prototype, {
         var container = this.containers.removeById(containerId);
         if (container) {
             this.getListboardById(listboardId).containers.removeById(containerId);
+
+            //if we remove it from a panel, we unset it
+            if(this.hasPanel1SelectedTypeId('container', container._id))
+                this.unSetPanel1SelectedTypeId();
+            if(this.hasPanel2SelectedTypeId('container', container._id))
+                this.unSetPanel2SelectedTypeId();
         }
     },
 
@@ -314,18 +302,9 @@ _.extend(State1.prototype, {
     getItemById: function (itemId) {
         return this.items.byId(itemId);
     },
-    getSelectedItem: function () {
-        return this.selectedItem;
-    },
-    getSelectedItemId: function () {
-        return this.getSelectedItem() && this.getSelectedItem()._id;
-    },
-
 
     //CRUD
-    setSelectedItem: function (itemId) {
-        this.selectedItem = this.getItemById(itemId);
-    },
+    
     addItem: function (item) {
         item = new Item(item);// to have common reference
         this.items.push(item);
@@ -390,6 +369,12 @@ _.extend(State1.prototype, {
             _.each(item.containers, function (containerId) {
                 this.removeItemFromContainer(containerId, item);
             }, this);
+
+            //if we remove it from a panel, we unset it
+            if(this.hasPanel1SelectedTypeId('item', item._id))
+                this.unSetPanel1SelectedTypeId();
+            if(this.hasPanel2SelectedTypeId('item', item._id))
+                this.unSetPanel2SelectedTypeId();
         }
     },
     removeItemFromFolder: function (folderId, itemToRemove) {
@@ -431,7 +416,39 @@ _.extend(State1.prototype, {
     //////////////////////////////////////////ITEMS//////////////////////////////////////
 
     
-    //////////////////////////////////////////SELECTED OBJECTS//////////////////////////////////////
+    //////////////////////////////////////////PANELS//////////////////////////////////////
+
+    // selected listboard
+    getPanel1SelectedTypeId: function () {
+        return this.panel1SelectedTypeId;
+    },
+    getPanel2SelectedTypeId: function () {
+        return this.panel2SelectedTypeId;
+    },    
+    setPanel1SelectedTypeId: function (type, id) {
+        this.panel1SelectedTypeId = new TypeId({type: type, _id: id});
+    },
+    setPanel2SelectedTypeId: function (type, id) {
+        this.panel2SelectedTypeId = new TypeId({type: type, _id: id});
+    },
+    unSetPanel1SelectedTypeId: function() {
+        this.panel1SelectedTypeId = null;  
+    },
+    unSetPanel2SelectedTypeId: function() {
+        this.panel1SelectedTypeId = null;  
+    },
+    hasPanel1SelectedTypeId: function(type, id) {
+        return this.panel1SelectedTypeId.type === type && this.panel1SelectedTypeId._id === id;
+    },
+    hasPanel2SelectedTypeId: function(type, id) {
+        return this.panel2SelectedTypeId.type === type && this.panel2SelectedTypeId._id === id;
+    }
+
+    //////////////////////////////////////////PANELS//////////////////////////////////////
+
+
+
+    //////////////////////////////////////////SELECTED OBJECTSSELECTION//////////////////////////////////////
 
     getSelection: function() {
         return this.selection;
@@ -503,7 +520,7 @@ _.extend(State1.prototype, {
         this.selection.folders.removeById(folderId);
     }
 
-    //////////////////////////////////////////SELECTED OBJECTS//////////////////////////////////////
+    //////////////////////////////////////////SELECTION//////////////////////////////////////
 
 
 });

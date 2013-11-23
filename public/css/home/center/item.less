@@ -6,15 +6,17 @@
 
     .item {                               
         background: #FFFFFF;
-        border: 2px solid @grey;
-        margin: 0 0 6px 0;
-        padding: 3px 6px 3px 6px;     
+        border-top: 1px solid #dcdcdc;        
+        border-left: 1px solid #dcdcdc;        
+        border-right: 1px solid #dcdcdc;        
+        padding: 6px;     
         font-size: 14px;
         position: relative;      
         .box-sizing(border-box);  
 
         &:hover {
             cursor: pointer;
+            border-left: 1px solid #a6a6a6;
         }
         a {
             color: @grey3;     

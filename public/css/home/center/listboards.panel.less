@@ -1,17 +1,16 @@
 .listboards-panel {
-    height: 124px;    
+    height: 104px;    
     position: absolute; 
     top: 46px;
     width: 100%;
     overflow-x: hidden;
-    background: url("/img/common/bg-pattern.png") repeat 50% 0;
     .flatten();   
 
     .ps-scrollbar-y-rail {
         display: none;
     }       
     .listboards {
-        height: 124px;
+        height: 104px;
         display: table;
     	margin: 0;
     	padding: 0;
@@ -26,20 +25,22 @@
             display: table-cell;                           
             font-size: 13px;
             list-style: none;
-            color: @white;
+            color: @grey2;
             text-align: center;         
             overflow: hidden;        
             font-weight: bold;   
+            border: 1px solid #dcdcdc;
 
             &:hover {
                 cursor:pointer; 
+                border: 1px solid #c6c6c6;
             }                                                    
             &.browser-listboard-option {                
-               background-color: lighten(@blue3, 10%);
+               /*background-color: lighten(@blue3, 10%);*/
                position: relative;
 
                 &:hover, &.selected {
-                    background-color: @blue3;
+                    /*background-color: @blue3;*/
                 } 
                img {                    
                     float: left;
@@ -47,10 +48,10 @@
                }
             }
             &.custom-listboard-option {
-                background-color: lighten(@grey2, 10%);
+                /*background-color: lighten(@grey2, 10%);*/
 
                 &:hover, &.selected {
-                    background-color: @grey2;
+                    /*background-color: @grey2;*/
                 } 
             }
             .listboard-option-header {
@@ -66,24 +67,29 @@
             }
             .listboard-option-containers {
                 display: table-row;                
-                color: @grey2;
+                color: @grey3;                
 
                 .container-option {
                     display: table-cell;                                        
                     width: 106px; 
-                    box-shadow: 0 2px 6px rgba(0,0,0,0.4);      
+                    border: 1px solid #dcdcdc;
+                    background-color: #F4F4F4;
+                    /*box-shadow: 0 2px 6px rgba(0,0,0,0.4);      
                     background-color: lighten(@grey1, 10%);
-
+*/
                     &:hover {
                         cursor:pointer; 
-                        background-color: @grey1;
+                        border: 1px solid #c6c6c6;
+
+                        .favicons {
+                            .opacity(80);
+                        }
                     }  
                     .title {        
                         width: 100px;    
                         height: 18px;
                         font-weight: bold;
                         text-overflow: ellipsis;                             
-                        padding-top: 6px;
                         line-height: 12px;
                         display: block;
                         overflow: hidden;
@@ -91,13 +97,14 @@
                         white-space: nowrap;
                     }
                     .favicons {
-                        margin: 6px 12px;
+                        margin: 0 12px;
+                        .opacity(40);
 
                         .favicon {
                             width: 16px;
                             height: 16px;
                             float: left;
-                            margin: 3px;
+                            margin: 1px;
                         }
                     }
                 }

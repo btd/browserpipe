@@ -4,27 +4,7 @@
 
 var React = require('react');
 
-
-/**
-    as props uses:
-        docWidth
-*/
-var TobBarComponent = React.createClass({
-    propTypes: {
-        docWidth: React.PropTypes.number.isRequired
-    },
-
-    componentDidMount: function(rootNode) {
-
-    },
-
-    componentWillUnmount: function() {
-
-    },
-
-    shouldComponentUpdate: function(nextProps) {
-        return Math.abs(this.props.docWidth - nextProps.docWidth) >= 1;
-    },
+var TobBarComponent = React.createClass({    
 
     render: function() {
         return (
@@ -57,7 +37,7 @@ var TobBarComponent = React.createClass({
                             </li>
                         </ul>
                         <a draggable="false"  href="/" data-original-title="" className="pull-left brand">
-                            <h1>{this.props.docWidth > 575 ? 'Listboard.it' : 'L'}</h1>
+                            <h1>Listboard.it</h1>
                         </a>
                         <div id="search-cont">
                             <button id="search-btn" type="submit" className="btn">
