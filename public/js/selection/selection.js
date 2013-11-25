@@ -1,5 +1,7 @@
 var _state = require('../state'),    
-    _ = require('lodash');
+    _ = require('lodash'),
+    $ = require('jquery'),
+    Messenger = require('Messenger');
 
 var msg, className = 'selection-selected';
 
@@ -43,7 +45,6 @@ var hideMessage = function() {
 
 var showMessage = function(text) {        
     if(!msg){
-        var that = this;
         msg = Messenger().post({
           message: text,
           type: 'info',

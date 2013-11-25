@@ -2,6 +2,8 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     config = require('../config');
 
+var AuthCode;
+
 var AuthCodeSchema = new Schema({
     application: { type: Schema.ObjectId, ref: 'Application'},
     value: { type: String, required: true, trim: true },

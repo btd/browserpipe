@@ -4,6 +4,8 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     validation = require('./validation');
 
+var Invitation;
+
 var errorMsgs = {
     invalid: 'is not valid'
 }

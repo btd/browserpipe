@@ -28,10 +28,6 @@ function getId(model) {
     return model._id;
 }
 
-function identity(model) {
-    return model;
-}
-
 var preprocessModelByChangeType = {
     'delete': getId
 };

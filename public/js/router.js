@@ -1,27 +1,28 @@
 // Filename: router.js
 
+/*global initialOptions: true*/
+
 var _state = require('./state'),
-    _ = require('lodash'),
     page = require('page'),
-    extension = require('./extension/extension')
+    extension = require('./extension/extension'),
     HomeView = require('./components/home'),
     io = require('socket.io'),
     $ = require('jquery');
 
 //Notification system
-require('messenger');
+var Messenger = require('Messenger');
 Messenger.options = {
     extraClasses: 'messenger-fixed messenger-on-top messenger-on-right'
 }
 
 var homeView, //react home component instance
-    socket; //socket.io client socket
+    socket, //socket.io client socket
+    loadNotFoundView;
 
 //TODO where is loadNotFoundView ???
 
 var loadHomeView = function(listboardsVisible, listboardSettingsVisible, dialogItemVisible) {
     if(!homeView){
-        var that = this;
         extension.isExtensionInstalled(function(installed) {
             homeView = HomeView.render(
                 getDocHeight(),

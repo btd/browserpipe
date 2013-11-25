@@ -33,10 +33,6 @@ exports.create = function(req, res) {
 
 var launchItemJobs = function(req, res, item) {
     return function() {
-        var delta = {
-            type: 'update.item',
-            data: item
-        }        
         jobs.schedule('check-url', {
             uri: item.url,
             uniqueId: item._id.toString()

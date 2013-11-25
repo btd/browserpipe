@@ -3,8 +3,9 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     _ = require('lodash'),
-    validation = require('./validation'),
-    q = require('q');
+    validation = require('./validation');
+
+var User;
 
 var bcrypt = require('bcrypt'),
     SALT_WORK_FACTOR = 10;

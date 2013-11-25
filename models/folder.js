@@ -6,6 +6,8 @@ var mongoose = require('mongoose'),
     q = require('q'),
     Item = require('./item');
 
+var Folder;
+
 var FolderSchema = new Schema({
     //Generic fields
     label: {type: String, trim: true }, //name of this folder

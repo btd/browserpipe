@@ -1,4 +1,5 @@
-var _ = require('lodash');
+var _ = require('lodash'),
+    $ = require('jquery');
 
 //Parent: where the draggable objects are and accept drop of them and other draggable objects
 //Object: are the draggable objects and accept drop of other objects
@@ -12,7 +13,6 @@ module.exports = function (options) {
     }, options);  
 
     var placeholder;
-    var isHandle, index;
 
     //Detects if CTRL key is pressed
     var isCopying = function(e) {   
@@ -33,7 +33,7 @@ module.exports = function (options) {
     };
     
     //Placeholder helpers
-    var isPlaceHolderAttached = function (elem) { return $.contains(document.documentElement, placeholder[0]) }    
+    var isPlaceHolderAttached = function () { return $.contains(document.documentElement, placeholder[0]) }
     var isInsidePlaceHolder = function(e) {
         if(!placeholder || !isPlaceHolderAttached()) return false;
         return (                     

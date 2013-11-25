@@ -1,9 +1,3 @@
-var request = require('superagent'),
-    URL = require('URIjs');
-
-var fs = require('fs'),
-    path = require('path');
-
 var DonwloadJob = require('./download');
 
 //TODO need test timeouts and redirects

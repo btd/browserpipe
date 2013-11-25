@@ -379,14 +379,14 @@ _.extend(State1.prototype, {
             }, this);
         }
     },
-    removeItemFromFolder: function (folderId, itemToRemove) {
+    removeItemFromFolder: function (folderId, item) {
         var folder = this.getFolderById(folderId);
-        var itemExist = folder.items.removeById(item._id);
+        folder.items.removeById(item._id);
     },
-    removeItemFromContainer: function (containerId, itemToRemove) {
+    removeItemFromContainer: function (containerId, item) {
         var container = this.getContainerById(containerId);
         if (container) {
-            var itemExist = container.items.removeById(item._id);
+            container.items.removeById(item._id);
         }
     },
 

@@ -1,5 +1,4 @@
-var _ = require('lodash'),
-    moco = require('moco'),
+var moco = require('moco'),
     util = require('./util/util'),
     collection = moco.collection,
     model = moco.model;

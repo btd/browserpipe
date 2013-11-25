@@ -1,6 +1,5 @@
 var express = require('express'),
-    mongoStore = require('connect-mongo')(express),
-    config = require('./../config');
+    mongoStore = require('connect-mongo')(express);
 
 var logger = require('rufus').getLogger('express');
 
@@ -81,7 +80,7 @@ module.exports = function (app, config, passport) {
     app.use(app.router)
 
     // common error handler
-    app.use(function (err, req, res, next) {
+    app.use(function (err, req, res) {
         // log it
         logger.error('Exception in express', err);
 
@@ -99,7 +98,7 @@ module.exports = function (app, config, passport) {
     })
 
     // assume 404 since no middleware responded
-    app.use(function (req, res, next) {
+    app.use(function (req, res) {
         res.format({
 
             html: function () {

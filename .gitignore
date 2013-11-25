@@ -36,3 +36,6 @@ compiled-assets
 
 #logs
 /logs/*
+
+# where makefile build xml for jenkins
+/results/*

@@ -1,8 +1,10 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     url = require('url'),
-    _ = require('lodash')
+    _ = require('lodash'),
     generateRandomString = require('../util/security').generateRandomString;
+
+var Application;
 
 var ApplicationSchema = new Schema({
     name: { type: String, required: true, trim: true },

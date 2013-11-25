@@ -30,8 +30,7 @@ var browserifyAliases = [
     bowerAlias('lodash/dist/lodash.js', 'lodash'),
     bowerAlias('emitter/index.js', 'emitter'),
     bowerAlias('indexof/index.js', 'indexof'),
-    bowerAlias('moco/index.js', 'moco'),
-    bowerAlias('messenger/build/js/messenger.js', 'messenger')
+    bowerAlias('moco/index.js', 'moco')
 ];
 
 module.exports = function(grunt) {
@@ -72,8 +71,16 @@ module.exports = function(grunt) {
                         alias: browserifyAliases,
                         extensions: [".jsx"],
                         external: ['emitter-component'],
-                        shim: {                            
-                            jquery: { path: "./public/bower_components/jquery/jquery.js", exports: "$" }
+                        shim: {
+                            jquery: {
+                                path: "./public/bower_components/jquery/jquery.js",
+                                exports: "$"
+                            },
+                            Messenger: {
+                                path: './public/bower_components/messenger/build/js/messenger.js',
+                                exports: 'Messenger',
+                                depends: { jquery: 'jQuery' }
+                            }
                         },
                         debug: true,
                         transform: ['reactify']
@@ -89,7 +96,15 @@ module.exports = function(grunt) {
                         external: ['emitter-component'],
                         extensions: [".jsx"],
                         shim: {                            
-                            jquery: { path: "./public/bower_components/jquery/jquery.js", exports: "$" }
+                            jquery: {
+                                path: "./public/bower_components/jquery/jquery.js",
+                                exports: "$"
+                            },
+                            Messenger: {
+                                path: './public/bower_components/messenger/build/js/messenger.js',
+                                exports: 'Messenger',
+                                depends: { jquery: 'jQuery' }
+                            }
                         },
                         debug: true,
                         transform: ['reactify']

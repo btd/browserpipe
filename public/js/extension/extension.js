@@ -1,4 +1,5 @@
-var _ = require('lodash')
+var _ = require('lodash'),
+   $ = require('jquery');
 
 module.exports.isExtensionInstalled = function (callback) {
     //window.chrome.app.isInstalled does not work for extensions

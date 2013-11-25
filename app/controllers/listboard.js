@@ -5,6 +5,8 @@ var _ = require('lodash'),
     responses = require('.././responses.js'),
     errors = require('.././errors.js');
 
+var q = require('q');
+
 var userUpdate = require('./user_update');
 
 //Find listboard by id
@@ -58,7 +60,7 @@ exports.destroy = function (req, res) {
     var listboard = req.listboard;
 
     //Deltas for items removed
-    var updateItems = Item.where('user').equals(req.user).where('containers').in(listboard.containers).execWithPromise()
+    Item.where('user').equals(req.user).where('containers').in(listboard.containers).execWithPromise()
         .then(function(items) {
             items = items.map(function(i) {
                 listboard.containers.forEach(function(c) {
