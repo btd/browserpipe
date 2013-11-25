@@ -10,6 +10,8 @@ describe('/folders', function () {
 
     it('by default user should have at least one root folder', function (done) {
         helper.createUser(function(s) {
+            var Folder = mongoose.model('Folder');
+
             Folder.by({ user: s.user, path: '' }).then(function(folder) {
                 if(!folder) return done(new Error('folder does not exists'));
 
@@ -22,6 +24,8 @@ describe('/folders', function () {
     describe('POST', function () {
         it('should create folder when parent folder exists', function (done) {
             helper.createUser(function(s) {
+                var Folder = mongoose.model('Folder');
+
                 Folder.by({ user: s.user, path: '' }).then(function(folder) {
                     s.request
                         .post('/folders')
@@ -62,6 +66,8 @@ describe('/folders', function () {
 
         it('should return 403 when creating a folder with the same label data', function (done) {
             helper.createUser(function(s) {
+                var Folder = mongoose.model('Folder');
+
                 Folder.by({ user: s.user, path: '' }).then(function(folder) {
                     var subFolder = helper.subFolder(folder);
 

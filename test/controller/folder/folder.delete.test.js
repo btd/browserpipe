@@ -12,6 +12,8 @@ describe('/folders/:folderId', function () {
 
         it('should return 200 when folder exists', function(done) {
             helper.createUser(function(s) {
+                var Folder = mongoose.model('Folder');
+
                 Folder.by({ user: s.user, path: '' }).then(function(folder) {
                     s.request
                         .post('/folders')
@@ -60,6 +62,8 @@ describe('/folders/:folderId', function () {
 
         it('should return 200 and delete all subfolders', function(done) {
             helper.createUser(function(s) {
+                var Folder = mongoose.model('Folder');
+
                 Folder.by({ user: s.user, path: '' }).then(function(folder) {
                     s.request
                         .post('/folders')
