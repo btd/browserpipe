@@ -44,6 +44,17 @@ var FolderPanel = React.createClass({
     else 
       return null;
   },
+  getPanelNumber: function (argument) {
+    if(this.props.fullWidth)
+      return null
+    else
+      return <div 
+            className={"panel-number" + (this.props.active?' selected': '')}
+            title={"Select panel " + this.props.panelNumber}
+            onClick= { this.props.activatePanel }>
+              { this.props.panelNumber }
+            </div>
+  },
   render: function() {
     var self = this;  
     return (               
@@ -51,21 +62,12 @@ var FolderPanel = React.createClass({
             className={ this.getClassName() }
              onClick= { this.props.activatePanel }>
           <div className={ this.getSubBarClassName() }>
-            <div className="navbar-inner">            
-              <ul className="nav pull-right">              
+            <div className="navbar-inner">  
+              { this.getPanelNumber() }                                 
+              <ul className="nav pull-right">           
                 <li>
-                  <a draggable="false"  className="add-folder btn" onClick={this.addEmptyFolder} href="#" title="Add empty folder" data-toggle="tooltip">
-                    <i className="icon-plus">Add folder</i>
-                  </a>
-                </li>   
-                <li>
-                  <a draggable="false"  className="add-folder btn" onClick={this.addEmptyFolder} href="#" title="Add empty folder" data-toggle="tooltip">
-                    <i className="icon-plus">Add item</i>
-                  </a>
-                </li>                                
-                <li>
-                  <a draggable="false"  className="btn" onClick={this.goToSettings} href="#" title="Settings" data-toggle="tooltip">
-                    <i className="icon-cog">Settings</i>
+                  <a draggable="false" title="Settings" className="btn" onClick={this.goToSettings} href="#" title="Settings" data-toggle="tooltip">
+                    <i className="icon-cog"></i>
                   </a>
                 </li>
               </ul>      
@@ -81,7 +83,7 @@ var FolderPanel = React.createClass({
             </div>
           </div>          
           <div className="panel-center">
-            <div className="scrollable-parent">            
+            <div className="scrollable-parent scrollable-parent-y">            
               <ul className="folders">
                 { this.renderUpFolder() } 
                 {
@@ -90,7 +92,7 @@ var FolderPanel = React.createClass({
                   })
                 }
               </ul>
-              <ul className="items scrollable-parent">
+              <ul className="items">
                 {                    
                   this.props.folder.items.map(function(item) {
                     return <Item item= {item} navigateToItem={self.props.navigateToItem} />

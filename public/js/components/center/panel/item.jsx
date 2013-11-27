@@ -27,7 +27,18 @@ var ItemPanel = React.createClass({
   getSubBarClassName: function() {
     return 'navbar sub-bar' + 
       (this.props.active?' border': '');
-  }, 
+  },
+  getPanelNumber: function (argument) {
+    if(this.props.fullWidth)
+      return null
+    else
+      return <div 
+            className={"panel-number" + (this.props.active?' selected': '')}
+            title={"Select panel " + this.props.panelNumber}
+            onClick= { this.props.activatePanel }>
+              { this.props.panelNumber }
+            </div>
+  },
   render: function() {
     var self = this;  
     return (               
@@ -35,11 +46,12 @@ var ItemPanel = React.createClass({
             className={ this.getClassName() } 
             onClick= { this.props.activatePanel } >
           <div className={ this.getSubBarClassName() } >
-            <div className="navbar-inner" >             
+            <div className="navbar-inner" >        
+              { this.getPanelNumber() }                            
               <ul className="nav pull-right">              
                 <li>
-                  <a draggable="false"  className="btn" onClick={this.goToSettings} href="#" title="Settings" data-toggle="tooltip">
-                    <i className="icon-cog">Settings</i>
+                  <a draggable="false" title="Settings" className="btn" onClick={this.goToSettings} href="#" title="Settings" data-toggle="tooltip">
+                    <i className="icon-cog"></i>
                   </a>
                 </li>
               </ul>      
@@ -55,8 +67,8 @@ var ItemPanel = React.createClass({
             </div>
           </div>          
           <div className="panel-center">
-            <div className="scrollable-parent">   
-              Nothing here yet
+            <div className="scrollable-parent scrollable-parent-y">  
+              <img className="screenshot" data-src="holder.js/360x270" alt="360x270" src="/img/item/screenshot.png" />
             </div>
           </div>
         </div>

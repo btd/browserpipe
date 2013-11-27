@@ -6,7 +6,8 @@ var _state = require('../../state'),
     _ = require('lodash'),
     extension = require('../../extension/extension'),
     page = require('page'),
-    React = require('react');
+    React = require('react'),
+    ContainersComponent = require('./common/containers'), 
     listboardSelectorDraggable = require('../../dragging/listboard.selector'),
     selection = require('../../selection/selection');
 
@@ -25,7 +26,7 @@ var ListboardsPanelComponent = React.createClass({
         else
             return null;*/
         return <a className="extension-button btn">
-            <i className="icon-plus">Install Extension</i>
+            <i className="icon-plus">Sync your browser</i>
         </a>     
     },
     installChromeExtension: function() {        
@@ -42,9 +43,9 @@ var ListboardsPanelComponent = React.createClass({
     isListboardSelected: function(listboardId) {
         return selection.isListboardSelected(listboardId);
     },
-    isContainerSelected: function(containerId) {
+    /*isContainerSelected: function(containerId) {
         return selection.isContainerSelected(containerId);
-    },
+    },*/
     handleListboardClick: function(e) {
         e.preventDefault();        
         e.stopPropagation();
@@ -61,31 +62,31 @@ var ListboardsPanelComponent = React.createClass({
         else            
             this.props.navigateToListboard(listboardId);
     },
-    handleContainerClick: function(e) {
+    /*handleContainerClick: function(e) {
         e.preventDefault();        
         e.stopPropagation();
         var elementId = e.target.id;
         if(!elementId)
             elementId = $(e.target).parents('.container-option:first').attr('id');
         var containerId = elementId.substring(5);
-        /*if(e.ctrlKey){
+        if(e.ctrlKey){
             if(!this.isContainerSelected(containerId))
                 selection.selectListboard(containerId);
             else
                 selection.unSelectListboard(containerId);
         }            
-        else     */       
+        else       
             this.props.navigateToContainer(containerId);
-    },  
+    },*/  
     getListboardClass: function(listboard) {
         return 'listboard-option ' +
         /*(this.props.selectedListboard._id === listboard._id ?  'selected ' : '') + */
         (listboard.type === 0 ? 'browser-listboard-option ' : 'custom-listboard-option ') +
         (this.isListboardSelected(listboard._id)? selection.getClassName() : '');
     },
-    getContainerClass: function(container) {
+    /*getContainerClass: function(container) {
         return 'container-option ' +
-        /*(this.props.selectedContainer && this.props.selectedContainer._id === container._id ?  'selected ' : '') + */
+        /*(this.props.selectedContainer && this.props.selectedContainer._id === container._id ?  'selected ' : '') + 
         (this.isContainerSelected(container._id)? selection.getClassName() : '');
     },
     getContainerTitle: function(container) {     
@@ -107,8 +108,6 @@ var ListboardsPanelComponent = React.createClass({
                     {this.getContainerFavicon(container, 1)}
                     {this.getContainerFavicon(container, 2)}
                     {this.getContainerFavicon(container, 3)}
-                    {this.getContainerFavicon(container, 4)}
-                    {this.getContainerFavicon(container, 5)}
                 </div>
     },
     renderContainerOption: function(container) {
@@ -120,7 +119,7 @@ var ListboardsPanelComponent = React.createClass({
                     {this.getContainerFavicons(container)}
                     <div className="title">{this.getContainerTitle(container)}</div>
                 </li>;
-    },
+    },*/
     renderListboardOption: function(listboard) {
         var self = this;
         return  <div 
@@ -133,30 +132,20 @@ var ListboardsPanelComponent = React.createClass({
                         <div className="listboard-type">{listboard.type === 0 ? '(browser)' : '(group of later windows)'}</div>
                         <div className="listboard-label">{listboard.label? listboard.label : 'Unnamed'}</div>
                     </div>
-                    <ul className="listboard-option-containers">
-                    {                    
-                        listboard.containers
-                            .map(function(container) {
-                                return self.renderContainerOption(container)
-                            })
-                    }     
-                    <li className="listboard-option-add-container">
-                        <div className="inner">
-                            <i className="icon-plus"></i>
-                            <div>{listboard.type === 0 ? 'Open window' : 'Add later window'}</div>
-                        </div>
-                    </li>
-                    </ul>     
+                    <ContainersComponent 
+                        listboard= { listboard }
+                        navigateToContainer = {this.props.navigateToContainer} />
                 </div>                   
     },
     componentDidMount: function(){
-        $('.listboards-panel').perfectScrollbar({});
+        $('.listboards-panel-inner').perfectScrollbar({});
     },
     render: function() {
         var self = this;
         return  (
-            <div  className="listboards-panel scrollable-parent" /*style={ this.getListboardsPanelStyle() }*/>                                 
-                    { this.renderExtensionButton() }                    
+            <div  className="listboards-panel" /*style={ this.getListboardsPanelStyle() }*/>                                 
+                { this.renderExtensionButton() }                    
+                <div className="listboards-panel-inner scrollable-parent">                    
                     <div className="listboards" >                         
                         {                    
                             this.props.listboards     
@@ -174,7 +163,8 @@ var ListboardsPanelComponent = React.createClass({
                                 <div>Add group of later windows</div>
                             </div>
                         </a>   
-                    </div>   
+                    </div>  
+                </div> 
                 /*<div id="installExtensionModal" className="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                   <div className="modal-header">
                     <button type="button" className="close" data-dismiss="modal" aria-hidden="true">×</button>

@@ -9,8 +9,8 @@
         width:50%;
     }    
     .sub-bar {        
-        border-top: 9px solid #fff;
-        height: 36px;
+        border-top: 9px solid #C0C9D9;
+        height: 42px;
         margin: 0 6px;            
         color: #444;
 
@@ -20,14 +20,33 @@
 
         .navbar-inner {               
             margin: 0;
-            padding: 0;
-            padding-top: 3px;            
+            padding: 0;            
             min-height: 33px;
             .flatten();  
             overflow: hidden;
             background: none;
 
+            .panel-number {
+                .opacity(30);
+                background-color: #2d4c7f;
+                padding-top: 3px;
+                width: 30px;
+                height: 30px;
+                float: left;
+                text-align: center;
+                font-weight: bold;
+                color: #fff;
+
+                &.selected {
+                    .opacity(100);
+                }
+                &:hover {
+                    cursor: pointer;
+                }
+            }
             .nav {
+                padding-top: 3px;            
+                padding-left: 6px;
 
                 &.nav-left {
                     float: none;
@@ -82,21 +101,56 @@
         -moz-box-sizing:border-box;
         -ms-box-sizing:border-box;
         box-sizing:border-box;
-        margin:-48px 0 0 0;
-        padding:48px 0 0 0;        
-        
-        .items {
-            position: relative;            
-            height: 100%;   
-            overflow-y:hidden;                  
-            -webkit-box-sizing:border-box;
-            -moz-box-sizing:border-box;
-            -ms-box-sizing:border-box;
-            box-sizing:border-box;
+        margin:-56px 0 0 0;
+        padding: 56px 0 0 0;   
+
+        .scrollable-parent {        
 
             .ps-scrollbar-x-rail {
-                display: none;
+                        display: none;
             }    
+        }               
+    }
+}
+
+.listboard-panel {
+
+    .containers {        
+
+        .container-option, .option-add-container {
+            margin: 3px 6px;
+            padding: 3px 6px;
+            display: inline-block;    
+            text-align: center;
+
+            .favicons {
+                margin: 6px 12px;
+            }
+        }
+        .option-add-container {
+            height: 48px;
+            margin: -38px 6px 0;
+
+            .inner {
+                padding-top: 12px;
+            }
+
         }
     }
+}
+
+.container-panel {
+
+}
+
+.item-panel {
+
+    .screenshot {
+        margin: auto;
+        display: block;   
+    }
+}
+
+.folder-panel {
+
 }

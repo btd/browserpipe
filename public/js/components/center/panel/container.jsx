@@ -29,6 +29,17 @@ var ContainerPanel = React.createClass({
     return 'navbar sub-bar' + 
       (this.props.active?' border': '');
   },
+  getPanelNumber: function (argument) {
+    if(this.props.fullWidth)
+      return null
+    else
+      return <div 
+            className={"panel-number" + (this.props.active?' selected': '')}
+            title={"Select panel " + this.props.panelNumber}
+            onClick= { this.props.activatePanel }>
+              { this.props.panelNumber }
+            </div>
+  },
   render: function() {
     var self = this;  
     return (               
@@ -37,15 +48,11 @@ var ContainerPanel = React.createClass({
             onClick= { this.props.activatePanel } >
           <div className={ this.getSubBarClassName() } >
             <div className="navbar-inner">
-              <ul className="nav pull-right">              
+              { this.getPanelNumber() }                       
+              <ul className="nav pull-right">                              
                 <li>
-                  <a draggable="false"  className="add-container btn" onClick={this.addEmptyContainer} href="#" title="Add empty container" data-toggle="tooltip">
-                    <i className="icon-plus">Add item</i>
-                  </a>
-                </li>
-                <li>
-                  <a draggable="false"  className="btn" onClick={this.goToSettings} href="#" title="Settings" data-toggle="tooltip">
-                    <i className="icon-cog">Settings</i>
+                  <a draggable="false" title="Settings" className="btn" onClick={this.goToSettings} href="#" title="Settings" data-toggle="tooltip">
+                    <i className="icon-cog"></i>
                   </a>
                 </li>
               </ul>                
@@ -61,7 +68,7 @@ var ContainerPanel = React.createClass({
             </div>
           </div>          
           <div className="panel-center">
-            <ul className="items scrollable-parent">
+            <ul className="items scrollable-parent scrollable-parent-y">
             {                    
               this.props.container.items.map(function(item) {
                   return <Item item= {item} navigateToItem={self.props.navigateToItem} />

@@ -1,189 +1,149 @@
-.listboards-panel {
-    padding: 0 120px;
-    height: 114px;    
+.listboards-panel {    
     position: absolute; 
     top: 46px;
     width: 100%;
     overflow-x: hidden;
-    .flatten();   
+    .flatten();  
 
-    .ps-scrollbar-y-rail {
-        display: none;
-    }       
-    .listboards {
-        height: 104px;
-        display: table;
-    	margin: 0;
-    	padding: 0;
-        border-collapse: separate;
-        border-spacing: 6px 3px;    
+    .listboards-panel-inner { 
+        height: 104px;   
+        margin-left: 120px;
+        position: relative;
+        overflow-x: hidden;
 
-        ul {
-            margin: 0;
-            padding: 0;            
-        }
-        .listboard-option, .add-listboard {
-            display: table-cell;                           
-            font-size: 13px;
-            list-style: none;
-            color: @grey2;
-            text-align: center;         
-            overflow: hidden;        
-            font-weight: bold;   
-            border: 1px solid #dcdcdc;
+        .ps-scrollbar-y-rail {
+            display: none;
+        }    
+        .ps-scrollbar-x-rail {
+           /* top: 6px;            */
+        }   
+        .listboards {
+            height: 104px;
+            display: table;
+        	margin: 0;
+        	padding: 0;
+            border-collapse: separate;
+            border-spacing: 12px 3px;    
 
-            &:hover {
-                cursor:pointer; 
-                border: 1px solid #c6c6c6;
-            }  
-        }
-        .listboard-option {              
-            &.selected {
-                border: 1px solid @blue3;
-            }                                                   
-            &.browser-listboard-option {                               
-               position: relative;
-
-               img {                    
-                    float: left;
-                    margin-right: 6px;
-               }
+            ul {
+                margin: 0;
+                padding: 0;            
             }
-            .listboard-option-header {
-                display: table-caption;
-                text-align: left;
-                margin-left: 12px;
-                display: block;
+            .listboard-option, .add-listboard {
+                display: table-cell;                           
+                font-size: 13px;
+                list-style: none;
+                color: @grey2;
+                text-align: center;         
+                overflow: hidden;        
+                font-weight: bold;   
+                border: 1px solid #dcdcdc;
+                background-color: #F4F4F4;             
+
+                &:hover {
+                    cursor:pointer; 
+                    border: 1px solid #c6c6c6;
+                }  
+            }
+            .listboard-option { 
+                background-color: #F4F4F4;                        
+
+                &.selected {
+                    border: 1px solid @blue3;
+                }                                                   
+                &.browser-listboard-option {                               
+                   position: relative;
+
+                   img {                    
+                        float: left;
+                        margin-right: 6px;
+                   }
+                }
+                .listboard-option-header {
+                    display: inline-block;
+                    text-align: left;
+                    margin-left: 12px;
+                    overflow: hidden;
+
+                    .listboard-label {
+                        float: none;
+                        width: auto;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                        text-align: right;
+                    }
+
+                    .listboard-type {
+                        margin: 0 6px;
+                        font-size: 10px;
+                        font-style: italic;                    
+                        float: right;
+                    }
+
+                    .listboard-icon {
+                        float: right;
+                    }
+                }
+                .containers {
+                    display: table-row;  
+
+                    .container-option, .option-add-container {
+                        display: table-cell;    
+                    }
+                }
+
+               /* &.selection-selected {
+                    color: @grey3;    
+                    border: 2px solid @blue4 !important;
+                    background-color: @blue4 !important;
+
+                    &.selection-dragged {
+                        .opacity(40);
+                    }
+                }
+                &.selection-droppable {
+                    border: 2px dashed #000;
+                }*/
+                
+            }
+            .add-listboard {                                        
+                vertical-align: middle;
+                .opacity(60);
+
+                &:hover {
+                    text-decoration: none;
+                    cursor:pointer;                         
+                    border: 1px solid #c6c6c6;
+                    .opacity(100);
+                }
+
+                .inner {
+                    width: 150px; 
+                }
+            }
+            .sortable-placeholder {            
+                display: table-cell;
+                border: 2px dashed #000;
+                list-style: none;            
+                height: 30px;
+                .opacity(80);             
                 overflow: hidden;
 
-                .listboard-label {
-                    float: none;
-                    width: auto;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                    text-align: right;
-                }
-
-                .listboard-type {
-                    margin: 0 6px;
-                    font-size: 10px;
-                    font-style: italic;                    
-                    float: right;
-                }
-
-                .listboard-icon {
-                    float: right;
-                }
+                .text {                
+                    text-align: center;
+                    width: 86px;    
+                    max-width: 86px;    
+                }   
             }
-            .listboard-option-containers {
-                display: table-row;                
-                color: @grey3;                
-
-
-                .container-option, .listboard-option-add-container {
-                    display: table-cell;                                        
-                    width: 106px; 
-                    border: 1px solid #dcdcdc;
-                    
-                }
-                .container-option {         
-                    background-color: #F4F4F4;           
-
-                    &:hover {
-                        cursor:pointer;                         
-                        border: 1px solid #c6c6c6;
-
-                        .favicons {
-                            .opacity(80);
-                        }
-                    }  
-                    .title {        
-                        width: 100px;    
-                        height: 18px;
-                        font-weight: bold;
-                        text-overflow: ellipsis;                             
-                        line-height: 12px;
-                        display: block;
-                        overflow: hidden;
-                        max-width: 100px;
-                        white-space: nowrap;
-                    }
-                    .favicons {
-                        margin: 0 12px;
-                        .opacity(40);
-
-                        .favicon {
-                            width: 16px;
-                            height: 16px;
-                            float: left;
-                            margin: 1px;
-                        }
-                    }
-                }
-                .listboard-option-add-container {                                        
-                    vertical-align: middle;
-                    .opacity(60);
-
-                    &:hover {
-                        cursor:pointer;                         
-                        border: 1px solid #c6c6c6;
-                        .opacity(100);
-                    }
-
-                    .inner {
-                        width: 100px; 
-                    }
-                }
-            }
-
-           /* &.selection-selected {
-                color: @grey3;    
-                border: 2px solid @blue4 !important;
-                background-color: @blue4 !important;
-
-                &.selection-dragged {
-                    .opacity(40);
-                }
-            }
-            &.selection-droppable {
-                border: 2px dashed #000;
-            }*/
-            
-        }
-        .add-listboard {                                        
-            vertical-align: middle;
-            .opacity(60);
-
-            &:hover {
-                cursor:pointer;                         
-                border: 1px solid #c6c6c6;
-                .opacity(100);
-            }
-
-            .inner {
-                width: 150px; 
-            }
-        }
-        .sortable-placeholder {            
-            display: table-cell;
-            border: 2px dashed #000;
-            list-style: none;            
-            height: 30px;
-            .opacity(80);             
-            overflow: hidden;
-
-            .text {                
-                text-align: center;
-                width: 86px;    
-                max-width: 86px;    
-            }   
         }
     }
 
     .extension-button, .archive-button {  
+        margin-top: 6px;
+        left: 6px;
         width: 90px;
-        height: 70px;
+        height: 58px;
         z-index: 100;
         padding-top: 24px;    
         position: fixed;        
@@ -198,31 +158,4 @@
             .opacity(100);
         }        
     }
-    .extension-button {
-        left: 0;
-    }
-    .archive-button {
-        right: 0;
-    }
-
-
-    /* a.chrome-extension-warning{
-        width: 270px;
-        background-color: red; 
-        color: @white;
-        text-align: center;         
-        overflow: hidden;
-        float: left;
-        .opacity(80);     
-        color: @white;
-        font-weight: bold;
-        overflow: hidden;
-        text-overflow: ellipsis;  
-
-         &:hover {
-            cursor:pointer; 
-            .opacity(90);
-            text-decoration: none;
-        }
-    }    */
 }

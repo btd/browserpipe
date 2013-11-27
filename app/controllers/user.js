@@ -45,22 +45,6 @@ exports.create = function (req, res, next) {
         
         return;
     }
-
-    var user = new User(_.pick(req.body, 'email', 'name', 'password'));
-    user.provider = 'local' //for passport
-    
-    //Creates initial data
-
-    //Create a listboard
-    var listboard = user.addListboard({ type: 1, label: 'Later windows'});
-    listboard.addContainer({type: 1, title: 'Example window' });
-
-    //Create a root folder
-    var rootFolder = new Folder({ label: 'Archive', user: user });
-
-    //Create child folders
-    var readLaterFolder = rootFolder.createChildFolder("Fun videos");
-    var coolSitesFolder = rootFolder.createChildFolder("Cool Sites");
    
     User.byEmail(req.body.email)
         .then(function(_user) {
@@ -71,6 +55,16 @@ exports.create = function (req, res, next) {
                 var user = new User(_.pick(req.body, 'email', 'name', 'password'));
                 user.provider = 'local' //for passport
 
+                //Create a listboard
+                var listboard = user.addListboard({ type: 1, label: 'Later windows'});
+                listboard.addContainer({type: 1, title: 'Example window' });
+
+                //Create a root folder
+                var rootFolder = new Folder({ label: 'Archive', user: user });
+                
+                //Create child folders
+                var readLaterFolder = rootFolder.createChildFolder("Fun videos");
+                var coolSitesFolder = rootFolder.createChildFolder("Cool Sites");
 
                 return user.saveWithPromise()
                     .then(function() {
@@ -83,7 +77,7 @@ exports.create = function (req, res, next) {
                     .then(function () {
                         req.login(user, function (err) {
                             if (err) return next(err);
-                             res.redirect('/listboards');
+                             res.redirect('/');
                         })
                     })
                     .fail(next)

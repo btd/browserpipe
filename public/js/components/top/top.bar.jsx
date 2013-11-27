@@ -6,10 +6,10 @@ var React = require('react');
 
 var TobBarComponent = React.createClass({   
     getPanelOptionText: function() {        
-        if(this.props.twoPanels)
-            return '1 Panel'
-        else
+        if(this.props.onePanel)
             return '2 Panels'
+        else
+            return '1 Panel'
     },
     render: function() {
         return (
@@ -48,7 +48,8 @@ var TobBarComponent = React.createClass({
                             </li>
                         </ul>
                         <a draggable="false"  href="/" data-original-title="" className="pull-left brand">
-                            <h1>Listboard.it</h1>
+                            <h1 className="long-brand">Listboard.it</h1>
+                            <h1 className="short-brand">L</h1>
                         </a>
                         <div id="search-cont">
                             <button id="search-btn" type="submit" className="btn">
