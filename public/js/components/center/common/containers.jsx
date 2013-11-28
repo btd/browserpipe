@@ -12,6 +12,14 @@ var ContainersComponent = React.createClass({
     isContainerSelected: function(containerId) {
         return selection.isContainerSelected(containerId);
     },
+    addEmptyContainer: function(e) {      
+        e.preventDefault();
+        _state.serverSaveContainer({
+            listboardId: this.props.listboard._id,
+            type: 1,
+            title: 'New Window'
+        })
+    },
     handleContainerClick: function(e) {
         e.preventDefault();        
         e.stopPropagation();
@@ -73,10 +81,12 @@ var ContainersComponent = React.createClass({
                             return self.renderContainerOption(container)
                         })
                 }     
-                <li className="option-add-container">
+                <li 
+                    className="option-add-container" 
+                    title={ this.props.listboard.type === 0 ? 'Open new window' : 'Add later window' }
+                    onClick={ this.addEmptyContainer } >
                     <div className="inner">
                         <i className="icon-plus"></i>
-                        <span>{this.props.listboard.type === 0 ? 'New window' : 'New later window'}</span>
                     </div>
                 </li>
                 </ul>                       

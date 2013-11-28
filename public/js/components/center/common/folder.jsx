@@ -23,16 +23,6 @@ var FolderComponent = React.createClass({
     else   
       this.props.folderClicked(this.props.folder._id);
   },
-  mouseEnter: function() {
-    this.refs.btnRemoveChildFolder.getDOMNode().className = "icon-remove remove-child-folder";   
-  },  
-  mouseLeave: function() {
-    this.refs.btnRemoveChildFolder.getDOMNode().className = "icon-remove remove-child-folder hide";   
-  }, 
-  removeFolder: function(e) {
-    e.stopPropagation();
-    _state.serverRemoveFolder(this.props.folder);
-  },
   getFolderClass: function() {
     return "folder " + (this.isSelected()? selection.getClassName() : '');
   },
@@ -52,8 +42,7 @@ var FolderComponent = React.createClass({
         onDragLeave={this.props.folderDraggable.objDragLeave}
         onDrop={this.props.folderDraggable.objDrop}*/
       >
-        <span onClick={ this.folderClicked }>{ this.props.folder.label }</span>
-        <i ref='btnRemoveChildFolder' onClick={this.removeFolder} className="icon-remove remove-child-folder hide" />
+        <span onClick={ this.folderClicked }>{ this.props.folder.label }</span>        
       </li>
     );
   }

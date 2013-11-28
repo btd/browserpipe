@@ -1,4 +1,19 @@
-var _state = require('../state')
+var _state = require('../state'),
+    navigation = require('../navigation/navigation');
+
+
+var removeFolder = function(folderId) {
+    var folder = _state.getFolderById(folderId);
+    var parent = _state.getFolderByFilter(folder.path);
+    
+    _state.removeFolder(folderId);
+
+    //if we remove it from a panel, we set the parent
+    if(_state.hasPanel1SelectedTypeObject('folder', folderId))
+        navigation.updateOnePanel('folder', parent._id , 1);
+    if(_state.hasPanel2SelectedTypeObject('folder', folderId))
+        navigation.updateOnePanel('folder', parent._id , 2);
+}
 
 module.exports = function (socket) {
 
@@ -15,13 +30,13 @@ module.exports = function (socket) {
             _state.updateFolder(folderUpdates[index]);
     }); 
 
-    socket.on('delete.folder', function (folder) {        
-        _state.removeFolder(folder);
+    socket.on('delete.folder', function (folderId) {        
+        removeFolder(folderId);
     });
 
-    socket.on('bulk.delete.folder', function (folders) {
-        for (var index in folders)
-            _state.removeFolder(folders[index]);
+    socket.on('bulk.delete.folder', function (folderIds) {
+        for (var index in folderIds)
+            removeFolder(folderIds[index]);
     }); 
 };
 

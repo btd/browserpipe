@@ -15,7 +15,7 @@ var LabelEditorComponent = React.createClass({
     e.stopPropagation();
     this.refs.label.getDOMNode().className = "hide";
     this.refs.labelEditor.getDOMNode().className = "input-append le-editor" 
-    this.refs.labelInput.getDOMNode().value = this.props.labelValue;
+    this.refs.labelInput.getDOMNode().value = (this.props.labelValue? this.props.labelValue : '') ;
     this.refs.labelInput.getDOMNode().focus(); 
   },
   hideInput: function() {

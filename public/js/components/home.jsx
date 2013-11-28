@@ -4,7 +4,6 @@
 
 var _state = require('../state'),
     _ = require('lodash'),
-    page = require('page'),
     React = require('react'),
     TopBarComponent = require('./top/top.bar'),
     ListboardsPanelComponent = require('./center/listboards.panel'),
@@ -12,7 +11,8 @@ var _state = require('../state'),
     ContainerPanel = require('./center/panel/container'),
     ItemPanel = require('./center/panel/item'),
     FolderPanel = require('./center/panel/folder'),
-    SelectionDraggable = require('./center/selection.draggable');    
+    SelectionDraggable = require('./center/selection.draggable'),
+    navigation = require('../navigation/navigation');
 
 var HomeComponent = React.createClass({  
   getInitialState: function() {
@@ -25,44 +25,49 @@ var HomeComponent = React.createClass({
           selection: this.props.selection,
           isExtensionInstalled: this.props.isExtensionInstalled
       };
-  },  
+  },    
   switchPanels: function(){  
     if(this.state.onePanel){  //Open second panel
-      if(this.state.panel2SelectedTypeObject)
-        page('/panel1/' + this.state.panel1SelectedTypeObject.type + '/' + this.state.panel1SelectedTypeObject.getObjectId() + '/panel2/' + this.state.panel2SelectedTypeObject.type + '/' + this.state.panel2SelectedTypeObject.getObjectId());
+      if(this.state.panel2SelectedTypeObject)        
+        navigation.navigateToTwoPanels(
+          this.state.panel1SelectedTypeObject.type,
+          this.state.panel1SelectedTypeObject.getObjectId(),
+          this.state.panel2SelectedTypeObject.type,
+          this.state.panel2SelectedTypeObject.getObjectId()
+        );
       else
-        page('/panel1/' + this.state.panel1SelectedTypeObject.type + '/' + this.state.panel1SelectedTypeObject.getObjectId() + '/panel2/' + this.state.panel1SelectedTypeObject.type + '/' + this.state.panel1SelectedTypeObject.getObjectId());
-      return true;
+        navigation.navigateToTwoPanels(
+          this.state.panel1SelectedTypeObject.type,
+          this.state.panel1SelectedTypeObject.getObjectId(),
+          this.state.panel1SelectedTypeObject.type,
+          this.state.panel1SelectedTypeObject.getObjectId()
+        );
     }
     else { //Close one panel      
        if(this.state.isPanel1Active)
-        page('/panel1/' + this.state.panel1SelectedTypeObject.type + '/' + this.state.panel1SelectedTypeObject.getObjectId());
+        navigation.navigateToOnePanel(
+          this.state.panel1SelectedTypeObject.type,
+          this.state.panel1SelectedTypeObject.getObjectId()
+        );
       else
-        page('/panel1/' + this.state.panel2SelectedTypeObject.type + '/' + this.state.panel2SelectedTypeObject.getObjectId());
-      return true;
+        navigation.navigateToOnePanel(
+          this.state.panel2SelectedTypeObject.type,
+          this.state.panel2SelectedTypeObject.getObjectId()
+        );
     }
   },
-  navigateToTypeObject: function(type, id){
-    if(this.state.onePanel)
-      page('/panel1/' + type + '/' + id);
-    else {
-      if(this.state.isPanel1Active)
-        page('/panel1/' + type + '/' + id + '/panel2/' + this.state.panel2SelectedTypeObject.type + '/' + this.state.panel2SelectedTypeObject.getObjectId());
-      else
-        page('/panel1/' + this.state.panel1SelectedTypeObject.type + '/' + this.state.panel1SelectedTypeObject.getObjectId() + '/panel2/' + type + '/' + id);
-    }      
-  },
+  
   navigateToListboard: function(listboardId) {
-    this.navigateToTypeObject('listboard', listboardId);
+    navigation.updateOnePanel('listboard', listboardId, (this.state.isPanel1Active? 1 : 2));
   },
   navigateToContainer: function(containerId) {
-    this.navigateToTypeObject('container', containerId);
+    navigation.updateOnePanel('container', containerId, (this.state.isPanel1Active? 1 : 2))
   },
   navigateToItem: function(itemId) {
-    this.navigateToTypeObject('item', itemId);
+    navigation.updateOnePanel('item', itemId, (this.state.isPanel1Active? 1 : 2))
   },
   navigateToFolder: function(folderId) {
-    this.navigateToTypeObject('folder', folderId);
+    navigation.updateOnePanel('folder', folderId, (this.state.isPanel1Active? 1 : 2))
   },
   navigateToFolderRoot: function() {
     var rootFolder = _state.getRootFolder();
@@ -140,7 +145,7 @@ var HomeComponent = React.createClass({
     
     if(!this.state.onePanel) {
       this.panel1 = this.getSelectedComponent(this.state.panel1SelectedTypeObject, false, 1, this.state.isPanel1Active, this.activatePanel1);
-      this.panel2 = this.getSelectedComponent(this.state.panel2SelectedTypeObject, false, 2, !this.state.isPanel1Active, this.activatePanel2);
+      this.panel2 = this.getSelectedComponent(this.state.panel2SelectedTypeObject, false, 2, !this.state.isPanel1Active, this.activatePanel2);      
     }
     else if(this.state.panel1SelectedTypeObject) {
       this.panel1 = this.getSelectedComponent(this.state.panel1SelectedTypeObject, true, 1, true, this.activatePanel1);
@@ -151,8 +156,9 @@ var HomeComponent = React.createClass({
       this.panel2 = null; 
     }
     else {
-      this.panel1 = <div>Nothing selected</div>;
-      this.panel2 = null;
+      //We navigate to the archive
+      var rootFolder = _state.getRootFolder();
+      navigation.navigateToOnePanel('folder', rootFolder._id);      
     }
 
     return (

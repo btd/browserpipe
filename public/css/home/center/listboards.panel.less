@@ -6,8 +6,7 @@
     .flatten();  
 
     .listboards-panel-inner { 
-        height: 104px;   
-        margin-left: 120px;
+        height: 104px;           
         position: relative;
         overflow-x: hidden;
 
@@ -29,7 +28,7 @@
                 margin: 0;
                 padding: 0;            
             }
-            .listboard-option, .add-listboard {
+            .listboard-option, .extension-button, .add-listboard {
                 display: table-cell;                           
                 font-size: 13px;
                 list-style: none;
@@ -43,10 +42,17 @@
                 &:hover {
                     cursor:pointer; 
                     border: 1px solid #c6c6c6;
+                    
+                    .listboard-option-type {
+                        .opacity(100);
+                    }
                 }  
             }
             .listboard-option { 
-                background-color: #F4F4F4;                        
+                background-color: #F4F4F4;  
+                position: relative;  
+                .border-radius(4px);
+                padding-left: 20px;
 
                 &.selected {
                     border: 1px solid @blue3;
@@ -58,6 +64,18 @@
                         float: left;
                         margin-right: 6px;
                    }
+                }
+                .listboard-option-type {
+                    font-weight: normal;
+                    text-shadow: none;                    
+                    color: @white;
+                    background-color: @grey4;
+                    .rotate(270deg);
+                    position: absolute;
+                    width: 100px;
+                    left: -40px;
+                    top: 40px;
+                    .opacity(80);
                 }
                 .listboard-option-header {
                     display: inline-block;
@@ -72,14 +90,7 @@
                         text-overflow: ellipsis;
                         white-space: nowrap;
                         text-align: right;
-                    }
-
-                    .listboard-type {
-                        margin: 0 6px;
-                        font-size: 10px;
-                        font-style: italic;                    
-                        float: right;
-                    }
+                    }                    
 
                     .listboard-icon {
                         float: right;
@@ -107,19 +118,28 @@
                 }*/
                 
             }
-            .add-listboard {                                        
+            .extension-button, .add-listboard {                                        
                 vertical-align: middle;
-                .opacity(60);
+                background-color: @grey4;
+                color: #fff;        
+                .opacity(80);    
+                background: #777777;
+                max-width: 120px;
+                padding: 2px;
+                text-shadow: none;
+                font-size: 14px;
+                font-weight: normal;
 
                 &:hover {
-                    text-decoration: none;
-                    cursor:pointer;                         
-                    border: 1px solid #c6c6c6;
+                    text-decoration: none;                    
                     .opacity(100);
                 }
-
                 .inner {
-                    width: 150px; 
+                    width: 110px;
+
+                    .text {
+                        margin: 0 12px;
+                    }
                 }
             }
             .sortable-placeholder {            
@@ -137,25 +157,5 @@
                 }   
             }
         }
-    }
-
-    .extension-button, .archive-button {  
-        margin-top: 6px;
-        left: 6px;
-        width: 90px;
-        height: 58px;
-        z-index: 100;
-        padding-top: 24px;    
-        position: fixed;        
-        background-color: @grey4;
-        color: #fff;        
-        background-image: none; 
-        .opacity(80);      
-
-        &:hover {
-            text-decoration: none;
-            cursor:pointer; 
-            .opacity(100);
-        }        
-    }
+    }    
 }

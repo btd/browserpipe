@@ -10,7 +10,8 @@
     }    
     .sub-bar {        
         border-top: 9px solid #C0C9D9;
-        height: 42px;
+        border-bottom: 1px solid #C0C9D9;
+        height: 39px;
         margin: 0 6px;            
         color: #444;
 
@@ -23,7 +24,6 @@
             padding: 0;            
             min-height: 33px;
             .flatten();  
-            overflow: hidden;
             background: none;
 
             .panel-number {
@@ -44,8 +44,7 @@
                     cursor: pointer;
                 }
             }
-            .nav {
-                padding-top: 3px;            
+            .nav {                
                 padding-left: 6px;
 
                 &.nav-left {
@@ -60,15 +59,17 @@
                             float: left;
                             margin: 6px;
                         }
+                        .label-editor .le-label, &.label-text {
+                            text-overflow: ellipsis;
+                            overflow: hidden;                
+                            white-space: nowrap;
+                            font-weight: bold;
+                            font-size: 16px;
+                            margin: 6px 12px 0 0;
+                        }
                         .label-editor {            
 
-                            .le-label {            
-                                text-overflow: ellipsis;
-                                overflow: hidden;                
-                                white-space: nowrap;
-                                font-weight: bold;
-                                font-size: 16px;
-                                margin: 6px 12px 0 0;
+                            .le-label {                                            
 
                                 &:hover {
                                     cursor: pointer;
@@ -77,6 +78,18 @@
                             .le-editor {
                                 margin-left: 12px;
                             }
+                        }
+                    }
+                }
+                &.nav-right {
+                    float: right;
+                    padding-top: 3px;
+
+                    a {
+                        background: none;
+
+                        &:hover {
+                            color: @grey3;
                         }
                     }
                 }
@@ -101,8 +114,8 @@
         -moz-box-sizing:border-box;
         -ms-box-sizing:border-box;
         box-sizing:border-box;
-        margin:-56px 0 0 0;
-        padding: 56px 0 0 0;   
+        margin:-48px 0 0 0;
+        padding: 56px 12px 0 12px;   
 
         .scrollable-parent {        
 
@@ -139,10 +152,6 @@
     }
 }
 
-.container-panel {
-
-}
-
 .item-panel {
 
     .screenshot {
@@ -151,6 +160,27 @@
     }
 }
 
-.folder-panel {
+.container-panel, .folder-panel {
+    .opt-add-item {
+        color: #777;
+        font-size: 12px;
 
+        &:hover {
+            color: #333;
+            cursor: pointer;
+        }
+    }
+    .input-append {
+        display: block;
+
+        &.hide {
+            display: none;
+        }
+        .new-item-url {
+            width: 90%;
+        }
+        .new-folder-label {
+            width: 90%;
+        }
+    }
 }

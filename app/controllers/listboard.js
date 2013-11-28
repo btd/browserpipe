@@ -19,13 +19,13 @@ exports.listboard = function (req, res, next, id) {
 
 //Create Later listboard
 exports.create = function (req, res) {
-    req.check('type').isInt().equals(1);
-    req.check('label').notEmpty();
+    req.check('type').isInt().equals(1);    
 
     var errs = req.validationErrors();
     if (errs) return errors.sendBadRequest(res);
 
     var listboard = req.user.addListboard(_.pick(req.body, 'label', 'type'));
+    listboard.addContainer({type: 1, title: 'New window' });
 
     req.user.saveWithPromise()
         .then(responses.sendModelId(res, listboard._id), errors.ifErrorSendBadRequest(res))

@@ -17,9 +17,6 @@ var ItemPanel = React.createClass({
       title: newTitle
     }, success );
   },
-  componentDidMount: function(){
-    $('.scrollable-parent', this.refs.itemPanel.getDOMNode()).perfectScrollbar({});
-  }, 
   getClassName: function() {
     return 'item-panel panel' + 
       (this.props.fullWidth?' full-width': ' half-width');
@@ -48,12 +45,7 @@ var ItemPanel = React.createClass({
           <div className={ this.getSubBarClassName() } >
             <div className="navbar-inner" >        
               { this.getPanelNumber() }                            
-              <ul className="nav pull-right">              
-                <li>
-                  <a draggable="false" title="Settings" className="btn" onClick={this.goToSettings} href="#" title="Settings" data-toggle="tooltip">
-                    <i className="icon-cog"></i>
-                  </a>
-                </li>
+              <ul className="nav nav-right">                              
               </ul>      
               <ul className="nav nav-left">                                  
                 <li>                  
@@ -73,6 +65,12 @@ var ItemPanel = React.createClass({
           </div>
         </div>
     );
+  },
+  componentDidMount: function(){
+    $('.scrollable-parent', this.refs.itemPanel.getDOMNode()).perfectScrollbar({});
+  }, 
+  componentDidUpdate: function(){
+    $('.scrollable-parent', this.refs.itemPanel.getDOMNode()).perfectScrollbar('update');
   }
 });
 

@@ -64,11 +64,11 @@ module.exports = function (app, passport) {
 
   //Items routes
   var item = require('./controllers/item');
-  app.post(   '/items',          item.create);
-  app.put(    '/items/:itemId',  item.update);
-  app.delete( '/items/:itemId',  item.destroy);
+  app.post(   '/items',          auth.send401IfNotAuthenticated, item.create);
+  app.put(    '/items/:itemId',  auth.send401IfNotAuthenticated, item.update);
+  app.delete( '/items/:itemId',  auth.send401IfNotAuthenticated, item.destroy);
     
-  app.param('itemId', item.item);
+  app.param('itemId', auth.send401IfNotAuthenticated, item.item);
 
     
   

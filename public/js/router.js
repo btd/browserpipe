@@ -3,7 +3,8 @@
 var _state = require('./state'),
     _ = require('lodash'),
     page = require('page'),
-    extension = require('./extension/extension')
+    navigation = require('./navigation/navigation'),
+    extension = require('./extension/extension'),
     HomeView = require('./components/home'),
     io = require('socket.io'),
     $ = require('jquery');
@@ -13,22 +14,24 @@ require('messenger');
 Messenger.options = {
     extraClasses: 'messenger-fixed messenger-on-top messenger-on-right'
 }
+
 //Scrollbar
 require('jquery.mousewheel');
 require('perfect.scrollbar');
 
+//Dropdown
+require('bootstrap-dropdown');
+
 var homeView, //react home component instance
     socket; //socket.io client socket
 
-//TODO where is loadNotFoundView ???
-
-var loadHomeView = function(onePanel) {
+var loadHomeView = function() {
     if(!homeView){
         var that = this;        
         extension.isExtensionInstalled(function(installed) {
             homeView = HomeView.render(
                 _state.getAllListboards(), 
-                onePanel,               
+                _state.onePanel,               
                 _state.getPanel1SelectedTypeObject(),
                 _state.getPanel2SelectedTypeObject(),
                 _state.getSelection(),
@@ -38,6 +41,7 @@ var loadHomeView = function(onePanel) {
     } else {        
        var panel1SelectedTypeObject = _state.getPanel1SelectedTypeObject();
        var panel2SelectedTypeObject = _state.getPanel2SelectedTypeObject();
+       var onePanel = _state.onePanel;
 
         homeView.setState({ 
             onePanel: onePanel,
@@ -97,20 +101,24 @@ page('/', function () {
 
 page('/panel1/:type1/:id1', function (ctx) {    
     setTimeout(function() {
+        _state.onePanel = true;
         var type1 = ctx.params.type1;
         var id1 = ctx.params.id1;        
         var result = selectTypeObject(type1, id1, function(type, object) {
             _state.setPanel1SelectedTypeObject(type, object)
         });        
         if(result)
-            loadHomeView(true);
-        else
-            loadNotFoundView();
+            loadHomeView();
+        else {
+            var rootFolder = _state.getRootFolder();
+            page('/panel1/folder/' + rootFolder._id);     
+        }
      }, 0);
 });
 
 page('/panel1/:type1/:id1/panel2/:type2/:id2', function (ctx) {    
     setTimeout(function() {
+        _state.onePanel = false;
         var type1 = ctx.params.type1;
         var type2 = ctx.params.type2;
         var id1 = ctx.params.id1;
@@ -122,9 +130,15 @@ page('/panel1/:type1/:id1/panel2/:type2/:id2', function (ctx) {
             _state.setPanel2SelectedTypeObject(type, object)
         });           
         if(result1 && result2)
-            loadHomeView(false);
-        else
-            loadNotFoundView();
+            loadHomeView();
+        else {
+            var rootFolder = _state.getRootFolder();
+            if(!result1) 
+                navigation.updateOnePanel('folder', rootFolder._id, 1);
+            else if(!result2)
+                navigation.updateOnePanel('folder', rootFolder._id, 2);
+        }
+            
      }, 0);
 });
 

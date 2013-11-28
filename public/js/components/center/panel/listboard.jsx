@@ -17,9 +17,11 @@ var ListboardPanel = React.createClass({
       label: newLabel
     }, success );
   },
-  componentDidMount: function(){
-    $('.scrollable-parent', this.refs.listboardPanel.getDOMNode()).perfectScrollbar({});
-  },  
+  handleDeleteClick: function(e) {          
+      e.preventDefault();
+      _state.serverRemoveListboard(this.props.listboard, function() {                 
+      });
+  },
   getClassName: function() {
     return 'listboard-panel panel' + 
       (this.props.fullWidth?' full-width': ' half-width');
@@ -30,9 +32,9 @@ var ListboardPanel = React.createClass({
   },
   getSubTitle: function() {
     if(this.props.listboard.type === 0)
-      return <span className="sub-title">(browser - last sync 2 min ago)</span>
+      return <span className="sub-title">browser - last sync 2 min ago</span>
     else
-      return <span className="sub-title">(onhold windows)</span>
+      return <span className="sub-title">group of windows</span>
   },
   getPanelNumber: function (argument) {
     if(this.props.fullWidth)
@@ -55,11 +57,14 @@ var ListboardPanel = React.createClass({
           <div className={ this.getSubBarClassName() } >
             <div className="navbar-inner" >    
               { this.getPanelNumber() }                       
-              <ul className="nav pull-right">   
-                <li>
-                  <a draggable="false" title="Settings" className="btn" onClick={this.goToSettings} href="#" title="Settings" data-toggle="tooltip">
+              <ul className="nav nav-right">   
+                <li className="dropdown">
+                  <a href="#" title="Settings" className="dropdown-toggle" data-toggle="dropdown">
                     <i className="icon-cog"></i>
                   </a>
+                  <ul className="dropdown-menu">
+                    <li><a tabindex="-1" href="#" onClick={ this.handleDeleteClick }>Delete</a></li>
+                  </ul>
                 </li>
               </ul>     
               <ul className="nav nav-left">                                  
@@ -68,7 +73,7 @@ var ListboardPanel = React.createClass({
                   <LabelEditorComponent 
                     onSaveLabel= {this.saveListboardLabel} 
                     labelValue= {this.props.listboard.label} 
-                    defaultLabelValue= "Unnamed" />
+                    defaultLabelValue= "Group of windows" />
                   { this.getSubTitle() }                  
                 </li>                                  
               </ul>            
@@ -83,6 +88,12 @@ var ListboardPanel = React.createClass({
           </div>
         </div>
     );
+  },
+  componentDidMount: function(){
+    $('.scrollable-parent', this.refs.listboardPanel.getDOMNode()).perfectScrollbar({});    
+  },  
+  componentDidUpdate: function(){
+    $('.scrollable-parent', this.refs.listboardPanel.getDOMNode()).perfectScrollbar('update');    
   }
 });
 
