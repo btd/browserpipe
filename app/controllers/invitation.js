@@ -1,7 +1,6 @@
 /* jshint node: true */
 
-var mongoose = require('mongoose'),
-    Invitation = require('../../models/invitation'),
+var Invitation = require('../../models/invitation'),
     responses = require('../responses'),
     errors = require('../errors');
 
@@ -9,7 +8,7 @@ var mongoose = require('mongoose'),
 exports.invitation = function(req, res, next, id) {
     Invitation.by({ _id: id, user: req.user })
         .then(function(invitation) {
-        	//TODO: redirect to nice 404 page
+            //TODO: redirect to nice 404 page
             if (!invitation) return errors.sendNotFound(res);
 
             req.invitation = invitation;
