@@ -55,7 +55,16 @@ var config = {
             uri: 'mongodb://localhost/listboardit-stage'
         },
         mincer: {
-            preprocess: ['img/index/**', 'font/**', 'css/index.css', 'css/app.css', 'js/index.js', 'js/main.js'],
+            preprocess: [
+                'img/index/**', 
+                'font/**', 
+                'css/index.css', 
+                'css/app.css', 
+                'css/messenger/messenger.css', 
+                'css/perfect.scrollbar/perfect.scrollbar.css', 
+                'js/index.js', 
+                'js/main.js'
+            ],
             manifest: path.join(__dirname, 'compiled-assets')
         }
     },
@@ -64,7 +73,16 @@ var config = {
             uri: 'mongodb://localhost/listboardit'
         },
         mincer: {
-            preprocess: ['img/index/**', 'font/**', 'css/index.css', 'css/app.css', 'js/index.js', 'js/main.js'],
+             preprocess: [
+                'img/index/**', 
+                'font/**', 
+                'css/index.css', 
+                'css/app.css', 
+                'css/messenger/messenger.css', 
+                'css/perfect.scrollbar/perfect.scrollbar.css', 
+                'js/index.js', 
+                'js/main.js'
+            ],
             manifest: path.join(__dirname, 'compiled-assets')
         }
     }
