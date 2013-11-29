@@ -30,8 +30,8 @@ module.exports = function (passport) {
                     user.authenticate(password, function(err, result) {
                         if(err) return done(err);
 
-                        if(result) done(null, false, error);
-                        else done(null, user);
+                        if(result) done(null, user);
+                        else done(null, false, error);
                     });
                 }, done)
                 .done();
