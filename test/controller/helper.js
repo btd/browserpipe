@@ -90,6 +90,16 @@ module.exports = function(app) {
                 })
         },
 
+        createUserAndlListboard: function(data) {
+            var self = this;            
+            this.createUser(function(s) {
+                s.user.addListboard(helper.listboard());
+                s.user.saveWithPromise()
+                    .then(function(){ data(s)})
+                    .fail(rethrow)
+            })
+        },        
+
         subFolder: function(parentFolder) {
             return {
                 label: Faker.random.catch_phrase_noun(),

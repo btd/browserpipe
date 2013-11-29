@@ -9,7 +9,7 @@ describe('/listboards/:listboardId', function () {
 
     describe('DELETE', function() {
         it('should return 200', function(done) {
-            helper.createUser(function(s) {
+            helper.createUserAndlListboard(function(s) {
                 var listboard = s.user.listboards[0];
 
                 s.request

@@ -8,7 +8,7 @@ describe('/listboard/:listboardId', function () {
 
     describe('PUT', function () {
         it('should return 200', function (done) {
-            helper.createUser(function (s) {
+            helper.createUserAndlListboard(function (s) {
                 var origListboard = s.user.listboards[0];
                 origListboard.label = 'CHANGE';
 
@@ -49,7 +49,7 @@ describe('/listboard/:listboardId', function () {
 
 
         it('should return 400 when bad data', function (done) {
-            helper.createUser(function (s) {
+            helper.createUserAndlListboard(function (s) {
                 var createdListboardId = s.user.listboards[0]._id;
 
                 //just empty object

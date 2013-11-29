@@ -19,7 +19,7 @@ describe('/users', function () {
                 .expect(302)
                 .end(function (err, res) {
                     if (err) return done(err);
-                    res.headers.location.should.be.equal('/listboards');
+                    res.headers.location.should.be.equal('/');
 
                     var User = mongoose.model('User');
                     User.byEmail(testUser.email)
