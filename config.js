@@ -55,7 +55,7 @@ var config = {
             uri: 'mongodb://localhost/listboardit-stage'
         },
         mincer: {
-            preprocess: ['img/**', 'font/**', 'css/bootstrap/variables.*' , 'css/bootstrap/common/**', 'css/**', 'js/**'],
+            preprocess: ['img/**', 'font/**', 'css/bootstrap/variables.less', 'css/bootstrap/mixins.less', 'css/bootstrap/common/**', 'css/**', 'js/**'],
             manifest: path.join(__dirname, 'compiled-assets')
         }
     },
@@ -64,7 +64,7 @@ var config = {
             uri: 'mongodb://localhost/listboardit'
         },
         mincer: {
-            preprocess: ['img/**', 'font/**', 'css/bootstrap/variables.*' , 'css/bootstrap/common/**', 'css/**', 'js/**'],
+            preprocess: ['img/**', 'font/**', 'css/bootstrap/variables.less' , 'css/bootstrap/mixins.less', 'css/bootstrap/common/**', 'css/**', 'js/**'],
             manifest: path.join(__dirname, 'compiled-assets')
         }
     }
