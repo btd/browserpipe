@@ -60,8 +60,6 @@ var config = {
                 'font/**', 
                 'css/index.css', 
                 'css/app.css', 
-                'css/messenger/messenger.less', 
-                'css/perfect.scrollbar/perfect.scrollbar.less', 
                 'js/index.js', 
                 'js/apps/main.js'
             ],
@@ -78,8 +76,6 @@ var config = {
                 'font/**', 
                 'css/index.css', 
                 'css/app.css', 
-                'css/messenger/messenger.less', 
-                'css/perfect.scrollbar/perfect.scrollbar.less', 
                 'js/index.js', 
                 'js/apps/main.js'
             ],
