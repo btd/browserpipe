@@ -73,7 +73,7 @@ exports.update = function(req, res) {
     var item = req.currentItem;    
     _.merge(item, _.pick(req.body, 'type', 'title', 'note'));
     
-    item.removeWithPromise()
+    item.saveWithPromise()
         .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
         .then(userUpdate.updateItem.bind(null, req.user._id, item))
         .done();
