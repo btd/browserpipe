@@ -60,10 +60,10 @@ var config = {
                 'font/**', 
                 'css/index.css', 
                 'css/app.css', 
-                'css/messenger/messenger.css', 
-                'css/perfect.scrollbar/perfect.scrollbar.css', 
+                'css/messenger/messenger.less', 
+                'css/perfect.scrollbar/perfect.scrollbar.less', 
                 'js/index.js', 
-                'js/main.js'
+                'js/apps/main.js'
             ],
             manifest: path.join(__dirname, 'compiled-assets')
         }
@@ -78,10 +78,10 @@ var config = {
                 'font/**', 
                 'css/index.css', 
                 'css/app.css', 
-                'css/messenger/messenger.css', 
-                'css/perfect.scrollbar/perfect.scrollbar.css', 
+                'css/messenger/messenger.less', 
+                'css/perfect.scrollbar/perfect.scrollbar.less', 
                 'js/index.js', 
-                'js/main.js'
+                'js/apps/main.js'
             ],
             manifest: path.join(__dirname, 'compiled-assets')
         }
