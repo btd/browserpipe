@@ -18,4 +18,12 @@ var InvitationSchema = new Schema({
 
 InvitationSchema.plugin(require('../util/mongoose-timestamp'));
 
+var qfindOne = function (obj) {
+    return Invitation
+            .findOne(obj)            
+            .execWithPromise();
+};
+
+InvitationSchema.statics.by = qfindOne;
+
 module.exports = Invitation = mongoose.model('Invitation', InvitationSchema);

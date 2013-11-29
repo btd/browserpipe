@@ -21,12 +21,11 @@ module.exports = function (app, passport) {
   
   //User routes
   var users = require('./controllers/user')  ;
-  app.get('/login', users.login);
-  app.get('/signup', users.signup);
+  app.get('/login', users.login);  
   app.get('/logout', users.logout);
   app.post('/users', users.create);
   app.post('/users/session', passport.authenticate('local', { successReturnToOrRedirect: '/', failureRedirect: '/login', badRequestMessage: "Please enter valid email and password", failureFlash: true }));
-    
+
   app.param('userId', users.user);
 
   //Home routes
@@ -35,7 +34,10 @@ module.exports = function (app, passport) {
 
   //Invitation routes
   var invitation = require('./controllers/invitation');
+  app.get('/invitation/signup/:invitationId', invitation.accepted, users.signup);
   app.post(  '/invitations', invitation.create);
+
+  app.param('invitationId', invitation.invitation);
 
   //Extension
   app.get(    '/clients/chrome/extension.crx', auth.send401IfNotAuthenticated, main.chromeExtension);
