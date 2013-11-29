@@ -1,6 +1,4 @@
-var _ = require('lodash'),
-    moco = require('moco'),
-    util = require('./util/util'),    
+var moco = require('moco'),
     model = moco.model,
     Listboard = require('./listboard').Listboard,
     Container = require('./listboard').Container,

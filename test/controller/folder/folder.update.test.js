@@ -10,6 +10,8 @@ describe('/folders/:folderId', function () {
     describe('PUT', function() {
         it('should return 200 when authenticated and folder found', function (done) {
             helper.createUser(function(s) {
+                var Folder = mongoose.model('Folder');
+                
                 Folder.by({ user: s.user, path: '' }).then(function(folder) {
                     var subFolder = helper.subFolder(folder);
                     s.request

@@ -1,10 +1,7 @@
-var Job = require('../job'),
-    utils = require('../utils');
+var Job = require('../job');
 
 var cheerio = require('cheerio'),
-    URL = require('URIjs'),
-    url = require('url'),
-    _ = require('lodash');
+    URL = require('URIjs');
 
 var path = require('path'),
     fs = require('fs');

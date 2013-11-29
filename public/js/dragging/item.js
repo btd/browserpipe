@@ -1,5 +1,4 @@
-var _state = require('../state'),    
-    _ = require('lodash'),
+var $ = require('jquery'),
     draggable = require('./util/draggable'),
     selection = require('../selection/selection');
 
@@ -17,14 +16,14 @@ module.exports = (function () {
             }
             $('.' + selection.getClassName()).addClass('selection-dragged');
         },
-        end: function(el) {
+        end: function() {
             selection.clearSelection();
             $('.' + selection.getClassName()).removeClass('selection-dragged');
         },
         canBeDropped: function(el) {
             return !selection.isElemSelected(el) && !selection.isElemParentSelected(el);                
         },
-        dropOverParent: function(index) {
+        dropOverParent: function() {
             
         }
     }

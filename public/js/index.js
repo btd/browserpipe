@@ -1,5 +1,6 @@
 //= require ../bower_components/jquery/jquery.js
 
+/*global $: true, ga: true*/
 $(function() {
     var $input1 = $('input[name=invite_email]');
     var $input2 = $('input[name=invite_email2]');

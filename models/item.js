@@ -1,9 +1,9 @@
 // Item schema
 
 var mongoose = require('mongoose'),
-    Schema = mongoose.Schema,
-    q = require('q'),
-    _ = require('lodash');
+    Schema = mongoose.Schema;
+
+var Item;
 
 //There are to types of items: folder-item and note-item
 var ItemSchema = new Schema({

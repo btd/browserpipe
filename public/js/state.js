@@ -6,7 +6,6 @@ var folder = require('./data/folder'),
     Folders = folder.Folders;
 
 var listboard = require('./data/listboard'),
-    Listboard = listboard.Listboard,
     Listboards = listboard.Listboards,
     Container = listboard.Container,
     Containers = listboard.Containers;
@@ -92,7 +91,7 @@ _.extend(State1.prototype, {
     //CRUD
     addFolder: function (folderObj) {
         var folder = new Folder(folderObj);
-        folder.children = new Array();
+        folder.children = [];
 
         this.folders.push(folder);
 
@@ -100,7 +99,7 @@ _.extend(State1.prototype, {
             var parentFolder = this.getFolderByFilter(folder.path);            
             parentFolder.children.push(folder._id); 
             //TODO: we need a .update() method in moco to force an update            
-            parentFolder.children = (new Array()).concat(parentFolder.children);
+            parentFolder.children = ([]).concat(parentFolder.children);
         }
 
         return folder;

@@ -4,11 +4,13 @@
         "exports": true,
         "require": true,
         "__dirname": true,
-        "console": true
+        "console": true,
+        "process": true
     },
     "asi": true,
     "smarttabs": true,
     "expr": true,
     "newcap": false,
-    "supernew": true
+    "supernew": true,
+    "unused": true
 }

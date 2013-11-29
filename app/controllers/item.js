@@ -55,10 +55,6 @@ exports.create = function(req, res) {
 
 var launchItemJobs = function(req, res, item) {
     return function() {
-        var delta = {
-            type: 'update.item',
-            data: item
-        }        
         jobs.schedule('check-url', {
             uri: item.url,
             uniqueId: item._id.toString()
@@ -111,8 +107,7 @@ var removeItemFromContainer = function(req, item) {
 var removeItemFromFolderOrContainer = function(req, item){
     if(req.currentFolder)
         return removeItemFromFolder(req, item)
-    else if (req.listboard && req.params.containerId){
-        var container = req.listboard.containers.id(req.params.containerId);
+    else if (req.listboard && req.params.containerId){        
         return removeItemFromContainer(req, item)                        
     }   
 }

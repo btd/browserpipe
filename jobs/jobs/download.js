@@ -36,7 +36,7 @@ DownloadJob.prototype.exec = function (done) {
         .get(this.uri)
         .set('User-Agent', this.userAgent)
         .set('Accept-Encoding', 'gzip,deflate')//lets prefer gzip by default
-        .end(function (err, res) {
+        .end(function (err) {
             if (err) return done(err);
         });
 

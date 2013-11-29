@@ -1,7 +1,6 @@
 // Filename: router.js
 
 var _state = require('./state'),
-    _ = require('lodash'),
     page = require('page'),
     navigation = require('./navigation/navigation'),
     extension = require('./extension/extension'),
@@ -26,8 +25,7 @@ var homeView, //react home component instance
     socket; //socket.io client socket
 
 var loadHomeView = function() {
-    if(!homeView){
-        var that = this;        
+    if(!homeView){        
         extension.isExtensionInstalled(function(installed) {
             homeView = HomeView.render(
                 _state.getAllListboards(), 
@@ -188,14 +186,6 @@ var onSelectedPanel2Change = function() {
         });
     }
 };
-
-var onSelectionChange = function () {
-    if(homeView) {
-        homeView.setState({
-            selection: _state.getSelection()
-        });
-    }
-}
 
 var stateChanges = function() {
     _state.on('change:panel1SelectedTypeObject', onSelectedPanel1Change);

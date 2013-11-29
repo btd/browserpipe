@@ -1,7 +1,6 @@
 /* jshint node: true */
 
-var _ = require('lodash'),
-    q = require('q'),
+var q = require('q'),
     mongoose = require('mongoose'),
     Item = mongoose.model('Item'),
     Folder = mongoose.model('Folder');

@@ -2,9 +2,9 @@
 
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
-    _ = require('lodash'),    
-    q = require('q'),
-    Item = require('./item');
+    _ = require('lodash');
+
+var Folder;
 
 var FolderSchema = new Schema({
     //Generic fields

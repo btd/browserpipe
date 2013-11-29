@@ -1,6 +1,8 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
+var AccessToken;
+
 var AccessTokenSchema = new Schema({
     application: { type: Schema.ObjectId, ref: 'Application', required: true},
     value: { type: String, required: true, trim: true },

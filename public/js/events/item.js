@@ -1,5 +1,4 @@
-var _state = require('../state'),
-    navigation = require('../navigation/navigation');
+var _state = require('../state');
 
 
 module.exports = function (socket) {

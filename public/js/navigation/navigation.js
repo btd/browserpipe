@@ -1,5 +1,4 @@
-var _state = require('../state'),    
-    _ = require('lodash'),
+var _state = require('../state'),
     page = require('page');
 
 
