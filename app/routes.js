@@ -1,5 +1,4 @@
 var auth = require('./middlewares/authorization');
-var env = require('../config').env;
 
 module.exports = function (app, passport) {
 
