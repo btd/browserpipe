@@ -5,19 +5,23 @@
 var _state = require('../../../state'),
     _ = require('lodash'),
     page = require('page'),
-    React = require('react'),        
+    React = require('react'),
+    PanelMixin = require('../../util/panel.mixin'),   
+    PanelActivatorMixin = require('../../util/panel.activator.mixin'),     
     LabelEditorComponent = require('../../util/label.editor'),    
     ContainersComponent = require('../common/containers'), 
     selection = require('../../../selection/selection');
 
 var ListboardPanel = React.createClass({ 
+  mixins: [PanelMixin, PanelActivatorMixin],
   saveListboardLabel: function(newLabel, success) {    
     _state.serverUpdateListboard({
       _id: this.props.listboard._id,
       label: newLabel
     }, success );
   },
-  handleDeleteClick: function(e) {          
+  handleDeleteClick: function(e) {  
+      e.stopPropagation();        
       e.preventDefault();
       _state.serverRemoveListboard(this.props.listboard, function() {                 
       });
@@ -42,8 +46,7 @@ var ListboardPanel = React.createClass({
     else
       return <div 
             className={"panel-number" + (this.props.active?' selected': '')}
-            title={"Select panel " + this.props.panelNumber}
-            onClick= { this.props.activatePanel }>
+            title={"Select panel " + this.props.panelNumber} >
               { this.props.panelNumber }
             </div>
   },
@@ -53,17 +56,18 @@ var ListboardPanel = React.createClass({
         <div 
             ref="listboardPanel" 
             className={ this.getClassName() } 
-          >
+            onClick= { this.handlePanelClick(this.props.activatePanel) } >
           <div className={ this.getSubBarClassName() } >
             <div className="navbar-inner" >    
               { this.getPanelNumber() }                       
-              <ul className="nav nav-right">   
+              <ul className="nav nav-right">                   
+                { this.getPanelPin() }
                 <li className="dropdown">
                   <a href="#" title="Settings" className="dropdown-toggle" data-toggle="dropdown">
                     <i className="icon-cog"></i>
                   </a>
                   <ul className="dropdown-menu">
-                    <li><a tabindex="-1" href="#" onClick={ this.handleDeleteClick }>Delete</a></li>
+                    <li><a tabindex="-1" href="#" onClick={ this.handlePanelClick(this.handleDeleteClick) }>Delete</a></li>
                   </ul>
                 </li>
               </ul>     
@@ -71,6 +75,7 @@ var ListboardPanel = React.createClass({
                 <li>                  
                   { this.props.listboard.type === 0 ? <img className="listboard-icon" draggable="false" src="/img/common/chrome-logo.png" alt="Chrome Logo" /> : null }
                   <LabelEditorComponent 
+                    activatePanel= { this.props.activatePanel }
                     onSaveLabel= {this.saveListboardLabel} 
                     labelValue= {this.props.listboard.label} 
                     defaultLabelValue= "Group of windows" />
@@ -82,6 +87,7 @@ var ListboardPanel = React.createClass({
           <div className="panel-center">
             <div className="scrollable-parent scrollable-parent-y">
               <ContainersComponent 
+                activatePanel= {this.props.activatePanel}
                 listboard= { this.props.listboard }
                 navigateToContainer = {this.props.navigateToContainer} />
             </div>

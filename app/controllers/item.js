@@ -10,11 +10,31 @@ var _ = require('lodash'),
 
 var userUpdate = require('./user_update');
 
+var addItemToFolder = function(req, item) {
+    return req.currentFolder.addItemId(item._id)
+            .saveWithPromise()
+            .then(userUpdate.updateFolder.bind(null, req.user._id, req.currentFolder));    
+}
+
+var addItemToContainer = function(req, item) {
+    var container = req.listboard.containers.id(req.params.containerId);
+    container.addItemId(item._id)
+    return req.user.saveWithPromise()
+            .then(userUpdate.updateContainer.bind(null, req.user._id, req.listboard._id, container));    
+}
+
+var addItemToFolderOrContainer = function(req, item){
+    if(req.currentFolder)
+        return addItemToFolder(req, item)
+    else if (req.listboard && req.params.containerId){        
+        return addItemToContainer(req, item)                        
+    }   
+}
 
 //Create item
 exports.create = function(req, res) {
     //TODO add validation
-    var item = new Item(_.pick(req.body, 'type', 'folders', 'containers', 'title', 'note'));
+    var item = new Item(_.pick(req.body, 'type', 'title', 'note'));
 
     item.url = req.body.url;
 
@@ -24,9 +44,11 @@ exports.create = function(req, res) {
     item.user = req.user;
 
     item.saveWithPromise()
-        .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
-        .then(userUpdate.createItem.bind(null, req.user._id, item))
-        .then(launchItemJobs(req, res, item))
+        .then()
+        .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))        
+        .then(userUpdate.createItem.bind(null, req.user._id, item))        
+        .then(addItemToFolderOrContainer(req, item))
+        .then(launchItemJobs(req, res, item))        
         .done();
 }
 
@@ -51,27 +73,19 @@ var launchItemJobs = function(req, res, item) {
 
 //Update item
 exports.update = function(req, res) {
-    //TODO update
-    console.error('This method is broken, need to update when we move containers and folders')
 
-    var item = req.currentItem;
-    //We mark them so mongoose saves them
-    //TODO: add addcontainer/addfolder/removecontainer/removefolder rest calls to optimize    
-    item.markModified('containers');
-    item.markModified('folders');
-    _.merge(item, _.pick(req.body, 'type', 'folders', 'containers', 'title', 'note'));
-    //We need to merge array manually, because empty arrays are not merged
-    if (req.body.containers)
-        item.containers = req.body.containers;
-    if (req.body.folders)
-        item.folders = req.body.folders;
-
-    res.send(500);
+    var item = req.currentItem;    
+    _.merge(item, _.pick(req.body, 'type', 'title', 'note'));
+    
+    item.removeWithPromise()
+        .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
+        .then(userUpdate.updateItem.bind(null, req.user._id, item))
+        .done();
 }
 
 //Find item by id
 exports.item = function(req, res, next, id) {
-    Item.by({ id: id, user: req.user })
+    Item.by({ _id: id, user: req.user })
         .then(function(item) {
             if (!item) return errors.sendNotFound(res);
 
@@ -81,12 +95,34 @@ exports.item = function(req, res, next, id) {
         .done();
 }
 
-//Delete item
-exports.destroy = function(req, res) {
+var removeItemFromFolder = function(req, item) {
+    return req.currentFolder.removeItemId(item._id)
+            .saveWithPromise()
+            .then(userUpdate.updateFolder.bind(null, req.user._id, req.currentFolder));    
+}
+
+var removeItemFromContainer = function(req, item) {
+    var container = req.listboard.containers.id(req.params.containerId);
+    container.removeItemId(item._id)
+    return req.user.saveWithPromise()
+            .then(userUpdate.updateContainer.bind(null, req.user._id, req.listboard._id, container));    
+}
+
+var removeItemFromFolderOrContainer = function(req, item){
+    if(req.currentFolder)
+        return removeItemFromFolder(req, item)
+    else if (req.listboard && req.params.containerId){
+        var container = req.listboard.containers.id(req.params.containerId);
+        return removeItemFromContainer(req, item)                        
+    }   
+}
+
+//Remove item
+exports.remove = function(req, res) {
     var item = req.currentItem;
 
     item.removeWithPromise()
         .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
-        .then(userUpdate.createItem.bind(null, req.user._id, item))
+        .then(removeItemFromFolderOrContainer(req, item))
         .done();
 }

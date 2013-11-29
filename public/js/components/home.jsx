@@ -18,6 +18,7 @@ var HomeComponent = React.createClass({
   getInitialState: function() {
       return {
           isPanel1Active: true,          
+          panelPinnedNumber: 0,
           listboards: this.props.listboards,
           onePanel: this.props.onePanel,
           panel1SelectedTypeObject: this.props.panel1SelectedTypeObject,
@@ -74,14 +75,32 @@ var HomeComponent = React.createClass({
     this.navigateToFolder(rootFolder._id);
   },
   activatePanel1: function(){
-    if(!this.state.isPanel1Active)
+    if(!this.state.isPanel1Active && this.state.panelPinnedNumber === 0) {
       this.setState({ isPanel1Active : true });
+      return true
+    }
+    else return false
   },
   activatePanel2: function(){
-    if(this.state.isPanel1Active)
+    if(this.state.isPanel1Active && this.state.panelPinnedNumber === 0) {
       this.setState({ isPanel1Active : false });
+      return true
+    }
+    else return false
   },
-  getSelectedComponent: function(typeobject, fullWidth, panelNumber, active, activatePanel){    
+  pinPanel1Toggle: function(){
+    if(this.state.panelPinnedNumber === 1)
+      this.setState({ panelPinnedNumber : 0 });
+    else if(this.state.panelPinnedNumber === 0)
+      this.setState({ panelPinnedNumber : 1 });
+  },
+  pinPanel2Toggle: function(){
+    if(this.state.panelPinnedNumber === 2)
+      this.setState({ panelPinnedNumber : 0 });
+    else if(this.state.panelPinnedNumber === 0)
+      this.setState({ panelPinnedNumber : 2 });
+  },  
+  getSelectedComponent: function(typeobject, fullWidth, panelNumber, active, activatePanel, pinPanelToggle){    
     switch(typeobject.type){
         case 'listboard' : {                
             var listboard = typeobject.listboard;            
@@ -92,6 +111,8 @@ var HomeComponent = React.createClass({
                   panelNumber = { panelNumber }
                   active = { active }
                   activatePanel = { activatePanel } 
+                  panelPinnedNumber = { this.state.panelPinnedNumber }
+                  pinPanelToggle = { pinPanelToggle }
                   navigateToContainer = { this.navigateToContainer } />;
             break;
         }
@@ -104,6 +125,8 @@ var HomeComponent = React.createClass({
                   panelNumber = { panelNumber }
                   active = { active }
                   activatePanel = { activatePanel } 
+                  panelPinnedNumber = { this.state.panelPinnedNumber }
+                  pinPanelToggle = { pinPanelToggle }
                   navigateToItem = { this.navigateToItem } />;
             break;
         }
@@ -115,7 +138,9 @@ var HomeComponent = React.createClass({
                   fullWidth = { fullWidth } 
                   panelNumber = { panelNumber }
                   active = { active }
-                  activatePanel = { activatePanel } />;
+                  activatePanel = { activatePanel } 
+                  panelPinnedNumber = { this.state.panelPinnedNumber }
+                  pinPanelToggle = { pinPanelToggle } />;
             break;
         }
         case 'folder' : {                
@@ -128,6 +153,8 @@ var HomeComponent = React.createClass({
                   active = { active }
                   activatePanel = { activatePanel } 
                   navigateToItem = { this.navigateToItem } 
+                  panelPinnedNumber = { this.state.panelPinnedNumber }
+                  pinPanelToggle = { pinPanelToggle }
                   navigateToFolder = { this.navigateToFolder } />;
             break;
         }
@@ -144,15 +171,39 @@ var HomeComponent = React.createClass({
       listboards= { this.state.listboards } />
     
     if(!this.state.onePanel) {
-      this.panel1 = this.getSelectedComponent(this.state.panel1SelectedTypeObject, false, 1, this.state.isPanel1Active, this.activatePanel1);
-      this.panel2 = this.getSelectedComponent(this.state.panel2SelectedTypeObject, false, 2, !this.state.isPanel1Active, this.activatePanel2);      
+      this.panel1 = this.getSelectedComponent(
+        this.state.panel1SelectedTypeObject, 
+        false, 
+        1, 
+        this.state.isPanel1Active, 
+        this.activatePanel1,
+        this.pinPanel1Toggle );
+      this.panel2 = this.getSelectedComponent(
+        this.state.panel2SelectedTypeObject,
+        false,
+        2,
+        !this.state.isPanel1Active, 
+        this.activatePanel2,
+        this.pinPanel2Toggle );      
     }
     else if(this.state.panel1SelectedTypeObject) {
-      this.panel1 = this.getSelectedComponent(this.state.panel1SelectedTypeObject, true, 1, true, this.activatePanel1);
+      this.panel1 = this.getSelectedComponent(
+        this.state.panel1SelectedTypeObject, 
+        true, 
+        1, 
+        true, 
+        this.activatePanel1,
+        this.pinPanel1Toggle );
       this.panel2 = null;
     }
     else if(this.state.panel2SelectedTypeObject) {
-      this.panel1 = this.getSelectedComponent(this.state.panel2SelectedTypeObject, true, 1, true, this.activatePanel1);
+      this.panel1 = this.getSelectedComponent(
+        this.state.panel2SelectedTypeObject, 
+        true, 
+        1, 
+        true, 
+        this.activatePanel1, 
+        this.pinPanel1Toggle );
       this.panel2 = null; 
     }
     else {

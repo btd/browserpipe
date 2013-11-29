@@ -17,6 +17,10 @@
         &:hover {
             cursor: pointer;
             border-left: 1px solid #a6a6a6;
+
+            .remove-item {
+                display: block;
+            } 
         }
         a {
             color: @grey3;     
@@ -50,13 +54,15 @@
         }                
         .remove-item {
             display: none;
+            float: right;
             margin: 3px 3px 3px 2px;
             .opacity(50);
 
             &:hover {
+                display: block;
                 cursor:pointer; 
                 .opacity(100);
-            } 
+            }
         }
         &.selection-selected {
             background-color: @blue4;

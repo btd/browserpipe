@@ -6,9 +6,11 @@ var $ = require('jquery'),
     _state = require('../../../state'),
     _ = require('lodash'),
     React = require('react'),
+    PanelActivatorMixin = require('../../util/panel.activator.mixin'),
     selection = require('../../../selection/selection');
 
-var FolderComponent = React.createClass({   
+var FolderComponent = React.createClass({ 
+  mixins: [PanelActivatorMixin],  
   isSelected: function() {
     return selection.isFolderSelected(this.props.folder._id);
   },
@@ -31,7 +33,7 @@ var FolderComponent = React.createClass({
       <li ref="folder" 
         onMouseEnter={this.mouseEnter} 
         onMouseLeave={this.mouseLeave} 
-        onClick={ this.folderClicked } 
+        onClick={ this.handlePanelClick(this.folderClicked) } 
         id={'folder_' + this.props.folder._id} 
         className={ this.getFolderClass() }
         draggable="true" 
@@ -42,7 +44,7 @@ var FolderComponent = React.createClass({
         onDragLeave={this.props.folderDraggable.objDragLeave}
         onDrop={this.props.folderDraggable.objDrop}*/
       >
-        <span onClick={ this.folderClicked }>{ this.props.folder.label }</span>        
+        <span onClick={ this.handlePanelClick(this.folderClicked) }>{ this.props.folder.label }</span>        
       </li>
     );
   }

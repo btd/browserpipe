@@ -6,11 +6,13 @@ var _state = require('../../../state'),
     _ = require('lodash'),
     util = require('../../../util'),
     page = require('page'),
-    React = require('react'),    
+    React = require('react'),
+    PanelActivatorMixin = require('../../util/panel.activator.mixin'),    
     Item = require('./item'),  
     selection = require('../../../selection/selection');
 
-var ItemsComponent = React.createClass({    
+var ItemsComponent = React.createClass({   
+    mixins: [PanelActivatorMixin],
     handleSaveItemClick: function(e) {
         var self = this;
         e.preventDefault();
@@ -54,7 +56,7 @@ var ItemsComponent = React.createClass({
         var self = this;
         return <ul className={ this.getItemsClass() }>            
             <li>
-                <a ref="addItem" draggable="false"  onClick={this.showAndFocusAddItemInput} className="opt-add-item">Add URL</a>          
+                <a ref="addItem" draggable="false"  onClick={ this.handlePanelClick(this.showAndFocusAddItemInput) } className="opt-add-item">Add URL</a>          
                 <div ref="itemEditor" className="input-append add-item hide">
                     <div className="control-group">    
                       <div className="controls">
@@ -64,8 +66,8 @@ var ItemsComponent = React.createClass({
                             <span ref="itemURLInvalidError" className="help-inline hide item-url-invalid">Invalid URL</span>
                           </div>
                           <div>
-                            <button onClick={this.handleSaveItemClick} className="btn add-item-save" type="button"><i className="icon-ok save-icon">&nbsp;Add URL</i></button>
-                            <button onClick={this.hideItemInput} className="btn add-item-cancel" type="button"><i className="icon-remove cancel-icon"></i></button>
+                            <button onClick={ this.handlePanelClick(this.handleSaveItemClick) } className="btn add-item-save" type="button"><i className="icon-ok save-icon">&nbsp;Add URL</i></button>
+                            <button onClick={ this.handlePanelClick(this.hideItemInput) } className="btn add-item-cancel" type="button"><i className="icon-remove cancel-icon"></i></button>
                         </div>
                     </div>
                   </div>
@@ -73,7 +75,11 @@ var ItemsComponent = React.createClass({
             </li>
             {                    
               this.props.items.map(function(item) {
-                  return <Item item= {item} navigateToItem={self.props.navigateToItem} />
+                  return <Item 
+                    item= {item} 
+                    activatePanel= { self.props.activatePanel }
+                    navigateToItem={self.props.navigateToItem} 
+                    removeItem={self.props.removeItem} />
               })
             }
         </ul>                      

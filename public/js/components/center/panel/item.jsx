@@ -6,11 +6,14 @@ var _state = require('../../../state'),
     _ = require('lodash'),
     page = require('page'),
     React = require('react'),
+    PanelMixin = require('../../util/panel.mixin'),   
+    PanelActivatorMixin = require('../../util/panel.activator.mixin'),     
     Item = require('../common/item'),    
     LabelEditorComponent = require('../../util/label.editor'),    
     selection = require('../../../selection/selection');
 
 var ItemPanel = React.createClass({ 
+  mixins: [PanelMixin, PanelActivatorMixin],
   saveItemLabel: function(newTitle, success) {    
     _state.serverUpdateItem({
       _id: this.props.item._id,
@@ -31,8 +34,7 @@ var ItemPanel = React.createClass({
     else
       return <div 
             className={"panel-number" + (this.props.active?' selected': '')}
-            title={"Select panel " + this.props.panelNumber}
-            onClick= { this.props.activatePanel }>
+            title={"Select panel " + this.props.panelNumber} >            
               { this.props.panelNumber }
             </div>
   },
@@ -41,15 +43,17 @@ var ItemPanel = React.createClass({
     return (               
         <div ref="itemPanel" 
             className={ this.getClassName() } 
-            onClick= { this.props.activatePanel } >
+            onClick= { this.handlePanelClick(this.props.activatePanel) } >
           <div className={ this.getSubBarClassName() } >
             <div className="navbar-inner" >        
               { this.getPanelNumber() }                            
-              <ul className="nav nav-right">                              
+              <ul className="nav nav-right">                   
+                { this.getPanelPin() }
               </ul>      
               <ul className="nav nav-left">                                  
                 <li>                  
                   <LabelEditorComponent 
+                    activatePanel= { this.props.activatePanel }
                     onSaveLabel= {this.saveItemLabel} 
                     labelValue= {this.props.item.title} 
                     defaultLabelValue= "Unnamed" />   

@@ -43,15 +43,15 @@ _.extend(State1.prototype, {
 
     loadInitialData: function (initialOptions) {
 
+        //Load items
+        this.loadItems(initialOptions.items || []);
+
         //Loads Folders
         this.loadFolders(initialOptions.folders || []);
 
         //Loads Listboards
         this.loadListboards(initialOptions.listboards || []);
-
-        //Load items
-        this.loadItems(initialOptions.items || []);
-
+        
         //Init selection
         this.clearSelection();
     },
@@ -68,11 +68,18 @@ _.extend(State1.prototype, {
         }, this);
     },
 
+    //Gets
     getFolderByFilter: function (filter) {
         return this.folders.byFilter(filter);
     },
     getFolderById: function (folderId) {
         return this.folders.byId(folderId);
+    },
+    getFoldersByIds: function(folderIds) {
+        var self = this;
+        return _.map(folderIds, function(folderId) {
+            return self.getFolderById(folderId);
+        })
     },
     getAllFolders: function () {
         return this.folders;
@@ -85,28 +92,32 @@ _.extend(State1.prototype, {
     //CRUD
     addFolder: function (folderObj) {
         var folder = new Folder(folderObj);
+        folder.children = new Array();
 
         this.folders.push(folder);
 
         if (!folder.isRoot) {                        
-            var parentFolder = this.getFolderByFilter(folder.path);
-            parentFolder.children.push(folder);                     
+            var parentFolder = this.getFolderByFilter(folder.path);            
+            parentFolder.children.push(folder._id); 
+            //TODO: we need a .update() method in moco to force an update            
+            parentFolder.children = (new Array()).concat(parentFolder.children);
         }
 
         return folder;
     },
     updateFolder: function (folderUpdate) {
         var folder = this.getFolderById(folderUpdate._id);
-        if (folder) {
+        if (folder)
             _.extend(folder, folderUpdate);
-        }
     },
     removeFolder: function (folderId) {
         var folder = this.folders.removeById(folderId);
         if (folder) {
             if(!folder.isRoot) {
                 var parent = this.getFolderByFilter(folder.path);
-                parent.children.removeById(folderId); 
+                var index = parent.children.indexOf(folderId);
+                if (index > -1)
+                    parent.children.splice(index, 1);                
             }
         }
     },
@@ -169,10 +180,8 @@ _.extend(State1.prototype, {
     },
     updateListboard: function (listboardUpdate) {
         var listboard = this.getListboardById(listboardUpdate._id);
-        if (listboard) {
-            //We do not update arrays here
+        if (listboard) //We do not update arrays here            
             _.extend(listboard, _.pick(listboardUpdate, 'label'));
-        }
     },
     removeListboard: function (listboardDeleteId) {
         var listboard = this.listboards.removeById(listboardDeleteId);
@@ -236,9 +245,8 @@ _.extend(State1.prototype, {
         var listboard = this.getListboardById(listboardId);
         if (listboard) {
             var container = listboard.containers.byId(containerUpdate._id);
-            if (container){
+            if (container)
                 _.extend(container, containerUpdate);
-            }
         }
     },
     removeContainer: function (listboardId, containerId) {
@@ -287,91 +295,40 @@ _.extend(State1.prototype, {
     getItemById: function (itemId) {
         return this.items.byId(itemId);
     },
+    getItemsByIds: function(itemIds) {
+        var self = this;
+        return _.map(itemIds, function(itemId) {
+            return self.getItemById(itemId);
+        })
+    },
 
     //CRUD
-    
     addItem: function (item) {
         item = new Item(item);// to have common reference
         this.items.push(item);
-        _.each(item.folders, function (folderId) {
-            this.addItemToFolder(folderId, item);
-        }, this);
-        _.each(item.containers, function (containerId) {
-            this.addItemToContainer(containerId, item);
-        }, this);
-
-        //Updates selected listboard
-        // we make updates in methods that was called upper
-
-    },
-    addItemToFolder: function (folderId, item) {
-        var folder = this.getFolderById(folderId);
-        var itemExist = folder.items.byId(item._id);
-        if (!itemExist) {
-            folder.items.push(item);
-        }
-    },
-    addItemToContainer: function (containerId, item) {
-        var container = this.getContainerById(containerId);
-        if (container) {
-            var itemExist = container.items.byId(item._id);
-            if (!itemExist) {
-                container.items.push(item);
-            }
-        }
     },
     updateItem: function (itemUpdate) {
         var item = this.getItemById(itemUpdate._id);
-        if (item) {
-
-            var toAddFoldersIds = _.difference(itemUpdate.folders, item.folders);
-            var toAddContainersIds = _.difference(itemUpdate.containers, item.containers);
-            var toRemoveFolderIds = _.difference(item.folders, itemUpdate.folders);
-            var toRemoveContainersIds = _.difference(item.containers, itemUpdate.containers);
-
-            _.each(toAddFoldersIds, function (folderId) {
-                this.addItemToFolder(folderId, item);
-            }, this);
-            _.each(toAddContainersIds, function (containerId) {
-                this.addItemToContainer(containerId, item);
-            }, this);
-            _.each(toRemoveFolderIds, function (folderId) {
-                this.removeItemFromFolder(folderId, item);
-            }, this);
-            _.each(toRemoveContainersIds, function (containerId) {
-                this.removeItemFromContainer(containerId, item);
-            }, this);
-
+        if (item)
             _.extend(item, itemUpdate);
-        }
     },
     removeItem: function (itemId) {
-        var item = this.items.removeById(itemId);
-        if (item) {
-            _.each(item.folders, function (folderId) {
-                this.removeItemFromFolder(folderId, item);
-            }, this);
-            _.each(item.containers, function (containerId) {
-                this.removeItemFromContainer(containerId, item);
-            }, this);
-        }
-    },
-    removeItemFromFolder: function (folderId, itemToRemove) {
-        var folder = this.getFolderById(folderId);
-        var itemExist = folder.items.removeById(item._id);
-    },
-    removeItemFromContainer: function (containerId, itemToRemove) {
-        var container = this.getContainerById(containerId);
-        if (container) {
-            var itemExist = container.items.removeById(item._id);
-        }
+        this.items.removeById(itemId);
     },
 
 
     //Server calls    
-    serverSaveItem: function (item, success) {
+    serverSaveItemToContainer: function (listboardId, containerId, item, success) {
         return $.ajax({
-            url: '/items',
+            url: '/listboards/' + listboardId + '/containers/' + containerId + '/items',
+            type: "POST",
+            data: JSON.stringify(item),
+            success: success
+        });
+    },
+    serverSaveItemToFolder: function (folderId, item, success) {
+        return $.ajax({
+            url: '/folders/' + folderId + '/items',
             type: "POST",
             data: JSON.stringify(item),
             success: success
@@ -385,9 +342,16 @@ _.extend(State1.prototype, {
             success: success
         });
     },
-    serverRemoveItem: function (item, success) {
+    serverRemoveItemFromContainer: function (listboardId, containerId, item, success) {
         return $.ajax({
-            url: '/items/' + item._id,
+            url: '/listboards/' + listboardId + '/containers/' + containerId + '/items/' + item._id,
+            type: "DELETE",
+            success: success
+        });
+    },
+    serverRemoveItemFromFolder: function (folderId, item, success) {
+        return $.ajax({
+            url: '/folders/' + folderId + '/items/' + item._id,
             type: "DELETE",
             success: success
         });

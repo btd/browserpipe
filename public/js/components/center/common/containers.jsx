@@ -6,9 +6,11 @@ var _state = require('../../../state'),
     _ = require('lodash'),
     page = require('page'),
     React = require('react'),
+    PanelActivatorMixin = require('../../util/panel.activator.mixin'),
     selection = require('../../../selection/selection');
 
 var ContainersComponent = React.createClass({ 
+    mixins: [PanelActivatorMixin],
     isContainerSelected: function(containerId) {
         return selection.isContainerSelected(containerId);
     },
@@ -27,15 +29,8 @@ var ContainersComponent = React.createClass({
         if(!elementId)
             elementId = $(e.target).parents('.container-option:first').attr('id');
         var containerId = elementId.substring(5);
-        /*if(e.ctrlKey){
-            if(!this.isContainerSelected(containerId))
-                selection.selectListboard(containerId);
-            else
-                selection.unSelectListboard(containerId);
-        }            
-        else     */       
-            this.props.navigateToContainer(containerId);
-    },  
+        this.props.navigateToContainer(containerId);             
+    }, 
     getContainerClass: function(container) {
         return 'container-option ' +
         /*(this.props.selectedContainer && this.props.selectedContainer._id === container._id ?  'selected ' : '') + */
@@ -48,7 +43,7 @@ var ContainersComponent = React.createClass({
             return container.title;
     },
     getContainerFavicon: function(container, index) {   
-        var item = container.items[index];
+        var item = _state.getItemById(container.items[index]);
         var style = {};
         if(item)
             style.backgroundImage = "url('" + item.favicon + "')"; //TODO: make sure this is secure        
@@ -65,7 +60,7 @@ var ContainersComponent = React.createClass({
     renderContainerOption: function(container) {
         return <li                    
                     className={ this.getContainerClass(container) } 
-                    onClick={this.handleContainerClick}
+                    onClick={ this.handlePanelClick(this.handleContainerClick) }
                     id={'cont_' + container._id}
                 >                    
                     {this.getContainerFavicons(container)}
@@ -74,7 +69,9 @@ var ContainersComponent = React.createClass({
     },
     render: function() {
         var self = this;
-        return  <ul className="containers">
+        return  <ul className="containers"
+                    activatePanel= {this.props.activatePanel}
+                >
                 {                    
                     this.props.listboard.containers
                         .map(function(container) {
@@ -84,7 +81,7 @@ var ContainersComponent = React.createClass({
                 <li 
                     className="option-add-container" 
                     title={ this.props.listboard.type === 0 ? 'Open new window' : 'Add later window' }
-                    onClick={ this.addEmptyContainer } >
+                    onClick={ this.handlePanelClick(this.addEmptyContainer) } >
                     <div className="inner">
                         <i className="icon-plus"></i>
                     </div>

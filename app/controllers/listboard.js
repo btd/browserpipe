@@ -1,7 +1,6 @@
 /* jshint node: true */
 
-var _ = require('lodash'),
-    Item = require('../../models/item'),
+var _ = require('lodash'),    
     responses = require('.././responses.js'),
     errors = require('.././errors.js');
 
@@ -56,25 +55,8 @@ exports.update = function (req, res) {
 exports.destroy = function (req, res) {
 
     var listboard = req.listboard;
-
-    //Deltas for items removed
-    var updateItems = Item.where('user').equals(req.user).where('containers').in(listboard.containers).execWithPromise()
-        .then(function(items) {
-            items = items.map(function(i) {
-                listboard.containers.forEach(function(c) {
-                    i.containers.remove(c._id);
-                })
-                return i;
-            });
-
-            userUpdate.bulkUpdateItem(req.user._id, items);
-            return q.all(items.map(function(i) {
-                return i.saveWithPromise(); }));
-        });
-
     req.user.removeListboard(listboard);
-
-    //Remove items from listboard containers
+    
     req.user.saveWithPromise()
         .then(responses.sendModelId(res, listboard._id), errors.ifErrorSendBadRequest(res))
         .then(userUpdate.deleteListboard.bind(null, req.user.id, listboard))

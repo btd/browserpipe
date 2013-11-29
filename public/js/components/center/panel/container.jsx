@@ -5,12 +5,15 @@
 var _state = require('../../../state'),
     _ = require('lodash'),
     page = require('page'),
-    React = require('react'),  
+    React = require('react'),
+    PanelMixin = require('../../util/panel.mixin'),   
+    PanelActivatorMixin = require('../../util/panel.activator.mixin'),   
     LabelEditorComponent = require('../../util/label.editor'),    
     ItemsComponent = require('../common/items'), 
     selection = require('../../../selection/selection');
 
 var ContainerPanel = React.createClass({ 
+  mixins: [PanelMixin, PanelActivatorMixin],
   saveContainerLabel: function(newTitle, success) {    
     _state.serverUpdateContainer({
       _id: this.props.container._id,
@@ -18,16 +21,30 @@ var ContainerPanel = React.createClass({
       title: newTitle
     }, success );
   },
-  saveItem: function(url, success) {    
-    var containers = [];   
-    containers.push(this.props.container._id)  
-    _state.serverSaveItem({       
-      type: 0,
-      url: url,
-      containers: containers
-    }, function(){
-      success();
-    });
+  saveItem: function(url, success) {   
+    _state.serverSaveItemToContainer(
+      this.props.container.listboardId,
+      this.props.container._id, 
+      {       
+        type: 0,
+        url: url
+      },
+      function(){
+        if(success)
+          success();
+      }
+    );
+  },
+  removeItem: function(item, success) {    
+    _state.serverRemoveItemFromContainer(
+      this.props.container.listboardId,
+      this.props.container._id, 
+      item,
+      function(){
+        if(success)
+          success();
+      }
+    );
   },
   handleDeleteClick: function(e) {          
       e.preventDefault();
@@ -48,8 +65,7 @@ var ContainerPanel = React.createClass({
     else
       return <div 
             className={"panel-number" + (this.props.active?' selected': '')}
-            title={"Select panel " + this.props.panelNumber}
-            onClick= { this.props.activatePanel }>
+            title={"Select panel " + this.props.panelNumber} >         
               { this.props.panelNumber }
             </div>
   },
@@ -57,23 +73,25 @@ var ContainerPanel = React.createClass({
     return (               
         <div ref="containerPanel" 
             className={ this.getClassName() } 
-            onClick= { this.props.activatePanel } >
+            onClick= { this.handlePanelClick(this.props.activatePanel) } >
           <div className={ this.getSubBarClassName() } >
             <div className="navbar-inner">
               { this.getPanelNumber() }                       
-              <ul className="nav nav-right">                              
+              <ul className="nav nav-right">                 
+                { this.getPanelPin() }        
                 <li className="dropdown">
                   <a href="#" title="Settings" className="dropdown-toggle" data-toggle="dropdown">
                     <i className="icon-cog"></i>
                   </a>
                   <ul className="dropdown-menu">
-                    <li><a tabindex="-1" href="#" onClick={ this.handleDeleteClick }>Delete</a></li>
+                    <li><a tabindex="-1" href="#" onClick={ this.handlePanelClick(this.handleDeleteClick) }>Delete</a></li>
                   </ul>
                 </li>
               </ul>                
               <ul className="nav nav-left">                                  
                 <li>                  
                   <LabelEditorComponent 
+                    activatePanel= { this.props.activatePanel }
                     onSaveLabel= {this.saveContainerLabel} 
                     labelValue= {this.props.container.title} 
                     defaultLabelValue= "Unnamed" />  
@@ -84,10 +102,12 @@ var ContainerPanel = React.createClass({
           </div>          
           <div className="panel-center">
             <ItemsComponent 
-                items= { this.props.container.items }
+                items= { _state.getItemsByIds(this.props.container.items) }
+                activatePanel= { this.props.activatePanel }
                 scrollable = { true } 
                 navigateToItem={this.props.navigateToItem}
-                saveItem={ this.saveItem } />
+                saveItem={ this.saveItem } 
+                removeItem={ this.removeItem } />
           </div>
         </div>
     );

@@ -5,13 +5,16 @@
 var _state = require('../../../state'),
     _ = require('lodash'),
     page = require('page'),
-    React = require('react'),        
+    React = require('react'),
+    PanelMixin = require('../../util/panel.mixin'),   
+    PanelActivatorMixin = require('../../util/panel.activator.mixin'),         
     LabelEditorComponent = require('../../util/label.editor'),    
     Folder = require('../common/folder'), 
     ItemsComponent = require('../common/items'), 
     selection = require('../../../selection/selection');
 
 var FolderPanel = React.createClass({ 
+  mixins: [PanelMixin, PanelActivatorMixin],
   saveFolderLabel: function(newLabel, success) {    
     _state.serverUpdateFolder({
       _id: this.props.folder._id,
@@ -49,15 +52,27 @@ var FolderPanel = React.createClass({
       });
   },
   saveItem: function(url, success) {    
-    var folders = [];   
-    folders.push(this.props.folder._id)  
-    _state.serverSaveItem({       
-      type: 0,
-      url: url,
-      folders: folders
-    }, function(){
-      success();
-    });
+    _state.serverSaveItemToFolder(
+      this.props.folder._id, 
+      {       
+        type: 0,
+        url: url
+      },
+      function(){
+        if(success)
+          success();
+      }
+    );
+  },
+  removeItem: function(item, success) {    
+    _state.serverRemoveItemFromFolder(
+      this.props.folder._id, 
+      item,
+      function(){
+        if(success)
+          success();
+      }
+    );
   },
   handleDeleteClick: function(e) {          
     e.preventDefault();
@@ -78,22 +93,13 @@ var FolderPanel = React.createClass({
   navigateToChildFolder: function(folderId) {
     this.props.navigateToFolder(folderId);
   },
-  renderUpFolder: function() {
-    if(!this.props.folder.isRoot)
-      return <li ref="folder"  onClick={this.navigateToParentFolder} className="folder">
-          <span onClick={ this.folderClicked }>...</span>               
-        </li>
-    else 
-      return null;
-  },
   getPanelNumber: function () {
     if(this.props.fullWidth)
       return null
     else
       return <div 
             className={"panel-number" + (this.props.active?' selected': '')}
-            title={"Select panel " + this.props.panelNumber}
-            onClick= { this.props.activatePanel }>
+            title={"Select panel " + this.props.panelNumber} >            
               { this.props.panelNumber }
             </div>
   },
@@ -103,6 +109,7 @@ var FolderPanel = React.createClass({
     else
       return  <li>
                 <LabelEditorComponent 
+                  activatePanel= { this.props.activatePanel }
                   onSaveLabel= {this.saveFolderLabel} 
                   labelValue= {this.props.folder.label} 
                   defaultLabelValue= "Unnamed" />
@@ -118,25 +125,42 @@ var FolderPanel = React.createClass({
                   <i className="icon-cog"></i>
                 </a>
                 <ul className="dropdown-menu">
-                  <li><a tabindex="-1" href="#" onClick={ this.handleDeleteClick }>Delete</a></li>
+                  <li><a tabindex="-1" href="#" onClick={ this.handlePanelClick(this.handleDeleteClick) }>Delete</a></li>
                 </ul>
               </li>
+  },  
+  renderUpFolder: function() {
+    if(!this.props.folder.isRoot)
+      return <li ref="folder"  onClick={this.handlePanelClick(this.navigateToParentFolder)} className="folder">
+          <span onClick={ this.handlePanelClick(this.folderClicked) }>...</span>               
+        </li>
+    else 
+      return null;
+  },
+  renderChildrenFolders: function() {
+    var self = this;  
+    return _.map(_state.getFoldersByIds(this.props.folder.children), function(folder) {
+      return <Folder 
+                folder= {folder} 
+                activatePanel= { self.props.activatePanel }
+                folderClicked= {self.navigateToChildFolder}  />
+    })
   },
   render: function() {
-    var self = this;  
     return (               
         <div ref="folderPanel" 
             className={ this.getClassName() }
-             onClick= { this.props.activatePanel }>
+             onClick= { this.handlePanelClick(this.props.activatePanel) }>
           <div className={ this.getSubBarClassName() }>
             <div className="navbar-inner">  
               { this.getPanelNumber() }                
-              <ul className="nav nav-right">    
+              <ul className="nav nav-right">  
+                { this.getPanelPin() }
                 <li className="">
                   <a href="#" title="Add folder">
                     <i 
                       className="icon-folder-close"
-                      onClick= { this.showAndFocusAddFolderInput }
+                      onClick= { this.handlePanelClick(this.showAndFocusAddFolderInput) }
                     ></i>
                   </a>
                 </li>                     
@@ -151,28 +175,26 @@ var FolderPanel = React.createClass({
             <div className="scrollable-parent scrollable-parent-y">            
               <ul className="folders">              
                 { this.renderUpFolder() } 
-                {
-                  this.props.folder.children.map(function(folder) {
-                    return <Folder folder= {folder} folderClicked= {self.navigateToChildFolder}  />
-                  })
-                }
+                { this.renderChildrenFolders() }
                 <li ref="folderEditor" className="input-append add-folder hide">
                   <div className="control-group">    
                       <div className="controls">
                       <input ref="folderInput" className="new-folder-label" type="text" onKeyPress={this.onEnterSaveFolder}/>
                       <div>
-                          <button onClick={this.saveFolder} className="btn add-folder-save" type="button"><i className="icon-ok small-font">&nbsp;Add folder</i></button>
-                          <button onClick={this.hideFolderInput} className="btn add-folder-cancel" type="button"><i className="icon-remove small-font"></i></button>
+                          <button onClick={ this.handlePanelClick(this.saveFolder) } className="btn add-folder-save" type="button"><i className="icon-ok small-font">&nbsp;Add folder</i></button>
+                          <button onClick={ this.handlePanelClick(this.hideFolderInput) } className="btn add-folder-cancel" type="button"><i className="icon-remove small-font"></i></button>
                       </div>
                     </div>
                   </div>
                 </li>
               </ul>
               <ItemsComponent 
-                items= { this.props.folder.items }
+                items= { _state.getItemsByIds(this.props.folder.items) }
+                activatePanel= { this.props.activatePanel }
                 scrollable = { false } 
                 navigateToItem={this.props.navigateToItem}
-                saveItem={ this.saveItem } />
+                saveItem={ this.saveItem }
+                removeItem={ this.removeItem } />
             </div>
           </div>
         </div>

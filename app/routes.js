@@ -64,9 +64,11 @@ module.exports = function (app, passport) {
 
   //Items routes
   var item = require('./controllers/item');
-  app.post(   '/items',          auth.send401IfNotAuthenticated, item.create);
+  app.post(   '/listboards/:listboardId/containers/:containerId/items',  auth.send401IfNotAuthenticated, item.create);
+  app.post(   '/folders/:folderId/items',  auth.send401IfNotAuthenticated, item.create);
   app.put(    '/items/:itemId',  auth.send401IfNotAuthenticated, item.update);
-  app.delete( '/items/:itemId',  auth.send401IfNotAuthenticated, item.destroy);
+  app.delete( '/listboards/:listboardId/containers/:containerId/items/:itemId',  auth.send401IfNotAuthenticated, item.remove);
+  app.delete( '/folders/:folderId/items/:itemId',  auth.send401IfNotAuthenticated, item.remove);
     
   app.param('itemId', auth.send401IfNotAuthenticated, item.item);
 
