@@ -93,6 +93,10 @@ module.exports = function (app, config, passport) {
                 res.json(500, {code: 500, error: "Oop's something went wrong"});
             }
         });
+
+        //TODO: ths is for jshint to not bother, but we need the next up there if 
+        //not express process request like (req, res, next) instead of (err, req, res)
+        next();
     })
 
     // assume 404 since no middleware responded
