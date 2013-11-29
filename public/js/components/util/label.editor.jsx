@@ -5,8 +5,7 @@
 var _state = require('../../state'),
     _ = require('lodash'),
     React = require('react'),
-    PanelActivatorMixin = require('./panel.activator.mixin'),  
-    Container = require('../center/container');
+    PanelActivatorMixin = require('./panel.activator.mixin');
 
 var LabelEditorComponent = React.createClass({ 
   mixins: [PanelActivatorMixin],

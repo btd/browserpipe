@@ -8,7 +8,10 @@ var PanelMixin = {
 			(this.props.panelPinnedNumber === this.props.panelNumber ? ' pinned' : '');
 	},
   	getPanelPin: function() {
-  		return <li>
+  		if(this.props.fullWidth)
+        return null
+      else
+        return <li>
           <a href="#" title="Pin panel">
             <i 
               className= { this.getPinClassName() }
