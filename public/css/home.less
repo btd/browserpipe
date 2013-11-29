@@ -7,20 +7,14 @@
 @import "home/top/top.bar.responsive.less";
 @import "home/center/listboards.panel.less";
 @import "home/center/listboards.panel.responsive.less";
-@import "home/center/listboard.less";
-@import "home/center/listboard.responsive.less";
-@import "home/center/listboard.settings.less";
-@import "home/center/listboard.settings.responsive.less";
-@import "home/center/item.less";
-@import "home/center/item.responsive.less";
-@import "home/center/container.less";
-@import "home/center/container.responsive.less";
-@import "home/center/folder.less";
-@import "home/center/folder.responsive.less";
-@import "home/dialog/dialog.less";
-@import "home/dialog/dialog.responsive.less";
-@import "home/dialog/item.view.dialog.less";
-@import "home/dialog/item.view.dialog.responsive.less";
+@import "home/center/panel/panel.less";
+@import "home/center/panel/panel.responsive.less";
+@import "home/center/common/container.less";
+@import "home/center/common/container.responsive.less";
+@import "home/center/common/item.less";
+@import "home/center/common/item.responsive.less";
+@import "home/center/common/folder.less";
+@import "home/center/common/folder.responsive.less";
 @import "home/footer/footer.less";
 
 html, body {
@@ -31,49 +25,30 @@ html, body {
     background-color: white;
     font-family: Arial, Helvetica, sans-serif;
 }
-.wrapper {
-    display: table;   
+
+#body-inner {
     height: 100%;
-    width: 100%;
 
-    .main-header {
-        display: table-row;        
-        background-color:@blue3;
-    }
-    .main-content {        
-        display: table-row;  /* height is dynamic, and will expand... */
-        height: 100%;        /* ...as content is added (won't scroll) */
-    }
-    .main-footer {
-        display: table-row;
-    }
-}
+    .wrapper {
+        height: 100%;
 
-i.save-icon, i.cancel-icon {			
-	font-size: 13px;
-}
+        .main-header { 
+            height: 150px;            
+        }
+        .main-content {        
+            height: 100%;  
+             overflow:hidden;
+            -webkit-box-sizing:border-box;
+            -moz-box-sizing:border-box;
+            -ms-box-sizing:border-box;
+            box-sizing:border-box;
+            margin:-150px 0 -21px 0;
+            padding:150px 0 21px 0;            
+        }
+        .main-footer {
+            height: 21px;
+        }
 
-.help-inline {
-	font-size: 13px !important;
-	font-weight: normal;
-}
-
-.le-editor {
-    margin: 0;
-}
-
-#selection-draggable {
-    text-align: center;
-    color: black;
-    position: fixed;
-    z-index: -3000;
-    background-color: @blue4;
-    .opacity(80);
-    font-size: 12px;
-    font-weight: bold;
-
-    ul {
-        margin: 6px 12px;
-        padding: 0;
     }
 }
+

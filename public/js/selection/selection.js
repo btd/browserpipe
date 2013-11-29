@@ -1,7 +1,7 @@
 var _state = require('../state'),    
     _ = require('lodash'),
     $ = require('jquery'),
-    Messenger = require('Messenger');
+    Messenger = require('messenger');
 
 var msg, className = 'selection-selected';
 

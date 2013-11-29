@@ -21,28 +21,29 @@ module.exports = function (app, passport) {
   
   //User routes
   var users = require('./controllers/user')  ;
-  app.get('/login', users.login);
-  app.get('/signup', users.signup);
+  app.get('/login', users.login);  
   app.get('/logout', users.logout);
   app.post('/users', users.create);
   app.post('/users/session', passport.authenticate('local', { successReturnToOrRedirect: '/', failureRedirect: '/login', badRequestMessage: "Please enter valid email and password", failureFlash: true }));
-    
+
   app.param('userId', users.user);
+
+  //Home routes
+  app.get(    '/panel1/:type1/:id1',                     auth.ensureLoggedIn('/login'), main.home);
+  app.get(    '/panel1/:type1/:id1/panel2/:type2/:id2',  auth.ensureLoggedIn('/login'), main.home);
 
   //Invitation routes
   var invitation = require('./controllers/invitation');
+  app.get('/invitation/signup/:invitationId', invitation.accepted, users.signup);
   app.post(  '/invitations', invitation.create);
+
+  app.param('invitationId', invitation.invitation);
 
   //Extension
   app.get(    '/clients/chrome/extension.crx', auth.send401IfNotAuthenticated, main.chromeExtension);
 
-  //Listboard
-  var listboard = require('./controllers/listboard');
-  app.get(    '/listboards',              auth.ensureLoggedIn('/login'), main.home);
-  app.get(    '/listboard/:listboardId',  auth.ensureLoggedIn('/login'), main.home);
-  app.get(    '/listboard/:listboardId/settings',      auth.ensureLoggedIn('/login'), main.home);
-
   //Listboards routes
+  var listboard = require('./controllers/listboard');
   app.post(  '/listboards',                auth.send401IfNotAuthenticated, listboard.create);
   app.put(   '/listboards/:listboardId',   auth.send401IfNotAuthenticated, listboard.update);
   app.delete('/listboards/:listboardId',   auth.send401IfNotAuthenticated, listboard.destroy);
@@ -65,13 +66,13 @@ module.exports = function (app, passport) {
 
   //Items routes
   var item = require('./controllers/item');
-  app.get(    '/item/:itemId',  auth.ensureLoggedIn('/login'), main.home);
-  
-  app.post(   '/items',          item.create);
-  app.put(    '/items/:itemId',  item.update);
-  app.delete( '/items/:itemId',  item.destroy);
+  app.post(   '/listboards/:listboardId/containers/:containerId/items',  auth.send401IfNotAuthenticated, item.create);
+  app.post(   '/folders/:folderId/items',  auth.send401IfNotAuthenticated, item.create);
+  app.put(    '/items/:itemId',  auth.send401IfNotAuthenticated, item.update);
+  app.delete( '/listboards/:listboardId/containers/:containerId/items/:itemId',  auth.send401IfNotAuthenticated, item.remove);
+  app.delete( '/folders/:folderId/items/:itemId',  auth.send401IfNotAuthenticated, item.remove);
     
-  app.param('itemId', item.item);
+  app.param('itemId', auth.send401IfNotAuthenticated, item.item);
 
     
   

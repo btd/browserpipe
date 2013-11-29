@@ -6,15 +6,21 @@
 
     .item {                               
         background: #FFFFFF;
-        border: 2px solid @grey;
-        margin: 0 0 6px 0;
-        padding: 3px 6px 3px 6px;     
+        border-top: 1px solid #dcdcdc;        
+        border-left: 1px solid #dcdcdc;        
+        border-right: 1px solid #dcdcdc;        
+        padding: 6px;     
         font-size: 14px;
         position: relative;      
         .box-sizing(border-box);  
 
         &:hover {
             cursor: pointer;
+            border-left: 1px solid #a6a6a6;
+
+            .remove-item {
+                display: block;
+            } 
         }
         a {
             color: @grey3;     
@@ -48,36 +54,15 @@
         }                
         .remove-item {
             display: none;
+            float: right;
             margin: 3px 3px 3px 2px;
             .opacity(50);
 
             &:hover {
+                display: block;
                 cursor:pointer; 
                 .opacity(100);
-            } 
-        }
-        &.selection-selected {
-            background-color: @blue4;
-
-            &.selection-dragged {
-                .opacity(40);
             }
-        }
-        &.selection-droppable {
-            border: 2px dashed #000;
-        }
-    }   
-
-    .sortable-placeholder {           
-        margin: 0 0 6px 0 !important;
-        display: block !important;
-        padding: 3px 6px 3px 6px !important;
-        font-size: 12px !important;
-
-        .text {
-            padding-top: 0 !important;
-            color: @grey3 !important;             
-            height: 21px !important;
         }
     }
 }

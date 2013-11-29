@@ -1,131 +1,149 @@
 // Filename: router.js
 
-/*global initialOptions: true*/
-
 var _state = require('./state'),
     page = require('page'),
+    navigation = require('./navigation/navigation'),
     extension = require('./extension/extension'),
     HomeView = require('./components/home'),
     io = require('socket.io'),
     $ = require('jquery');
 
 //Notification system
-var Messenger = require('Messenger');
+require('messenger');
 Messenger.options = {
     extraClasses: 'messenger-fixed messenger-on-top messenger-on-right'
 }
 
+//Scrollbar
+require('jquery.mousewheel');
+require('perfect.scrollbar');
+
+//Dropdown
+require('bootstrap-dropdown');
+
 var homeView, //react home component instance
-    socket, //socket.io client socket
-    loadNotFoundView;
+    socket; //socket.io client socket
 
-//TODO where is loadNotFoundView ???
-
-var loadHomeView = function(listboardsVisible, listboardSettingsVisible, dialogItemVisible) {
-    if(!homeView){
+var loadHomeView = function() {
+    if(!homeView){        
         extension.isExtensionInstalled(function(installed) {
             homeView = HomeView.render(
-                getDocHeight(),
-                getDocWidth(),
-                _state.getAllListboards(),
-                _state.getSelectedListboard(),
-                _state.getSelectedItem(),
-                _state.getSelectedFolder(),
+                _state.getAllListboards(), 
+                _state.onePanel,               
+                _state.getPanel1SelectedTypeObject(),
+                _state.getPanel2SelectedTypeObject(),
                 _state.getSelection(),
-                installed,
-                listboardsVisible,
-                listboardSettingsVisible,
-                dialogItemVisible
+                installed
             );
         })
     } else {        
-       var selectedListboard = _state.getSelectedListboard();
-       var selectedItem = _state.getSelectedItem();
-       var selectedFolder = _state.getSelectedFolder();
+       var panel1SelectedTypeObject = _state.getPanel1SelectedTypeObject();
+       var panel2SelectedTypeObject = _state.getPanel2SelectedTypeObject();
+       var onePanel = _state.onePanel;
 
         homeView.setState({ 
-            selectedListboard: selectedListboard,
-            selectedItem: selectedItem,
-            selectedFolder: selectedFolder,
-            selection: _state.getSelection(),
-            listboardsVisible: listboardsVisible,
-            listboardSettingsVisible: listboardSettingsVisible,
-            dialogItemVisible: dialogItemVisible
+            onePanel: onePanel,
+            panel1SelectedTypeObject: panel1SelectedTypeObject,
+            panel2SelectedTypeObject: panel2SelectedTypeObject,
+            selection: _state.getSelection()
         }); 
     }
 
 }
 
+var selectTypeObject = function(type, id, callback) {
+    //We do the switch to avoid injections
+    switch(type){
+        case 'listboard' : {             
+            var listboard = _state.getListboardById(id);
+            if(listboard){
+                callback('listboard', listboard); 
+                return true;
+            }
+            break;
+        }
+        case 'container' : {  
+            var container = _state.getContainerById(id);
+            if(container){
+                callback('container', container); 
+                return true;
+            }
+            break;
+        }
+        case 'item' : {                
+            var item = _state.getItemById(id);
+            if(item){
+                callback('item', item); 
+                return true;
+            }
+            break;
+        }
+        case 'folder' : {                
+            var folder = _state.getFolderById(id);
+            if(folder){
+                callback('folder', folder); 
+                return true;
+            }
+            break;
+        }
+    }
+    return false;
+}
+
 page('/', function () {
     setTimeout(function() {
-        page('/listboards');
+        var rootFolder = _state.getRootFolder();
+        page('/panel1/folder/' + rootFolder._id);            
     }, 0);
 });
 
-page('/listboards', function () {
+page('/panel1/:type1/:id1', function (ctx) {    
     setTimeout(function() {
-        _state.selectFirstListboard();
-        var selectedListboard = _state.getSelectedListboard();
-        if(selectedListboard)
-            page('/listboard/' + selectedListboard._id);
-        else
-            loadHomeView(true, false, false);
-    }, 0);
-});
-
-page('/listboard/:id', function (ctx) {    
-    setTimeout(function() {
-        var id = ctx.params.id;
-        if(_state.getListboardById(id)){
-            _state.setSelectedListboard(id);        
-            loadHomeView(true, false, false);
+        _state.onePanel = true;
+        var type1 = ctx.params.type1;
+        var id1 = ctx.params.id1;        
+        var result = selectTypeObject(type1, id1, function(type, object) {
+            _state.setPanel1SelectedTypeObject(type, object)
+        });        
+        if(result)
+            loadHomeView();
+        else {
+            var rootFolder = _state.getRootFolder();
+            page('/panel1/folder/' + rootFolder._id);     
         }
-        else
-            loadNotFoundView();
      }, 0);
 });
 
-page('/listboard/:id/settings', function (ctx) {
+page('/panel1/:type1/:id1/panel2/:type2/:id2', function (ctx) {    
     setTimeout(function() {
-        var id = ctx.params.id;
-        if(_state.getListboardById(id)){
-            _state.setSelectedListboard(id);        
-            loadHomeView(false, true, false);    
+        _state.onePanel = false;
+        var type1 = ctx.params.type1;
+        var type2 = ctx.params.type2;
+        var id1 = ctx.params.id1;
+        var id2 = ctx.params.id2;        
+        var result1 = selectTypeObject(type1, id1, function(type, object) {
+            _state.setPanel1SelectedTypeObject(type, object)
+        });               
+        var result2 = selectTypeObject(type2, id2, function(type, object) { 
+            _state.setPanel2SelectedTypeObject(type, object)
+        });           
+        if(result1 && result2)
+            loadHomeView();
+        else {
+            var rootFolder = _state.getRootFolder();
+            if(!result1) 
+                navigation.updateOnePanel('folder', rootFolder._id, 1);
+            else if(!result2)
+                navigation.updateOnePanel('folder', rootFolder._id, 2);
         }
-        else
-            loadNotFoundView();
-     }, 0);    
-});
-
-page('/item/:id', function (ctx) {    
-    setTimeout(function() {        
-        var id = ctx.params.id;
-        if(_state.getItemById(id)){
-            _state.setSelectedItem(id);        
-            //If loaded for the first time, there is no selected listboard, so we select one
-            //TODO: select the first listboard that contains the item
-            if(!_state.getSelectedListboard())
-                _state.selectFirstListboard();
-            loadHomeView(true, false, true);
-        }
-        else
-            loadNotFoundView();
+            
      }, 0);
 });
-
-
-var getDocHeight = function() {
-    return $(window).height();
-};
-
-var getDocWidth = function() {
-    return $(window).width();
-};
 
 var initialize = function () {
     //init routing
     page({
-        popstate: false,
+        popstate: true,
         click: false,
         dispatch: true
     });
@@ -147,60 +165,36 @@ var initialize = function () {
 var loadWindowEvent = function() {
     //TODO: view is there is a better way to capture and pass events
     $(window).resize(function () {
-        if(homeView) {
-            homeView.setState({
-                docHeight: getDocHeight(),
-                docWidth: getDocWidth()
-            });
-        }
+        //We reset scrollbars
+        $('.scrollable-parent').scrollTop(0);
+        $('.scrollable-parent').perfectScrollbar('update');
     });
 };
 
-var onSelectedListboardChange = function() {
+var onSelectedPanel1Change = function() {    
     if(homeView) {
         homeView.setState({
-            selectedListboard: _state.getSelectedListboard()
+            panel1SelectedTypeObject: _state.getPanel1SelectedTypeObject()
         });
     }
 };
 
-var onSelectedItemChange = function() {
+var onSelectedPanel2Change = function() {
     if(homeView) {
         homeView.setState({
-            selectedItem: _state.getSelectedItem()
+            panel2SelectedTypeObject: _state.getPanel2SelectedTypeObject()
         });
     }
-}
-
-var onSelectedFolderChange = function () {
-    if(homeView) {
-        homeView.setState({
-            selectedFolder: _state.getSelectedFolder()
-        });
-    }
-}
-
-var onSelectionChange = function () {
-    if(homeView) {
-        homeView.setState({
-            selection: _state.getSelection()
-        });
-    }
-}
+};
 
 var stateChanges = function() {
-    _state.on('change:selectedListboard', onSelectedListboardChange);
+    _state.on('change:panel1SelectedTypeObject', onSelectedPanel1Change);
 
-    _state.on('change:selectedItem', onSelectedItemChange);
-
-    _state.on('change:selectedFolder', onSelectedFolderChange);
-
-    _state.on('change:selection', onSelectionChange);
+    _state.on('change:panel2SelectedTypeObject', onSelectedPanel2Change);
 
     var addedOrDeletedListboard = function() {
         homeView.setState({
-            listboards: _state.getAllListboards(),
-            selectedListboard: _state.getSelectedListboard()
+            listboards: _state.getAllListboards()
         });
     }
 

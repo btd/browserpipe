@@ -12,9 +12,7 @@ var Item = model()
     .attr('favicon') // String url for favicon
     .attr('url') // String
     .attr('note') // String
-    .attr('type') // integer;
-    .attr('folders') // array of folder id's
-    .attr('containers') // array of container id's
+    .attr('type') // integer;    
     .attr('externalId'); // id of the tab if it has
 
 var Items = collection(Item)

@@ -1,4 +1,15 @@
-var _state = require('../state')
+var _state = require('../state'),
+    navigation = require('../navigation/navigation');
+
+var removeContainer = function(listboardId, containerId) {
+    _state.removeContainer(listboardId, containerId);
+
+    //if we remove it from a panel, we navigate to the listboard that contains it
+    if(_state.hasPanel1SelectedTypeObject('container', containerId))
+        navigation.updateOnePanel('listboard', listboardId, 1);
+    if(_state.hasPanel2SelectedTypeObject('container', containerId))
+        navigation.updateOnePanel('listboard', listboardId, 2);
+}
 
 module.exports = function (socket) {
    
@@ -22,14 +33,13 @@ module.exports = function (socket) {
     });
 
     socket.on('delete.container', function (data) {        
-        _state.removeContainer(data.listboardId, data.container);
+        removeContainer(data.listboardId, data.container);
     });
 
     socket.on('bulk.delete.container', function (data) {
         var l = data.containers.length, listboardId = data.listboardId;
-        while(l--) {
-            _state.removeContainer(listboardId, data.containers[l]);
-        }
+        while(l--)
+            removeContainer(listboardId, data.containers[l]);
     });
 };
 

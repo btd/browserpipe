@@ -1,3 +1,69 @@
+//Clear
+ul, ol {
+  padding: 0;
+  margin: 0;
+}
+
+//Common
+.small-font {           
+    font-size: 13px;
+}
+
+.ps-scrollbar-x-rail {
+  height: 12px;
+
+  .ps-scrollbar-x {
+    height: 12px;
+  }
+}
+
+.ps-scrollbar-y-rail {
+  width: 12px;
+
+  .ps-scrollbar-y {
+    width: 12px;
+  }
+}
+.scrollable-parent-x {
+  position: relative;
+  overflow-x: hidden;
+}
+.scrollable-parent-y {
+  position: relative;
+  overflow-y: hidden;
+  height: 100%;
+}
+
+
+i.save-icon, i.cancel-icon {      
+  font-size: 13px;
+}
+
+.help-inline {
+  font-size: 13px !important;
+  font-weight: normal;
+}
+
+.le-editor {
+    margin: 0;
+}
+
+#selection-draggable {
+    text-align: center;
+    color: black;
+    position: fixed;
+    z-index: -3000;
+    background-color: @blue4;
+    .opacity(80);
+    font-size: 12px;
+    font-weight: bold;
+
+    ul {
+        margin: 6px 12px;
+        padding: 0;
+    }
+}
+
 //Flatten styles
 .flatten() {
   border: none;

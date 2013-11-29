@@ -1,7 +1,6 @@
 /* jshint node: true */
 
-var _ = require('lodash'),
-    q = require('q'),
+var q = require('q'),
     mongoose = require('mongoose'),
     Item = mongoose.model('Item'),
     Folder = mongoose.model('Folder');
@@ -10,33 +9,9 @@ var _ = require('lodash'),
 exports.home = function (req, res) {
     if (req.isAuthenticated()) {
 
-        var listboards = req.user.listboards;
-        Folder.getAll(req.user)
-            .then(function (folders) {                
-                //Load container ids
-                var containerIds = _(listboards).map(function (listboard) {
-                    return _.map(listboard.containers, '_id');
-                }).flatten().value();
-
-                var folderIds = _.map(folders, '_id');
-
-                var itemsByContainersPromise = Item.findAllByContainers(
-                        req.user,
-                        containerIds
-                    );
-                var itemsByFoldersPromise = Item.findAllByFolders(
-                        req.user,
-                        folderIds
-                    );
-
-                return q.all([
-                        itemsByContainersPromise,
-                        itemsByFoldersPromise
-                    ])
-                    .spread(function (itemsByContainers, itemsByFolders) {
-                        return [folders, _.union(itemsByContainers, itemsByFolders)];
-                    });
-            }).spread(function (folders, items) {
+        var listboards = req.user.listboards;        
+        q.all([Folder.getAll(req.user), Item.getAll(req.user)])
+            .spread(function (folders, items) {                
                 res.render('main/home', {
                     user: req.user,
                     listboards: listboards,

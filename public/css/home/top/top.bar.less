@@ -1,4 +1,7 @@
 #top-bar {
+    position: fixed;
+    z-index: 200;
+    background-color:@blue3;
     height: 46px;
     margin-bottom: 0px;
     border: none;
@@ -16,12 +19,16 @@
             .flatten();
         }
         .nav-option {
+            margin-left: 6px;
+
             a {
                 padding: 8px 15px;
                 color: @white;
-                background-color: @blue1;                
+                background-color: @blue1;    
+                text-shadow: none;            
 
                 &:hover {
+                    cursor: pointer;
                     background-color: @blue3;
                     text-decoration: none;    
                     text-shadow: none;    
@@ -60,9 +67,8 @@
         }          
         .brand {
             padding: 0px;
-
+            margin-left: 0;
             text-align: center;
-
             color: #EFEFEF;
             font-weight: 100;
             text-decoration: none;
@@ -87,6 +93,7 @@
                 margin-bottom: 0; 
                 .flatten();
                 font-weight: bold;
+                text-shadow: none;            
                 .tobutton(@blue1, @blue3)
             }
             #search-span {

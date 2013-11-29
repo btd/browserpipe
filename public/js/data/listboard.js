@@ -1,14 +1,12 @@
 var moco = require('moco'),
     util = require('./util/util'),
     collection = moco.collection,
-    model = moco.model,
-
-    Items = require('./item').Items;
+    model = moco.model;
 
 var Container = model()
     .attr('_id', { primary: true }) // ObjectId text representation
     .attr('title') // String
-    .attr('items', { collection: Items }) // collection of items    
+    .attr('items') // items ids
     .attr('type') // integer; usually 1*/
     .attr('externalId') // id of the window, for type == 0
     .attr('listboardId') // listboard id that contains it

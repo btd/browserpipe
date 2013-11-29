@@ -1,5 +1,6 @@
 var _state = require('../state');
 
+
 module.exports = function (socket) {
 
     socket.on('create.item', function (newItem) {

@@ -1,0 +1,57 @@
+.containers {              
+    color: @grey3;                
+
+
+    .container-option, .option-add-container {                                                  
+        border: 1px solid #dcdcdc;
+        
+    }
+    .container-option {           
+        background-color: #FFF;                                           
+
+        &:hover {
+            cursor:pointer;                         
+            border: 1px solid #c6c6c6;
+
+            .favicons {
+                .opacity(80);
+            }
+        }  
+        .title {        
+            width: 100px;    
+            height: 18px;
+            font-weight: bold;
+            text-overflow: ellipsis;                             
+            line-height: 12px;
+            display: block;
+            overflow: hidden;
+            max-width: 100px;
+            white-space: nowrap;
+        }
+        .favicons {
+            margin: 0 12px;
+            .opacity(40);
+
+            .favicon {
+                width: 16px;
+                height: 16px;
+                float: left;
+                margin: 1px;
+            }
+        }
+    }
+    .option-add-container {                                        
+        vertical-align: middle;
+        .opacity(60);
+
+        &:hover {
+            cursor:pointer;                         
+            border: 1px solid #c6c6c6;
+            .opacity(100);
+        }
+
+        .inner {
+            width: 48px; 
+        }
+    }
+}

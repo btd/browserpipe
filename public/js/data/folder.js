@@ -2,8 +2,7 @@ var _ = require('lodash'),
     moco = require('moco'),
     util = require('./util/util'),
     collection = moco.collection,
-    model = moco.model,
-    Items = require('./item').Items;
+    model = moco.model;
 
 var Folders = collection()// i will define model later
     .use(collection.byId)
@@ -14,8 +13,8 @@ var Folders = collection()// i will define model later
 var Folder = model()
     .attr('_id', { primary: true }) // ObjectId text representation
     .attr('label') // String
-    .attr('children', { collection: Folders }) // collection of sub folders
-    .attr('items', { collection: Items }) // collection of items
+    .attr('children') // array of folder Ids
+    .attr('items') // items ids
     .attr('path') // String
     .attr('isRoot', {
         get: function() {

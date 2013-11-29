@@ -30,7 +30,11 @@ var browserifyAliases = [
     bowerAlias('lodash/dist/lodash.js', 'lodash'),
     bowerAlias('emitter/index.js', 'emitter'),
     bowerAlias('indexof/index.js', 'indexof'),
-    bowerAlias('moco/index.js', 'moco')
+    bowerAlias('moco/index.js', 'moco'),
+    bowerAlias('messenger/build/js/messenger.js', 'messenger'),
+    bowerAlias('perfect.scrollbar/src/jquery.mousewheel.js', 'jquery.mousewheel'),
+    bowerAlias('perfect.scrollbar/src/perfect-scrollbar.js', 'perfect.scrollbar'),
+    bowerAlias('bootstrap/js/bootstrap-dropdown.js', 'bootstrap-dropdown'),
 ];
 
 module.exports = function(grunt) {
@@ -71,16 +75,8 @@ module.exports = function(grunt) {
                         alias: browserifyAliases,
                         extensions: [".jsx"],
                         external: ['emitter-component'],
-                        shim: {
-                            jquery: {
-                                path: "./public/bower_components/jquery/jquery.js",
-                                exports: "$"
-                            },
-                            Messenger: {
-                                path: './public/bower_components/messenger/build/js/messenger.js',
-                                exports: 'Messenger',
-                                depends: { jquery: 'jQuery' }
-                            }
+                        shim: {                            
+                            jquery: { path: "./public/bower_components/jquery/jquery.js", exports: "$" }
                         },
                         debug: true,
                         transform: ['reactify']
@@ -96,15 +92,7 @@ module.exports = function(grunt) {
                         external: ['emitter-component'],
                         extensions: [".jsx"],
                         shim: {                            
-                            jquery: {
-                                path: "./public/bower_components/jquery/jquery.js",
-                                exports: "$"
-                            },
-                            Messenger: {
-                                path: './public/bower_components/messenger/build/js/messenger.js',
-                                exports: 'Messenger',
-                                depends: { jquery: 'jQuery' }
-                            }
+                            jquery: { path: "./public/bower_components/jquery/jquery.js", exports: "$" }
                         },
                         debug: true,
                         transform: ['reactify']

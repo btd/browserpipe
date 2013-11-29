@@ -1,0 +1,190 @@
+.panel {          
+    height:100%;    
+    float: left;
+    
+    &.full-width {
+        width:100%;
+    }
+    &.half-width {
+        width:50%;
+    }    
+    .sub-bar {        
+        border-top: 9px solid #C0C9D9;
+        border-bottom: 1px solid #C0C9D9;
+        height: 39px;
+        margin: 0 6px;            
+        color: #444;
+
+        &.border {
+            border-top: 9px solid #2d4c7f;
+        }
+
+        .navbar-inner {               
+            margin: 0;
+            padding: 0;            
+            min-height: 33px;
+            .flatten();  
+            background: none;
+
+            .panel-number {
+                .opacity(30);
+                background-color: #2d4c7f;
+                padding-top: 3px;
+                width: 30px;
+                height: 30px;
+                float: left;
+                text-align: center;
+                font-weight: bold;
+                color: #fff;
+
+                &.selected {
+                    .opacity(100);
+                }
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+            .nav {                
+                padding-left: 6px;
+
+                &.nav-left {
+                    float: none;
+                    overflow: hidden;
+
+                    li {
+                        width: 100%;
+                        line-height: 14px;
+
+                        .listboard-icon {
+                            float: left;
+                            margin: 6px;
+                        }
+                        .label-editor .le-label, &.label-text {
+                            text-overflow: ellipsis;
+                            overflow: hidden;                
+                            white-space: nowrap;
+                            font-weight: bold;
+                            font-size: 16px;
+                            margin: 6px 12px 0 0;
+                        }
+                        .label-editor {            
+
+                            .le-label {                                            
+
+                                &:hover {
+                                    cursor: pointer;
+                                }
+                            }
+                            .le-editor {
+                                margin-left: 12px;
+                            }
+                        }
+                    }
+                }
+                &.nav-right {
+                    float: right;
+                    padding-top: 3px;
+
+                    a {
+                        background: none;
+
+                        &:hover {
+                            color: @grey3;
+                        }
+                    }
+
+                    .pinned {
+                        color: #2d4c7f;
+                    }
+                }
+            }
+            
+            a {
+                margin: 0 6px;
+                text-shadow: none;
+                padding: 4px 12px;
+            }
+
+            .sub-title {
+                font-size: 10px;
+                font-style: italic;
+            }
+        }
+    }
+    .panel-center {                 
+        height: 100%;
+        overflow-y:hidden;                  
+        -webkit-box-sizing:border-box;
+        -moz-box-sizing:border-box;
+        -ms-box-sizing:border-box;
+        box-sizing:border-box;
+        margin:-48px 0 0 0;
+        padding: 56px 12px 0 12px;   
+
+        .scrollable-parent {        
+
+            .ps-scrollbar-x-rail {
+                        display: none;
+            }    
+        }               
+    }
+}
+
+.listboard-panel {
+
+    .containers {        
+
+        .container-option, .option-add-container {
+            margin: 3px 6px;
+            padding: 3px 6px;
+            display: inline-block;    
+            text-align: center;
+
+            .favicons {
+                margin: 6px 12px;
+            }
+        }
+        .option-add-container {
+            height: 48px;
+            margin: -38px 6px 0;
+
+            .inner {
+                padding-top: 12px;
+            }
+
+        }
+    }
+}
+
+.item-panel {
+
+    .screenshot {
+        margin: auto;
+        display: block;   
+    }
+}
+
+.container-panel, .folder-panel {
+    .opt-add-item {
+        color: #777;
+        font-size: 12px;
+
+        &:hover {
+            color: #333;
+            cursor: pointer;
+        }
+    }
+    .input-append {
+        display: block;
+
+        &.hide {
+            display: none;
+        }
+        .new-item-url {
+            width: 90%;
+        }
+        .new-folder-label {
+            width: 90%;
+        }
+    }
+}

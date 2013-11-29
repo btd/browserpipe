@@ -54,17 +54,12 @@ exports.create = function (req, res, next) {
             } else {
                 var user = new User(_.pick(req.body, 'email', 'name', 'password'));
                 user.provider = 'local' //for passport
-
-                //Creates initial data
-
-                //Create a listboard
-                user.addListboard({ type: 1, label: 'Example listboard'});
-
+                
                 //Create a root folder
                 var rootFolder = new Folder({ label: 'Archive', user: user });
-
+                
                 //Create child folders
-                var readLaterFolder = rootFolder.createChildFolder("Read Later");
+                var readLaterFolder = rootFolder.createChildFolder("Fun videos");
                 var coolSitesFolder = rootFolder.createChildFolder("Cool Sites");
 
                 return user.saveWithPromise()
@@ -78,7 +73,7 @@ exports.create = function (req, res, next) {
                     .then(function () {
                         req.login(user, function (err) {
                             if (err) return next(err);
-                             res.redirect('/listboards');
+                             res.redirect('/');
                         })
                     })
                     .fail(next)

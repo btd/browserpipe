@@ -2,8 +2,7 @@
 
 var _ = require('lodash'),
     q = require('q'),
-    Folder = require('../../models/folder'),
-    Item = require('../../models/item'),
+    Folder = require('../../models/folder'),    
     responses = require('../responses'),
     errors = require('../errors');
 
@@ -62,61 +61,50 @@ exports.create = function (req, res, next) {
       .done();
 }
 
-//Update folder
-exports.update = function (req, res) {
-    req.checkBody('label').notEmpty();
-    req.checkBody('path').notEmpty();
+var updateDescendants = function(req, oldPath, folder) {  
+  return Folder.findAllDescendant(req.user, oldPath)
+    .then(function(folders) {
+      
+      var updatedFolders = folders.map(function(f) {
+        f.path = f.path.replace(oldPath, folder.fullPath);
+        return f;
+      });
 
-    var errs = req.validationErrors();
-    if(errs) {
-      return errors.sendBadRequest(res);
-    }
-    var folder = req.currentFolder;
+      var promises = updatedFolders.map(function(f) { return f.saveWithPromise(); });
 
-    Folder.findAllDescendant(req.user, folder.fullPath)
-      .then(function(folders) {
-        _.merge(folder, _.pick(req.body, 'label', 'path'));
-
-        folders = folders.map(function(f) {
-          f.path = folder.fullPath;
-          return f;
-        });
-
-        return q.all(folders.map(function(f) { return f.saveWithPromise(); }))
-          .then(userUpdate.bulkUpdateFolder.bind(null, req.user._id, folders));
-      })
-      .then(responses.sendModelId(res, folder._id))
-      .fail(errors.ifErrorSendBadRequest(res))
-      .done();
+      return q.all(promises).then(userUpdate.bulkUpdateFolder.bind(null, req.user._id, updatedFolders));
+    })
 }
 
-//Delete folder, all its childs folders and remove tag from item
+//Update folder
+exports.update = function (req, res) {
+
+  req.checkBody('label').notEmpty();    
+
+  var errs = req.validationErrors();
+  if(errs) {
+    return errors.sendBadRequest(res);
+  }
+  var folder = req.currentFolder;
+  var oldPath = folder.fullPath;
+
+  _.merge(folder, _.pick(req.body, 'label'));
+
+  saveFolder(req, res, folder)
+    .then(userUpdate.updateFolder.bind(null, req.user._id, folder))        
+    .then(updateDescendants(req, oldPath, folder))
+    .done();      
+}
+
+//Delete folder, all its childs folders
 exports.destroy = function (req, res) {
     var folder = req.currentFolder;  
 
     Folder.findAllDescendant(req.user, folder.fullPath)
-      .then(function(allSubFolders) {
-        allSubFolders.push(folder);
-
-        //need to find all items that uses this folders
-        var removeItems = Item.where('user').equals(req.user).where('folders').in(allSubFolders).execWithPromise()
-          .then(function(items) {
-            items = items.map(function(i) {
-              allSubFolders.forEach(function(f) {
-                i.folders.remove(f._id);
-              })
-              return i;
-            });
-
-            userUpdate.bulkUpdateItem(req.user._id, items);
-            return q.all(items.map(function(i) {
-              return i.saveWithPromise(); }));
-          });
-
-        var removeFolders = q.all(allSubFolders.map(function(f) { return f.removeWithPromise(); }))
-
-        return q.all([ removeItems, removeFolders ])
-          .then(userUpdate.bulkDeleteFolder.bind(null, req.user._id, allSubFolders));
+      .then(function(allSubFolders) {        
+        allSubFolders.push(folder);  
+        return q.all(allSubFolders.map(function(f) { return f.removeWithPromise() }))
+                .then(userUpdate.bulkDeleteFolder.bind(null, req.user._id, allSubFolders));
       })
       .then(responses.sendModelId(res, folder._id))
       .fail(errors.ifErrorSendBadRequest(res))

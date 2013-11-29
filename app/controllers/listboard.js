@@ -1,11 +1,8 @@
 /* jshint node: true */
 
-var _ = require('lodash'),
-    Item = require('../../models/item'),
+var _ = require('lodash'),    
     responses = require('.././responses.js'),
     errors = require('.././errors.js');
-
-var q = require('q');
 
 var userUpdate = require('./user_update');
 
@@ -21,13 +18,13 @@ exports.listboard = function (req, res, next, id) {
 
 //Create Later listboard
 exports.create = function (req, res) {
-    req.check('type').isInt().equals(1);
-    req.check('label').notEmpty();
+    req.check('type').isInt().equals(1);    
 
     var errs = req.validationErrors();
     if (errs) return errors.sendBadRequest(res);
 
     var listboard = req.user.addListboard(_.pick(req.body, 'label', 'type'));
+    listboard.addContainer({type: 1, title: 'New window' });
 
     req.user.saveWithPromise()
         .then(responses.sendModelId(res, listboard._id), errors.ifErrorSendBadRequest(res))
@@ -58,25 +55,8 @@ exports.update = function (req, res) {
 exports.destroy = function (req, res) {
 
     var listboard = req.listboard;
-
-    //Deltas for items removed
-    Item.where('user').equals(req.user).where('containers').in(listboard.containers).execWithPromise()
-        .then(function(items) {
-            items = items.map(function(i) {
-                listboard.containers.forEach(function(c) {
-                    i.containers.remove(c._id);
-                })
-                return i;
-            });
-
-            userUpdate.bulkUpdateItem(req.user._id, items);
-            return q.all(items.map(function(i) {
-                return i.saveWithPromise(); }));
-        });
-
     req.user.removeListboard(listboard);
-
-    //Remove items from listboard containers
+    
     req.user.saveWithPromise()
         .then(responses.sendModelId(res, listboard._id), errors.ifErrorSendBadRequest(res))
         .then(userUpdate.deleteListboard.bind(null, req.user.id, listboard))

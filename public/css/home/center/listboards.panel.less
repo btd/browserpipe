@@ -1,132 +1,134 @@
-.listboards-panel {
+.listboards-panel {    
+    position: absolute; 
+    top: 46px;
     width: 100%;
-    position: relative;        
-    overflow-x: auto;
-	background: url("/img/common/bg-pattern.png") repeat 50% 0;
-    .flatten();   
+    overflow-x: hidden;
+    .flatten();  
 
-     a.chrome-extension-warning{
-        width: 270px;
-        background-color: red; 
-        color: @white;
-        text-align: center;         
-        overflow: hidden;
-        float: left;
-        .opacity(80);     
-        color: @white;
-        font-weight: bold;
-        overflow: hidden;
-        text-overflow: ellipsis;  
+    .listboards-panel-inner { 
+        height: 104px;           
+        position: relative;
+        overflow-x: hidden;
 
-         &:hover {
-            cursor:pointer; 
-            .opacity(90);
-            text-decoration: none;
-        }
-    }    
-    .listboards {
-    	margin: 0;
-    	padding: 0;
-        display: table;
-        border-collapse: separate;
-        border-spacing: 6px 3px;
+        .ps-scrollbar-y-rail {
+            display: none;
+        }    
+        .ps-scrollbar-x-rail {
+           /* top: 6px;            */
+        }   
+        .listboards {
+            height: 104px;
+            display: table;
+        	margin: 0;
+        	padding: 0;
+            border-collapse: separate;
+            border-spacing: 12px 3px;    
 
-        ul {
-            margin: 0;
-            padding: 0;            
-        }
-        .listboard-selector {  
-            display: table-cell;
-            font-size: 13px;
-            list-style: none;
-            color: @white;
-            text-align: center;         
-            overflow: hidden;        
-            .opacity(80);    
-            
-            &:hover {
-                cursor:pointer; 
-                .opacity(100);
-            }             
-            div {        
-                width: 86px;    
-                max-width: 86px;    
-                height: 30px;
-                font-weight: bold;
-                text-overflow: ellipsis;     
+            ul {
+                margin: 0;
+                padding: 0;            
             }
+            .listboard-option, .extension-button, .add-listboard {
+                display: table-cell;                           
+                font-size: 13px;
+                list-style: none;
+                color: @grey2;
+                text-align: center;         
+                overflow: hidden;        
+                font-weight: bold;   
+                border: 1px solid #dcdcdc;
+                background-color: #F4F4F4;             
 
-            &.browser-listboard-selector { 
-               border: 2px solid @blue3;       
-               background-color: @blue3;
-               position: relative;
-
-               img {                    
-                    position: absolute;
-                    left: 3px;
-               }
-               span {
-                    margin-left: 12px;
-                    display: block;
-               }
-               &.selected {
-                    .opacity(100);
-                    border: 2px solid @blue3;       
-                    background-color: @blue3;
-                } 
+                &:hover {
+                    cursor:pointer; 
+                    border: 1px solid #c6c6c6;
+                    
+                    .listboard-option-type {
+                        .opacity(100);
+                    }
+                }  
             }
-            &.custom-listboard-selector {
-                border: 2px solid @grey4;
-                background-color: @grey4;
+            .listboard-option { 
+                background-color: #F4F4F4;  
+                position: relative;  
+                .border-radius(4px);
+                padding-left: 20px;
 
                 &.selected {
-                    .opacity(100);
-                    border: 2px solid @grey2;
-                    background-color: @grey2;
-                } 
-            }
-            &.selection-selected {
-                color: @grey3;    
-                border: 2px solid @blue4 !important;
-                background-color: @blue4 !important;
+                    border: 1px solid @blue3;
+                }                                                   
+                &.browser-listboard-option {                               
+                   position: relative;
 
-                &.selection-dragged {
-                    .opacity(40);
+                   img {                    
+                        float: left;
+                        margin-right: 6px;
+                   }
+                }
+                .listboard-option-type {
+                    font-weight: normal;
+                    text-shadow: none;                    
+                    color: @white;
+                    background-color: @grey4;
+                    .rotate(270deg);
+                    position: absolute;
+                    width: 100px;
+                    left: -40px;
+                    top: 40px;
+                    .opacity(80);
+                }
+                .listboard-option-header {
+                    display: inline-block;
+                    text-align: left;
+                    margin-left: 12px;
+                    overflow: hidden;
+
+                    .listboard-label {
+                        float: none;
+                        width: auto;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                        text-align: right;
+                    }                    
+
+                    .listboard-icon {
+                        float: right;
+                    }
+                }
+                .containers {
+                    display: table-row;  
+
+                    .container-option, .option-add-container {
+                        display: table-cell;    
+                    }
+                }
+                
+            }
+            .extension-button, .add-listboard {                                        
+                vertical-align: middle;
+                background-color: @grey4;
+                color: #fff;        
+                .opacity(80);    
+                background: #777777;
+                max-width: 120px;
+                padding: 2px;
+                text-shadow: none;
+                font-size: 14px;
+                font-weight: normal;
+
+                &:hover {
+                    text-decoration: none;                    
+                    .opacity(100);
+                }
+                .inner {
+                    width: 110px;
+
+                    .text {
+                        margin: 0 12px;
+                    }
                 }
             }
-            &.selection-droppable {
-                border: 2px dashed #000;
-            }
-            
         }
-        .sortable-placeholder {            
-            display: table-cell;
-            border: 2px dashed #000;
-            list-style: none;            
-            height: 30px;
-            .opacity(80);             
-            overflow: hidden;
-
-            .text {                
-                text-align: center;
-                width: 86px;    
-                max-width: 86px;    
-            }   
-        }
-    }
-    .add-listboard {      
-        display: table-cell;
-        margin-top: 9px;
-        background-color: @grey4;
-        color: #fff;
-        background-image: none; 
-        .opacity(80);      
-
-        &:hover {
-            text-decoration: none;
-            cursor:pointer; 
-            .opacity(100);
-        }        
-    }
-
+    }    
 }
