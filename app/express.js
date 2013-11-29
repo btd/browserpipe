@@ -80,7 +80,7 @@ module.exports = function (app, config, passport) {
     app.use(app.router)
 
     // common error handler
-    app.use(function (err, req, res) {
+    app.use(function (err, req, res, next) {
         // log it
         logger.error('Exception in express', err);
 
@@ -93,8 +93,6 @@ module.exports = function (app, config, passport) {
                 res.json(500, {code: 500, error: "Oop's something went wrong"});
             }
         });
-        // error page
-
     })
 
     // assume 404 since no middleware responded
