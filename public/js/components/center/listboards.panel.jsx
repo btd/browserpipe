@@ -7,7 +7,6 @@ var _state = require('../../state'),
     extension = require('../../extension/extension'),
     page = require('page'),
     React = require('react'),
-    ContainersComponent = require('./common/containers'), 
     listboardSelectorDraggable = require('../../dragging/listboard.selector'),
     selection = require('../../selection/selection');
 
@@ -44,10 +43,19 @@ var ListboardsPanelComponent = React.createClass({
             this.props.navigateToListboard(listboardId);
     },
     getListboardClass: function(listboard) {
-        return 'listboard-option ' +
+        return 'listboard-option btn ' +
         /*(this.props.selectedListboard._id === listboard._id ?  'selected ' : '') + */
         (listboard.type === 0 ? 'browser-listboard-option ' : 'custom-listboard-option ') +
         (this.isListboardSelected(listboard._id)? selection.getClassName() : '');
+    },
+    getOptionType: function(listboard) {
+        if(listboard.type === 0)
+            return <div className="listboard-option-type browser">
+                        <span>browser</span>
+                        <img className="listboard-icon" draggable="false" src="/img/common/chrome-logo.png" alt="Chrome Logo" />                        
+                    </div>
+        else
+            return <div className="listboard-option-type later">later</div>
     },
     renderListboardOption: function(listboard) {
         var self = this;
@@ -56,14 +64,10 @@ var ListboardsPanelComponent = React.createClass({
                     onClick={this.handleListboardClick}
                     id={'li_' + listboard._id}
                 >
-                    <div className="listboard-option-type">{listboard.type === 0 ? 'browser' : 'later'}</div>
-                    <div className="listboard-option-header" >
-                        { listboard.type === 0 ? <img className="listboard-icon" draggable="false" src="/img/common/chrome-logo.png" alt="Chrome Logo" /> : null }                        
+                    { this.getOptionType(listboard) }    
+                    <div className="inner" >
                         <div className="listboard-label">{listboard.label? listboard.label : 'Group of windows'}</div>
                     </div>
-                    <ContainersComponent 
-                        listboard= { listboard }
-                        navigateToContainer = {this.props.navigateToContainer} />
                 </div>                   
     },
     render: function() {
@@ -78,18 +82,18 @@ var ListboardsPanelComponent = React.createClass({
                                 <div className="text">Sync current tabs</div>
                             </div>
                         </a>  
-                        <a draggable="false"  className="add-listboard btn" onClick={this.addEmptyListboardAndSelectIt}  href="#" title="Add listboard" data-toggle="tooltip">
-                            <div className="inner">
-                                <i className="icon-plus"></i>
-                                <div className="text">Add tabs for later</div>
-                            </div>
-                        </a>  
                         {                    
                             this.props.listboards     
                                 .map(function(listboard) {
                                     return self.renderListboardOption(listboard)
                                 })
                         }  
+                        <a draggable="false"  className="add-listboard btn" onClick={this.addEmptyListboardAndSelectIt}  href="#" title="Add listboard" data-toggle="tooltip">
+                            <div className="inner">
+                                <i className="icon-plus"></i>
+                                <div className="text">Add tabs for later</div>
+                            </div>
+                        </a>  
                     </div>  
                 </div> 
                 /*<div id="installExtensionModal" className="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
