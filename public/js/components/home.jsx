@@ -162,8 +162,7 @@ var HomeComponent = React.createClass({
   },
   render: function() {
     this.listboardsPanelComponent = <ListboardsPanelComponent         
-      navigateToListboard={ this.navigateToListboard } 
-      navigateToContainer={ this.navigateToContainer }       
+      navigateToListboard={ this.navigateToListboard }       
       isPanel1Active={ this.state.isPanel1Active }
       panel1SelectedTypeObject= { this.state.panel1SelectedTypeObject } 
       panel2SelectedTypeObject= { this.state.panel2SelectedTypeObject } 

@@ -48,66 +48,8 @@
                     }
                 }  
             }
-            .listboard-option { 
-                background-color: #F4F4F4;  
-                position: relative;  
-                .border-radius(4px);
-                padding-left: 20px;
-
-                &.selected {
-                    border: 1px solid @blue3;
-                }                                                   
-                &.browser-listboard-option {                               
-                   position: relative;
-
-                   img {                    
-                        float: left;
-                        margin-right: 6px;
-                   }
-                }
-                .listboard-option-type {
-                    font-weight: normal;
-                    text-shadow: none;                    
-                    color: @white;
-                    background-color: @grey4;
-                    .rotate(270deg);
-                    position: absolute;
-                    width: 100px;
-                    left: -40px;
-                    top: 40px;
-                    .opacity(80);
-                }
-                .listboard-option-header {
-                    display: inline-block;
-                    text-align: left;
-                    margin-left: 12px;
-                    overflow: hidden;
-
-                    .listboard-label {
-                        float: none;
-                        width: auto;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        white-space: nowrap;
-                        text-align: right;
-                    }                    
-
-                    .listboard-icon {
-                        float: right;
-                    }
-                }
-                .containers {
-                    display: table-row;  
-
-                    .container-option, .option-add-container {
-                        display: table-cell;    
-                    }
-                }
-                
-            }
-            .extension-button, .add-listboard {                                        
+            .extension-button, .add-listboard, .listboard-option {                                        
                 vertical-align: middle;
-                background-color: @grey4;
                 color: #fff;        
                 .opacity(80);    
                 background: #777777;
@@ -122,12 +64,55 @@
                     .opacity(100);
                 }
                 .inner {
-                    width: 110px;
 
                     .text {
                         margin: 0 12px;
                     }
                 }
+            }
+            .extension-button, .add-listboard {
+
+                .inner {
+                    width: 90px;
+                }
+
+            }
+            .extension-button{
+                background-color: #033649;
+            }
+            .add-listboard {
+                background-color: #036564;
+            }
+
+            .listboard-option {                 
+                position: relative;
+                padding-left: 21px;
+                background-color: @grey4;
+
+                .inner {
+                    width: 110px;
+                }                
+                .listboard-option-type {
+                    font-weight: normal;
+                    text-shadow: none;                    
+                    color: @white;                    
+                    .rotate(270deg);
+                    position: absolute;
+                    width: 100px;
+                    left: -40px;
+                    top: 40px;
+                    .opacity(80);
+
+                    &.browser {
+                        background-color: #033649;
+                    }
+                    &.later {
+                        background-color: #036564;
+                    }
+                    .listboard-icon {
+                        margin-left: 6px;
+                    }
+                }                
             }
         }
     }    
