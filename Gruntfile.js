@@ -105,6 +105,8 @@ module.exports = function(grunt) {
         // A very basic default task.
         grunt.registerTask('default', ['develop', 'browserify', 'watch']);
 
+        grunt.registerTask('dist', ['browserify:mainJs']);
+
         grunt.loadNpmTasks('grunt-contrib-watch');
         grunt.loadNpmTasks('grunt-browserify');
         grunt.loadNpmTasks('grunt-develop'); 
