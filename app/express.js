@@ -13,7 +13,6 @@ module.exports = function (app, config, passport) {
 
     var cm = new (require('./connect-mincer'))(config.mincer);
     require('./middlewares/less-mincer')(cm.environment);
-    cm.preprocess();
     app.use(cm.middleware());
     app.use(config.mincer.url, cm.createServer());
 

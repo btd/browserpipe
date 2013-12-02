@@ -45,7 +45,6 @@ var ConnectMincer = function(options) {
 
     this.environment.ContextClass.defineAssetPath(function (pathname, options) {
         var assetPath = that._findAssetPaths(pathname, options)[0];
-
         if (!assetPath) {
             throw new Error("File " + pathname + " not found");
         }
@@ -53,25 +52,29 @@ var ConnectMincer = function(options) {
     });
 
     if(options.preprocess) {
-        this.environment.jsCompressor  = "uglify";
-        this.environment.cssCompressor = "csso";
+        //this.environment.jsCompressor  = "uglify";
+        //this.environment.cssCompressor = "csso";
 
         //assets will not changed between requests
         this.environment = this.environment.index;
 
+        // this should be repeated twice
         this.manifest = new Mincer.Manifest(this.environment, options.manifest);
+
+        compile(this.manifest, this.options.preprocess);
     }
 };
 
-ConnectMincer.prototype.preprocess = function() {
-    if(this.options.preprocess) {
-        var that = this;
-        this.manifest.compile(this.options.preprocess, function(err) {
-            if(err) console.warn('Error while preprocess assets', err);
-            else console.info('Assets compiled', that.options.preprocess);
+function compile(manifest, filters) {
+    if(Array.isArray(filters) && filters.length > 0) {
+        var head = filters.shift();
+        console.log("Compile %s", head);
+        manifest.compile([ head ], function(err) {
+            if(!err) compile(manifest, filters);
+            else throw err;
         });
     }
-};
+}
 
 ConnectMincer.prototype._findAssetPaths = function (logicalPath, options, ext) {
     var parsedUrl = _.pick(url.parse(logicalPath, true), 'query', 'hash', 'pathname');

@@ -72,13 +72,13 @@ var config = {
         },
         mincer: {
              preprocess: [
-                'img/index/**', 
-                'font/**', 
-                'css/index.css', 
-                'css/app.css', 
-                'js/index.js', 
-                'js/apps/main.js'
-            ],
+                'font/**',
+                'img/index/**',
+                'js/index.js',
+                'js/apps/main.js',
+                'css/index.css',
+                'css/app.css'
+             ],
             manifest: path.join(__dirname, 'compiled-assets')
         }
     }
