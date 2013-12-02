@@ -52,8 +52,8 @@ var ConnectMincer = function(options) {
     });
 
     if(options.preprocess) {
-        //this.environment.jsCompressor  = "uglify";
-        //this.environment.cssCompressor = "csso";
+        this.environment.jsCompressor  = "uglify";
+        this.environment.cssCompressor = "csso";
 
         //assets will not changed between requests
         this.environment = this.environment.index;
