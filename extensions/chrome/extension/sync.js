@@ -1,11 +1,4 @@
-var listboarditAuth = new OAuth2('listboard_it', {
-    client_id: '459043952b1b9d51fab2bf0cc018353cd121609236e03273c378172e52b7f601ff20d79345b78e358bad0024ccd785b2a8a0e39817327a386628f68dc71ef464',
-    client_secret: 'dcb37d3bed34e05a31d84000aa0f823e5344b4f635c9402b6cdd8817ee9eed1bdc08daac536a0eeac98e8d232e4f4b3cff420aaf9e56db8da6bbaac333b3f62c'
-});
 
-var xobj = function(){
-    return new XMLHttpRequest();
-};
 
 function XhrError(message, status) {
     Error.call(this);
@@ -20,7 +13,7 @@ XhrError.prototype = Object.create(Error.prototype);
 function noop() { }
 
 function xhr(options, callback, errback) {
-    var req = xobj();
+    var req = new XMLHttpRequest();
 
     if(Object.prototype.toString.call(options) == '[object String]') {
         options = { url: options };
@@ -71,6 +64,11 @@ function browserKey() {
     }
     return key;
 }
+
+var listboarditAuth = new OAuth2('listboard_it', {
+    client_id: 'c1ac6c64c0e5b3d89742ca0b0c21f17a6ad09653cbc5485445205ff62d46f744b653edbcf44a789a7c08d46878fba68dc039a56eda99104bc2de8a6a953bf217',
+    client_secret: '0010b153d6ab89f94ada6650745c2ec579de72cf41facdc0441f20cf6d080aacd3d9dd302886cbc8bb78fc067805bd65a2f7ab1fdc2ca93ef5b4eaf2d94e54f6'
+});
 
 var sync = function() {
     listboarditAuth.authorize(function() {
@@ -132,24 +130,24 @@ chrome.browserAction.onClicked.addListener(function (tab) {
 
 //bind tab events
 chrome.tabs.onCreated.addListener(function(tab) {
-    sync();
+    //sync();
 })
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-    sync();
+    //sync();
 })
 chrome.tabs.onMoved.addListener(function(tabId, moveInfo) {
-    sync();
+    //sync();
 })
 chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
-    sync();
+    //sync();
 })
 
 //bind window events
 chrome.windows.onCreated.addListener(function(win) {
-    sync();
+    //sync();
 })
 chrome.windows.onRemoved.addListener(function(winId) {
-    sync();
+    //sync();
 })
 
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {  

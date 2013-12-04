@@ -59,4 +59,10 @@ var qfindOne = function (obj) {
 
 ItemSchema.statics.by = qfindOne;
 
+ItemSchema.statics.all = function(query) {
+    return Item
+        .find(query)
+        .execWithPromise();
+}
+
 module.exports = Item = mongoose.model('Item', ItemSchema);
