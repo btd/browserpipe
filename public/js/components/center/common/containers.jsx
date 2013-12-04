@@ -18,8 +18,7 @@ var ContainersComponent = React.createClass({
         e.preventDefault();
         _state.serverSaveContainer({
             listboardId: this.props.listboard._id,
-            type: 1,
-            title: 'New Window'
+            type: 1
         })
     },
     handleContainerClick: function(e) {

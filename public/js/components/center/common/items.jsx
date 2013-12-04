@@ -52,27 +52,33 @@ var ItemsComponent = React.createClass({
         this.refs.itemURLBlankError.getDOMNode().className = "help-inline hide item-url-blank";
         this.refs.itemURLInvalidError.getDOMNode().className = "help-inline hide item-url-invalid";
     },
+    getAddNewItem: function() {
+        if(this.props.saveItem)
+            return <li>
+                    <a ref="addItem" draggable="false"  onClick={ this.handlePanelClick(this.showAndFocusAddItemInput) } className="opt-add-item">Add URL</a>          
+                    <div ref="itemEditor" className="input-append add-item hide">
+                        <div className="control-group">    
+                          <div className="controls">
+                              <textarea ref="itemInput" className="new-item-url" cols="2"></textarea>
+                              <div>
+                                <span ref="itemURLBlankError" className="help-inline hide item-url-blank">Cannot be blank</span>
+                                <span ref="itemURLInvalidError" className="help-inline hide item-url-invalid">Invalid URL</span>
+                              </div>
+                              <div>
+                                <button onClick={ this.handlePanelClick(this.handleSaveItemClick) } className="btn add-item-save" type="button"><i className="icon-ok save-icon">&nbsp;Add URL</i></button>
+                                <button onClick={ this.handlePanelClick(this.hideItemInput) } className="btn add-item-cancel" type="button"><i className="icon-remove cancel-icon"></i></button>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+                </li>
+        else
+            return null;
+    },
     render: function() {
         var self = this;
         return <ul className={ this.getItemsClass() }>            
-            <li>
-                <a ref="addItem" draggable="false"  onClick={ this.handlePanelClick(this.showAndFocusAddItemInput) } className="opt-add-item">Add URL</a>          
-                <div ref="itemEditor" className="input-append add-item hide">
-                    <div className="control-group">    
-                      <div className="controls">
-                          <textarea ref="itemInput" className="new-item-url" cols="2"></textarea>
-                          <div>
-                            <span ref="itemURLBlankError" className="help-inline hide item-url-blank">Cannot be blank</span>
-                            <span ref="itemURLInvalidError" className="help-inline hide item-url-invalid">Invalid URL</span>
-                          </div>
-                          <div>
-                            <button onClick={ this.handlePanelClick(this.handleSaveItemClick) } className="btn add-item-save" type="button"><i className="icon-ok save-icon">&nbsp;Add URL</i></button>
-                            <button onClick={ this.handlePanelClick(this.hideItemInput) } className="btn add-item-cancel" type="button"><i className="icon-remove cancel-icon"></i></button>
-                        </div>
-                    </div>
-                  </div>
-                </div>
-            </li>
+            { this.getAddNewItem() }
             {                    
               this.props.items.map(function(item) {
                   return <Item 

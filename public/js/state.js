@@ -163,6 +163,16 @@ _.extend(State1.prototype, {
     getAllListboards: function () {
         return this.listboards;
     },
+    getLaterListboard: function () {
+        return _.find(this.listboards, function(l) {
+            return l.type === 1;
+        });
+    },
+    getAllBrowserListboards: function () {
+        return this.listboards.filter(function(l) {
+            return l.type === 0;
+        });
+    },
     getFirstListboard: function () {
         return (this.listboards.length > 0? this.listboards[0] : null);
     },
@@ -373,6 +383,7 @@ _.extend(State1.prototype, {
             case 'container' : typeobject.container = object; break;
             case 'item' : typeobject.item = object; break;
             case 'folder' : typeobject.folder = object; break;
+            case 'search' : typeobject.search = object; break;
         }
     },
     setPanel1SelectedTypeObject: function (type, object) {       
@@ -470,9 +481,22 @@ _.extend(State1.prototype, {
     },
     removeFolderFromSelection: function(folderId) {        
         this.selection.folders.removeById(folderId);
-    }
+    },
 
     //////////////////////////////////////////SELECTION//////////////////////////////////////
+
+
+    ///////////////////////////////////////////SEARCH///////////////////////////////////////
+    
+    searchItem: function (query, success) {
+        return $.ajax({
+            url: '/search/' + query,
+            type: "GET",
+            success: success
+        });
+    },
+
+    ///////////////////////////////////////////SEARCH///////////////////////////////////////
 
 
 });

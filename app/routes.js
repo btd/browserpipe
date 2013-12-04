@@ -31,6 +31,7 @@ module.exports = function (app, passport) {
 
   //Listboards routes
   var listboard = require('./controllers/listboard');
+  //@Deprecated: there is only one listboard of type 1 (later) and listboars of type 0 are created from extensions installation
   app.post(  '/listboards',                auth.send401IfNotAuthenticated, listboard.create);
   app.put(   '/listboards/:listboardId',   auth.send401IfNotAuthenticated, listboard.update);
   app.delete('/listboards/:listboardId',   auth.send401IfNotAuthenticated, listboard.destroy);
@@ -58,9 +59,12 @@ module.exports = function (app, passport) {
   app.put(    '/items/:itemId',  auth.send401IfNotAuthenticated, item.update);
   app.delete( '/listboards/:listboardId/containers/:containerId/items/:itemId',  auth.send401IfNotAuthenticated, item.remove);
   app.delete( '/folders/:folderId/items/:itemId',  auth.send401IfNotAuthenticated, item.remove);
-    
+
   app.param('itemId', auth.send401IfNotAuthenticated, item.item);
 
-    
-  
+  //Search route  
+  app.get(    '/search/:query',  auth.send401IfNotAuthenticated, item.search);    
+
+  app.param('query', auth.send401IfNotAuthenticated, item.query);
+
 };

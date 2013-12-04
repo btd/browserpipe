@@ -1,104 +1,85 @@
-@media screen and (max-width:575px) {
-
+@media screen {
 	#top-bar {
-		height: 36px;
-
-		.navbar-inner {
-		    .container-fluid {
-		    	.brand {		    		
-	                margin: 3px 0 0;
-					padding: 0 3px;
-
-					h1 {
-						line-height: 21px;
-					}
-					.short-brand {
-	                	display: block;
-	                }
-	                .long-brand {
-	                	display: none;
-	                }
-	            }
-		        #opt-top-bar{		            
-					li {
-						a {
-							padding: 2px 10px;
-
-							.name {
-			            		display: none;
-							}
-		            	}		            
-					}
-		        }		        
-			    #search-cont { 
+		.short-version {
+        	display: block;
+        }
+        .long-version {
+        	display: none;
+        }
+        .navbar-inner {
+		    .container-fluid {	    		        
+			    
+	            #search-cont { 
 
 					#search-btn { 
-						margin-right: 10px;
-						height: 25px;
-						padding: 3px 12px !important;
 
 						span {
 							display: none;
 						}
 					}
-					#search-span {
-			            #search-box { 
-			                height: 15px;                    		
-			            }
-			        }
 			    }
-		        #account-nav{
-                	margin: 0 9px 0 0px;  
+		    }
+		}
+    }
+}
 
-                	li {
-						a {
-							padding: 2px 10px;
+@media screen and (min-width:480px) {
 
-							.name {
-			            		display: none;
-							}
-		            	}		            
-					}  
-            	}
+	#top-bar {
+
+		.navbar-inner {
+		    .container-fluid {
+		    	.brand {	
+					.short-version {
+	                	display: block;
+	                }
+	                .long-version {
+	                	display: none;
+	                }
+	            }	
+		    }
+		    #account-nav {
+		    	.nav-option {
+		    		.short-version {
+	                	display: none;
+	                }
+	                .long-version {
+	                	display: block;
+	                }
+		    	}
 		    }
 		}
 	}
 
 }
-@media screen and (min-width:575px) {
+@media screen and (min-width:675px) {
 
 	#top-bar {
+
 		.navbar-inner {
-		    .container-fluid {
+		    .container-fluid {	
+
 		    	.brand {
 	                font-size: 27px;
 
-	                .short-brand {
+	                .short-version {
 	                	display: none;
 	                }
-	                .long-brand {
+	                .long-version {
 	                	display: block;
 	                }
-	            }	            
-		        #opt-top-bar{
-		            .name {
-		            	display: none;
-		            }
-		        }		        
-			    #search-cont {  
+	            }    		        			    
+	            #search-cont { 
+
 					#search-btn { 
-						margin-right: 10px;
-						height: 36px;
+
+						span {
+							display: inline-block;
+							margin-left: 3px;
+						}
 					}
-					#search-span {
-			            #search-box { 
-			                height: 26px;
-			            }
-			        }
 			    }
-			    #account-nav{
-                	margin: 0 9px 0 0px;  
-                }
+
 		    }
 		}
 	}

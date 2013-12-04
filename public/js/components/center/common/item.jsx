@@ -52,6 +52,12 @@ var ItemComponent = React.createClass({
     return "item " + 
         (this.isSelected()? selection.getClassName() : '');
   },  
+  getRemoveIcon: function() {
+    if(this.props.removeItem)
+      return <i className="icon-remove remove-item" onClick={ this.handlePanelClick(this.handleItemRemoveClick) } title="Close"></i>
+    else
+      return null;
+  },
   render: function() {
     return (          
       <li ref='item' 
@@ -67,7 +73,7 @@ var ItemComponent = React.createClass({
           onDragLeave={this.props.itemDraggable.objDragLeave}
           onDrop={this.props.itemDraggable.objDrop}*/
         > 
-        <i className="icon-remove remove-item" onClick={ this.handlePanelClick(this.handleItemRemoveClick) } title="Close"></i>
+        { this.getRemoveIcon() }
         <img draggable="false" className="favicon" src={ this.props.item.favicon } alt="Favicon" />
         <a draggable="false"  onClick={ this.handlePanelClick(this.urlClicked) } className="title" target="_blank" href={this.props.item.url}>
           {  this.getTitle()  } 

@@ -121,3 +121,23 @@ exports.remove = function(req, res) {
         .then(removeItemFromFolderOrContainer(req, item))
         .done();
 }
+
+exports.query = function(req, res, next, query) {
+    req.query = query;
+    next();
+}
+
+
+//Search item
+exports.search = function(req, res) {
+    Item.textSearch(req.query, function (err, output) {
+        
+        if (err) return errors.sendInternalServer(res);
+
+        var ids = output.results.map(function(result) {
+            return result.obj._id;
+        })
+
+        res.json({ query: req.query, items: ids });
+    });
+}

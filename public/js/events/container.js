@@ -4,11 +4,32 @@ var _state = require('../state'),
 var removeContainer = function(listboardId, containerId) {
     _state.removeContainer(listboardId, containerId);
 
-    //if we remove it from a panel, we navigate to the listboard that contains it
+    var updatePanelOne = false, updatePanelTwo = false;
     if(_state.hasPanel1SelectedTypeObject('container', containerId))
-        navigation.updateOnePanel('listboard', listboardId, 1);
+        updatePanelOne = true;
     if(_state.hasPanel2SelectedTypeObject('container', containerId))
-        navigation.updateOnePanel('listboard', listboardId, 2);
+        updatePanelTwo = true;
+
+    //if we need to update a panel
+    if(updatePanelOne || updatePanelTwo) {    
+        var laterBoard = _state.getLaterListboard();
+        if(listboardId !== laterBoard._id){
+            //if we remove it from a listboard.type == 0, we navigate to the listboard that contains it
+            if(updatePanelOne)
+                navigation.updateOnePanel('listboard', listboardId, 1);
+            if(updatePanelTwo)
+                navigation.updateOnePanel('listboard', listboardId, 2);
+        }
+        else {
+            //If not we navigate to the root folder
+            var rootFolder = _state.getRootFolder();
+            if(updatePanelOne)
+                navigation.updateOnePanel('folder', rootFolder._id, 1);
+            if(updatePanelTwo)
+                navigation.updateOnePanel('folder', rootFolder._id, 2);
+        }
+    }
+
 }
 
 module.exports = function (socket) {

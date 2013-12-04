@@ -28,7 +28,8 @@ var loadHomeView = function() {
     if(!homeView){        
         extension.isExtensionInstalled(function(installed) {
             homeView = HomeView.render(
-                _state.getAllListboards(), 
+                _state.getLaterListboard(),
+                _state.getAllBrowserListboards(), 
                 _state.onePanel,               
                 _state.getPanel1SelectedTypeObject(),
                 _state.getPanel2SelectedTypeObject(),
@@ -51,11 +52,11 @@ var loadHomeView = function() {
 
 }
 
-var selectTypeObject = function(type, id, callback) {
+var selectTypeObject = function(type, param, callback) {
     //We do the switch to avoid injections
     switch(type){
         case 'listboard' : {             
-            var listboard = _state.getListboardById(id);
+            var listboard = _state.getListboardById(param);
             if(listboard){
                 callback('listboard', listboard); 
                 return true;
@@ -63,7 +64,7 @@ var selectTypeObject = function(type, id, callback) {
             break;
         }
         case 'container' : {  
-            var container = _state.getContainerById(id);
+            var container = _state.getContainerById(param);
             if(container){
                 callback('container', container); 
                 return true;
@@ -71,7 +72,7 @@ var selectTypeObject = function(type, id, callback) {
             break;
         }
         case 'item' : {                
-            var item = _state.getItemById(id);
+            var item = _state.getItemById(param);
             if(item){
                 callback('item', item); 
                 return true;
@@ -79,12 +80,20 @@ var selectTypeObject = function(type, id, callback) {
             break;
         }
         case 'folder' : {                
-            var folder = _state.getFolderById(id);
+            var folder = _state.getFolderById(param);
             if(folder){
                 callback('folder', folder); 
                 return true;
             }
             break;
+        }
+        case 'search' : {                
+            _state.searchItem(param, function(result){
+                if(!result)
+                    result = [];
+                callback('search', result); 
+            });
+            return true;
         }
     }
     return false;

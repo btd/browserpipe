@@ -14,17 +14,21 @@ var ListboardsPanelComponent = React.createClass({
     installChromeExtension: function() {        
         extension.installChromeExtension();
     },
-    addEmptyListboardAndSelectIt: function(e) {        
+    addEmptyContainerAndSelectIt: function(e) {        
         e.preventDefault();
         var that = this;
-        _state.serverSaveListboard({
+        _state.serverSaveContainer({
+            listboardId: this.props.laterBoard._id,
             type: 1
-        }, function(listboard){
-            that.props.navigateToListboard(listboard._id);
+        }, function(container){
+            that.props.navigateToContainer(container._id);
         })
     },
     isListboardSelected: function(listboardId) {
         return selection.isListboardSelected(listboardId);
+    },
+    isContainerSelected: function(containerId) {
+        return selection.isContainerSelected(containerId);
     },
     handleListboardClick: function(e) {
         e.preventDefault();        
@@ -32,43 +36,68 @@ var ListboardsPanelComponent = React.createClass({
         var elementId = e.target.id;
         if(!elementId)
             elementId = $(e.target).parents('.listboard-option:first').attr('id');
-        var listboardId = elementId.substring(3);
-        if(e.ctrlKey){
-            if(!this.isListboardSelected(listboardId))
-                selection.selectListboard(listboardId);
-            else
-                selection.unSelectListboard(listboardId);
-        }            
-        else            
-            this.props.navigateToListboard(listboardId);
+        var listboardId = elementId.substring(3);                 
+        this.props.navigateToListboard(listboardId);
     },
-    getListboardClass: function(listboard) {
-        return 'listboard-option btn ' +
-        /*(this.props.selectedListboard._id === listboard._id ?  'selected ' : '') + */
-        (listboard.type === 0 ? 'browser-listboard-option ' : 'custom-listboard-option ') +
+    handleContainerClick: function(e) {
+        e.preventDefault();        
+        e.stopPropagation();
+        var elementId = e.target.id;
+        if(!elementId)
+            elementId = $(e.target).parents('.container-option:first').attr('id');                   
+        var containerId = elementId.substring(3);
+        this.props.navigateToContainer(containerId);
+    },
+    getListboardClass: function(listboard) {        
+        return 'listboard-option btn browser-listboard-option ' +
+        ((
+            (this.props.isPanel1Active && this.props.panel1SelectedTypeObject && (
+                (this.props.panel1SelectedTypeObject.type === 'listboard' && this.props.panel1SelectedTypeObject.getObjectId() === listboard._id) ||
+                (this.props.panel1SelectedTypeObject.type === 'container' && this.props.panel1SelectedTypeObject.container.listboardId === listboard._id)
+            )) ||
+            (!this.props.isPanel1Active && this.props.panel2SelectedTypeObject && (
+                (this.props.panel2SelectedTypeObject.type === 'listboard' && this.props.panel2SelectedTypeObject.getObjectId() === listboard._id) ||
+                (this.props.panel2SelectedTypeObject.type === 'container' && this.props.panel2SelectedTypeObject.container.listboardId === listboard._id)
+            ))
+        )? ' selected' : '') +
         (this.isListboardSelected(listboard._id)? selection.getClassName() : '');
     },
-    getOptionType: function(listboard) {
-        if(listboard.type === 0)
-            return <div className="listboard-option-type browser">
-                        <span>browser</span>
-                        <img className="listboard-icon" draggable="false" src="/img/common/chrome-logo.png" alt="Chrome Logo" />                        
-                    </div>
-        else
-            return <div className="listboard-option-type later">later</div>
+    getContainerClass: function(container) {
+        return 'container-option btn custom-listboard-option ' +
+        ((
+            (this.props.isPanel1Active && this.props.panel1SelectedTypeObject && this.props.panel1SelectedTypeObject.type === 'container' && this.props.panel1SelectedTypeObject.getObjectId() === container._id) ||
+            (!this.props.isPanel1Active && this.props.panel2SelectedTypeObject && this.props.panel2SelectedTypeObject.type === 'container' && this.props.panel2SelectedTypeObject.getObjectId() === container._id)
+        )? ' selected' : '') +
+        (this.isContainerSelected(container._id)? selection.getClassName() : '');
     },
-    renderListboardOption: function(listboard) {
+    renderBrowsersListboardOption: function(listboard) {
         var self = this;
         return  <div 
                     className={ this.getListboardClass(listboard) } 
                     onClick={this.handleListboardClick}
                     id={'li_' + listboard._id}
                 >
-                    { this.getOptionType(listboard) }    
+                    <div className="option-type">
+                        <span>browser</span>
+                        <img className="listboard-icon" draggable="false" src="/img/common/chrome-logo.png" alt="Chrome Logo" />                        
+                    </div>
                     <div className="inner" >
                         <div className="listboard-label">{listboard.label? listboard.label : 'Group of windows'}</div>
                     </div>
                 </div>                   
+    },
+    renderLaterContainerOption: function(container) {
+        var self = this;
+        return  <div 
+                    className={ this.getContainerClass(container) } 
+                    onClick={this.handleContainerClick}
+                    id={'li_' + container._id}
+                >
+                    <div className="option-type">later</div>  
+                    <div className="inner" >
+                        <div className="container-label">{container.title? container.title : 'Unnamed'}</div>
+                    </div>
+                </div>     
     },
     render: function() {
         var self = this;
@@ -79,16 +108,22 @@ var ListboardsPanelComponent = React.createClass({
                         <a className="extension-button btn">
                             <div className="inner">
                                 <i className="icon-plus"></i>
-                                <div className="text">Sync current tabs</div>
+                                <div className="text">Sync this browser</div>
                             </div>
                         </a>  
                         {                    
                             this.props.listboards     
                                 .map(function(listboard) {
-                                    return self.renderListboardOption(listboard)
+                                    return self.renderBrowsersListboardOption(listboard)
                                 })
                         }  
-                        <a draggable="false"  className="add-listboard btn" onClick={this.addEmptyListboardAndSelectIt}  href="#" title="Add listboard" data-toggle="tooltip">
+                        {                    
+                            this.props.laterBoard.containers     
+                                .map(function(container) {
+                                    return self.renderLaterContainerOption(container)
+                                })
+                        }  
+                        <a draggable="false"  className="add-later-container btn" onClick={this.addEmptyContainerAndSelectIt}  href="#" title="Add listboard" data-toggle="tooltip">
                             <div className="inner">
                                 <i className="icon-plus"></i>
                                 <div className="text">Add tabs for later</div>
