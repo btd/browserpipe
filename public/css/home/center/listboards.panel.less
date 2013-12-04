@@ -28,27 +28,14 @@
                 margin: 0;
                 padding: 0;            
             }
-            .listboard-option, .extension-button, .add-listboard {
-                display: table-cell;                           
-                font-size: 13px;
-                list-style: none;
-                color: @grey2;
+            .listboard-option, .container-option, .extension-button, .add-later-container {
+                outline:0;
+                display: table-cell;                                           
+                list-style: none;                
                 text-align: center;         
-                overflow: hidden;        
-                font-weight: bold;   
+                overflow: hidden;
                 border: 1px solid #dcdcdc;
-                background-color: #F4F4F4;             
-
-                &:hover {
-                    cursor:pointer; 
-                    border: 1px solid #c6c6c6;
-                    
-                    .listboard-option-type {
-                        .opacity(100);
-                    }
-                }  
-            }
-            .extension-button, .add-listboard, .listboard-option {                                        
+                background-color: #F4F4F4;     
                 vertical-align: middle;
                 color: #fff;        
                 .opacity(80);    
@@ -57,12 +44,22 @@
                 padding: 2px;
                 text-shadow: none;
                 font-size: 14px;
-                font-weight: normal;
+                font-weight: normal;        
 
                 &:hover {
+                    cursor:pointer; 
+                }
+
+                &:hover, &.selected  {
+                    border: 1px solid #c6c6c6;
                     text-decoration: none;                    
                     .opacity(100);
+                    
+                    .option-type {
+                        .opacity(100);
+                    }
                 }
+
                 .inner {
 
                     .text {
@@ -70,7 +67,7 @@
                     }
                 }
             }
-            .extension-button, .add-listboard {
+            .extension-button, .add-later-container {
 
                 .inner {
                     width: 90px;
@@ -78,21 +75,20 @@
 
             }
             .extension-button{
-                background-color: #033649;
+                background-color: @blue3;
             }
-            .add-listboard {
+            .add-later-container {
                 background-color: #036564;
             }
-
-            .listboard-option {                 
+            .listboard-option, .container-option {                 
                 position: relative;
                 padding-left: 21px;
-                background-color: @grey4;
 
                 .inner {
                     width: 110px;
                 }                
-                .listboard-option-type {
+                .option-type {                  
+                    background-color: #033649;
                     font-weight: normal;
                     text-shadow: none;                    
                     color: @white;                    
@@ -103,16 +99,18 @@
                     top: 40px;
                     .opacity(80);
 
-                    &.browser {
-                        background-color: #033649;
-                    }
-                    &.later {
-                        background-color: #036564;
-                    }
                     .listboard-icon {
                         margin-left: 6px;
                     }
                 }                
+            }
+            .listboard-option {                 
+                background-color: @blue3;
+            }
+            .container-option {    
+                background-color: #036564;
+
+                
             }
         }
     }    

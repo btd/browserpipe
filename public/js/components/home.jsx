@@ -11,6 +11,7 @@ var _state = require('../state'),
     ContainerPanel = require('./center/panel/container'),
     ItemPanel = require('./center/panel/item'),
     FolderPanel = require('./center/panel/folder'),
+    SearchPanel = require('./center/panel/search'),
     SelectionDraggable = require('./center/selection.draggable'),
     navigation = require('../navigation/navigation');
 
@@ -19,6 +20,7 @@ var HomeComponent = React.createClass({
       return {
           isPanel1Active: true,          
           panelPinnedNumber: 0,
+          laterBoard: this.props.laterBoard,
           listboards: this.props.listboards,
           onePanel: this.props.onePanel,
           panel1SelectedTypeObject: this.props.panel1SelectedTypeObject,
@@ -73,6 +75,9 @@ var HomeComponent = React.createClass({
   navigateToFolderRoot: function() {
     var rootFolder = _state.getRootFolder();
     this.navigateToFolder(rootFolder._id);
+  },
+  performSearch: function(query) {
+    navigation.updateOnePanel('search', query, (this.state.isPanel1Active? 1 : 2))
   },
   activatePanel1: function(){
     if(!this.state.isPanel1Active && this.state.panelPinnedNumber === 0) {
@@ -158,15 +163,31 @@ var HomeComponent = React.createClass({
                   navigateToFolder = { this.navigateToFolder } />;
             break;
         }
+        case 'search' : {                
+            var search = typeobject.search; 
+            if(search)
+                return <SearchPanel 
+                  search= { search } 
+                  fullWidth = { fullWidth } 
+                  panelNumber = { panelNumber }
+                  active = { active }
+                  activatePanel = { activatePanel } 
+                  panelPinnedNumber = { this.state.panelPinnedNumber }
+                  pinPanelToggle = { pinPanelToggle }
+                  navigateToItem = { this.navigateToItem } />;
+            break;
+        }
     }    
   },
   render: function() {
     this.listboardsPanelComponent = <ListboardsPanelComponent         
-      navigateToListboard={ this.navigateToListboard }       
+      navigateToListboard={ this.navigateToListboard }
+      navigateToContainer={ this.navigateToContainer }
       isPanel1Active={ this.state.isPanel1Active }
       panel1SelectedTypeObject= { this.state.panel1SelectedTypeObject } 
       panel2SelectedTypeObject= { this.state.panel2SelectedTypeObject } 
       isExtensionInstalled={ this.state.isExtensionInstalled }
+      laterBoard = { this.state.laterBoard }
       listboards= { this.state.listboards } />
     
     if(!this.state.onePanel) {
@@ -217,7 +238,8 @@ var HomeComponent = React.createClass({
           <TopBarComponent 
             switchPanels = { this.switchPanels }    
             openArchive = { this.navigateToFolderRoot }
-            onePanel = { this.state.onePanel } />  
+            onePanel = { this.state.onePanel } 
+            performSearch = { this.performSearch } />  
           {this.listboardsPanelComponent}      
         </div>
         <div className="main-content">
@@ -236,6 +258,7 @@ var HomeComponent = React.createClass({
 
 
 module.exports.render = function (
+    laterBoard,
     listboards, 
     onePanel,
     panel1SelectedTypeObject,
@@ -245,6 +268,7 @@ module.exports.render = function (
   ) {
   return React.renderComponent(
     <HomeComponent 
+      laterBoard={laterBoard}
       listboards={listboards} 
       onePanel={onePanel}
       panel1SelectedTypeObject = {panel1SelectedTypeObject}

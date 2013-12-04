@@ -54,6 +54,9 @@ exports.create = function (req, res, next) {
             } else {
                 var user = new User(_.pick(req.body, 'email', 'name', 'password'));
                 user.provider = 'local' //for passport
+
+                //Create later listboard, there will be only 1 of type: 1
+                user.addListboard({ type: 1, label: 'Later listboard'});
                 
                 //Create a root folder
                 var rootFolder = new Folder({ label: 'Archive', user: user });

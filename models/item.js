@@ -25,6 +25,15 @@ var ItemSchema = new Schema({
 });
 
 ItemSchema.plugin(require('../util/mongoose-timestamp'));
+ItemSchema.plugin(require('mongoose-text-search'));
+
+ItemSchema.index(
+    { 
+        title: 'text', 
+        url: 'text', 
+        note: 'text'
+    }
+);
 
 ItemSchema.statics.getByExternalId = function (user, externalId) {
     return this

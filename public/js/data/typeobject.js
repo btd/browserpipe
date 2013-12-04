@@ -14,6 +14,7 @@ var TypeObject = model()
     .attr('container', { model: Container }) // Container object
     .attr('item', { model: Item }) // item object
     .attr('folder', { model: Folder }) // Folder object
+    .attr('search')
     .use(model.nestedObjects)
     .use(function(Model) { 
 		Model.prototype.getObjectId = function() {
@@ -22,6 +23,7 @@ var TypeObject = model()
 	            case 'container' : return (this.container? this.container._id : null);
 	            case 'item' : return (this.item? this.item._id : null);
 	            case 'folder' : return (this.folder? this.folder._id : null);
+                case 'search' : return (this.search? this.search.query : null);
 	        }
 	        return null;
 		}

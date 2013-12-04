@@ -7,9 +7,35 @@ var React = require('react');
 var TobBarComponent = React.createClass({   
     getPanelOptionText: function() {        
         if(this.props.onePanel)
-            return '2 Panels'
+            return <span>
+                        <span className="long-version">2 Panels</span>                   
+                        <span className="short-version">2 P</span>
+                    </span>
         else
-            return '1 Panel'
+            return <span>
+                        <span className="long-version">1 Panel</span>                   
+                        <span className="short-version">1 P</span>
+                    </span>
+    },
+    executeSearch: function() {
+        var query = $('#search-box').val();
+        if(query.trim() === '')
+             Messenger().post({
+              message: 'Please complete the search box',
+              type: 'error',
+              hideAfter: 2
+            });
+        else
+            this.props.performSearch(query);
+    },
+    handleSearchClick: function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.executeSearch();
+    },
+    handleSearchBoxKeyPressed: function(e) {        
+        if (e.keyCode === 13)
+            this.executeSearch();
     },
     render: function() {
         return (
@@ -21,7 +47,10 @@ var TobBarComponent = React.createClass({
                                 <a draggable="false"  tabindex="-1" onClick={ this.props.switchPanels } >{ this.getPanelOptionText() }</a>
                             </li>
                             <li className="nav-option"> 
-                                <a draggable="false"  tabindex="-1" onClick={ this.props.openArchive } >Archive</a>
+                                <a draggable="false"  tabindex="-1" onClick={ this.props.openArchive } >
+                                    <span className="long-version">Archive</span>
+                                    <span className="short-version">Arch</span>
+                                </a>
                             </li>
                             <li className="dropdown nav-option">
                                 <a draggable="false"  href="#" data-toggle="dropdown" className="dropdown-toggle">
@@ -48,15 +77,15 @@ var TobBarComponent = React.createClass({
                             </li>
                         </ul>
                         <a draggable="false"  href="/" data-original-title="" className="pull-left brand">
-                            <h1 className="long-brand">Listboard.it</h1>
-                            <h1 className="short-brand">L</h1>
+                            <h1 className="long-version">Listboard.it</h1>
+                            <h1 className="short-version">L</h1>
                         </a>
                         <div id="search-cont">
-                            <button id="search-btn" type="submit" className="btn">
+                            <button id="search-btn" type="submit" className="btn" onClick={ this.handleSearchClick }>
                                 <i className="icon-search"></i> Search
                             </button>
                             <span id="search-span">
-                                <input id="search-box" type="text" className="uncompressed"/>
+                                <input id="search-box" onKeyPress={ this.handleSearchBoxKeyPressed } type="text" className="uncompressed"/>
                             </span>
                         </div>
                     </div>
