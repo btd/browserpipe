@@ -11,7 +11,7 @@ var _state = require('./state'),
 //Notification system
 require('messenger');
 Messenger.options = {
-    extraClasses: 'messenger-fixed messenger-on-top messenger-on-right'
+    extraClasses: 'messenger-fixed messenger-on-bottom messenger-on-right'
 }
 
 //Scrollbar
@@ -94,6 +94,14 @@ var selectTypeObject = function(type, param, callback) {
                 callback('search', result); 
             });
             return true;
+        }
+        case 'selection' : {                
+            var selection = _state.getSelection();
+            if(selection){
+                callback('selection', selection); 
+                return true;
+            }
+            break;
         }
     }
     return false;
@@ -196,10 +204,21 @@ var onSelectedPanel2Change = function() {
     }
 };
 
+
+var onSelectionChange = function () {
+    if(homeView) {
+        homeView.setState({
+            selection: _state.getSelection()
+        });
+    }
+}
+
 var stateChanges = function() {
     _state.on('change:panel1SelectedTypeObject', onSelectedPanel1Change);
 
     _state.on('change:panel2SelectedTypeObject', onSelectedPanel2Change);
+
+     _state.on('change:selection', onSelectionChange);
 
     var addedOrDeletedListboard = function() {
         homeView.setState({

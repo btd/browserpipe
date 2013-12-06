@@ -9,8 +9,7 @@ var _state = require('../../../state'),
     PanelMixin = require('../../util/panel.mixin'),   
     PanelActivatorMixin = require('../../util/panel.activator.mixin'),     
     Item = require('../common/item'),    
-    LabelEditorComponent = require('../../util/label.editor'),    
-    selection = require('../../../selection/selection');
+    LabelEditorComponent = require('../../util/label.editor');
 
 var ItemPanel = React.createClass({ 
   mixins: [PanelMixin, PanelActivatorMixin],

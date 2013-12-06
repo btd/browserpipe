@@ -24,6 +24,7 @@ var TypeObject = model()
 	            case 'item' : return (this.item? this.item._id : null);
 	            case 'folder' : return (this.folder? this.folder._id : null);
                 case 'search' : return (this.search? this.search.query : null);
+                case 'selection' : return 'items';
 	        }
 	        return null;
 		}

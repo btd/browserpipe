@@ -9,8 +9,7 @@ var _state = require('../../../state'),
     PanelMixin = require('../../util/panel.mixin'),   
     PanelActivatorMixin = require('../../util/panel.activator.mixin'),     
     LabelEditorComponent = require('../../util/label.editor'),    
-    ContainersComponent = require('../common/containers'), 
-    selection = require('../../../selection/selection');
+    ContainersComponent = require('../common/containers');
 
 var ListboardPanel = React.createClass({ 
   mixins: [PanelMixin, PanelActivatorMixin],

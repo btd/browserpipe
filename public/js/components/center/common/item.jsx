@@ -7,8 +7,7 @@ var _state = require('../../../state'),
     extension = require('../../../extension/extension'),
     _ = require('lodash'),
     React = require('react'),
-    PanelActivatorMixin = require('../../util/panel.activator.mixin'),
-    selection = require('../../../selection/selection');
+    PanelActivatorMixin = require('../../util/panel.activator.mixin');    
 
 var ItemComponent = React.createClass({ 
   mixins: [PanelActivatorMixin],  
@@ -23,21 +22,30 @@ var ItemComponent = React.createClass({
   },
   isSelected: function() {
     return this.props.forceSelected || 
-          selection.isItemSelected(this.props.item._id);
+          this.props.selection.isItemSelected(this.props.item._id);
   },
   urlClicked: function(e) {  
-    if(this.props.isTab) {
-      e.preventDefault();
+    if(this.props.isTab) {      
+      e.preventDefault(); 
+      e.stopPropagation();
+      console.log('yesssss')
       extension.focusTab(this.props.item.externalId);
     }    
+    else {
+      e.stopPropagation();
+      return true;
+    }      
+  },
+  getElementId: function(e) {
+    var elementId = e.target.id;    
+    if(!elementId)
+        elementId = $(e.target).parents('.item:first').attr('id');
+    return elementId.substring(3);
   },
   handleItemClick: function(e){
     e.preventDefault(); 
     e.stopPropagation();
-    var elementId = e.target.id;
-    if(!elementId)
-        elementId = $(e.target).parents('.item:first').attr('id');
-    var itemId = elementId.substring(3);
+    var itemId = this.getElementId(e);
     this.props.navigateToItem(itemId);
   },
   handleItemRemoveClick: function(e){
@@ -45,12 +53,20 @@ var ItemComponent = React.createClass({
     e.stopPropagation();
     this.props.removeItem(this.props.item);
   },
+  handleSelectCheckboxClick: function(e) {
+    e.stopPropagation();
+    var itemId = this.getElementId(e);
+    if(!this.isSelected())
+      this.props.selection.selectItem(this.props.item._id);
+    else
+      this.props.selection.unSelectItem(this.props.item._id);
+  },
   getItemId : function() {
     return "it-" + this.props.item._id;
   },
   getItemClass: function() {
     return "item " + 
-        (this.isSelected()? selection.getClassName() : '');
+        (this.isSelected()? this.props.selection.getClassName() : '');
   },  
   getRemoveIcon: function() {
     if(this.props.removeItem)
@@ -60,22 +76,14 @@ var ItemComponent = React.createClass({
   },
   render: function() {
     return (          
-      <li ref='item' 
-          id={ this.getItemId() } 
-          ref="item"  
+      <li id={ this.getItemId() }           
           onClick={ this.handlePanelClick(this.handleItemClick) } 
           className={ this.getItemClass() }
-          /*draggable="true"
-          onDragStart={this.props.itemDraggable.objDragStart} 
-          onDragEnd={this.props.itemDraggable.objDragEnd}
-          onDragOver={this.props.itemDraggable.objDragOver}
-          onDragEnter={this.props.itemDraggable.objDragEnter}
-          onDragLeave={this.props.itemDraggable.objDragLeave}
-          onDrop={this.props.itemDraggable.objDrop}*/
         > 
+        <input ref="checkbox" className="checked" type='checkbox' onClick= {this.handlePanelClick(this.handleSelectCheckboxClick) } />
         { this.getRemoveIcon() }
         <img draggable="false" className="favicon" src={ this.props.item.favicon } alt="Favicon" />
-        <a draggable="false"  onClick={ this.handlePanelClick(this.urlClicked) } className="title" target="_blank" href={this.props.item.url}>
+        <a draggable="false"  onClick={ this.urlClicked } className="title" target="_blank" href={this.props.item.url}>
           {  this.getTitle()  } 
         </a>
         <div className="description">{ this.props.item.note }</div>  		
@@ -84,6 +92,18 @@ var ItemComponent = React.createClass({
         </div>  */        
       </li>
     );    
+  },
+  updateCheckbox: function() {
+    if(this.isSelected())
+      this.refs.checkbox.getDOMNode().checked = true;
+    else
+      this.refs.checkbox.getDOMNode().checked = false;
+  },
+  componentDidMount: function(){ 
+    this.updateCheckbox();     
+  },
+  componentDidUpdate: function(){ 
+    this.updateCheckbox();     
   }
 });
 

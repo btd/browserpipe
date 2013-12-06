@@ -384,6 +384,7 @@ _.extend(State1.prototype, {
             case 'item' : typeobject.item = object; break;
             case 'folder' : typeobject.folder = object; break;
             case 'search' : typeobject.search = object; break;
+            case 'selection' : typeobject.selection = selection; break;
         }
     },
     setPanel1SelectedTypeObject: function (type, object) {       

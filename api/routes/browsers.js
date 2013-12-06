@@ -113,7 +113,7 @@ module.exports = function (app) {
                             }
                             delete itemsCache[externalId];
                         } else {
-                            var item = new Item({
+                            item = new Item({
                                 externalId: tab.externalId,
                                 title: tab.title,
                                 url: tab.url,

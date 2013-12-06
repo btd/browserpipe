@@ -1,7 +1,6 @@
 var _state = require('../state'),    
     _ = require('lodash'),
-    $ = require('jquery'),
-    Messenger = require('messenger');
+    $ = require('jquery');
 
 var msg, className = 'selection-selected';
 
@@ -43,15 +42,38 @@ var hideMessage = function() {
         msg.hide();
 };
 
-var showMessage = function(text) {        
+var showMessage = function(text) {  
     if(!msg){
         msg = Messenger().post({
           message: text,
           type: 'info',
+          hideAfter: false,
           actions: {
             cancel: {
-              label: 'cancel selection',
+              label: 'clear',
               action: function() {
+                _state.clearSelection();
+                hideMessage();
+              }
+            },
+            view: {
+              label: 'view',
+              action: function() {
+                module.exports.handleViewClick();
+              }
+            },
+            move: {
+              label: 'move here',
+              action: function() {
+                console.log('moved')
+                _state.clearSelection();
+                hideMessage();
+              }
+            },
+            copy: {
+              label: 'copy here',
+              action: function() {
+                console.log('copiedd')
                 _state.clearSelection();
                 hideMessage();
               }
@@ -68,6 +90,10 @@ var showMessage = function(text) {
 var getSelectionText =  function(count, singularText, pluralText) {
     return count > 0 ? (" (" + count + " " + (count > 1 ? pluralText : singularText) + ")") : "";
 };
+
+module.exports.setHandleViewClick = function(callback) {
+    this.handleViewClick = callback;
+}
 
 
 module.exports.getSelectedListboardById = function(id) {
