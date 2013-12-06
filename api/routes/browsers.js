@@ -30,34 +30,42 @@ var checkBrowserKey = function (req, res, next) {
     }
 };
 
+function makeCache(arr, field) {
+    var cache = {};
+    arr.forEach(function(el) {
+        cache[el[field]] = el;
+    })
+    return cache;
+}
+
 module.exports = function (app) {
     app.post('/browsers/:browserKey', loadUser, checkBrowserKey, function (req, res) {
         var body = req.body;
-
         var listboard = req.listboard || req.user.addListboard({
             type: 0, label: 'My ' + body.browserName + ' browser', browserKey: req.browserKey
         });
-
-        var listboardId = listboard._id;
-
-        var user = req.user, userId = user._id;
-
         listboard.lastSyncDate = new Date();
 
-        var containerExternalIdCache = {};
+        var listboardId = listboard._id, user = req.user, userId = user._id;
 
-        listboard.containers.forEach(function (container) {
-            containerExternalIdCache[container.externalId] = container;
-        });
 
+
+        var containerExternalIdCache = makeCache(listboard.containers, 'externalId');
         var windowExternalIdCache = {};
+        var promises = [];
 
+        // to send comet update
         var createdContainers = [];
+        var updatedContainers = [];
+        var deletedContainers = [];
+        var createdItems = [];
+        var updatedItems = [];
 
+        // first we save a new listboard/container structure
+        // windows <-> containers
         // create containers that does not exists
         body.windows.forEach(function (window) {
             //each window mapped to container
-
             var container = containerExternalIdCache[window.externalId];
             if (!container) {
                 listboard.addContainer({
@@ -66,14 +74,11 @@ module.exports = function (app) {
                 });
                 container = listboard.last();
                 containerExternalIdCache[window.externalId] = container;
-
                 createdContainers.push(container);
             }
 
             windowExternalIdCache[window.externalId] = window;
         });
-
-        var deletedContainers = [];
 
         // remove containers that already was closed as tabs
         _.each(containerExternalIdCache, function (container, externalId) {
@@ -83,65 +88,78 @@ module.exports = function (app) {
             }
         });
 
-        var createdItems = [];
-        var updatedItems = [];
+        // second we sync new structure with items/urls
+        listboard.containers.forEach(function(container) {
+            var window = windowExternalIdCache[container.externalId];
 
-        req.user.saveWithPromise() //save structure
-            .then(function () {
-                return Q.all(listboard.containers.map(function (container) {
-                    // load all items from this container
-                    var window = windowExternalIdCache[container.externalId];
-                    var tabExternalIdCache = {};
+            if(container.items.length > 0) {
+                // container is not empty - assume it is updated
 
-                    window.tabs.forEach(function (tab) {
-                        tabExternalIdCache[tab.externalId] = tab;
-                    });
+                var tabExternalIdCache = makeCache(window.tabs, 'externalId');
+                promises.push(Item.all({ _id: { $in : container.items } }).then(function(items) {
+                    var itemsCache = makeCache(items, 'externalId');
 
-                    return Item.findByContainer(user, container._id).then(function (items) {
-                        var promises = [];
+                    var itemPromises = [];
 
-                        var itemsExternalIdCache = {};
-
-                        items.forEach(function (item) {
-                            itemsExternalIdCache[item.externalId] = item;
-
-                            if (!tabExternalIdCache[item.externalId]) {
-                                item.containers.remove(container._id);
+                    _.each(tabExternalIdCache, function(tab, externalId) {
+                        var item = itemsCache[externalId];
+                        if(item) { //item with this external id found
+                            if(item.url != tab.url) {
+                                item.title = tab.title;
+                                item.url = tab.url;
+                                item.favicon = 'http://www.google.com/s2/favicons?domain=' + encodeURIComponent(item.url);
                                 updatedItems.push(item);
-                                promises.push(item.saveWithPromise());
+                                itemPromises.push(item.saveWithPromise());
                             }
-                        });                        
-                        window.tabs.forEach(function (tab) {
-                            var item = itemsExternalIdCache[tab.externalId];
-                            if (!item) {
-                                item = new Item({
-                                    externalId: tab.externalId,
-                                    title: tab.title,
-                                    url: tab.url,
-                                    //TODO: we need to download favicon and no use external URL
-                                    favicon: 'http://www.google.com/s2/favicons?domain=' + encodeURIComponent(tab.url),
-                                    type: 0,
-                                    user: user._id,
-                                    containers: [container._id]
-                                });
-                                createdItems.push(item);
-                                promises.push(item.saveWithPromise());
-                            } else {
-                                //We check if url in the tab changed
-                                if(item.url != tab.url) {
-                                    item.title = tab.title;
-                                    item.url = tab.url;
-                                    item.favicon = 'http://www.google.com/s2/favicons?domain=' + encodeURIComponent(item.url);
-                                    updatedItems.push(item);
-                                    promises.push(item.saveWithPromise());                                                          
-                                }
-                            }
-                        });
+                            delete itemsCache[externalId];
+                        } else {
+                            var item = new Item({
+                                externalId: tab.externalId,
+                                title: tab.title,
+                                url: tab.url,
+                                favicon: 'http://www.google.com/s2/favicons?domain=' + encodeURIComponent(tab.url),
+                                type: 0,
+                                user: user._id
+                            });
 
-                        return Q.all(promises);
+                            createdItems.push(item);
+                            container.items.push(item._id);
+
+                            itemPromises.push(item.saveWithPromise());
+                        }
                     });
-                }));
-            })
+
+                    _.each(itemsCache, function(item) {
+                        container.items.remove(item._id);
+                    });
+
+                    return Q.all(itemPromises);
+                }).done());
+                updatedContainers.push(container);
+            } else {
+                // container is empty
+                window.tabs.map(function (tab) {
+                    var item = new Item({
+                        externalId: tab.externalId,
+                        title: tab.title,
+                        url: tab.url,
+                        //TODO: we need to download favicon and no use external URL
+                        favicon: 'http://www.google.com/s2/favicons?domain=' + encodeURIComponent(tab.url),
+                        type: 0,
+                        user: user._id
+                    });
+
+                    createdItems.push(item);
+
+                    container.items.push(item._id);
+                    promises.push(item.saveWithPromise());
+                });
+            }
+        });
+
+        promises.push(req.user.saveWithPromise());
+
+        return Q.all(promises)
             .fail(error.sendIfFailed(res))//by default it send 500
             .then(function () {
                 res.send('Ok');//TODO i think need to send something else?
@@ -150,11 +168,11 @@ module.exports = function (app) {
                 if(!req.listboard) userUpdate.createListboard(userId, listboard);
             })
             .then(userUpdate.bulkCreateContainer.bind(null, userId, listboardId, createdContainers))
+            .then(userUpdate.bulkUpdateContainer.bind(null, userId, listboardId, updatedContainers))
             .then(userUpdate.bulkDeleteContainer.bind(null, userId, listboardId, deletedContainers))
             .then(userUpdate.bulkCreateItem.bind(null, userId, createdItems))
             // some have the url updated others are not deleted, but marked as deleted //TODO: should we delete them
-            .then(userUpdate.bulkUpdateItem.bind(null, userId, updatedItems))
-            .done();
+            .then(userUpdate.bulkUpdateItem.bind(null, userId, updatedItems));
     })
 
 }

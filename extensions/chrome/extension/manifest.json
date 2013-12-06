@@ -20,7 +20,10 @@
         "default_title": "Listboard.It"
     },
 
-    "web_accessible_resources": [ "manifest.json" ],
+    "web_accessible_resources": [
+        "manifest.json",
+        "oauth2/oauth2.html"
+    ],
 
     "content_scripts": [
         {
