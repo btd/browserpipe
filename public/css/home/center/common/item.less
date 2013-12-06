@@ -5,11 +5,11 @@
     font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
 
     .item {                               
-        background: #FFFFFF;
+        background-color: #FFFFFF;
         border-top: 1px solid #dcdcdc;        
         border-left: 1px solid #dcdcdc;        
         border-right: 1px solid #dcdcdc;        
-        padding: 6px;     
+        padding: 6px 6px 6px 3px;     
         font-size: 14px;
         position: relative;      
         .box-sizing(border-box);  
@@ -22,6 +22,9 @@
                 display: block;
             } 
         }
+        &.selection-selected {
+            background-color: #d9edf7;
+        }
         a {
             color: @grey3;     
             word-break: break-all;
@@ -29,6 +32,9 @@
             margin-left: 3px;
             font-weight: bold;
 
+        }
+        input[type=checkbox] {
+            margin: 0 6px;
         }
         .description {
             font-size: 12px; 

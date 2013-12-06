@@ -10,8 +10,7 @@ var _state = require('../../../state'),
     PanelActivatorMixin = require('../../util/panel.activator.mixin'),         
     LabelEditorComponent = require('../../util/label.editor'),    
     Folder = require('../common/folder'), 
-    ItemsComponent = require('../common/items'), 
-    selection = require('../../../selection/selection');
+    ItemsComponent = require('../common/items');
 
 var FolderPanel = React.createClass({ 
   mixins: [PanelMixin, PanelActivatorMixin],
@@ -190,6 +189,7 @@ var FolderPanel = React.createClass({
               </ul>
               <ItemsComponent 
                 items= { _state.getItemsByIds(this.props.folder.items) }
+                selection = { this.props.selection }
                 activatePanel= { this.props.activatePanel }
                 scrollable = { false } 
                 navigateToItem={this.props.navigateToItem}

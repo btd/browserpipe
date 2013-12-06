@@ -9,8 +9,7 @@ var _state = require('../../../state'),
     PanelMixin = require('../../util/panel.mixin'),   
     PanelActivatorMixin = require('../../util/panel.activator.mixin'),   
     LabelEditorComponent = require('../../util/label.editor'),    
-    ItemsComponent = require('../common/items'), 
-    selection = require('../../../selection/selection');
+    ItemsComponent = require('../common/items');
 
 var ContainerPanel = React.createClass({ 
   mixins: [PanelMixin, PanelActivatorMixin],
@@ -103,6 +102,7 @@ var ContainerPanel = React.createClass({
           <div className="panel-center">
             <ItemsComponent 
                 items= { _state.getItemsByIds(this.props.container.items) }
+                selection = { this.props.selection }
                 activatePanel= { this.props.activatePanel }
                 scrollable = { true } 
                 navigateToItem={this.props.navigateToItem}

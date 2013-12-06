@@ -8,8 +8,7 @@ var _state = require('../../../state'),
     page = require('page'),
     React = require('react'),
     PanelActivatorMixin = require('../../util/panel.activator.mixin'),    
-    Item = require('./item'),  
-    selection = require('../../../selection/selection');
+    Item = require('./item');
 
 var ItemsComponent = React.createClass({   
     mixins: [PanelActivatorMixin],
@@ -77,12 +76,13 @@ var ItemsComponent = React.createClass({
     },
     render: function() {
         var self = this;
-        return <ul className={ this.getItemsClass() }>            
+        return <ul className={ this.getItemsClass() } >            
             { this.getAddNewItem() }
             {                    
               this.props.items.map(function(item) {
                   return <Item 
                     item= {item} 
+                    selection = { self.props.selection }
                     activatePanel= { self.props.activatePanel }
                     navigateToItem={self.props.navigateToItem} 
                     removeItem={self.props.removeItem} />

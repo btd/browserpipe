@@ -10,10 +10,10 @@ var _state = require('../../../state'),
     PanelActivatorMixin = require('../../util/panel.activator.mixin'),   
     ItemsComponent = require('../common/items');
 
-var SearchPanel = React.createClass({ 
+var SelectionPanel = React.createClass({ 
   mixins: [PanelMixin, PanelActivatorMixin],    
   getClassName: function() {
-    return 'search-panel panel' + 
+    return 'selection-panel panel' + 
       (this.props.fullWidth?' full-width': ' half-width');
   },
   getSubBarClassName: function() {
@@ -30,20 +30,21 @@ var SearchPanel = React.createClass({
               { this.props.panelNumber }
             </div>
   },
-  getSearchItems: function() {
-    if(this.props.search.items.length > 0)
+  getSelectionItems: function() {
+    var items = _state.getSelectedItems();
+    if(items.length > 0)
        return <ItemsComponent 
-                items= { _state.getItemsByIds(this.props.search.items ) }
+                items= { items }
                 selection = { this.props.selection }
                 activatePanel= { this.props.activatePanel }
                 scrollable = { true } 
                 navigateToItem={this.props.navigateToItem} />
     else
-      return <div>No result found</div>;
+      return <div>No items selected</div>;
   },
   render: function() {    
     return (               
-        <div ref="searchPanel"   
+        <div ref="selectionPanel"   
             className={ this.getClassName() }           
             onClick= { this.handlePanelClick(this.props.activatePanel) } >
           <div className={ this.getSubBarClassName() } >
@@ -53,24 +54,24 @@ var SearchPanel = React.createClass({
                 { this.getPanelPin() }        
               </ul>                
               <ul className="nav nav-left">                                  
-                <li className="label-text" title="Search results">
-                  { 'Search results for "' + this.props.search.query + '"' }
+                <li className="label-text" title="Selection">
+                  Selection
                 </li>
               </ul>                            
             </div>
           </div>          
           <div className="panel-center">
-            { this.getSearchItems() }
+            { this.getSelectionItems() }
           </div>
         </div>
     );
   },
   componentDidMount: function(){    
-    $('.scrollable-parent', this.refs.searchPanel.getDOMNode()).perfectScrollbar({});
+    $('.scrollable-parent', this.refs.selectionPanel.getDOMNode()).perfectScrollbar({});
   },
   componentDidUpdate: function(){    
-    $('.scrollable-parent', this.refs.searchPanel.getDOMNode()).perfectScrollbar('update');
+    $('.scrollable-parent', this.refs.selectionPanel.getDOMNode()).perfectScrollbar('update');
   }  
 });
 
-module.exports = SearchPanel
+module.exports = SelectionPanel

@@ -6,14 +6,10 @@ var _state = require('../../../state'),
     _ = require('lodash'),
     page = require('page'),
     React = require('react'),
-    PanelActivatorMixin = require('../../util/panel.activator.mixin'),
-    selection = require('../../../selection/selection');
+    PanelActivatorMixin = require('../../util/panel.activator.mixin');
 
 var ContainersComponent = React.createClass({ 
-    mixins: [PanelActivatorMixin],
-    isContainerSelected: function(containerId) {
-        return selection.isContainerSelected(containerId);
-    },
+    mixins: [PanelActivatorMixin],    
     addEmptyContainer: function(e) {      
         e.preventDefault();
         _state.serverSaveContainer({
@@ -30,11 +26,6 @@ var ContainersComponent = React.createClass({
         var containerId = elementId.substring(5);
         this.props.navigateToContainer(containerId);             
     }, 
-    getContainerClass: function(container) {
-        return 'container-option ' +
-        /*(this.props.selectedContainer && this.props.selectedContainer._id === container._id ?  'selected ' : '') + */
-        (this.isContainerSelected(container._id)? selection.getClassName() : '');
-    },
     getContainerTitle: function(container) {     
         if(!container.title || container.title.trim() === '')                     
                 return container.items.length + " Tabs";
@@ -58,7 +49,7 @@ var ContainersComponent = React.createClass({
     },
     renderContainerOption: function(container) {
         return <li                    
-                    className={ this.getContainerClass(container) } 
+                    className='container-option'
                     onClick={ this.handlePanelClick(this.handleContainerClick) }
                     id={'cont_' + container._id}
                 >                    
