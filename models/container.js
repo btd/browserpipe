@@ -1,4 +1,6 @@
-var Schema = require('mongoose').Schema    
+var mongoose = require('mongoose'),
+    Schema = mongoose.Schema,
+    _ = require('lodash');
 
 var ContainerSchema = new Schema({
     type: {type: Number, required: true},  //0: window, 1: empty
@@ -15,6 +17,12 @@ var ContainerSchema = new Schema({
 });
 
 ContainerSchema.plugin(require('../util/mongoose-timestamp'));
+
+ContainerSchema.methods.containItemId = function (itemId) {    
+    return _.some(this.items, function(item){
+        return item.equals(itemId)
+    });
+};
 
 ContainerSchema.methods.addItemId = function (itemId) {
     this.items.push(itemId);

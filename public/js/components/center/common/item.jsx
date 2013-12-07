@@ -7,7 +7,8 @@ var _state = require('../../../state'),
     extension = require('../../../extension/extension'),
     _ = require('lodash'),
     React = require('react'),
-    PanelActivatorMixin = require('../../util/panel.activator.mixin');    
+    PanelActivatorMixin = require('../../util/panel.activator.mixin'),
+    navigation = require('../../../navigation/navigation');
 
 var ItemComponent = React.createClass({ 
   mixins: [PanelActivatorMixin],  
@@ -46,7 +47,7 @@ var ItemComponent = React.createClass({
     e.preventDefault(); 
     e.stopPropagation();
     var itemId = this.getElementId(e);
-    this.props.navigateToItem(itemId);
+    navigation.navigateToItem(itemId);
   },
   handleItemRemoveClick: function(e){
     e.preventDefault();

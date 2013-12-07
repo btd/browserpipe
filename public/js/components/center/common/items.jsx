@@ -84,7 +84,6 @@ var ItemsComponent = React.createClass({
                     item= {item} 
                     selection = { self.props.selection }
                     activatePanel= { self.props.activatePanel }
-                    navigateToItem={self.props.navigateToItem} 
                     removeItem={self.props.removeItem} />
               })
             }

@@ -1,6 +1,7 @@
 var _state = require('../state'),    
     _ = require('lodash'),
-    $ = require('jquery');
+    $ = require('jquery'),
+    navigation = require('../navigation/navigation');
 
 var msg, className = 'selection-selected';
 
@@ -37,63 +38,77 @@ var selectAllButItem = function(container, item){
     });
 };
 
+var getMessageActions = function(showCopyMoveActions) {
+    var actions = {            
+        cancel: {
+          label: 'clear',
+          action: function() {
+            _state.clearSelection();
+            hideMessage();
+          }
+        },
+        view: {
+          label: 'view',
+          action: function() {
+            navigation.navigateToItemSelection();
+          }
+        }
+    }    
+    if(showCopyMoveActions) {
+        var itemIds = _.map(_state.getSelectedItems(), function(item) { return item._id; })
+        actions.move = {
+          label: 'move here',
+          action: function() {
+            var selectedTypeObject = _state.getActivePanelSelectedTypeObject();   
+            if(selectedTypeObject.type === 'container')
+                _state.serverMoveItemsToContainer(selectedTypeObject.container.listboardId, selectedTypeObject.getObjectId(), itemIds);
+            else if(selectedTypeObject.type === 'folder')
+                _state.serverMoveItemsToFolder(selectedTypeObject.getObjectId(), itemIds);
+            _state.clearSelection();
+            hideMessage();
+          }
+        }
+        actions.copy = {
+          label: 'copy here',
+          action: function() {
+            var selectedTypeObject = _state.getActivePanelSelectedTypeObject();   
+            if(selectedTypeObject.type === 'container')
+                _state.serverCopyItemsToContainer(selectedTypeObject.container.listboardId, selectedTypeObject.getObjectId(), itemIds);
+            else if(selectedTypeObject.type === 'folder')
+                _state.serverCopyItemsToFolder(selectedTypeObject.getObjectId(), itemIds);
+            _state.clearSelection();
+            hideMessage();
+          }
+        }
+    }
+    return actions;
+}
+
 var hideMessage = function() {
     if(msg)
         msg.hide();
 };
 
-var showMessage = function(text) {  
-    if(!msg){
+var showMessage = function(text, showCopyMoveActions) {              
+    var actions = getMessageActions(showCopyMoveActions);
+    if(!msg){        
         msg = Messenger().post({
           message: text,
           type: 'info',
           hideAfter: false,
-          actions: {
-            cancel: {
-              label: 'clear',
-              action: function() {
-                _state.clearSelection();
-                hideMessage();
-              }
-            },
-            view: {
-              label: 'view',
-              action: function() {
-                module.exports.handleViewClick();
-              }
-            },
-            move: {
-              label: 'move here',
-              action: function() {
-                console.log('moved')
-                _state.clearSelection();
-                hideMessage();
-              }
-            },
-            copy: {
-              label: 'copy here',
-              action: function() {
-                console.log('copiedd')
-                _state.clearSelection();
-                hideMessage();
-              }
-            }
-          }
+          actions: actions
         });
     }
     else
         msg.update({
-          message: text
+          message: text,
+          actions: actions
         });
 }
 
 var getSelectionText =  function(count, singularText, pluralText) {
     return count > 0 ? (" (" + count + " " + (count > 1 ? pluralText : singularText) + ")") : "";
 };
-
-module.exports.setHandleViewClick = function(callback) {
-    this.handleViewClick = callback;
-}
 
 
 module.exports.getSelectedListboardById = function(id) {
@@ -269,15 +284,19 @@ module.exports.getSelectionsText = function() {
     return [listboardText, containerText, itemText, folderText]
 }
 
-module.exports.updateSelectionMessage = function() {
+module.exports.updateSelectionMessage = function() {    
     var result = this.getSelectionsText();
     var listboardText = result[0];
     var containerText = result[1];
     var itemText = result[2];
     var folderText = result[3];
     var text = listboardText + containerText + itemText + folderText;
+    var selectedTypeObject = _state.getActivePanelSelectedTypeObject();    
     if(text)
-        showMessage("Selected: " + text);
+        showMessage(
+            "Selected: " + text,
+            (selectedTypeObject.type === 'container' || selectedTypeObject.type === 'folder')
+        );
     else
         hideMessage();           
 

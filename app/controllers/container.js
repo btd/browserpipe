@@ -57,3 +57,31 @@ exports.destroy = function (req, res) {
         errors.sendNotFound(res);
 }
     
+//Move items to the container
+exports.copymoveitems = function(req, res) {
+  var container = req.listboard.containers.id(req.params.containerId);
+
+  req.checkBody('action').notEmpty();    
+  req.checkBody('items').notEmpty();    
+
+  var errs = req.validationErrors();
+  if(errs) {
+    return errors.sendBadRequest(res);
+  }
+
+  var action = req.body.action;
+  var items = req.body.items;
+
+  _.each(items, function(item) { 
+    if(!container.containItemId(item))
+        container.addItemId(item); 
+  });  
+  if(action === 'move'){
+    //TODO: remove item from previous holder when merging container and containers
+  }
+
+  saveContainer(req, res, container)
+    .then(userUpdate.updateContainer.bind(null, req.user._id, req.listboard._id, container))
+    .done();
+
+}

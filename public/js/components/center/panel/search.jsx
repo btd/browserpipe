@@ -36,8 +36,7 @@ var SearchPanel = React.createClass({
                 items= { _state.getItemsByIds(this.props.search.items ) }
                 selection = { this.props.selection }
                 activatePanel= { this.props.activatePanel }
-                scrollable = { true } 
-                navigateToItem={this.props.navigateToItem} />
+                scrollable = { true } />
     else
       return <div>No result found</div>;
   },

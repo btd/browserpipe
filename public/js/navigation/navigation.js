@@ -34,3 +34,32 @@ module.exports.updateOnePanel = function(type, id, panel){
 		}
 	}      
 }
+
+module.exports.navigateToListboard = function(listboardId) {
+    this.updateOnePanel('listboard', listboardId, (_state.isPanel1Active? 1 : 2));
+}
+
+module.exports.navigateToContainer = function(containerId) {
+	this.updateOnePanel('container', containerId, (_state.isPanel1Active? 1 : 2))
+}
+
+module.exports.navigateToItem = function(itemId) {
+	this.updateOnePanel('item', itemId, (_state.isPanel1Active? 1 : 2))
+}
+
+module.exports.navigateToFolder = function(folderId) {
+	this.updateOnePanel('folder', folderId, (_state.isPanel1Active? 1 : 2))
+}
+
+module.exports.navigateToFolderRoot = function() {
+	var rootFolder = _state.getRootFolder();
+	this.navigateToFolder(rootFolder._id);
+}
+
+module.exports.performSearch = function(query) {
+	this.updateOnePanel('search', query, (_state.isPanel1Active? 1 : 2))
+}
+
+module.exports.navigateToItemSelection = function() {
+	this.updateOnePanel('selection', 'items', (_state.isPanel1Active? 1 : 2))
+}

@@ -17,11 +17,10 @@ var _state = require('../state'),
     selection = require('../selection/selection'),
     navigation = require('../navigation/navigation');
 
-var HomeComponent = React.createClass({  
-  isPanel1Active: true, //Small trick have active panel before js tick
+var HomeComponent = React.createClass({    
   getInitialState: function() {
       return {     
-          isPanel1Active: this.isPanel1Active,
+          isPanel1Active: _state.isPanel1Active,
           panelPinnedNumber: 0,
           laterBoard: this.props.laterBoard,
           listboards: this.props.listboards,
@@ -50,7 +49,7 @@ var HomeComponent = React.createClass({
         );
     }
     else { //Close one panel      
-       if(this.isPanel1Active)
+       if(_state.isPanel1Active)
         navigation.navigateToOnePanel(
           this.state.panel1SelectedTypeObject.type,
           this.state.panel1SelectedTypeObject.getObjectId()
@@ -61,39 +60,19 @@ var HomeComponent = React.createClass({
           this.state.panel2SelectedTypeObject.getObjectId()
         );
     }
-  },  
-  navigateToListboard: function(listboardId) {
-    navigation.updateOnePanel('listboard', listboardId, (this.isPanel1Active? 1 : 2));
-  },
-  navigateToContainer: function(containerId) {
-    navigation.updateOnePanel('container', containerId, (this.isPanel1Active? 1 : 2))
-  },
-  navigateToItem: function(itemId) {
-    navigation.updateOnePanel('item', itemId, (this.isPanel1Active? 1 : 2))
-  },
-  navigateToFolder: function(folderId) {
-    navigation.updateOnePanel('folder', folderId, (this.isPanel1Active? 1 : 2))
-  },
-  navigateToFolderRoot: function() {
-    var rootFolder = _state.getRootFolder();
-    this.navigateToFolder(rootFolder._id);
-  },
-  performSearch: function(query) {
-    navigation.updateOnePanel('search', query, (this.isPanel1Active? 1 : 2))
-  },
-  navigateToItemSelection: function() {
-    navigation.updateOnePanel('selection', 'items', (this.isPanel1Active? 1 : 2))
-  },
+  },    
   activatePanel1: function(){
-    if(!this.isPanel1Active && this.state.panelPinnedNumber === 0) {
-      this.isPanel1Active = true;
+    if(!_state.isPanel1Active && this.state.panelPinnedNumber === 0) {
+      _state.isPanel1Active = true;
       this.setState({ isPanel1Active : true });
+      selection.updateSelectionMessage();
     }
   },
   activatePanel2: function(){
-    if(this.isPanel1Active && this.state.panelPinnedNumber === 0) {
-      this.isPanel1Active = false;
+    if(_state.isPanel1Active && this.state.panelPinnedNumber === 0) {      
+      _state.isPanel1Active = false;
       this.setState({ isPanel1Active : false });
+      selection.updateSelectionMessage();
     }
   },
   pinPanel1Toggle: function(){
@@ -120,8 +99,7 @@ var HomeComponent = React.createClass({
                   active = { active }
                   activatePanel = { activatePanel } 
                   panelPinnedNumber = { this.state.panelPinnedNumber }
-                  pinPanelToggle = { pinPanelToggle }
-                  navigateToContainer = { this.navigateToContainer } />;
+                  pinPanelToggle = { pinPanelToggle } />;
             break;
         }
         case 'container' : {                
@@ -135,8 +113,7 @@ var HomeComponent = React.createClass({
                   active = { active }
                   activatePanel = { activatePanel } 
                   panelPinnedNumber = { this.state.panelPinnedNumber }
-                  pinPanelToggle = { pinPanelToggle }
-                  navigateToItem = { this.navigateToItem } />;
+                  pinPanelToggle = { pinPanelToggle } />;
             break;
         }
         case 'item' : {                
@@ -162,10 +139,8 @@ var HomeComponent = React.createClass({
                   panelNumber = { panelNumber }
                   active = { active }
                   activatePanel = { activatePanel } 
-                  navigateToItem = { this.navigateToItem } 
                   panelPinnedNumber = { this.state.panelPinnedNumber }
-                  pinPanelToggle = { pinPanelToggle }
-                  navigateToFolder = { this.navigateToFolder } />;
+                  pinPanelToggle = { pinPanelToggle } />;
             break;
         }
         case 'search' : {                
@@ -179,8 +154,7 @@ var HomeComponent = React.createClass({
                   active = { active }
                   activatePanel = { activatePanel } 
                   panelPinnedNumber = { this.state.panelPinnedNumber }
-                  pinPanelToggle = { pinPanelToggle }
-                  navigateToItem = { this.navigateToItem } />;
+                  pinPanelToggle = { pinPanelToggle } />;
             break;
         }
         case 'selection' : {           
@@ -191,17 +165,14 @@ var HomeComponent = React.createClass({
                 active = { active }
                 activatePanel = { activatePanel } 
                 panelPinnedNumber = { this.state.panelPinnedNumber }
-                pinPanelToggle = { pinPanelToggle }
-                navigateToItem = { this.navigateToItem } />;
+                pinPanelToggle = { pinPanelToggle } />;
             break;
         }
     }    
   },
   render: function() {
-    this.listboardsPanelComponent = <ListboardsPanelComponent         
-      navigateToListboard={ this.navigateToListboard }
-      navigateToContainer={ this.navigateToContainer }
-      isPanel1Active={ this.isPanel1Active }
+    this.listboardsPanelComponent = <ListboardsPanelComponent    
+      isPanel1Active={ _state.isPanel1Active }
       panel1SelectedTypeObject= { this.state.panel1SelectedTypeObject } 
       panel2SelectedTypeObject= { this.state.panel2SelectedTypeObject } 
       isExtensionInstalled={ this.state.isExtensionInstalled }
@@ -213,14 +184,14 @@ var HomeComponent = React.createClass({
         this.state.panel1SelectedTypeObject, 
         false, 
         1, 
-        this.isPanel1Active, 
+        _state.isPanel1Active, 
         this.activatePanel1,
         this.pinPanel1Toggle );
       this.panel2 = this.getSelectedComponent(
         this.state.panel2SelectedTypeObject,
         false,
         2,
-        !this.isPanel1Active, 
+        !_state.isPanel1Active, 
         this.activatePanel2,
         this.pinPanel2Toggle );      
     }
@@ -244,18 +215,14 @@ var HomeComponent = React.createClass({
         this.pinPanel1Toggle );
       this.panel2 = null; 
     }
-    else {
-      //We navigate to the archive
-      var rootFolder = _state.getRootFolder();
-      navigation.navigateToOnePanel('folder', rootFolder._id);      
-    }
+    else      
+      navigation.navigateToFolderRoot();
 
     return (
       <div onClick={this.handleBodyClick} className="wrapper">
         <div className="main-header">
           <TopBarComponent 
-            switchPanels = { this.switchPanels }    
-            openArchive = { this.navigateToFolderRoot }
+            switchPanels = { this.switchPanels }                
             onePanel = { this.state.onePanel } 
             performSearch = { this.performSearch } />  
           {this.listboardsPanelComponent}      
@@ -271,9 +238,6 @@ var HomeComponent = React.createClass({
         {this.state.dialogItemVisible? <div className="modal-backdrop fade in"></div> : null}
       </div>
     );
-  },
-  componentDidMount: function(){
-    selection.setHandleViewClick(this.navigateToItemSelection);
   }
 });
 

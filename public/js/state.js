@@ -33,6 +33,7 @@ var State1 = model()
     .attr('containers', { collection: Containers })
     .attr('items', { collection: Items })
     .attr('onePanel', { default: true })
+    .attr('isPanel1Active', { default: true })
     .attr('panel1SelectedTypeObject', { model: TypeObject })
     .attr('panel2SelectedTypeObject', { model: TypeObject })
     .attr('selection', { model: Selection })
@@ -365,12 +366,62 @@ _.extend(State1.prototype, {
             success: success
         });
     },
+    serverMoveItemsToContainer: function (listboardId, containerId, itemIds, success) {
+        return $.ajax({
+            url: '/listboards/' + listboardId + '/containers/' + containerId + '/items',
+            type: "PUT",
+            data: JSON.stringify({
+                action: 'move',
+                items: itemIds
+            }),
+            success: success
+        });
+    },
+    serverMoveItemsToFolder: function (folderId, itemIds, success) {
+        return $.ajax({
+            url: '/folders/' + folderId + '/items',
+            type: "PUT",
+            data: JSON.stringify({
+                action: 'move',
+                items: itemIds
+            }),
+            success: success
+        });
+    },
+    serverCopyItemsToContainer: function (listboardId, containerId, itemIds, success) {
+        return $.ajax({
+            url: '/listboards/' + listboardId + '/containers/' + containerId + '/items',
+            type: "PUT",
+            data: JSON.stringify({
+                action: 'copy',
+                items: itemIds
+            }),
+            success: success
+        });
+    },
+    serverCopyItemsToFolder: function (folderId, itemIds, success) {
+        return $.ajax({
+            url: '/folders/' + folderId + '/items',
+            type: "PUT",
+            data: JSON.stringify({
+                action: 'copy',
+                items: itemIds
+            }),
+            success: success
+        });
+    },
     //////////////////////////////////////////ITEMS//////////////////////////////////////
 
     
     //////////////////////////////////////////PANELS//////////////////////////////////////
 
     // selected listboard
+    getActivePanelSelectedTypeObject: function() {
+        if(this.isPanel1Active)
+            return this.getPanel1SelectedTypeObject();
+        else
+            return this.getPanel2SelectedTypeObject();
+    },
     getPanel1SelectedTypeObject: function () {
         return (this.panel1SelectedTypeObject && this.panel1SelectedTypeObject.type? this.panel1SelectedTypeObject : null);
     },

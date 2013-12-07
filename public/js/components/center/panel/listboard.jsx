@@ -87,8 +87,7 @@ var ListboardPanel = React.createClass({
             <div className="scrollable-parent scrollable-parent-y">
               <ContainersComponent 
                 activatePanel= {this.props.activatePanel}
-                listboard= { this.props.listboard }
-                navigateToContainer = {this.props.navigateToContainer} />
+                listboard= { this.props.listboard } />
             </div>
           </div>
         </div>

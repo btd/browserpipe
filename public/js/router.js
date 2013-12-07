@@ -6,7 +6,8 @@ var _state = require('./state'),
     extension = require('./extension/extension'),
     HomeView = require('./components/home'),
     io = require('socket.io'),
-    $ = require('jquery');
+    $ = require('jquery'),
+    selection = require('./selection/selection');
 
 //Notification system
 require('messenger');
@@ -190,6 +191,7 @@ var loadWindowEvent = function() {
 
 var onSelectedPanel1Change = function() {    
     if(homeView) {
+        selection.updateSelectionMessage();
         homeView.setState({
             panel1SelectedTypeObject: _state.getPanel1SelectedTypeObject()
         });
@@ -198,6 +200,7 @@ var onSelectedPanel1Change = function() {
 
 var onSelectedPanel2Change = function() {
     if(homeView) {
+        selection.updateSelectionMessage();
         homeView.setState({
             panel2SelectedTypeObject: _state.getPanel2SelectedTypeObject()
         });
