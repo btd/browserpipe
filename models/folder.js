@@ -67,6 +67,12 @@ FolderSchema.statics.findAllDescendant = function (user, path) {
         .execWithPromise();
 }
 
+FolderSchema.methods.containItemId = function (itemId) {
+    return _.some(this.items, function(item){
+        return item.equals(itemId)
+    });
+};
+
 FolderSchema.methods.addItemId = function (itemId) {
     this.items.push(itemId);
     return this;

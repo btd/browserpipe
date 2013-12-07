@@ -10,7 +10,8 @@ var _state = require('../../../state'),
     PanelActivatorMixin = require('../../util/panel.activator.mixin'),         
     LabelEditorComponent = require('../../util/label.editor'),    
     Folder = require('../common/folder'), 
-    ItemsComponent = require('../common/items');
+    ItemsComponent = require('../common/items'),
+    navigation = require('../../../navigation/navigation');
 
 var FolderPanel = React.createClass({ 
   mixins: [PanelMixin, PanelActivatorMixin],
@@ -87,10 +88,10 @@ var FolderPanel = React.createClass({
   },
   navigateToParentFolder: function() {    
     var parent = _state.getFolderByFilter(this.props.folder.path);
-    this.props.navigateToFolder(parent._id);
+    navigation.navigateToFolder(parent._id);
   },
   navigateToChildFolder: function(folderId) {
-    this.props.navigateToFolder(folderId);
+    navigation.navigateToFolder(folderId);
   },
   getPanelNumber: function () {
     if(this.props.fullWidth)
@@ -192,7 +193,6 @@ var FolderPanel = React.createClass({
                 selection = { this.props.selection }
                 activatePanel= { this.props.activatePanel }
                 scrollable = { false } 
-                navigateToItem={this.props.navigateToItem}
                 saveItem={ this.saveItem }
                 removeItem={ this.removeItem } />
             </div>

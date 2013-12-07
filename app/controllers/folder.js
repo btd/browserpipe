@@ -111,6 +111,35 @@ exports.destroy = function (req, res) {
       .done()
 }
 
+//Move items to the folder
+exports.copymoveitems = function(req, res) {
+  var folder = req.currentFolder;  
+
+  req.checkBody('action').notEmpty();    
+  req.checkBody('items').notEmpty();    
+
+  var errs = req.validationErrors();
+  if(errs) {
+    return errors.sendBadRequest(res);
+  }
+
+  var action = req.body.action;
+  var items = req.body.items;
+
+  _.each(items, function(item) { 
+    if(!folder.containItemId(item))
+      folder.addItemId(item);     
+  } );  
+  if(action === 'move'){
+    //TODO: remove item from previous holder when merging container and folders
+  }
+
+  saveFolder(req, res, folder)
+  //TODO: optimize here only send the difference in items instead of sending all items again
+    .then(userUpdate.updateFolder.bind(null, req.user._id, folder))            
+    .done();   
+}
+
 //Find folder by id
 exports.folder = function (req, res, next, id) {
     Folder.byId(id)

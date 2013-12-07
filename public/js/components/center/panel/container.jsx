@@ -105,7 +105,6 @@ var ContainerPanel = React.createClass({
                 selection = { this.props.selection }
                 activatePanel= { this.props.activatePanel }
                 scrollable = { true } 
-                navigateToItem={this.props.navigateToItem}
                 saveItem={ this.saveItem } 
                 removeItem={ this.removeItem } />
           </div>

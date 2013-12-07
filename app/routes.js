@@ -29,6 +29,17 @@ module.exports = function (app, passport) {
   //Extension
   app.get(    '/clients/chrome/extension.crx', auth.send401IfNotAuthenticated, main.chromeExtension);
 
+  //Bookmark
+  app.get('//:url(*)', function(req, res) {
+    console.log('yesss ')
+    res.send('thx');
+  })
+
+  app.param('url', function(req, res, next, id) {
+    console.log(id);
+    next();
+  });
+
   //Listboards routes
   var listboard = require('./controllers/listboard');
   //@Deprecated: there is only one listboard of type 1 (later) and listboars of type 0 are created from extensions installation
@@ -40,15 +51,17 @@ module.exports = function (app, passport) {
 
   //Containers routes
   var container = require('./controllers/container');
-  app.post(   '/listboards/:listboardId/containers',               auth.send401IfNotAuthenticated, container.create);
-  app.put(    '/listboards/:listboardId/containers/:containerId',  auth.send401IfNotAuthenticated, container.update);
-  app.delete( '/listboards/:listboardId/containers/:containerId',  auth.send401IfNotAuthenticated, container.destroy);
+  app.post(   '/listboards/:listboardId/containers',                      auth.send401IfNotAuthenticated, container.create);
+  app.put(    '/listboards/:listboardId/containers/:containerId',         auth.send401IfNotAuthenticated, container.update);
+  app.put(    '/listboards/:listboardId/containers/:containerId/items',   auth.send401IfNotAuthenticated, container.copymoveitems);
+  app.delete( '/listboards/:listboardId/containers/:containerId',         auth.send401IfNotAuthenticated, container.destroy);
 
   //Folders routes
   var folder = require('./controllers/folder');
-  app.post(   '/folders',             auth.send401IfNotAuthenticated, folder.create);
-  app.put(    '/folders/:folderId',     auth.send401IfNotAuthenticated, folder.update);
-  app.delete( '/folders/:folderId',    auth.send401IfNotAuthenticated, folder.destroy);
+  app.post(   '/folders',                     auth.send401IfNotAuthenticated, folder.create);
+  app.put(    '/folders/:folderId',           auth.send401IfNotAuthenticated, folder.update);
+  app.put(    '/folders/:folderId/items',     auth.send401IfNotAuthenticated, folder.copymoveitems);
+  app.delete( '/folders/:folderId',           auth.send401IfNotAuthenticated, folder.destroy);
     
   app.param('folderId', auth.send401IfNotAuthenticated, folder.folder);
 

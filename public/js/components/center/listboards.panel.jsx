@@ -8,7 +8,8 @@ var _state = require('../../state'),
     page = require('page'),
     React = require('react'),
     listboardSelectorDraggable = require('../../dragging/listboard.selector'),
-    selection = require('../../selection/selection');
+    selection = require('../../selection/selection'),
+    navigation = require('../../navigation/navigation');
 
 var ListboardsPanelComponent = React.createClass({            
     installChromeExtension: function() {        
@@ -16,12 +17,11 @@ var ListboardsPanelComponent = React.createClass({
     },
     addEmptyContainerAndSelectIt: function(e) {        
         e.preventDefault();
-        var that = this;
         _state.serverSaveContainer({
             listboardId: this.props.laterBoard._id,
             type: 1
         }, function(container){
-            that.props.navigateToContainer(container._id);
+            navigation.navigateToContainer(container._id);
         })
     },
     isListboardSelected: function(listboardId) {
@@ -37,7 +37,7 @@ var ListboardsPanelComponent = React.createClass({
         if(!elementId)
             elementId = $(e.target).parents('.listboard-option:first').attr('id');
         var listboardId = elementId.substring(3);                 
-        this.props.navigateToListboard(listboardId);
+        navigation.navigateToListboard(listboardId);
     },
     handleContainerClick: function(e) {
         e.preventDefault();        
@@ -46,7 +46,7 @@ var ListboardsPanelComponent = React.createClass({
         if(!elementId)
             elementId = $(e.target).parents('.container-option:first').attr('id');                   
         var containerId = elementId.substring(3);
-        this.props.navigateToContainer(containerId);
+        navigation.navigateToContainer(containerId);
     },
     getListboardClass: function(listboard) {        
         return 'listboard-option btn browser-listboard-option ' +

@@ -6,7 +6,8 @@ var _state = require('../../../state'),
     _ = require('lodash'),
     page = require('page'),
     React = require('react'),
-    PanelActivatorMixin = require('../../util/panel.activator.mixin');
+    PanelActivatorMixin = require('../../util/panel.activator.mixin'),
+    navigation = require('../../../navigation/navigation');
 
 var ContainersComponent = React.createClass({ 
     mixins: [PanelActivatorMixin],    
@@ -24,7 +25,7 @@ var ContainersComponent = React.createClass({
         if(!elementId)
             elementId = $(e.target).parents('.container-option:first').attr('id');
         var containerId = elementId.substring(5);
-        this.props.navigateToContainer(containerId);             
+        navigation.navigateToContainer(containerId);             
     }, 
     getContainerTitle: function(container) {     
         if(!container.title || container.title.trim() === '')                     

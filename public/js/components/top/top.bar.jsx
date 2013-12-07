@@ -2,7 +2,8 @@
  * @jsx React.DOM
  */
 
-var React = require('react');
+var React = require('react'),
+    navigation = require('../../navigation/navigation');
 
 var TobBarComponent = React.createClass({   
     getPanelOptionText: function() {        
@@ -26,7 +27,10 @@ var TobBarComponent = React.createClass({
               hideAfter: 2
             });
         else
-            this.props.performSearch(query);
+            navigation.performSearch(query);
+    },
+    handleArchiveClick: function(e) {
+        navigation.navigateToFolderRoot();
     },
     handleSearchClick: function(e) {
         e.preventDefault();
@@ -47,7 +51,7 @@ var TobBarComponent = React.createClass({
                                 <a draggable="false"  tabindex="-1" onClick={ this.props.switchPanels } >{ this.getPanelOptionText() }</a>
                             </li>
                             <li className="nav-option"> 
-                                <a draggable="false"  tabindex="-1" onClick={ this.props.openArchive } >
+                                <a draggable="false"  tabindex="-1" onClick={ this.handleArchiveClick } >
                                     <span className="long-version">Archive</span>
                                     <span className="short-version">Arch</span>
                                 </a>
