@@ -8,6 +8,7 @@ var userUpdate = require('./user_update');
 
 var saveContainer = function(req, res, container){
     return req.user.saveWithPromise()
+        .then(userUpdate.createItem.bind(null, req.user._id, container))
         .then(responses.sendModelId(res, container._id))
         .fail(errors.ifErrorSendBadRequest(res));
 }
@@ -15,17 +16,16 @@ var saveContainer = function(req, res, container){
 //Create container
 exports.create = function (req, res) {
     //req.checkBody('title').notEmpty(); it can be empty
-    req.checkBody('type').notEmpty().isInt();
 
     var errs = req.validationErrors();
     if(errs) {
         return errors.sendBadRequest(res);
     }
 
-    var container = req.listboard.addContainer(_.pick(req.body, 'title', 'type')).last();
+    var container = req.listboard.addContainer(_.pick(req.body, 'title'));
 
     saveContainer(req, res, container)
-      .then(userUpdate.createContainer.bind(null, req.user._id, req.listboard._id, container))
+      .then(userUpdate.updateListboard.bind(null, req.user._id, req.listboard))
       .done();
 }
 

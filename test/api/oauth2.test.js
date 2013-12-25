@@ -258,7 +258,7 @@ describe('OAuth2', function () {
                                         .type('urlencoded')
                                         .send({ _csrf: csrfField.getAttribute('value') })
                                         .set('Cookie', authCookie.name + '=' + authCookie.value)
-                                        .expect('Location', '/oauth2/auth/loginAuth/../login?error=invalid_user')
+                                        .expect('Location', '/oauth2/auth/login?error=invalid_user')
                                         .expect(302, done);
                                 }
                             );
@@ -289,7 +289,7 @@ describe('OAuth2', function () {
                                         .type('urlencoded')
                                         .send({ _csrf: csrf, username: goodUser.email, password: goodUser.password })
                                         .set('Cookie', authCookie.name + '=' + authCookie.value)
-                                        .expect('Location', '/oauth2/auth/loginAuth/../requestAccess')
+                                        .expect('Location', '/oauth2/auth/requestAccess')
                                         .expect(302, done);
                                 }
                             );

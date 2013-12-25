@@ -1,9 +1,8 @@
 //Application scripts
 script.
     var initialOptions = {
-        listboards: !{JSON.stringify(listboards).replace(/\//g, '\\/')},
-        folders: !{JSON.stringify(folders).replace(/\//g, '\\/')},
-        items: !{JSON.stringify(items).replace(/\//g, '\\/')}
+        user: !{ JSON.stringify(user).replace(/\//g, '\\/') },
+        items: !{ JSON.stringify(items).replace(/\//g, '\\/') }
     };
 
 != javascript_tag ('js/apps/main')

@@ -15,16 +15,23 @@ var errorMsgs = {
     should_be_unique: 'already used'
 }
 
-var ListboardSchema = require('./listboard');
-
 var UserSchema = new Schema({
     name: { type: String, match: /(\w| )+/, trim: true, validate: validation.nonEmpty("Name ")},
     email: { type: String, required: true, validate: [ /\S+@\S+\.\S/, errorMsgs.invalid], trim: true, lowercase: true},
     password: { type: String, required: true},
-    listboards: [ ListboardSchema ]
+
+    laterListboard: { type: Schema.ObjectId, ref: 'Item' },
+    browserListboards: [{ type: Schema.ObjectId, ref: 'Item' }]
 });
 
 UserSchema.plugin(require('../util/mongoose-timestamp'));
+
+UserSchema.set('toJSON', {
+    transform: function(doc, ret, options) {
+        delete ret.password;
+        return ret;
+    }
+});
 
 //http://devsmash.com/blog/password-authentication-with-mongoose-and-bcrypt
 UserSchema.pre('save', function(next) {
@@ -47,13 +54,17 @@ UserSchema.methods.authenticate = function (password, callback) {
     return bcrypt.compare(password, this.password, callback);
 };
 
+UserSchema.statics.by = function (obj) {
+    return User.findOne(obj).execWithPromise();
+};
+
 // 2 convinient wrappers to do not repeat in code also it populate internal doc
 UserSchema.statics.byId = function (id) {
-    return qfindOne({ _id: id});
+    return User.by({ _id: id});
 };
 
 UserSchema.statics.byEmail = function (email) {
-    return qfindOne({ email: email.toLowerCase() });
+    return User.by({ email: email.toLowerCase() });
 };
 
 UserSchema.pre('save', function (done) {
@@ -70,32 +81,5 @@ UserSchema.pre('save', function (done) {
             done(err);
         });
 });
-
-var qfindOne = function (obj) {
-    return User.findOne(obj).execWithPromise();
-};
-
-UserSchema.statics.by = qfindOne;
-
-
-UserSchema.methods.getListboardByBrowserKey = function (key) {
-    var result = _.filter(this.listboards, function( listboard ){ return listboard.browserKey === key; });
-    if (result.length === 1)
-        return result[0];
-    else if (result.length === 0)
-        return null
-    else if (result.length > 1)
-        throw "Cannot be two listboards with same browser key"
-}
-
-UserSchema.methods.addListboard = function (rawListboard) {
-    this.listboards.push(rawListboard);
-    return _.last(this.listboards);
-}
-
-UserSchema.methods.removeListboard = function (listboard) {
-    this.listboards.id(listboard).remove();
-    return this;
-};
 
 module.exports = User = mongoose.model('User', UserSchema);

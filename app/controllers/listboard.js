@@ -34,16 +34,14 @@ exports.create = function (req, res) {
 
 //Update Later listboard
 exports.update = function (req, res) {
-
-    //Validate user input
-    req.check('label', 'Please enter a label').notEmpty();
+    req.check('title').notEmpty();
 
     //If errors, flash or send them
     var err = req.validationErrors();
     if (err) return errors.sendBadRequest(res);
 
     var listboard = req.listboard;
-    _.merge(listboard, _.pick(req.body, 'label'));
+    _.merge(listboard, _.pick(req.body, 'title'));
 
     req.user.saveWithPromise()
         .then(responses.sendModelId(res, listboard._id), errors.ifErrorSendBadRequest(res))

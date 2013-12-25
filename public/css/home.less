@@ -1,54 +1,42 @@
 // Core variables and mixins
-
 // Rules import
 @import "common/colors.less";
 @import "common/util.less";
 @import "home/top/top.bar.less";
 @import "home/top/top.bar.responsive.less";
 @import "home/center/listboards.panel.less";
-@import "home/center/listboards.panel.responsive.less";
-@import "home/center/panel/panel.less";
-@import "home/center/panel/panel.responsive.less";
-@import "home/center/common/container.less";
-@import "home/center/common/container.responsive.less";
-@import "home/center/common/item.less";
-@import "home/center/common/item.responsive.less";
-@import "home/center/common/folder.less";
-@import "home/center/common/folder.responsive.less";
+@import "home/center/panel.less";
 @import "home/footer/footer.less";
 
 html, body {
-    overflow: hidden;
-    height: 100%;
-    width: 100%;
-    margin: 0;
-    background-color: white;
-    font-family: Arial, Helvetica, sans-serif;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  background-color: white;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 #body-inner {
+  height: 100%;
+
+  .wrapper {
     height: 100%;
 
-    .wrapper {
-        height: 100%;
-
-        .main-header { 
-            height: 150px;            
-        }
-        .main-content {        
-            height: 100%;  
-             overflow:hidden;
-            -webkit-box-sizing:border-box;
-            -moz-box-sizing:border-box;
-            -ms-box-sizing:border-box;
-            box-sizing:border-box;
-            margin:-150px 0 -21px 0;
-            padding:150px 0 21px 0;            
-        }
-        .main-footer {
-            height: 21px;
-        }
-
+    .main-header {
+      height: 150px;
     }
+    .main-content {
+      height: 100%;
+      //overflow: hidden;
+
+      margin: -150px 0 -21px 0;
+      padding: 150px 0 21px 0;
+    }
+    .main-footer {
+      height: 21px;
+    }
+
+  }
 }
 
