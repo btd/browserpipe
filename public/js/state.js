@@ -1,18 +1,10 @@
 var $ = require('jquery'),
     _ = require('lodash');
 
-var folder = require('./data/folder'),
-    Folder = folder.Folder,
-    Folders = folder.Folders;
-
-var listboard = require('./data/listboard'),
-    Listboards = listboard.Listboards,
-    Container = listboard.Container,
-    Containers = listboard.Containers;
-
 var item = require('./data/item'),
     Item = item.Item,
     Items = item.Items;
+
 
 var typeObject = require('./data/typeobject'),
     TypeObject = typeObject.TypeObject;
@@ -28,15 +20,11 @@ $.ajaxSetup({
 var model = require('moco').model;
 
 var State1 = model()
-    .attr('folders', { collection: Folders })
-    .attr('listboards', { collection: Listboards })
-    .attr('containers', { collection: Containers })
+    .attr('laterListboard')
+    .attr('browserListboards')
     .attr('items', { collection: Items })
-    .attr('onePanel', { default: true })
-    .attr('isPanel1Active', { default: true })
-    .attr('panel1SelectedTypeObject', { model: TypeObject })
-    .attr('panel2SelectedTypeObject', { model: TypeObject })
-    .attr('selection', { model: Selection })
+    .attr('selected1')
+    .attr('selected2')
     .use(model.nestedObjects);
 
 _.extend(State1.prototype, {
@@ -46,253 +34,23 @@ _.extend(State1.prototype, {
         //Load items
         this.loadItems(initialOptions.items || []);
 
-        //Loads Folders
-        this.loadFolders(initialOptions.folders || []);
-
-        //Loads Listboards
-        this.loadListboards(initialOptions.listboards || []);
+        this.laterListboard = initialOptions.user.laterListboard;
+        this.browserListboards = initialOptions.user.browserListboards;
         
         //Init selection
-        this.clearSelection();
+        //this.clearSelection();
     },
 
-
-    //////////////////////////////////////////FOLDERS//////////////////////////////////////
-    //Load
-    loadFolders: function (from) {
-        //Load children folders
-        _.each(from, function(folderObj) {
-            var folder = this.addFolder(folderObj);
-            if(folder.isRoot)
-                this.selectedFolder = folder;
-        }, this);
-    },
-
-    //Gets
-    getFolderByFilter: function (filter) {
-        return this.folders.byFilter(filter);
-    },
-    getFolderById: function (folderId) {
-        return this.folders.byId(folderId);
-    },
-    getFoldersByIds: function(folderIds) {
-        var self = this;
-        return _.map(folderIds, function(folderId) {
-            return self.getFolderById(folderId);
-        })
-    },
-    getAllFolders: function () {
-        return this.folders;
-    },
-    getRootFolder: function () {
-        //There is always a root folder
-        return this.folders[0];
-    },
-
-    //CRUD
-    addFolder: function (folderObj) {
-        var folder = new Folder(folderObj);
-        folder.children = [];
-
-        this.folders.push(folder);
-
-        if (!folder.isRoot) {                        
-            var parentFolder = this.getFolderByFilter(folder.path);            
-            parentFolder.children.push(folder._id); 
-            //TODO: we need a .update() method in moco to force an update            
-            parentFolder.children = ([]).concat(parentFolder.children);
-        }
-
-        return folder;
-    },
-    updateFolder: function (folderUpdate) {
-        var folder = this.getFolderById(folderUpdate._id);
-        if (folder)
-            _.extend(folder, folderUpdate);
-    },
-    removeFolder: function (folderId) {
-        var folder = this.folders.removeById(folderId);
-        if (folder) {
-            if(!folder.isRoot) {
-                var parent = this.getFolderByFilter(folder.path);
-                var index = parent.children.indexOf(folderId);
-                if (index > -1)
-                    parent.children.splice(index, 1);                
-            }
-        }
-    },
-
-    //TODO it should be done in more universal way, also need more universal validation
-    //Server calls    
-    serverSaveFolder: function (folder, success) {
-        return $.ajax({
-            url: '/folders',
-            type: 'POST',
-            data: JSON.stringify(folder),
-            success: success
-        });
-    },
-    serverUpdateFolder: function (folder, success) {
-        return $.ajax({
-            url: '/folders/' + folder._id,
-            type: "PUT",
-            data: JSON.stringify(folder),
-            success: success
-        });
-    },
-    serverRemoveFolder: function (folder, success) {
-        return $.ajax({
-            url: '/folders/' + folder._id,
-            type: "DELETE",
-            success: success
-        });
-    },
-    //////////////////////////////////////////FOLDERS//////////////////////////////////////
-
-
-    //////////////////////////////////////////LISTBOARDS//////////////////////////////////////
-    //Load
-    loadListboards: function (from) {
-        _.each(from, this.addListboard, this);
-    },
-
-
-    //Gets
-    getListboardById: function (listboardId) {
-        return this.listboards.byId(listboardId);
-    },
-    getAllListboards: function () {
-        return this.listboards;
-    },
     getLaterListboard: function () {
-        return _.find(this.listboards, function(l) {
-            return l.type === 1;
-        });
+        return this.laterListboard;
     },
     getAllBrowserListboards: function () {
-        return this.listboards.filter(function(l) {
-            return l.type === 0;
-        });
-    },
-    getFirstListboard: function () {
-        return (this.listboards.length > 0? this.listboards[0] : null);
+        return this.browserListboards;
     },
 
-    //CRUD Listboard
-    addListboard: function (listboard) {
-        //it is moveton to change object that someone give us
-        var listboardCopy = _.omit(listboard, 'containers');        
-        this.listboards.push(listboardCopy);
-
-        _.each(listboard.containers, function(container) {
-            this.addContainer(listboard._id, container);            
-        }, this);
+    setSelected: function(num, obj) {
+        this['selected'+num] = obj;
     },
-    updateListboard: function (listboardUpdate) {
-        var listboard = this.getListboardById(listboardUpdate._id);
-        if (listboard) //We do not update arrays here            
-            _.extend(listboard, _.pick(listboardUpdate, 'label'));
-    },
-    removeListboard: function (listboardDeleteId) {
-        var listboard = this.listboards.removeById(listboardDeleteId);
-        if (listboard) {
-            // remove state-wise containers collection
-            listboard.containers.forEach(function(container) {
-                this.containers.removeById(container._id); // O(N)
-            }, this);
-        }
-    },
-
-
-    //Server calls    
-    serverSaveListboard: function (listboard, success) {
-        return $.ajax({
-            url: '/listboards',
-            type: "POST",
-            data: JSON.stringify(listboard),
-            success: success
-        });
-    },
-    serverUpdateListboard: function (listboard, success) {
-        return $.ajax({
-            url: '/listboards/' + listboard._id,
-            type: "PUT",
-            data: JSON.stringify(listboard),
-            success: success
-        });
-    },
-    serverRemoveListboard: function (listboard, success) {
-        return $.ajax({
-            url: '/listboards/' + listboard._id,
-            type: "DELETE",
-            success: success
-        });
-    },
-    //////////////////////////////////////////LISTBOARDS//////////////////////////////////////
-
-
-    //////////////////////////////////////////CONTAINERS//////////////////////////////////////
-    //Gets
-    getContainerById: function (containerId) {
-        return this.containers.byId(containerId);
-    },
-    getContainerByIdAndListboard: function (listboard, containerId) {
-        return listboard.containers.byId(containerId);
-    },    
-
-    //CRUD
-    addContainer: function (listboardId, container) {
-        var listboard = this.getListboardById(listboardId);
-        if (listboard) {
-            container.listboardId = listboardId;
-            container = new Container(container); // this is required to have the same reference in both collections
-            listboard.containers.push(container);
-            this.containers.push(container);
-        }
-    },
-
-    updateContainer: function (listboardId, containerUpdate) {
-        var listboard = this.getListboardById(listboardId);
-        if (listboard) {
-            var container = listboard.containers.byId(containerUpdate._id);
-            if (container)
-                _.extend(container, containerUpdate);
-        }
-    },
-    removeContainer: function (listboardId, containerId) {
-        var container = this.containers.removeById(containerId);
-        if (container) {
-            var listboard = this.getListboardById(listboardId);
-            listboard.containers.removeById(containerId);
-        }
-    },
-
-    //Server calls    
-    serverSaveContainer: function (container, success) {
-        return $.ajax({
-            url: '/listboards/' + container.listboardId + '/containers',
-            type: "POST",
-            data: JSON.stringify(container),
-            success: success
-        });
-    },
-    serverUpdateContainer: function (container, success) {        
-        return $.ajax({
-            url: '/listboards/' + container.listboardId + '/containers/' + container._id,
-            type: "PUT",
-            data: JSON.stringify(container),
-            success: success
-        });
-    },
-    serverRemoveContainer: function (container, success) {
-        return $.ajax({
-            url: '/listboards/' + container.listboardId + '/containers/' + container._id,
-            type: "DELETE",
-            success: success
-        });
-    },
-    //////////////////////////////////////////CONTAINERS//////////////////////////////////////
-
 
     //////////////////////////////////////////ITEMS//////////////////////////////////////
     //Load
@@ -306,10 +64,7 @@ _.extend(State1.prototype, {
         return this.items.byId(itemId);
     },
     getItemsByIds: function(itemIds) {
-        var self = this;
-        return _.map(itemIds, function(itemId) {
-            return self.getItemById(itemId);
-        })
+        return _.map(itemIds, this.getItemById, this);
     },
 
     //CRUD
@@ -326,24 +81,16 @@ _.extend(State1.prototype, {
         this.items.removeById(itemId);
     },
 
+    serverAddItemToItem: function (parentId, item, success) {
+        $.ajax({
+            url: '/items/' + parentId + '/items',
+            type: "POST",
+            data: JSON.stringify(item),
+            success: success
+        });
+    },
 
-    //Server calls    
-    serverSaveItemToContainer: function (listboardId, containerId, item, success) {
-        return $.ajax({
-            url: '/listboards/' + listboardId + '/containers/' + containerId + '/items',
-            type: "POST",
-            data: JSON.stringify(item),
-            success: success
-        });
-    },
-    serverSaveItemToFolder: function (folderId, item, success) {
-        return $.ajax({
-            url: '/folders/' + folderId + '/items',
-            type: "POST",
-            data: JSON.stringify(item),
-            success: success
-        });
-    },
+
     serverUpdateItem: function (item, success) {
         return $.ajax({
             url: '/items/' + item._id,
@@ -352,69 +99,20 @@ _.extend(State1.prototype, {
             success: success
         });
     },
-    serverRemoveItemFromContainer: function (listboardId, containerId, item, success) {
+
+    serverDeleteItem: function(item, success) {
         return $.ajax({
-            url: '/listboards/' + listboardId + '/containers/' + containerId + '/items/' + item._id,
+            url: '/items/' + item._id,
             type: "DELETE",
             success: success
         });
     },
-    serverRemoveItemFromFolder: function (folderId, item, success) {
-        return $.ajax({
-            url: '/folders/' + folderId + '/items/' + item._id,
-            type: "DELETE",
-            success: success
-        });
-    },
-    serverMoveItemsToContainer: function (listboardId, containerId, itemIds, success) {
-        return $.ajax({
-            url: '/listboards/' + listboardId + '/containers/' + containerId + '/items',
-            type: "PUT",
-            data: JSON.stringify({
-                action: 'move',
-                items: itemIds
-            }),
-            success: success
-        });
-    },
-    serverMoveItemsToFolder: function (folderId, itemIds, success) {
-        return $.ajax({
-            url: '/folders/' + folderId + '/items',
-            type: "PUT",
-            data: JSON.stringify({
-                action: 'move',
-                items: itemIds
-            }),
-            success: success
-        });
-    },
-    serverCopyItemsToContainer: function (listboardId, containerId, itemIds, success) {
-        return $.ajax({
-            url: '/listboards/' + listboardId + '/containers/' + containerId + '/items',
-            type: "PUT",
-            data: JSON.stringify({
-                action: 'copy',
-                items: itemIds
-            }),
-            success: success
-        });
-    },
-    serverCopyItemsToFolder: function (folderId, itemIds, success) {
-        return $.ajax({
-            url: '/folders/' + folderId + '/items',
-            type: "PUT",
-            data: JSON.stringify({
-                action: 'copy',
-                items: itemIds
-            }),
-            success: success
-        });
-    },
+
     //////////////////////////////////////////ITEMS//////////////////////////////////////
 
     
     //////////////////////////////////////////PANELS//////////////////////////////////////
-
+    /*
     // selected listboard
     getActivePanelSelectedTypeObject: function() {
         if(this.isPanel1Active)
@@ -458,7 +156,7 @@ _.extend(State1.prototype, {
                 this.panel2SelectedTypeObject.type === type &&
                 this.panel2SelectedTypeObject.getObjectId() === id;
     },
-
+    */
     //////////////////////////////////////////PANELS//////////////////////////////////////
 
 
@@ -494,16 +192,14 @@ _.extend(State1.prototype, {
     },
     clearSelection: function() {    
         this.clearListboardSelection();
-        this.clearContainerSelection();
+        //this.clearContainerSelection();
         this.clearItemSelection();
-        this.clearFolderSelection();               
+        //this.clearFolderSelection();
     },
     clearListboardSelection: function() {    
         this.selection.listboards.clear();
     },
-    clearContainerSelection: function() {    
-        this.selection.containers.clear();
-    },
+
     clearItemSelection: function() {    
         this.selection.items.clear();
     },

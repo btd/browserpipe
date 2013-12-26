@@ -3,7 +3,7 @@
 var _ = require('lodash'),
     q = require('q'),
     User = require('../../models/user'),
-    Folder = require('../../models/folder');
+    Item = require('../../models/item');
 
 //Login form
 exports.login = function (req, res) {
@@ -55,31 +55,29 @@ exports.create = function (req, res, next) {
                 var user = new User(_.pick(req.body, 'email', 'name', 'password'));
                 user.provider = 'local' //for passport
 
-                //Create later listboard, there will be only 1 of type: 1
-                user.addListboard({ type: 1, label: 'Later listboard'});
-                
-                //Create a root folder
-                var rootFolder = new Folder({ label: 'Archive', user: user });
-                
-                //Create child folders
-                var readLaterFolder = rootFolder.createChildFolder("Fun videos");
-                var coolSitesFolder = rootFolder.createChildFolder("Cool Sites");
+                var later = Item.newContainer({ title: 'Later', user: user });
+                // items
+                var archiveContainer = later.addContainer({ title: 'Archive' });
+                var funVideosContainer = later.addContainer({ title: 'Fun videos' });
+                var coolSitesContainer = later.addContainer({ title: 'Cool sites' });
+
+                user.laterListboard = later;
 
                 return user.saveWithPromise()
                     .then(function() {
                         return q.all([
-                            rootFolder.saveWithPromise(),
-                            readLaterFolder.saveWithPromise(),
-                            coolSitesFolder.saveWithPromise()
+                            later.saveWithPromise(),
+                            archiveContainer.saveWithPromise(),
+                            funVideosContainer.saveWithPromise(),
+                            coolSitesContainer.saveWithPromise()
                         ]);
                     })
                     .then(function () {
                         req.login(user, function (err) {
                             if (err) return next(err);
-                             res.redirect('/');
+                            res.redirect('/');
                         })
-                    })
-                    .fail(next)
+                    }, next)
             }
         }, next)
         .done();

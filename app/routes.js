@@ -15,6 +15,8 @@ module.exports = function (app, passport) {
 
   app.param('userId', users.user);
 
+
+
   //Home routes
   app.get(    '/panel1/:type1/:id1',                     auth.ensureLoggedIn('/login'), main.home);
   app.get(    '/panel1/:type1/:id1/panel2/:type2/:id2',  auth.ensureLoggedIn('/login'), main.home);
@@ -42,36 +44,27 @@ module.exports = function (app, passport) {
 
   //Listboards routes
   var listboard = require('./controllers/listboard');
-  //@Deprecated: there is only one listboard of type 1 (later) and listboars of type 0 are created from extensions installation
-  app.post(  '/listboards',                auth.send401IfNotAuthenticated, listboard.create);
-  app.put(   '/listboards/:listboardId',   auth.send401IfNotAuthenticated, listboard.update);
-  app.delete('/listboards/:listboardId',   auth.send401IfNotAuthenticated, listboard.destroy);
+  app.param('listboardId', auth.send401IfNotAuthenticated, listboard.listboard);
 
-  app.param('listboardId', auth.send401IfNotAuthenticated, listboard.listboard);    
+    //@Deprecated: there is only one listboard of type 1 (later) and listboars of type 0 are created from extensions installation
+  //app.post(  '/listboards',                auth.send401IfNotAuthenticated, listboard.create);
+  //app.put(   '/listboards/:listboardId',   auth.send401IfNotAuthenticated, listboard.update);
+  //app.delete('/listboards/:listboardId',   auth.send401IfNotAuthenticated, listboard.destroy);
 
   //Containers routes
-  var container = require('./controllers/container');
-  app.post(   '/listboards/:listboardId/containers',                      auth.send401IfNotAuthenticated, container.create);
-  app.put(    '/listboards/:listboardId/containers/:containerId',         auth.send401IfNotAuthenticated, container.update);
-  app.put(    '/listboards/:listboardId/containers/:containerId/items',   auth.send401IfNotAuthenticated, container.copymoveitems);
-  app.delete( '/listboards/:listboardId/containers/:containerId',         auth.send401IfNotAuthenticated, container.destroy);
-
-  //Folders routes
-  var folder = require('./controllers/folder');
-  app.post(   '/folders',                     auth.send401IfNotAuthenticated, folder.create);
-  app.put(    '/folders/:folderId',           auth.send401IfNotAuthenticated, folder.update);
-  app.put(    '/folders/:folderId/items',     auth.send401IfNotAuthenticated, folder.copymoveitems);
-  app.delete( '/folders/:folderId',           auth.send401IfNotAuthenticated, folder.destroy);
-    
-  app.param('folderId', auth.send401IfNotAuthenticated, folder.folder);
-
-  //Items routes
   var item = require('./controllers/item');
-  app.post(   '/listboards/:listboardId/containers/:containerId/items',  auth.send401IfNotAuthenticated, item.create);
-  app.post(   '/folders/:folderId/items',  auth.send401IfNotAuthenticated, item.create);
-  app.put(    '/items/:itemId',  auth.send401IfNotAuthenticated, item.update);
-  app.delete( '/listboards/:listboardId/containers/:containerId/items/:itemId',  auth.send401IfNotAuthenticated, item.remove);
-  app.delete( '/folders/:folderId/items/:itemId',  auth.send401IfNotAuthenticated, item.remove);
+  //var container = require('./controllers/container');
+  //app.post(   '/listboards/:listboardId/containers',                   auth.send401IfNotAuthenticated, item.addToListboard);
+  //app.put(    '/listboards/:listboardId/containers/:containerId',    auth.send401IfNotAuthenticated, item.update);
+  //app.put(    '/listboards/:listboardId/containers/:itemId/items',   auth.send401IfNotAuthenticated, item.copymoveitems);
+  //app.post(   '/listboards/:listboardId/containers/:itemId/items',   auth.send401IfNotAuthenticated, item.add);
+  //app.delete( '/listboards/:listboardId/containers/:itemId',         auth.send401IfNotAuthenticated, item.destroy);
+
+  app.post(  '/items/:itemId/items', auth.send401IfNotAuthenticated, item.addToItem);
+  app.put(   '/items/:itemId',       auth.send401IfNotAuthenticated, item.update);
+  app.delete('/items/:itemId',       auth.send401IfNotAuthenticated, item.delete);
+
+  app.get('/add', auth.ensureLoggedIn('/login'), item.addItemBookmarklet);
 
   app.param('itemId', auth.send401IfNotAuthenticated, item.item);
 
@@ -80,4 +73,5 @@ module.exports = function (app, passport) {
 
   app.param('query', auth.send401IfNotAuthenticated, item.query);
 
+  require('./controllers/browser')(app);
 };

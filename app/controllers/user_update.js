@@ -39,7 +39,7 @@ createListboard or bulkCreateFolder
  */
 ['create', 'delete', 'update'].forEach(function(verb) {
     var processModel = preprocessModelByChangeType[verb];
-    ['listboard', 'folder', 'item'].forEach(function(modelType) {
+    ['user', 'item'].forEach(function(modelType) {
         exports[verb + capitalize(modelType)] = function(userId, model) {
             publishUserUpdate(
                 userId,
@@ -56,31 +56,6 @@ createListboard or bulkCreateFolder
     })
 });
 
-// create separate for containers as it require to have listboard for work
-['create', 'delete', 'update'].forEach(function(verb) {
-    var processModel = preprocessModelByChangeType[verb];
-    var modelType = 'container';
-    // container require listboardId
-
-    exports[verb + capitalize(modelType)] = function(userId, listboardId, model) {
-        publishUserUpdate(
-            userId,
-            verb + '.' + modelType, {
-                listboardId: listboardId,
-                container: processModel ? processModel(model): model
-            });
-    };
-
-    exports['bulk' + capitalize(verb) + capitalize(modelType)] = function(userId, listboardId, models) {
-        publishUserUpdate(
-            userId,
-            'bulk.' + verb + '.' + modelType,{
-                listboardId: listboardId,
-                containers: processModel ? models.map(processModel): models
-            });
-    }
-
-});
 
 var waitUserUpdates = function(userId, callback) {
     var client = redis.createClient(config.redis.port, config.redis.host, config.redis.options);

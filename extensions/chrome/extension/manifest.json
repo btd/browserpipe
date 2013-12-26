@@ -8,29 +8,30 @@
     "permissions": [
         "tabs",
         "storage",
+        "contextMenus",
         "*://*.listboard.it/*"
     ],
 
     "background": {
-        "scripts": ["oauth2/oauth2.js", "sync.js"]
+        "scripts": ["sync.js"]
+    },
+
+    "icons": {
+        "16": "icon16.png",
+        "48": "icon48.png",
+        "128": "icon128.png"
     },
 
     "browser_action": {
-        "default_icon": "icon.ico",
-        "default_title": "Listboard.It"
+        "default_icon": "icon48.png",
+        "default_title": "Sync with Listboard.It"
     },
 
     "web_accessible_resources": [
-        "manifest.json",
-        "oauth2/oauth2.html"
+        "manifest.json"
     ],
 
     "content_scripts": [
-        {
-            "matches": ["http://api.local.listboard.it:4001/nothing*"],
-            "js": ["oauth2/oauth2_inject.js"],
-            "run_at": "document_start"
-        },
         {
             "matches": ["*://*.listboard.it/*"],
             "js": ["message/message.js"],

@@ -48,10 +48,10 @@ var TobBarComponent = React.createClass({
                     <div className="container-fluid">
                         <ul id="account-nav" className="nav pull-right">
                             <li className="nav-option"> 
-                                <a draggable="false"  tabindex="-1" onClick={ this.props.switchPanels } >{ this.getPanelOptionText() }</a>
+                                <a draggable="false" onClick={ this.props.switchPanels } >{ this.getPanelOptionText() }</a>
                             </li>
                             <li className="nav-option"> 
-                                <a draggable="false"  tabindex="-1" onClick={ this.handleArchiveClick } >
+                                <a draggable="false" onClick={ this.handleArchiveClick } >
                                     <span className="long-version">Archive</span>
                                     <span className="short-version">Arch</span>
                                 </a>
@@ -62,18 +62,18 @@ var TobBarComponent = React.createClass({
                                 </a>
                                 <ul className="dropdown-menu">
                                     <li>
-                                        <a draggable="false"  tabindex="-1" href="/settings">
+                                        <a draggable="false" href="/settings">
                                             <i className="icon-none"><span>Settings</span></i>
                                         </a>
                                     </li>
                                     <li>
-                                    <a draggable="false"  tabindex="-1" href="/help">
+                                    <a draggable="false" href="/help">
                                         <i className="icon-none"> <span>Help</span></i>
                                     </a>
                                     </li>
                                     <li className="divider"></li>
                                     <li>
-                                        <a draggable="false"  tabindex="-1" href="/logout">
+                                        <a draggable="false"  href="/logout">
                                             <i className="icon-none"><span>Logout </span></i>
                                         </a>
                                     </li>

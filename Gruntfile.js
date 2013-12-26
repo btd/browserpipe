@@ -25,7 +25,7 @@ var nodeAlias = function(subPath, aliasName) {
 
 var browserifyAliases = [
     bowerAlias('page.js/index.js', 'page'),
-    nodeAlias('react-tools/build/modules/React.js', 'react'),
+    nodeAlias('react-tools/build/modules/ReactWithAddons.js', 'react'),
     bowerAlias('socket.io-client/dist/socket.io.js', 'socket.io'),
     bowerAlias('lodash/dist/lodash.js', 'lodash'),
     bowerAlias('emitter/index.js', 'emitter'),
@@ -34,7 +34,8 @@ var browserifyAliases = [
     bowerAlias('messenger/build/js/messenger.js', 'messenger'),
     bowerAlias('perfect.scrollbar/src/jquery.mousewheel.js', 'jquery.mousewheel'),
     bowerAlias('perfect.scrollbar/src/perfect-scrollbar.js', 'perfect.scrollbar'),
-    bowerAlias('bootstrap/js/bootstrap-dropdown.js', 'bootstrap-dropdown'),
+    bowerAlias('bootstrap/js/dropdown.js', 'bootstrap-dropdown'),
+
 ];
 
 module.exports = function(grunt) {
@@ -55,15 +56,11 @@ module.exports = function(grunt) {
             watch: {
                 publicJs: {
                     files: ['public/js/**/*.js', 'public/js/components/**/*.jsx', '!public/js/apps/**', '!public/js/test/test.js'],
-                    tasks: ['browserify']
+                    tasks: ['browserify:mainJs']
                 },
                 app: {
                     files: ['app/**/*.js', 'config/**/*.js', 'app/**/*.jade'],
                     tasks: ['develop']
-                },
-                tests: {
-                    files: ['public/js/**/*.js', 'public/js/components/**/*.jsx', '!public/js/apps/**', '!public/js/test/test.js'],
-                    tasks: ['browserify:tests']
                 }
             },
 
@@ -81,29 +78,13 @@ module.exports = function(grunt) {
                         debug: true,
                         transform: ['reactify']
                     }
-                },
-                tests: {
-                    src: ['public/js/test/tests.js'],
-                    dest: 'public/js/test/test.js',
-                    options: {
-                        alias: browserifyAliases.concat([
-                            bowerAlias('should.js/lib/should.js', 'should')
-                        ]),
-                        external: ['emitter-component'],
-                        extensions: [".jsx"],
-                        shim: {                            
-                            jquery: { path: "./public/bower_components/jquery/jquery.js", exports: "$" }
-                        },
-                        debug: true,
-                        transform: ['reactify']
-                    }
                 }
             }
 
         });
 
         // A very basic default task.
-        grunt.registerTask('default', ['develop', 'browserify', 'watch']);
+        grunt.registerTask('default', ['develop', 'browserify:mainJs', 'watch']);
 
         grunt.registerTask('dist', ['browserify:mainJs']);
 

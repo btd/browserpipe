@@ -1,19 +1,15 @@
 var moco = require('moco'),
     model = moco.model,
-    Listboard = require('./listboard').Listboard,
-    Container = require('./listboard').Container,
-    Item = require('./item').Item,
-    Folder = require('./folder').Folder;
+    Item = require('./item').Item;
 
 var TypeObject = model()
     .attr('type') // type of object: listboard, folder, container, item
-    //TODOL this should be something like this
+    //TODO this should be something like this
     //.attr('object', { Model }) // object
     //For now we put different attr
-    .attr('listboard', { model: Listboard }) // Listboard object
-    .attr('container', { model: Container }) // Container object
+    //.attr('container', { model: Container }) // Container object
     .attr('item', { model: Item }) // item object
-    .attr('folder', { model: Folder }) // Folder object
+    //.attr('folder', { model: Folder }) // Folder object
     .attr('search')
     .use(model.nestedObjects)
     .use(function(Model) { 

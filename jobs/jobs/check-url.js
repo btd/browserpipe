@@ -41,7 +41,7 @@ CheckUrlJob.prototype.exec = function (done) {
 
             that.log('Got request check content-type: ' + mime);
 
-            var sc = mime.indexOf(';');
+            var sc = (mime || '').indexOf(';');
             if (sc > 0) mime = mime.substring(0, sc);
 
             if (utils.isHtmlContentType(mime)) {

@@ -16,8 +16,8 @@ Messenger.options = {
 }
 
 //Scrollbar
-require('jquery.mousewheel');
-require('perfect.scrollbar');
+//require('jquery.mousewheel');
+//require('perfect.scrollbar');
 
 //Dropdown
 require('bootstrap-dropdown');
@@ -30,104 +30,43 @@ var loadHomeView = function() {
         extension.isExtensionInstalled(function(installed) {
             homeView = HomeView.render(
                 _state.getLaterListboard(),
-                _state.getAllBrowserListboards(), 
-                _state.onePanel,               
-                _state.getPanel1SelectedTypeObject(),
-                _state.getPanel2SelectedTypeObject(),
+                _state.getAllBrowserListboards(),
+                _state.selected1,
+                _state.selected2,
                 _state.getSelection(),
                 installed
             );
         })
-    } else {        
-       var panel1SelectedTypeObject = _state.getPanel1SelectedTypeObject();
-       var panel2SelectedTypeObject = _state.getPanel2SelectedTypeObject();
-       var onePanel = _state.onePanel;
+    } else {
 
-        homeView.setState({ 
-            onePanel: onePanel,
-            panel1SelectedTypeObject: panel1SelectedTypeObject,
-            panel2SelectedTypeObject: panel2SelectedTypeObject,
+        homeView.setState({
+            selected1: _state.selected1,
+            selected2: _state.selected2,
             selection: _state.getSelection()
         }); 
     }
 
 }
 
-var selectTypeObject = function(type, param, callback) {
-    //We do the switch to avoid injections
-    switch(type){
-        case 'listboard' : {             
-            var listboard = _state.getListboardById(param);
-            if(listboard){
-                callback('listboard', listboard); 
-                return true;
-            }
-            break;
-        }
-        case 'container' : {  
-            var container = _state.getContainerById(param);
-            if(container){
-                callback('container', container); 
-                return true;
-            }
-            break;
-        }
-        case 'item' : {                
-            var item = _state.getItemById(param);
-            if(item){
-                callback('item', item); 
-                return true;
-            }
-            break;
-        }
-        case 'folder' : {                
-            var folder = _state.getFolderById(param);
-            if(folder){
-                callback('folder', folder); 
-                return true;
-            }
-            break;
-        }
-        case 'search' : {                
-            _state.searchItem(param, function(result){
-                if(!result)
-                    result = [];
-                callback('search', result); 
-            });
-            return true;
-        }
-        case 'selection' : {                
-            var selection = _state.getSelection();
-            if(selection){
-                callback('selection', selection); 
-                return true;
-            }
-            break;
-        }
-    }
-    return false;
-}
-
 page('/', function () {
     setTimeout(function() {
-        var rootFolder = _state.getRootFolder();
-        page('/panel1/folder/' + rootFolder._id);            
+        _state.selected1 = _state.getItemById(_state.getLaterListboard());
     }, 0);
 });
 
-page('/panel1/:type1/:id1', function (ctx) {    
+page('/panel1/item/:id1', function (ctx) {
     setTimeout(function() {
-        _state.onePanel = true;
-        var type1 = ctx.params.type1;
-        var id1 = ctx.params.id1;        
-        var result = selectTypeObject(type1, id1, function(type, object) {
-            _state.setPanel1SelectedTypeObject(type, object)
-        });        
-        if(result)
+        //_state.onePanel = true;
+        var id1 = ctx.params.id1;
+
+        var result = _state.getItemById(id1);
+
+        if(result) {
+            _state.selected1 = result;
+            _state.selected2 = null;
             loadHomeView();
-        else {
-            var rootFolder = _state.getRootFolder();
-            page('/panel1/folder/' + rootFolder._id);     
+        } else {
+            //page('/');
         }
      }, 0);
 });
@@ -159,6 +98,10 @@ page('/panel1/:type1/:id1/panel2/:type2/:id2', function (ctx) {
 });
 
 var initialize = function () {
+    //Load initial data variable initialOptions global
+    _state.loadInitialData(initialOptions);
+    stateChanges();
+
     //init routing
     page({
         popstate: true,
@@ -166,43 +109,41 @@ var initialize = function () {
         dispatch: true
     });
 
-    //Load initial data variable initialOptions global
-    _state.loadInitialData(initialOptions);
-
     //Saves reference to the socket
     var url = location.protocol+'//'+location.host;
     socket = io.connect(url);
 
     loadWindowEvent();
     loadServerEvents();
-    stateChanges();
 
     return page;
 };
 
 var loadWindowEvent = function() {
     //TODO: view is there is a better way to capture and pass events
-    $(window).resize(function () {
+    //$(window).resize(function () {
         //We reset scrollbars
-        $('.scrollable-parent').scrollTop(0);
-        $('.scrollable-parent').perfectScrollbar('update');
-    });
+        //$('.scrollable-parent').scrollTop(0);
+        //$('.scrollable-parent').perfectScrollbar('update');
+    //});
 };
 
-var onSelectedPanel1Change = function() {    
+var onSelectedPanel1Change = function() {
+    var selected = _state.selected1;
+    page('/panel1/item/' + selected._id);
     if(homeView) {
-        selection.updateSelectionMessage();
+        //selection.updateSelectionMessage();
         homeView.setState({
-            panel1SelectedTypeObject: _state.getPanel1SelectedTypeObject()
+            selected1: selected
         });
     }
 };
 
 var onSelectedPanel2Change = function() {
     if(homeView) {
-        selection.updateSelectionMessage();
+        //selection.updateSelectionMessage();
         homeView.setState({
-            panel2SelectedTypeObject: _state.getPanel2SelectedTypeObject()
+            selected2: _state.selected2
         });
     }
 };
@@ -217,20 +158,33 @@ var onSelectionChange = function () {
 }
 
 var stateChanges = function() {
-    _state.on('change:panel1SelectedTypeObject', onSelectedPanel1Change);
+    _state.on('change:selected1', onSelectedPanel1Change);
 
-    _state.on('change:panel2SelectedTypeObject', onSelectedPanel2Change);
+    _state.on('change:selected2', onSelectedPanel2Change);
 
-     _state.on('change:selection', onSelectionChange);
+    _state.on('change:selection', onSelectionChange);
 
-    var addedOrDeletedListboard = function() {
-        homeView.setState({
-            listboards: _state.getAllListboards()
-        });
+    var changeInItems = function(item) {
+        if(_state.selected1 && (item._id === _state.selected1._id || item.parent === _state.selected1._id))
+            homeView.setState({
+                selected1: _state.selected1
+            });
+
+        if(_state.selected2 && (item._id === _state.selected2._id || item.parent === _state.selected2._id))
+            homeView.setState({
+                selected2: _state.selected2
+            });
     }
 
-    _state.listboards.on('add', addedOrDeletedListboard);
-    _state.listboards.on('remove', addedOrDeletedListboard);
+    _state.on('change:browserListboards', function() {
+        homeView.setState({
+            listboards: _state.getAllBrowserListboards()
+        });
+    });
+
+    _state.items.on('add', changeInItems);
+    _state.items.on('remove', changeInItems);
+    _state.items.on('change', changeInItems);
 
     _state.on('extension.possible.installed', function() {
         homeView.setState({
@@ -240,9 +194,9 @@ var stateChanges = function() {
 }
 
 var loadServerEvents = function() {
-    require('./events/listboard')(socket);
-    require('./events/folder')(socket);
-    require('./events/container')(socket);
+    //require('./events/listboard')(socket);
+    //require('./events/folder')(socket);
+    require('./events/user')(socket);
     require('./events/item')(socket);
 };
 

@@ -6,72 +6,104 @@ var _ = require('lodash'),
     responses = require('../responses'),
     errors = require('../errors'),
 
+    Q = require('q'),
+
     jobs = new (require('../../jobs/manager'));
 
 var userUpdate = require('./user_update');
 
-var addItemToFolder = function(req, item) {
-    return req.currentFolder.addItemId(item._id)
-            .saveWithPromise()
-            .then(userUpdate.updateFolder.bind(null, req.user._id, req.currentFolder));    
-}
-
-var addItemToContainer = function(req, item) {
-    var container = req.listboard.containers.id(req.params.containerId);
-    container.addItemId(item._id)
-    return req.user.saveWithPromise()
-            .then(userUpdate.updateContainer.bind(null, req.user._id, req.listboard._id, container));    
-}
-
-var addItemToFolderOrContainer = function(req, item){
-    if(req.currentFolder)
-        return addItemToFolder(req, item)
-    else if (req.listboard && req.params.containerId){        
-        return addItemToContainer(req, item)                        
-    }   
-}
-
-//Create item
-exports.create = function(req, res) {
-    //TODO add validation
-    var item = new Item(_.pick(req.body, 'type', 'title', 'note'));
-
-    item.url = req.body.url;
-
-    //We create default favicon that then will be update by job
-    item.favicon = 'http://www.google.com/s2/favicons?domain=' + encodeURIComponent(item.url);
-     
-    item.user = req.user;
-
-    item.saveWithPromise()
-        .then()
-        .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))        
-        .then(userUpdate.createItem.bind(null, req.user._id, item))        
-        .then(addItemToFolderOrContainer(req, item))
-        .then(launchItemJobs(req, res, item))        
-        .done();
+function launchItemJobs(req, res, item) {
+    jobs.schedule('check-url', {
+        uri: item.url,
+        uniqueId: item._id.toString()
+    }).on('complete', function() {
+        Item.byId(item._id).then(function(item) {
+            if(item) {
+                userUpdate.updateItem(req.user._id, item);
+            }
+        }).done();
+    })
 }
 
 
-var launchItemJobs = function(req, res, item) {
-    return function() {
-        jobs.schedule('check-url', {
-            uri: item.url,
-            uniqueId: item._id.toString()
-        }).on('complete', function() {
-            item.favicon = config.storeUrl + "/" + item._id.toString() + "/favicon.ico";
-            item.saveWithPromise()
-                .then(userUpdate.createItem.bind(null, req.user._id, item))
-                .done();
+exports.addItemToItem = function(parent, req, res) {
+    var item = new Item(_.pick(req.body, 'type', 'title', 'url'));
+    item.parent = parent._id;
+    item.user = req.user._id;
+
+    return item.saveWithPromise()
+        .then(function() {
+            parent.items.push(item._id);
+            return parent.saveWithPromise();
         })
+        .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
+        .then(userUpdate.createItem.bind(null, req.user._id, item))
+        .then(userUpdate.updateItem.bind(null, req.user._id, parent))
+        .then(function() {
+            if(item.isBookmark()) {
+                launchItemJobs(req, res, item)
+            }
+        });
+}
+
+// this method used to add item to another item (because item could not exists without any parent container)
+exports.addToItem = function(req, res) {
+    req.check('type').isInt();
+    req.check('parent').notEmpty();
+
+    var errs = req.validationErrors();
+    if (errs) return errors.sendBadRequest(res);
+
+    return exports.addItemToItem(req.currentItem, req, res);
+}
+
+exports.addItemBookmarklet = function(req, res) {
+    req.check('url').notEmpty();
+
+    var errs = req.validationErrors();
+    if (errs) return errors.sendBadRequest(res);
+
+    var redirect = 'back';
+
+    var query = req.query;
+    if(query.next === 'same') {
+        redirect = query.url;
     }
+
+    Item.by({ _id: query.to || req.user.laterListboard, user: req.user._id }).then(function(parent) {
+        if(parent) {
+            var item = parent.addBookmark(_.pick(query, 'title', 'url'));
+
+            return item.saveWithPromise()
+                .then(function() {
+                    return parent.saveWithPromise();
+                })
+                .then(function(){
+                    res.redirect(redirect);
+                })
+                .then(userUpdate.createItem.bind(null, req.user._id, item))
+                .then(userUpdate.updateItem.bind(null, req.user._id, parent))
+                .then(function() {
+                    if(item.isBookmark()) {
+                        launchItemJobs(req, res, item)
+                    }
+                });
+        } else {
+            res.redirect(redirect);
+        }
+    })
+    .done();
 }
 
 //Update item
 exports.update = function(req, res) {
+    req.check('title').notEmpty();
+
+    var errs = req.validationErrors();
+    if (errs) return errors.sendBadRequest(res);
 
     var item = req.currentItem;    
-    _.merge(item, _.pick(req.body, 'type', 'title', 'note'));
+    _.merge(item, _.pick(req.body, 'title'));// for now only title can be changed, by idea will need to add url and note depending from type of item
     
     item.saveWithPromise()
         .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
@@ -91,35 +123,38 @@ exports.item = function(req, res, next, id) {
         .done();
 }
 
-var removeItemFromFolder = function(req, item) {
-    return req.currentFolder.removeItemId(item._id)
-            .saveWithPromise()
-            .then(userUpdate.updateFolder.bind(null, req.user._id, req.currentFolder));    
-}
-
-var removeItemFromContainer = function(req, item) {
-    var container = req.listboard.containers.id(req.params.containerId);
-    container.removeItemId(item._id)
-    return req.user.saveWithPromise()
-            .then(userUpdate.updateContainer.bind(null, req.user._id, req.listboard._id, container));    
-}
-
-var removeItemFromFolderOrContainer = function(req, item){
-    if(req.currentFolder)
-        return removeItemFromFolder(req, item)
-    else if (req.listboard && req.params.containerId){        
-        return removeItemFromContainer(req, item)                        
-    }   
+//TODO need to send updates to client
+function removeItem(item) {
+    return Item.all({ _id: { $in: item.items } }).then(function(items) {
+        return Q.all(items.map(function(child) {
+            if(child.isContainer()) {
+                return removeItem(child);
+            } else {
+                return child.removeWithPromise();
+            }
+        }));
+    }).then(function() {
+        return item.removeWithPromise();
+    });
 }
 
 //Remove item
-exports.remove = function(req, res) {
-    var item = req.currentItem;
+exports.delete = function(req, res) {
+    var item = req.currentItem,
+        user = req.user;
 
-    item.removeWithPromise()
-        .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
-        .then(removeItemFromFolderOrContainer(req, item))
-        .done();
+    //1 delete parent reference
+    if(item.parent) { //simple item
+        return Item.byId({ _id: item.parent })
+            .then(function(parent) {
+                parent.items.remove(item._id);
+                return parent.saveWithPromise().then(userUpdate.updateItem.bind(null, req.user._id, parent));
+            })
+            .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
+            .then(removeItem.bind(null, item))//2 delete item
+    } else {//root item - should be listboard
+        errors.sendForbidden(res);
+    }
 }
 
 exports.query = function(req, res, next, query) {

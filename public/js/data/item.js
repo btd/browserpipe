@@ -6,14 +6,16 @@ var moco = require('moco'),
 
 var Item = model()
     .attr('_id', { primary: true }) // ObjectId text representation
-    .attr('label') // String
+    .attr('items', { default: [] }) // for type=2 container
+    .attr('parent') //parent reference
     .attr('title') // String
     .attr('screenshot') // String
     .attr('favicon') // String url for favicon
     .attr('url') // String
     .attr('note') // String
-    .attr('type') // integer;    
+    .attr('type') // integer;
     .attr('externalId'); // id of the tab if it has
+
 
 var Items = collection(Item)
     .use(collection.byId)

@@ -24,7 +24,7 @@ var Jobs = function(options) {
             if(job)
                 job.remove(function(err){
                     if (err) throw err;
-                        logger.info('removed completed job #%d', job.id);
+                        logger.debug('removed completed job #%d', job.id);
                 });
         });
     });
@@ -56,7 +56,7 @@ Jobs.prototype = {
      * @param {Object} data
      */
     schedule: function(name, data) {
-        logger.info('schedule job %s with %O', name, data);
+        logger.info('schedule job %s with %j', name, data);
         return this.queue.create(name, data)
             .attempts(this.options.attempts)
             .save();

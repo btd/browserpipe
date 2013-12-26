@@ -5,12 +5,16 @@
         "require": true,
         "__dirname": true,
         "console": true,
-        "process": true
+        "process": true,
+        "window": true,
+        "document": true,
+        "setTimeout": true
     },
     "asi": true,
     "smarttabs": true,
     "expr": true,
     "newcap": false,
     "supernew": true,
-    "unused": true
+    "unused": true,
+    "eqnull": true
 }

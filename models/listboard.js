@@ -1,18 +1,19 @@
 // Listboard schema
 
 var Schema = require('mongoose').Schema,
-    _ = require('lodash');
+    _ = require('lodash'),
+    Item = require('./item');
 
 
 var ListboardSchema = new Schema({
     type: {type: Number, required: true}, //0: browser, 1: custom listboard
-    label: { type: String, trim: true },
-    containers: [ require('./container') ],
-    
+
+    title: { type: String, trim: true },
+    containers: [ {  type: Schema.ObjectId, ref: 'Item' }],
 
     //For 0 container (associated with a browser)
     browserKey: { type: String },
-    lastSyncDate: Date    
+    lastSyncDate: { type: Date }
 },{
     toObject: { virtuals: true },
     toJSON: { virtuals: true }
@@ -21,12 +22,9 @@ var ListboardSchema = new Schema({
 ListboardSchema.plugin(require('../util/mongoose-timestamp'));
 
 ListboardSchema.methods.addContainer = function (cont) {
-    this.containers.push({
-        type: cont.type,
-        title: cont.title,
-        externalId: cont.externalId
-    });
-    return this;
+    var item = Item.newContainer({ user: cont.user, title: cont.title, externalId: cont.externalId })
+    this.containers.push(item._id);
+    return item;
 };
 
 ListboardSchema.methods.removeContainer = function (cont) {
@@ -45,7 +43,7 @@ ListboardSchema.methods.getContainerByExternalId = function (externalId) {
     else if (result.length === 0)
         return null
     else if (result.length > 1)
-        throw "Cannot be two containers with same external id on a listboard"
+        throw new Error("Cannot be two containers with same external id on a listboard")
 }
 
 module.exports = ListboardSchema;

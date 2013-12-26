@@ -1,117 +1,90 @@
-.listboards-panel {    
-    position: absolute; 
-    top: 46px;
-    width: 100%;
+
+.listboards-panel {
+  position: absolute;
+  top: 46px;
+  width: 100%;
+  overflow-x: hidden;
+  .flatten();
+
+  .listboards-panel-inner {
+    height: 104px;
+    position: relative;
     overflow-x: hidden;
-    .flatten();  
 
-    .listboards-panel-inner { 
-        height: 104px;           
-        position: relative;
-        overflow-x: hidden;
+    .listboards {
+      height: 104px;
+      display: table;
+      margin: 0;
+      padding: 0;
+      border-collapse: separate;
+      border-spacing: 7px 4px;
 
-        .ps-scrollbar-y-rail {
-            display: none;
-        }    
-        .ps-scrollbar-x-rail {
-           /* top: 6px;            */
-        }   
-        .listboards {
-            height: 104px;
-            display: table;
-        	margin: 0;
-        	padding: 0;
-            border-collapse: separate;
-            border-spacing: 12px 3px;    
+      ul {
+        margin: 0;
+        padding: 0;
+      }
+      .listboard-option, .container-option, .extension-button, .add-later-container {
+        outline: 0;
+        display: table-cell;
+        list-style: none;
+        text-align: center;
+        overflow: hidden;
+        border: 1px solid #dcdcdc;
+        background-color: #F4F4F4;
+        vertical-align: middle;
+        color: #fff;
+        .opacity(80);
+        background: #777777;
+        max-width: 120px;
+        padding: 2px;
+        text-shadow: none;
+        font-size: 14px;
+        font-weight: normal;
 
-            ul {
-                margin: 0;
-                padding: 0;            
-            }
-            .listboard-option, .container-option, .extension-button, .add-later-container {
-                outline:0;
-                display: table-cell;                                           
-                list-style: none;                
-                text-align: center;         
-                overflow: hidden;
-                border: 1px solid #dcdcdc;
-                background-color: #F4F4F4;     
-                vertical-align: middle;
-                color: #fff;        
-                .opacity(80);    
-                background: #777777;
-                max-width: 120px;
-                padding: 2px;
-                text-shadow: none;
-                font-size: 14px;
-                font-weight: normal;        
-
-                &:hover {
-                    cursor:pointer; 
-                }
-
-                &:hover, &.selected  {
-                    border: 1px solid #c6c6c6;
-                    text-decoration: none;                    
-                    .opacity(100);
-                    
-                    .option-type {
-                        .opacity(100);
-                    }
-                }
-
-                .inner {
-
-                    .text {
-                        margin: 0 12px;
-                    }
-                }
-            }
-            .extension-button, .add-later-container {
-
-                .inner {
-                    width: 90px;
-                }
-
-            }
-            .extension-button{
-                background-color: @blue3;
-            }
-            .add-later-container {
-                background-color: #036564;
-            }
-            .listboard-option, .container-option {                 
-                position: relative;
-                padding-left: 21px;
-
-                .inner {
-                    width: 110px;
-                }                
-                .option-type {                  
-                    background-color: #033649;
-                    font-weight: normal;
-                    text-shadow: none;                    
-                    color: @white;                    
-                    .rotate(270deg);
-                    position: absolute;
-                    width: 100px;
-                    left: -40px;
-                    top: 40px;
-                    .opacity(80);
-
-                    .listboard-icon {
-                        margin-left: 6px;
-                    }
-                }                
-            }
-            .listboard-option {                 
-                background-color: @blue3;
-            }
-            .container-option {    
-                background-color: #036564;
-
-                
-            }
+        &:hover {
+          cursor: pointer;
         }
-    }    
+
+        &:hover, &.selected {
+          border: 1px solid #c6c6c6;
+          text-decoration: none;
+          .opacity(100);
+
+          .option-type {
+            .opacity(100);
+          }
+        }
+
+        .inner {
+
+          .text {
+            margin: 0 12px;
+          }
+        }
+      }
+      .extension-button, .add-later-container {
+
+        .inner {
+          width: 90px;
+        }
+
+      }
+      .extension-button {
+        background-color: @blue3;
+      }
+      .add-later-container {
+        background-color: #036564;
+      }
+      .listboard-option, .container-option {
+        max-width: 110px;
+      }
+      .listboard-option {
+        background-color: @blue3;
+      }
+      .container-option {
+        padding: 0 20px;
+        background-color: #036564;
+      }
+    }
+  }
 }

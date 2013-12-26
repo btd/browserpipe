@@ -248,7 +248,7 @@ module.exports.isListboardSelected = function(id) {
     return this.getSelectedListboardById(id)? true : false;
 }
 
-module.exports.isContainerSelected = function(id) {            
+module.exports.isContainerSelected = function(id) {
     return this.getSelectedContainerById(id)? true : false;
 }
 
@@ -256,7 +256,7 @@ module.exports.isItemSelected = function(id) {
     return this.getSelectedItemById(id)? true : false;
 }
 
-module.exports.isFolderSelected = function(id) {            
+module.exports.isFolderSelected = function(id) {
     return this.getSelectedFolderById(id)? true : false;
 }
 
@@ -270,27 +270,21 @@ module.exports.isElemParentSelected = function(el) {
 
 module.exports.getSelectionsText = function() {    
     var selection = _state.getSelection();
-    var listboardText = '', containerText = '', itemText = '', folderText = '';
-    var listboardCount = selection.listboards.length;    
-    var containerCount = selection.containers.length;
+    var listboardText = '', itemText = '';
+    var listboardCount = selection.listboards.length;
     var itemCount = selection.items.length;
-    var folderCount = selection.folders.length;
-    if((listboardCount + containerCount + itemCount + folderCount) > 0) {
+    if((listboardCount +itemCount) > 0) {
         listboardText = getSelectionText(listboardCount, "listboard",  "listboards");
-        containerText = getSelectionText(containerCount, "container",  "containers");
         itemText = getSelectionText(itemCount, "item",  "items");
-        folderText = getSelectionText(folderCount, "folder",  "folders");
     }
-    return [listboardText, containerText, itemText, folderText]
+    return [listboardText, itemText];
 }
 
 module.exports.updateSelectionMessage = function() {    
     var result = this.getSelectionsText();
     var listboardText = result[0];
-    var containerText = result[1];
     var itemText = result[2];
-    var folderText = result[3];
-    var text = listboardText + containerText + itemText + folderText;
+    var text = listboardText + itemText;
     var selectedTypeObject = _state.getActivePanelSelectedTypeObject();    
     if(text)
         showMessage(
