@@ -46,11 +46,13 @@ var config = {
         }
     },
     development: {
+        appUrl: 'http://localhost:8080',
         db: {
             uri: 'mongodb://localhost/listboardit-dev'
         }
     },
     staging: {
+        appUrl: 'http://000staging.listboard.it',
         db: {
             uri: 'mongodb://localhost/listboardit-stage'
         },
@@ -67,6 +69,7 @@ var config = {
         }
     },
     production: {
+        appUrl: 'http://listboard.it',
         db: {
             uri: 'mongodb://localhost/listboardit'
         },

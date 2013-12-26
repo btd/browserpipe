@@ -2,7 +2,8 @@
 script.
     var initialOptions = {
         user: !{ JSON.stringify(user).replace(/\//g, '\\/') },
-        items: !{ JSON.stringify(items).replace(/\//g, '\\/') }
+        items: !{ JSON.stringify(items).replace(/\//g, '\\/') },
+        config: !{ JSON.stringify(config).replace(/\//g, '\\/') }
     };
 
 != javascript_tag ('js/apps/main')

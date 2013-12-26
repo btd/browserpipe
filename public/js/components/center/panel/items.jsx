@@ -121,8 +121,9 @@ var BookmarkItem = React.createClass({
     }
 });
 
+var config = initialOptions.config;
 function saveToThisBookmarklet(item) {
-    return "javascript:if(document.getSelection){s=document.getSelection();}else{s='';};document.location='http://localhost:4000/add?next=same&url='+encodeURIComponent(location.href)+'&description='+encodeURIComponent(s)+'&title='+encodeURIComponent(document.title)+'&to="+item._id+"'";
+    return "javascript:if(document.getSelection){s=document.getSelection();}else{s='';};document.location='"+config.appUrl+"/add?next=same&url='+encodeURIComponent(location.href)+'&description='+encodeURIComponent(s)+'&title='+encodeURIComponent(document.title)+'&to="+item._id+"'";
 }
 
 var minWidthToColumns = [ //copy from less

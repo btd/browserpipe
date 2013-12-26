@@ -1,4 +1,5 @@
 var Item = require('../../models/item');
+var config = require('../../config');
 
 //Home
 exports.home = function (req, res, next) {
@@ -6,7 +7,10 @@ exports.home = function (req, res, next) {
         return Item.all({ user: req.user._id }).then(function(items) {
             res.render('main/home', {
                 user: req.user,
-                items: items
+                items: items,
+                config: {
+                    appUrl: config.appUrl
+                }
             })
         }, next)
     } else
