@@ -21,6 +21,7 @@ var UserSchema = new Schema({
     password: { type: String, required: true},
 
     laterListboard: { type: Schema.ObjectId, ref: 'Item' },
+    archiveListboard: { type: Schema.ObjectId, ref: 'Item' },
     browserListboards: [{ type: Schema.ObjectId, ref: 'Item' }]
 });
 

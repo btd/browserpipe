@@ -29,9 +29,6 @@ var TobBarComponent = React.createClass({
         else
             navigation.performSearch(query);
     },
-    handleArchiveClick: function(e) {
-        navigation.navigateToFolderRoot();
-    },
     handleSearchClick: function(e) {
         e.preventDefault();
         e.stopPropagation();
@@ -49,12 +46,6 @@ var TobBarComponent = React.createClass({
                         <ul id="account-nav" className="nav pull-right">
                             <li className="nav-option"> 
                                 <a draggable="false" onClick={ this.props.switchPanels } >{ this.getPanelOptionText() }</a>
-                            </li>
-                            <li className="nav-option"> 
-                                <a draggable="false" onClick={ this.handleArchiveClick } >
-                                    <span className="long-version">Archive</span>
-                                    <span className="short-version">Arch</span>
-                                </a>
                             </li>
                             <li className="dropdown nav-option">
                                 <a draggable="false"  href="#" data-toggle="dropdown" className="dropdown-toggle">

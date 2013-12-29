@@ -35,6 +35,11 @@ var ListboardsPanelComponent = React.createClass({
                     <span className="container-label">{container.title? container.title : 'Unnamed'}</span>
                 </div>     
     },
+    renderArchiveListboard: function(listboard) {
+        return  <div className='container-option btn archive-listboard-option' onClick={this.navigateItem.bind(this, listboard)}>
+                    <span className="container-label">{listboard.title? listboard.title : 'Unnamed'}</span>
+                </div>  
+    },
     render: function() {
         var that = this;
         return  (
@@ -55,6 +60,7 @@ var ListboardsPanelComponent = React.createClass({
                                 })
                         }  
                         { this.renderLaterContainerOption(_state.getItemById(this.props.laterBoard)) }
+                        { this.renderArchiveListboard(_state.getItemById(this.props.archiveBoard)) }
                     </div>  
                 </div>
         </div>);

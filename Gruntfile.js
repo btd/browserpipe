@@ -29,13 +29,9 @@ var browserifyAliases = [
     bowerAlias('socket.io-client/dist/socket.io.js', 'socket.io'),
     bowerAlias('lodash/dist/lodash.js', 'lodash'),
     bowerAlias('emitter/index.js', 'emitter'),
-    bowerAlias('indexof/index.js', 'indexof'),
     bowerAlias('moco/index.js', 'moco'),
     bowerAlias('messenger/build/js/messenger.js', 'messenger'),
-    bowerAlias('perfect.scrollbar/src/jquery.mousewheel.js', 'jquery.mousewheel'),
-    bowerAlias('perfect.scrollbar/src/perfect-scrollbar.js', 'perfect.scrollbar'),
-    bowerAlias('bootstrap/js/dropdown.js', 'bootstrap-dropdown'),
-
+    bowerAlias('bootstrap/js/dropdown.js', 'bootstrap-dropdown')
 ];
 
 module.exports = function(grunt) {

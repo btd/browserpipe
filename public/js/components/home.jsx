@@ -18,6 +18,7 @@ var HomeComponent = React.createClass({
           //isPanel1Active: _state.isPanel1Active,
           //panelPinnedNumber: 0,
           laterBoard: this.props.laterBoard,
+          archiveBoard: this.props.archiveBoard,
           listboards: this.props.listboards,
           //onePanel: this.props.onePanel,
           selected1: this.props.selected1,
@@ -40,6 +41,7 @@ var HomeComponent = React.createClass({
       selected2= { this.state.selected2 }
       isExtensionInstalled={ this.state.isExtensionInstalled }
       laterBoard = { this.state.laterBoard }
+      archiveBoard = { this.state.archiveBoard }
       listboards= { this.state.listboards } />
 
     var panel1, panel2;
@@ -79,6 +81,7 @@ var HomeComponent = React.createClass({
 
 module.exports.render = function (
     laterBoard,
+    archiveBoard,
     listboards,
     selected1,
     selected2,
@@ -88,6 +91,7 @@ module.exports.render = function (
   return React.renderComponent(
     <HomeComponent 
       laterBoard={laterBoard}
+      archiveBoard={archiveBoard}
       listboards={listboards}
       selected1={selected1}
       selected2={selected2}
