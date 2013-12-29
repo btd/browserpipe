@@ -267,7 +267,7 @@ var ItemsPanel = React.createClass({
         switch(item.type) {
             case 0: return <BookmarkItem key={item._id} item={item} />;
             case 1:
-            case 2: return <ContainerItem key={item._id} item={item} onClickContainer={this.navigateItem.bind(this, item)} />;
+            case 2: return <ContainerItem key={item._id} item={item} onClickContainer={this.navigateItem.bind(this, item._id)} />;
         }
     },
 
@@ -302,25 +302,32 @@ var ItemsPanel = React.createClass({
         _state.serverDeleteItem(obj);
     },
 
-    navigateItem: function(item) {
+    navigateItem: function(itemId) {
+        var item = _state.getItemById(itemId);
         _state.setSelected(this.props.num, item);
     },
 
     navigateTop: function() {
-        var item = _state.getItemById(this.props.obj.parent);
-        this.navigateItem(item);
+        this.navigateItem(this.props.obj.parent);
     },
 
     render: function() {
-        var columns = [];
-        var c = this.state.columnsCount;
+        // split all items by columns
+        var columns = [], c = this.state.columnsCount, 
+            obj = this.props.obj, items = obj.items, parent = obj.parent;
         while(c--) columns.push([]);
-        this.props.obj.items.forEach(function(item, idx) {
-            columns[idx % this.state.columnsCount].push(item);
+        var pre = 0;
+        if(parent) {
+            columns[0].push(parent);
+            pre = 1;
+        }
+        items.forEach(function(item, idx) {
+            columns[(idx + pre) % this.state.columnsCount].push(item); // idx + pre - because i added first item
         }, this);
 
+        // add last as item editor
         if(this.state.addingItem) {
-            columns[this.props.obj.items.length % this.state.columnsCount].push({ editor: true});
+            columns[(items.length + pre) % this.state.columnsCount].push({ editor: true});
         }
 
         return (
@@ -328,17 +335,17 @@ var ItemsPanel = React.createClass({
               <div className={ this.getSubBarClassName() } >
                 <div className="navbar-inner" >
                   {
-                      this.props.obj.parent &&
-                          <ul className="nav pull-right">
-                            <li className="dropdown">
-                              <a href="#" title="Settings" className="dropdown-toggle" data-toggle="dropdown">
-                                <i className="icon-cog"></i>
-                              </a>
-                              <ul className="dropdown-menu">
-                                <li><a onClick={this.deleteObj} href="javascript:void(0)">Delete</a></li>
-                              </ul>
-                            </li>
+                    parent &&
+                      <ul className="nav pull-right">
+                        <li className="dropdown">
+                          <a href="#" title="Settings" className="dropdown-toggle" data-toggle="dropdown">
+                            <i className="icon-cog"></i>
+                          </a>
+                          <ul className="dropdown-menu">
+                            <li><a onClick={this.deleteObj} href="javascript:void(0)">Delete</a></li>
                           </ul>
+                        </li>
+                      </ul>
                   }
                   <ul className="nav pull-left">
                     <li className="title">
@@ -346,8 +353,8 @@ var ItemsPanel = React.createClass({
                       { this.renderTitle() }
                     </li>
                     {
-                        this.props.obj.parent &&
-                            <li className="btn" onClick={this.navigateTop} title="Go upper"><i className="icon-level-up"></i></li>
+                        parent &&
+                          <li className="btn" onClick={this.navigateTop} title="Go upper"><i className="icon-level-up"></i></li>
                     }
                     <li className="btn" onClick={this.showAddItem.bind(this, { type: 2 })}>
                         <i className="icon-plus icon-fw"></i><i className="icon-folder icon-fw"></i>
@@ -368,7 +375,9 @@ var ItemsPanel = React.createClass({
                         return <div className="items-column" key={idx}>{
                                 column.map(function(itemId) {
                                     if(!itemId.editor) {
-                                        var item = _state.getItemById(itemId);
+                                        var item = itemId === parent ? 
+                                            { _id: itemId, title: '..', type: 2 } : 
+                                            _state.getItemById(itemId);
                                         return this.renderItem(item);
                                     } else {
                                         return this.renderItemEditor();

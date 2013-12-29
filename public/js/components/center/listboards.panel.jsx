@@ -37,7 +37,8 @@ var ListboardsPanelComponent = React.createClass({
     },
     renderArchiveListboard: function(listboard) {
         return  <div className='container-option btn archive-listboard-option' onClick={this.navigateItem.bind(this, listboard)}>
-                    <span className="container-label">{listboard.title? listboard.title : 'Unnamed'}</span>
+                    <i className="icon-archive icon-2x"></i>
+                    <div className="container-label">{listboard.title? listboard.title : 'Unnamed'}</div>
                 </div>  
     },
     render: function() {
@@ -51,7 +52,7 @@ var ListboardsPanelComponent = React.createClass({
                                 <i className="icon-refresh icon-2x"></i>
                                 <div className="text">Sync this browser</div>
                             </div>
-                        </a>  
+                        </a>
                         {                    
                             this.props.listboards     
                                 .map(function(listboard) {

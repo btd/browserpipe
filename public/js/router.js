@@ -51,7 +51,7 @@ var loadHomeView = function() {
 
 page('/', function () {
     setTimeout(function() {
-        _state.selected1 = _state.getItemById(_state.getLaterListboard());
+        _state.selected1 = _state.getItemById(_state.archiveListboard);
     }, 0);
 });
 
