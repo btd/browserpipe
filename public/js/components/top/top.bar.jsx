@@ -5,18 +5,12 @@
 var React = require('react'),
     navigation = require('../../navigation/navigation');
 
+var ENTER = 13;
+
 var TobBarComponent = React.createClass({   
-    getPanelOptionText: function() {        
-        if(this.props.onePanel)
-            return <span>
-                        <span className="long-version">2 Panels</span>                   
-                        <span className="short-version">2 P</span>
-                    </span>
-        else
-            return <span>
-                        <span className="long-version">1 Panel</span>                   
-                        <span className="short-version">1 P</span>
-                    </span>
+    getPanelOptionText: function() {
+        var iconClass = this.props.onePanel ? "icon-pause" : "icon-stop";
+        return <span><i className={iconClass}></i></span>;
     },
     executeSearch: function() {
         var query = $('#search-box').val();
@@ -30,12 +24,11 @@ var TobBarComponent = React.createClass({
             navigation.performSearch(query);
     },
     handleSearchClick: function(e) {
-        e.preventDefault();
-        e.stopPropagation();
         this.executeSearch();
+        return false;
     },
     handleSearchBoxKeyPressed: function(e) {        
-        if (e.keyCode === 13)
+        if (e.keyCode === ENTER)
             this.executeSearch();
     },
     render: function() {

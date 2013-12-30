@@ -26,6 +26,7 @@ var State1 = model()
     .attr('items', { collection: Items })
     .attr('selected1')
     .attr('selected2')
+    .attr('activePanel', { default: 1 })
     .use(model.nestedObjects);
 
 _.extend(State1.prototype, {

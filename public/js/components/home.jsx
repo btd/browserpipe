@@ -35,6 +35,13 @@ var HomeComponent = React.createClass({
             wide={wide} />;
   },
 
+  switchPanels: function() {
+    if(this.state.selected2) // disable it
+      _state.selected2 = null;
+    else
+      _state.selected2 = _state.selected1;
+  },
+
   render: function() {
     var listboardsPanel = <ListboardsPanelComponent
       selected1= { this.state.selected1 }
@@ -61,7 +68,7 @@ var HomeComponent = React.createClass({
         <div className="main-header">
           <TopBarComponent 
             switchPanels = { this.switchPanels }                
-            onePanel = { this.state.onePanel } 
+            onePanel = { this.state.selected2 == null } 
             performSearch = { this.performSearch } />  
           { listboardsPanel }
         </div>
