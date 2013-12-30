@@ -126,15 +126,10 @@ exports.item = function(req, res, next, id) {
 //TODO need to send updates to client
 function removeItem(item) {
     return Item.all({ _id: { $in: item.items } }).then(function(items) {
-        return Q.all(items.map(function(child) {
-            if(child.isContainer()) {
-                return removeItem(child);
-            } else {
-                return child.removeWithPromise();
-            }
-        }));
+        return Q.all(items.map(removeItem));
     }).then(function() {
-        return item.removeWithPromise();
+        item.deleted = true;
+        return item.saveWithPromise();
     });
 }
 

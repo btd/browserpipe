@@ -56,18 +56,19 @@ exports.create = function (req, res, next) {
                 user.provider = 'local' //for passport
 
                 var later = Item.newContainer({ title: 'Later', user: user });
+                var archive = Item.newContainer({ title: 'Archive', user: user });
                 // items
-                var archiveContainer = later.addContainer({ title: 'Archive' });
-                var funVideosContainer = later.addContainer({ title: 'Fun videos' });
-                var coolSitesContainer = later.addContainer({ title: 'Cool sites' });
+                var funVideosContainer = archive.addContainer({ title: 'Fun videos' });
+                var coolSitesContainer = archive.addContainer({ title: 'Cool sites' });
 
                 user.laterListboard = later;
+                user.archiveListboard = archive;
 
                 return user.saveWithPromise()
                     .then(function() {
                         return q.all([
                             later.saveWithPromise(),
-                            archiveContainer.saveWithPromise(),
+                            archive.saveWithPromise(),
                             funVideosContainer.saveWithPromise(),
                             coolSitesContainer.saveWithPromise()
                         ]);

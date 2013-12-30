@@ -29,8 +29,9 @@ var loadHomeView = function() {
     if(!homeView){        
         extension.isExtensionInstalled(function(installed) {
             homeView = HomeView.render(
-                _state.getLaterListboard(),
-                _state.getAllBrowserListboards(),
+                _state.laterListboard,
+                _state.archiveListboard,
+                _state.browserListboards,
                 _state.selected1,
                 _state.selected2,
                 _state.getSelection(),
@@ -50,7 +51,7 @@ var loadHomeView = function() {
 
 page('/', function () {
     setTimeout(function() {
-        _state.selected1 = _state.getItemById(_state.getLaterListboard());
+        _state.selected1 = _state.getItemById(_state.archiveListboard);
     }, 0);
 });
 
@@ -178,7 +179,7 @@ var stateChanges = function() {
 
     _state.on('change:browserListboards', function() {
         homeView.setState({
-            listboards: _state.getAllBrowserListboards()
+            listboards: _state.browserListboards
         });
     });
 

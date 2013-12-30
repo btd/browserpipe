@@ -24,13 +24,15 @@ var ItemSchema = new Schema({
     screenshot: { type: String, trim: true },
     url: { type: String, trim: true },
 
-    // only for top level items
+    // only for browsers
     externalId: { type: String, trim: true },
     browserKey: { type: String, trim: true },
     lastSync: { type: Date },
 
     // common for all types
     title: { type: String, trim: true },
+
+    deleted: { type: Boolean, default: false },
 
     // when type 2
     note: { type: String, trim: true } //TODO maybe combine note and url?

@@ -21,10 +21,12 @@ var model = require('moco').model;
 
 var State1 = model()
     .attr('laterListboard')
+    .attr('archiveListboard')
     .attr('browserListboards')
     .attr('items', { collection: Items })
     .attr('selected1')
     .attr('selected2')
+    .attr('activePanel', { default: 1 })
     .use(model.nestedObjects);
 
 _.extend(State1.prototype, {
@@ -36,6 +38,7 @@ _.extend(State1.prototype, {
 
         this.laterListboard = initialOptions.user.laterListboard;
         this.browserListboards = initialOptions.user.browserListboards;
+        this.archiveListboard = initialOptions.user.archiveListboard;
         
         //Init selection
         //this.clearSelection();

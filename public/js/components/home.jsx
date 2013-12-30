@@ -10,7 +10,7 @@ var _state = require('../state'),
     selection = require('../selection/selection'),
     navigation = require('../navigation/navigation');
 
-var ItemsPanel = require('./center/panel/items');
+var ItemsPanel = require('./center/items');
 
 var HomeComponent = React.createClass({    
   getInitialState: function() {
@@ -18,6 +18,7 @@ var HomeComponent = React.createClass({
           //isPanel1Active: _state.isPanel1Active,
           //panelPinnedNumber: 0,
           laterBoard: this.props.laterBoard,
+          archiveBoard: this.props.archiveBoard,
           listboards: this.props.listboards,
           //onePanel: this.props.onePanel,
           selected1: this.props.selected1,
@@ -34,12 +35,20 @@ var HomeComponent = React.createClass({
             wide={wide} />;
   },
 
+  switchPanels: function() {
+    if(this.state.selected2) // disable it
+      _state.selected2 = null;
+    else
+      _state.selected2 = _state.selected1;
+  },
+
   render: function() {
     var listboardsPanel = <ListboardsPanelComponent
       selected1= { this.state.selected1 }
       selected2= { this.state.selected2 }
       isExtensionInstalled={ this.state.isExtensionInstalled }
       laterBoard = { this.state.laterBoard }
+      archiveBoard = { this.state.archiveBoard }
       listboards= { this.state.listboards } />
 
     var panel1, panel2;
@@ -59,7 +68,7 @@ var HomeComponent = React.createClass({
         <div className="main-header">
           <TopBarComponent 
             switchPanels = { this.switchPanels }                
-            onePanel = { this.state.onePanel } 
+            onePanel = { this.state.selected2 == null } 
             performSearch = { this.performSearch } />  
           { listboardsPanel }
         </div>
@@ -79,6 +88,7 @@ var HomeComponent = React.createClass({
 
 module.exports.render = function (
     laterBoard,
+    archiveBoard,
     listboards,
     selected1,
     selected2,
@@ -88,6 +98,7 @@ module.exports.render = function (
   return React.renderComponent(
     <HomeComponent 
       laterBoard={laterBoard}
+      archiveBoard={archiveBoard}
       listboards={listboards}
       selected1={selected1}
       selected2={selected2}
