@@ -8,15 +8,13 @@
     width: 100%;
 
     .navbar-inner {        
-        padding-bottom: 6px;
-        padding-left: 15px;
-        padding-right: 15px;
+        padding: 0 5px 5px 10px;
         border: none;
         background:@blue2 !important;
         .flatten();
 
         #account-nav{
-            margin: 0 9px 0 0px;  
+            margin: 0;  
         }
         .dropdown-menu, .modal, .btn {    
             .flatten();
@@ -92,14 +90,12 @@
 
             #search-btn { 
                 float: right;                 
-                margin-top: 0; 
-                margin-bottom: 0; 
+                margin: 0; 
                 .flatten();
                 font-weight: bold;
                 text-shadow: none;            
                 .tobutton(@blue1, @blue3);
                 height: 36px;
-                margin-right: 10px;
             }
             #search-span {
                 display: block;

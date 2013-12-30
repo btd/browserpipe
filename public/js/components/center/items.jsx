@@ -1,4 +1,4 @@
-var _state = require('../../../state'),
+var _state = require('../../state'),
     _ = require('lodash'),
     React = require('react'),
     cx = React.addons.classSet;
@@ -318,16 +318,16 @@ var ItemsPanel = React.createClass({
         while(c--) columns.push([]);
         var pre = 0;
         if(parent) {
-            columns[0].push(parent);
+            columns[0].push(this.renderItem({ _id: parent, title: '..', type: 2 }));
             pre = 1;
         }
         items.forEach(function(item, idx) {
-            columns[(idx + pre) % this.state.columnsCount].push(item); // idx + pre - because i added first item
+            columns[(idx + pre) % this.state.columnsCount].push(this.renderItem(_state.getItemById(item))); // idx + pre - because i added first item
         }, this);
 
         // add last as item editor
         if(this.state.addingItem) {
-            columns[(items.length + pre) % this.state.columnsCount].push({ editor: true});
+            columns[(items.length + pre) % this.state.columnsCount].push(this.renderItemEditor());
         }
 
         return (
@@ -372,19 +372,8 @@ var ItemsPanel = React.createClass({
                 <div ref="itemsContainer" className="items-container">
                 {
                     columns.map(function(column, idx) {
-                        return <div className="items-column" key={idx}>{
-                                column.map(function(itemId) {
-                                    if(!itemId.editor) {
-                                        var item = itemId === parent ? 
-                                            { _id: itemId, title: '..', type: 2 } : 
-                                            _state.getItemById(itemId);
-                                        return this.renderItem(item);
-                                    } else {
-                                        return this.renderItemEditor();
-                                    }
-                                }, this)
-                               }</div>
-                    }, this)
+                        return <div className="items-column" key={idx}>{column}</div>
+                    })
                 }
                 </div>
               </div>

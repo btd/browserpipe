@@ -10,7 +10,7 @@ var _state = require('../state'),
     selection = require('../selection/selection'),
     navigation = require('../navigation/navigation');
 
-var ItemsPanel = require('./center/panel/items');
+var ItemsPanel = require('./center/items');
 
 var HomeComponent = React.createClass({    
   getInitialState: function() {
