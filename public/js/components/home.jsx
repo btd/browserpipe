@@ -5,81 +5,95 @@
 var _state = require('../state'),
     _ = require('lodash'),
     React = require('react'),
-    TopBarComponent = require('./top/top.bar'),
-    ListboardsPanelComponent = require('./center/listboards.panel'),
-    selection = require('../selection/selection'),
-    navigation = require('../navigation/navigation');
-
-var ItemsPanel = require('./center/items');
+    page = require('page'),
+    websocket = require('../websocket/websocket'),
+    Container= require('./container'),
+    Tab= require('./tab');
 
 var HomeComponent = React.createClass({    
   getInitialState: function() {
       return {     
-          //isPanel1Active: _state.isPanel1Active,
-          //panelPinnedNumber: 0,
-          laterBoard: this.props.laterBoard,
-          archiveBoard: this.props.archiveBoard,
-          listboards: this.props.listboards,
-          //onePanel: this.props.onePanel,
-          selected1: this.props.selected1,
-          selected2: this.props.selected2,
-          selection: this.props.selection,
-          isExtensionInstalled: this.props.isExtensionInstalled
+          archive: this.props.archive,
+          browser: this.props.browser,
+          selected: this.props.selected,
       };
   },
-
-  itemsPanel: function(num, obj, wide) {
-    return <ItemsPanel
-            num={num}
-            obj={obj}
-            wide={wide} />;
+  newContainerClicked: function() {
+    _state.serverAddItemToItem(this.state.browser._id, { type: 2 }, function(item) {
+      //TODO: navigation to the just added container is not working because websockets is taking more time to add it than ajax reponse.
+      //We should fix this by sending crud request to server via websockets instead of ajax.
+      setTimeout(function() {  page('/item/' + item._id) }, 500); 
+    });
   },
-
-  switchPanels: function() {
-    if(this.state.selected2) // disable it
-      _state.selected2 = null;
-    else
-      _state.selected2 = _state.selected1;
+  newTabClicked: function() {
+    _state.serverAddItemToItem(this.state.selected._id, { type: 0 }, function(item) {
+      //TODO: navigation to the just added container is not working because websockets is taking more time to add it than ajax reponse.
+      //We should fix this by sending crud request to server via websockets instead of ajax.
+      setTimeout(function() { page('/item/' + item._id) }, 500); 
+    });
   },
-
+  homeOptionClicked: function() { 
+    page('/item/' + this.state.selected.parent);
+  },
+  isContainerActive: function(container) {
+    return (this.state.selected._id === container._id) ||
+      (_.contains(container.items, this.state.selected._id));
+  },
+  isTabActive: function(tab) {
+    return this.state.selected._id === tab._id;
+  },
+  navigateToURL: function(){
+     var url = this.refs.urlInput.getDOMNode().value.trim();
+     websocket.send('navigate', { itemId: this.state.selected._id, url: url });
+  },
   render: function() {
-    var listboardsPanel = <ListboardsPanelComponent
-      selected1= { this.state.selected1 }
-      selected2= { this.state.selected2 }
-      isExtensionInstalled={ this.state.isExtensionInstalled }
-      laterBoard = { this.state.laterBoard }
-      archiveBoard = { this.state.archiveBoard }
-      listboards= { this.state.listboards } />
-
-    var panel1, panel2;
-
-    if(this.state.selected1) {
-        //load panel1
-        panel1 = this.itemsPanel(1, this.state.selected1, this.state.selected2 == null);
-    }
-
-    if(this.state.selected2) {
-        //load panel2
-        panel2 = this.itemsPanel(2, this.state.selected2, false);
-    }
-
+    var self = this;
+    var browserMode = this.state.selected && (this.state.selected.type === 0 || this.state.selected.type === 1);
     return (
-      <div onClick={this.handleBodyClick} className="wrapper">
-        <div className="main-header">
-          <TopBarComponent 
-            switchPanels = { this.switchPanels }                
-            onePanel = { this.state.selected2 == null } 
-            performSearch = { this.performSearch } />  
-          { listboardsPanel }
+      <div className="content">
+        <div className={"browser-commands" + (browserMode? "": " hide")} >
+	  <input type="text" className="url-input" ref="urlInput" value={(browserMode? this.state.selected.url : "")} />
+	  <input type="button" className="url-btn" value="Go"  onClick={this.navigateToURL} />
+	  <div className="home-option" onClick={ this.homeOptionClicked } >
+	    <i className="icon-th-large"></i>
+	  </div>
         </div>
-        <div className="main-content">
-          {panel1}
-          {panel2}
+        <div className="home" >
+	  <div className={"home-top" + (browserMode? " hide": "")}>
+            <div className="search-box">
+              <input type="text" placeholder="Find a tab"/>
+            </div>
+          </div>
+        
+          <div className={"containers" + (browserMode? " hide": "")}>
+            {                   
+              this.state.browser.items.map(function(containerId) {
+                var container = _state.getItemById(containerId);
+                return <Container container={ container } active={ self.state.selected && self.state.selected._id == container._id } /> 
+              })
+            }  
+            <div className="new-container" onClick={ this.newContainerClicked }><i className="icon-plus"></i></div>
+          </div>
+          
+          <div className="container-items">
+	    {
+              this.state.browser.items.map(function(containerId) {
+                var container = _state.getItemById(containerId);
+		return <div className={"items" + (self.isContainerActive(container)? " active": "")}>
+		         {
+                            container.items.map(function(tabId){
+                              var tab = _state.getItemById(tabId);
+                              return  <Tab tab={ tab } active={ self.isTabActive(tab) } browserMode={ browserMode } />
+			    })
+			 }
+                         <div className={"new-tab" + (browserMode? " hide": "")} onClick={ self.newTabClicked }>
+			   <i className="icon-plus"></i>
+			 </div>
+		       </div>
+              })
+	    }
+          </div>
         </div>
-        <div className="main-footer">
-          <small>@Listboard.it</small>
-        </div>
-        {this.state.dialogItemVisible? <div className="modal-backdrop fade in"></div> : null}
       </div>
     );
   }
@@ -87,23 +101,15 @@ var HomeComponent = React.createClass({
 
 
 module.exports.render = function (
-    laterBoard,
-    archiveBoard,
-    listboards,
-    selected1,
-    selected2,
-    selection,
-    isExtensionInstalled
+    archive,
+    browser,
+    selected
   ) {
   return React.renderComponent(
     <HomeComponent 
-      laterBoard={laterBoard}
-      archiveBoard={archiveBoard}
-      listboards={listboards}
-      selected1={selected1}
-      selected2={selected2}
-      selection={selection}
-      isExtensionInstalled={isExtensionInstalled}/>,
+      archive={archive}
+      browser={browser}
+      selected={selected} />,
     document.getElementById('body-inner')
   );
 };

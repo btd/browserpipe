@@ -15,11 +15,9 @@ module.exports = function (app, passport) {
 
   app.param('userId', users.user);
 
-
-
   //Home routes
-  app.get(    '/panel1/:type1/:id1',                     auth.ensureLoggedIn('/login'), main.home);
-  app.get(    '/panel1/:type1/:id1/panel2/:type2/:id2',  auth.ensureLoggedIn('/login'), main.home);
+  app.get(    '/item/:id1',                     auth.ensureLoggedIn('/login'), main.home);
+  app.get(    '/browser',                     auth.ensureLoggedIn('/login'), main.home);
 
   //Invitation routes
   var invitation = require('./controllers/invitation');
@@ -75,3 +73,5 @@ module.exports = function (app, passport) {
 
   require('./controllers/browser')(app);
 };
+
+

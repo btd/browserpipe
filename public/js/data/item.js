@@ -12,7 +12,7 @@ var Item = model()
     .attr('screenshot') // String
     .attr('favicon') // String url for favicon
     .attr('url') // String
-    .attr('note') // String
+    .attr('html') // String
     .attr('type') // integer;
     .attr('externalId'); // id of the tab if it has
 

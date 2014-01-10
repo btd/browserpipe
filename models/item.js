@@ -34,8 +34,7 @@ var ItemSchema = new Schema({
 
     deleted: { type: Boolean, default: false },
 
-    // when type 2
-    note: { type: String, trim: true } //TODO maybe combine note and url?
+    html: { type: String, trim: true }
 },{
     toObject: { virtuals: true },
     toJSON: { virtuals: true }
@@ -48,7 +47,7 @@ ItemSchema.index(
     { 
         title: 'text', 
         url: 'text', 
-        note: 'text'
+        html: 'text'
     }
 );
 
@@ -76,6 +75,7 @@ ItemSchema.statics.byUserAndExternalId = function (user, externalId) {
     return Item.by({ user: user, externalId: externalId });
 };
 
+//TODO: for security reasons we should not use byId in the server but byIdAndUserId
 ItemSchema.statics.byId = function (id) {
     return Item.by({ _id: id});
 };
