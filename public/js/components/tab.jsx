@@ -14,8 +14,8 @@ var TabComponent = React.createClass({
   },
   render: function() {
     return (
-      <div ref="tab" className={"tab" + (this.props.active? " maximized" : (this.props.browserMode? " hide" : " minimized"))} >
-        <div className={ "tab-mask" + (this.props.active? " hide" : "")} onClick={ this.tabMaskClicked } >
+      <div ref="tab" className="tab" >
+        <div className="tab-mask" onClick={ this.tabMaskClicked } >
           <div className="tab-mask-options">
             <div className="tab-mask-option">
               <i className="icon-share"></i>
@@ -26,15 +26,12 @@ var TabComponent = React.createClass({
           </div>
           <div className="tab-mask-text" >Click to open</div>
         </div>
-        <iframe src='about:blank' className="tab-content">
-	</iframe>
+        <div className="tab-content">
+	  <img src={this.props.tab.screenshot} />
+	</div>
       </div>
     );
-  },
-  componentDidMount: function() {
-    var $tabContent = $('.tab-content', this.refs.tab.getDOMNode());
-    $tabContent.contents().find('body').append(this.props.tab.html);
-  } 
+  }
 });  
 
 module.exports = TabComponent 

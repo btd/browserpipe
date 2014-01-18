@@ -29,7 +29,7 @@ _.extend(State1.prototype, {
         //Load items
         this.loadItems(initialOptions.items || []);
 
-        this.browser = this.getItemById(initialOptions.user.browser);
+        this.selected = this.browser = this.getItemById(initialOptions.user.browser);
         this.archive= this.getItemById(initialOptions.user.archive);
     },
 

@@ -3,15 +3,18 @@
 var _state = require('./state'),
     page = require('page'),
     HomeView = require('./components/home'),
+    BrowserView = require('./components/browser'),
     $ = require('jquery'),
     websocket = require('./websocket/websocket');
 
 //Dropdown
 require('bootstrap-dropdown');
 
-var homeView; //react home component instance
+var homeView, browserView; //react home component instance
 
 var loadHomeView = function() {
+    $('#home-section').show();
+    $('#browser-section').hide();
     if(!homeView){        
        homeView = HomeView.render(
          _state.archive,
@@ -21,6 +24,20 @@ var loadHomeView = function() {
     } else {
         homeView.setState({
             selected: _state.selected
+        }); 
+    }
+}
+
+var loadBrowserView = function(item) {
+    $('#home-section').hide();
+    $('#browser-section').show();
+    if(!browserView){        
+       browserView = BrowserView.render(
+         item
+       );
+    } else {
+        browserView.setState({
+            selected: item
         }); 
     }
 }
@@ -39,10 +56,14 @@ page('/', function () {
 page('/item/:id', function (ctx) {
     setTimeout(function() {
         var id = ctx.params.id;
-        var result = _state.getItemById(id);
-        if(result) {
-            _state.selected = result;
-            loadHomeView();
+        var item = _state.getItemById(id);
+        if(item) {
+	    if(item.type === 2) {
+              _state.selected = item;
+              loadHomeView();
+	    }
+	    else
+	      loadBrowserView(item);
         } else {
             page('/');
         }
@@ -68,7 +89,6 @@ var initialize = function () {
 };
 
 var stateChanges = function() {
-    //_state.on('change:selected', onSelectedChange);
 
     var changeInItems = function(item) {
         if(_state.selected && (item._id === _state.selected._id || item.parent === _state.selected._id))
@@ -80,7 +100,6 @@ var stateChanges = function() {
     _state.items.on('add', changeInItems);
     _state.items.on('remove', changeInItems);
     _state.items.on('change', changeInItems);
-
 
     var changeInBrowser= function() {
         homeView.setState({

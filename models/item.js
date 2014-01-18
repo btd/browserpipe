@@ -71,8 +71,11 @@ ItemSchema.index(
     };
 });
 
+
 ItemSchema.statics.byUserAndExternalId = function (user, externalId) {
-    return Item.by({ user: user, externalId: externalId });
+    return Item
+        .by({ user: user, externalId: externalId })
+        .select('_id items parent user type favicon screenshot url externalId browserKey lastSync title deleted'); //We exclude html to speed up
 };
 
 //TODO: for security reasons we should not use byId in the server but byIdAndUserId
@@ -83,12 +86,21 @@ ItemSchema.statics.byId = function (id) {
 ItemSchema.statics.by = function (query) {
     return Item
         .findOne(query)
+	.select('_id items parent user type favicon screenshot url externalId browserKey lastSync title deleted')
+        .execWithPromise();
+};
+
+ItemSchema.statics.getHtml = function (id) {
+    return Item
+        .findOne({ _id: id})
+	.select('html')
         .execWithPromise();
 };
 
 ItemSchema.statics.all = function(query) {
     return Item
         .find(query)
+	.select('_id items parent user type favicon screenshot url externalId browserKey lastSync title deleted')
         .execWithPromise();
 }
 module.exports = Item = mongoose.model('Item', ItemSchema);
