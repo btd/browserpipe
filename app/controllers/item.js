@@ -97,11 +97,6 @@ exports.addItemBookmarklet = function(req, res) {
 
 //Update item
 exports.update = function(req, res) {
-    req.check('title').notEmpty();
-
-    var errs = req.validationErrors();
-    if (errs) return errors.sendBadRequest(res);
-
     var item = req.currentItem;    
     _.merge(item, _.pick(req.body, 'title'));// for now only title can be changed, by idea will need to add url and note depending from type of item
     

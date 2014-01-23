@@ -22,6 +22,9 @@ var BrowserComponent = React.createClass({
      var url = this.refs.urlInput.getDOMNode().value.trim();
      websocket.send('browser.navigate', { itemId: this.state.selected._id, url: url });
   },
+  toggleBar: function(){
+    //Toggle between bar fixed (pinned) or slide up&down (unpinned)
+  },
   render: function() {
     var self = this;
     return (
@@ -30,7 +33,10 @@ var BrowserComponent = React.createClass({
 	  <input type="text" className="url-input" ref="urlInput" value={this.state.selected.url} />
 	  <input type="button" className="url-btn" value="Go"  onClick={this.navigateToURL} />
 	  <div className="home-option" onClick={ this.homeOptionClicked } >
-	    <i className="icon-th-large"></i>
+	    <i className="fa fa-th-large"></i>
+	  </div>
+	  <div className="pin-option" onClick={ this.toggleBar } >
+	    <i className="fa fa-thumb-tack"></i>
 	  </div>
         </div>
         <iframe src='about:blank' className="browser-content">

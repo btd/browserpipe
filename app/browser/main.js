@@ -204,7 +204,10 @@ function evaluatePage(){
   for(var i = -1, l = els.length; ++i < l;){
     els[i].setAttribute("style", getElementStyle(els[i]));
   }
-  return document.getElementsByTagName('html')[0].innerHTML;
+  return {
+    title: document.title,
+    html: document.getElementsByTagName('html')[0].innerHTML
+  }
 }
 
 function sanitizeHtml(html) {
@@ -244,7 +247,9 @@ var initBrowser =  function(socket) {
       return page.open(url, function(err,status) {
 	console.timeEnd("page-open");
 	console.time("page-evaluate");
-	return page.evaluate(evaluatePage , function(err, html) { 
+	return page.evaluate(evaluatePage , function(err, result) { 
+	  var title = result.title;
+	  var html = result.html;
           console.timeEnd("page-evaluate");
 	  console.time("page-changeAbsURLs");
 	  //replace_all_rel_by_abs(url, html);
@@ -259,7 +264,10 @@ var initBrowser =  function(socket) {
 	  var screenshot_path = getPicturePath(itemId);
 	  Item.byId(itemId).then(function(item) {
 	    if(item) {
+	      item.title = title;
 	      item.url = url;
+	      //TODO: scrap favicon correctly
+	      item.favicon = 'http://www.google.com/s2/favicons?domain=' + encodeURIComponent(item.url);
 	      item.html = html;
 	      item.screenshot = screenshot_url;
 	      console.time("page-getScreenshot");

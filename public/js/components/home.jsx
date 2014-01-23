@@ -41,6 +41,13 @@ var HomeComponent = React.createClass({
         (_.contains(container.items, this.state.selected._id))
     );
   },
+  deleteActiveContainer: function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    _state.serverDeleteItem(this.state.selected, function(){
+      page('/');
+    });
+  },
   renderFolders: function(container) {
     return container.items.filter(function(itemId){
       var item = _state.getItemById(itemId);
@@ -67,13 +74,34 @@ var HomeComponent = React.createClass({
 	<div className="home-top">
 	  <div className="logo">Listboard.it</div>
 	  <div className="user-options">
-	    <i className="icon-user"></i>
+	    <li className="dropdown nav-option">
+	      <a draggable="false"  href="#" data-toggle="dropdown" className="dropdown-toggle">
+	        <i className="fa fa-user"></i>
+	      </a>
+	      <ul className="dropdown-menu">
+	        <li>
+		  <a draggable="false"  tabindex="-1" href="/settings">
+		    <i className="icon-none"><span>Settings</span></i>
+		  </a>
+		</li>
+		<li>
+		  <a draggable="false"  tabindex="-1" href="/help">
+		    <i className="icon-none"> <span>Help</span></i>
+		  </a>
+		</li>
+		<li className="divider"></li>
+		<li>
+		  <a draggable="false"  tabindex="-1" href="/logout">
+		    <i className="icon-none"><span>Logout </span></i>
+		  </a>
+                </li>
+	      </ul>
+	    </li>
 	  </div>
 	  <div className="search-box">
 	    <input type="text" placeholder="Find a tab"/>
 	  </div>
 	</div>
-      
 	<div className="containers">
 	  {                   
 	    this.state.browser.items.map(function(containerId) {
@@ -84,9 +112,22 @@ var HomeComponent = React.createClass({
 	  <div className="container archive" onClick={ this.archiveClicked } >
 	    <div>Archive</div>
 	  </div>
-	  <div className="new-container" onClick={ this.newContainerClicked }><i className="icon-plus"></i></div>
+	  <div className="new-container" onClick={ this.newContainerClicked }><i className="fa fa-plus"></i></div>
 	</div>
-	
+        <div className="container-options">
+	    <li className="dropdown nav-option">
+	      <a draggable="false"  href="#" data-toggle="dropdown" className="dropdown-toggle">
+	        <i className="fa fa-cog"></i>
+	      </a>
+	      <ul className="dropdown-menu">
+		<li>
+		  <a draggable="false" tabindex="-1" href="#" onClick={ this.deleteActiveContainer } >
+		    <i className="icon-none"><span>Delete</span></i>
+		  </a>
+                </li>
+	      </ul>
+	    </li>
+	</div>
 	<div className="container-items">
 	  {
 	    this.state.browser.items.map(function(containerId) {
@@ -94,7 +135,7 @@ var HomeComponent = React.createClass({
 	      return <div className={"items" + (self.isContainerActive(container)? " active": "")}>
 		       { self.renderItems(container) }
 		       <div className="new-tab" onClick={ self.newTabClicked }>
-			 <i className="icon-plus"></i>
+			 <i className="fa fa-plus"></i>
 		       </div>
 		     </div>
 	    })
@@ -103,7 +144,7 @@ var HomeComponent = React.createClass({
 	    { this.renderFolders(this.state.archive) }
 	    { this.renderItems(this.state.archive) }
 	    <div className="new-tab" onClick={ self.newTabClicked }>
-	      <i className="icon-plus"></i>
+	      <i className="fa fa-plus"></i>
 	    </div>
 	  </div>
 	</div>
