@@ -66,7 +66,7 @@ var ContainerComponent = React.createClass({
   },
   render: function() {
     return (
-      <div onClick={ this.containerClicked } className={"container" + (this.props.active?" active":"")} >
+      <div title={ this.props.container.title } onClick={ this.containerClicked } className={"container" + (this.props.active?" active":"")} >
 	<i ref="containerCloseOption" onClick={ this.closeOptionClicked } className="close-option fa fa-times"></i>
 	<i ref="containerEditOption" onClick={ this.editOptionClicked } className="edit-option fa fa-pencil"></i>
 	<div ref="containerInner" className="container-inner" >

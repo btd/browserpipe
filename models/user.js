@@ -20,7 +20,6 @@ var UserSchema = new Schema({
     email: { type: String, required: true, validate: [ /\S+@\S+\.\S/, errorMsgs.invalid], trim: true, lowercase: true},
     password: { type: String, required: true},
 
-    archive: { type: Schema.ObjectId, ref: 'Item' },
     browser: { type: Schema.ObjectId, ref: 'Item' },
 });
 

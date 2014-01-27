@@ -13,7 +13,6 @@ var _state = require('../state'),
 var HomeComponent = React.createClass({    
   getInitialState: function() {
       return {     
-          archive: this.props.archive,
           browser: this.props.browser,
           selected: this.props.selected,
       };
@@ -31,9 +30,6 @@ var HomeComponent = React.createClass({
       //We should fix this by sending crud request to server via websockets instead of ajax.
       setTimeout(function() { page('/item/' + item._id) }, 500); 
     });
-  },
-  archiveClicked: function() { 
-    page('/item/' + this.state.archive._id);
   },
   isContainerActive: function(container) {
     return this.state.selected && (
@@ -109,10 +105,7 @@ var HomeComponent = React.createClass({
 	      return <Container container={ container } active={ self.state.selected && self.state.selected._id == container._id } /> 
 	    })
 	  }  
-	  <div className="container archive" onClick={ this.archiveClicked } >
-	    <div>Archive</div>
-	  </div>
-	  <div className="new-container" onClick={ this.newContainerClicked }><i className="fa fa-plus"></i></div>
+	  <div className="new-container" title="Add new window" onClick={ this.newContainerClicked }><i className="fa fa-plus"></i></div>
 	</div>
         <div className="container-options">
 	    <li className="dropdown nav-option">
@@ -133,20 +126,22 @@ var HomeComponent = React.createClass({
 	    this.state.browser.items.map(function(containerId) {
 	      var container = _state.getItemById(containerId);
 	      return <div className={"items" + (self.isContainerActive(container)? " active": "")}>
+	               { self.renderFolders(container) }
 		       { self.renderItems(container) }
-		       <div className="new-tab" onClick={ self.newTabClicked }>
-			 <i className="fa fa-plus"></i>
+		       <div className="new-options">
+			 <div className="new-tab" title="Add new tab" onClick={ self.newTabClicked }>
+			   <i className="fa fa-plus"></i>
+			 </div>
+			 <div className="new-folder" title="Add new folder" onClick={ self.newTabClicked }>
+			   <i className="fa fa-folder"></i>
+			 </div>
+			 <div className="new-note" title="Add new note" onClick={ self.newTabClicked }>
+			   <i className="fa fa-file"></i>
+			 </div>
 		       </div>
 		     </div>
 	    })
 	  }
-	  <div className={"items" + (this.isContainerActive(this.state.archive)? " active": "")}>
-	    { this.renderFolders(this.state.archive) }
-	    { this.renderItems(this.state.archive) }
-	    <div className="new-tab" onClick={ self.newTabClicked }>
-	      <i className="fa fa-plus"></i>
-	    </div>
-	  </div>
 	</div>
       </div>
     );
@@ -155,13 +150,11 @@ var HomeComponent = React.createClass({
 
 
 module.exports.render = function (
-    archive,
     browser,
     selected
   ) {
   return React.renderComponent(
     <HomeComponent 
-      archive={archive}
       browser={browser}
       selected={selected} />,
     document.getElementById('home-section')

@@ -17,7 +17,6 @@ var loadHomeView = function() {
     $('#browser-section').hide();
     if(!homeView){        
        homeView = HomeView.render(
-         _state.archive,
          _state.browser,
          _state.selected
        );

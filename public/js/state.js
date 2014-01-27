@@ -16,7 +16,6 @@ $.ajaxSetup({
 var model = require('moco').model;
 
 var State1 = model()
-    .attr('archive')
     .attr('browser')
     .attr('items', { collection: Items })
     .attr('selected')
@@ -30,7 +29,6 @@ _.extend(State1.prototype, {
         this.loadItems(initialOptions.items || []);
 
         this.selected = this.browser = this.getItemById(initialOptions.user.browser);
-        this.archive= this.getItemById(initialOptions.user.archive);
     },
 
     //////////////////////////////////////////ITEMS//////////////////////////////////////

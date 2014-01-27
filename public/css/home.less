@@ -9,7 +9,6 @@
 
 body {
   color: #666;
-  text-shadow: 0 1px 0 #fff;
   background-color: #f2eee8;
   background-image: url('/img/common/bg-pattern.png');
 }
@@ -145,6 +144,7 @@ a {
       .clearfix();
 
       .container {
+        overflow: hidden;
 	position: relative;
 	float: left;
 	width: 100px;
@@ -165,21 +165,25 @@ a {
 	transition: all 0.3s ease;
 
 	.close-option {
+	  font-size: 10px;
 	  display: none;
 	  position: absolute;
-	  right: 3px;
-	  top: 3px;
+	  right: 0px;
+	  top: 0px;
 	}
 
 	.edit-option {
+	  font-size: 10px;
 	  display: none;
 	  position: absolute;
-	  right: 3px;
-	  bottom: 3px;
+	  left: 0px;
+	  top: 0px;
 	}
 
 	.container-inner {
           height: 100%;
+          width: 100%;
+          display: table;
 
 	  .tab-screenshot-small {
 	    height: 16px;
@@ -189,9 +193,10 @@ a {
 
 	  .container-title {
 	    background-color: #CCC;
+            display: table-cell;
 	    text-align: center;
-	    height: 100%;
             overflow: hidden;
+            vertical-align: middle;
 	  }
 	}
 
@@ -225,6 +230,10 @@ a {
 
 	  .edit-option {
 	    display: block;
+	  }
+
+	  .container-inner {
+	    border-top: 10px solid #fff;
 	  }
 	}
       }
@@ -390,27 +399,54 @@ a {
 	  }
 	}
 
-	.new-tab {
+	.new-options {
+	  position: relative;
+          margin: 12px 20px;
+	  width: 320px;
+	  height: 220px;
 	  float: left;
-	  font-size: 80px;
-	  border: 2px dashed #999;
-	  padding: 6px 16px;
-	  margin: 60px 120px;
-	  cursor: default;
-	  -webkit-transition: all 0.3s ease;
-	  -moz-transition: all 0.3s ease;
-	  -o-transition: all 0.3s ease;
-	  transition: all 0.3s ease; 
+
+	  .new-tab, .new-folder, .new-note {
+	    border: 2px dashed #999;
+	    cursor: default;
+	    -webkit-transition: all 0.3s ease;
+	    -moz-transition: all 0.3s ease;
+	    -o-transition: all 0.3s ease;
+	    transition: all 0.3s ease; 
+	    
+	    &:hover {
+	      cursor: pointer;
+	      color: #333;
+	      border-color: #333; 
+	    }
 	  
-	  &:hover {
-	    cursor: pointer;
-	    color: #333;
-	    border-color: #333; 
+	    &.hide {
+	      display: none !important;
+	    }
+	  }
+
+	  .new-tab {
+	    float: left;
+	    font-size: 80px;
+	    padding: 6px 16px;
+	    margin: 30px 120px;
+	  }
+
+	  .new-folder, .new-note {
+	    position: absolute;
+	    bottom: 30px;
+	    font-size: 24px;
+	    padding: 6px 9px;
+	  }
+
+	  .new-folder {
+            left: 120px;
+	  }
+
+	  .new-note {
+            left: 180px;
 	  }
 	
-	  &.hide {
-	    display: none !important;
-	  }
 	}
       }
     }
