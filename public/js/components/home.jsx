@@ -31,11 +31,8 @@ var HomeComponent = React.createClass({
       setTimeout(function() { page('/item/' + item._id) }, 500); 
     });
   },
-  isContainerActive: function(container) {
-    return this.state.selected && (
-	(this.state.selected._id === container._id) ||
-        (_.contains(container.items, this.state.selected._id))
-    );
+  newFolderClicked: function() {
+    _state.serverAddItemToItem(this.state.selected._id, { type: 2 });
   },
   deleteActiveContainer: function(e) {
     e.preventDefault();
@@ -44,8 +41,21 @@ var HomeComponent = React.createClass({
       page('/');
     });
   },
-  renderFolders: function(container) {
-    return container.items.filter(function(itemId){
+  folderUpClicked: function() {
+    page("/item/" + this.state.selected.parent);
+  },
+  renderFolderUp: function() {
+    if(this.state.selected && this.state.selected.type === 2 && this.state.selected.parent !== _state.browser._id)
+      return (
+	<div className="folder" onClick={ this.folderUpClicked } >
+	  <div className="folder-title up">...</div>
+	</div>
+      );
+    else return null;
+  },
+  renderFolders: function() {
+    if(!this.state.selected) return null;
+    else return this.state.selected.items.filter(function(itemId){
       var item = _state.getItemById(itemId);
       return item.type === 2;
     }).map(function(folderId){
@@ -54,8 +64,8 @@ var HomeComponent = React.createClass({
     })
   },
   renderItems: function(container) {
-    var self = this;
-    return  container.items.filter(function(itemId){
+    if(!this.state.selected) return null;
+    else return this.state.selected.items.filter(function(itemId){
       var item = _state.getItemById(itemId);
       return item.type !== 2;
     }).map(function(tabId){
@@ -102,7 +112,7 @@ var HomeComponent = React.createClass({
 	  {                   
 	    this.state.browser.items.map(function(containerId) {
 	      var container = _state.getItemById(containerId);
-	      return <Container container={ container } active={ self.state.selected && self.state.selected._id == container._id } /> 
+	      return <Container container={ container } selected={ self.state.selected } /> 
 	    })
 	  }  
 	  <div className="new-container" title="Add new window" onClick={ this.newContainerClicked }><i className="fa fa-plus"></i></div>
@@ -122,26 +132,22 @@ var HomeComponent = React.createClass({
 	    </li>
 	</div>
 	<div className="container-items">
-	  {
-	    this.state.browser.items.map(function(containerId) {
-	      var container = _state.getItemById(containerId);
-	      return <div className={"items" + (self.isContainerActive(container)? " active": "")}>
-	               { self.renderFolders(container) }
-		       { self.renderItems(container) }
-		       <div className="new-options">
-			 <div className="new-tab" title="Add new tab" onClick={ self.newTabClicked }>
-			   <i className="fa fa-plus"></i>
-			 </div>
-			 <div className="new-folder" title="Add new folder" onClick={ self.newTabClicked }>
-			   <i className="fa fa-folder"></i>
-			 </div>
-			 <div className="new-note" title="Add new note" onClick={ self.newTabClicked }>
-			   <i className="fa fa-file"></i>
-			 </div>
-		       </div>
-		     </div>
-	    })
-	  }
+	 <div className="items">
+	   { this.renderFolderUp() }
+	   { this.renderFolders() }
+	   { this.renderItems() }
+	   <div className="new-options">
+	     <div className="new-tab" title="Add new tab" onClick={ this.newTabClicked }>
+	       <i className="fa fa-plus"></i>
+	     </div>
+	     <div className="new-folder" title="Add new folder" onClick={ this.newFolderClicked }>
+	       <i className="fa fa-folder"></i>
+	     </div>
+	     <div className="new-note" title="Add new note" >
+	       <i className="fa fa-file"></i>
+	     </div>
+	   </div>
+	 </div>
 	</div>
       </div>
     );

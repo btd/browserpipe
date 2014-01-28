@@ -164,20 +164,23 @@ a {
 	-o-transition: all 0.3s ease;
 	transition: all 0.3s ease;
 
-	.close-option {
+	.root-option, .close-option, .edit-option {
 	  font-size: 10px;
 	  display: none;
 	  position: absolute;
-	  right: 0px;
 	  top: 0px;
 	}
 
-	.edit-option {
-	  font-size: 10px;
-	  display: none;
-	  position: absolute;
+	.root-option {
 	  left: 0px;
-	  top: 0px;
+	}
+
+	.close-option {
+	  right: 0px;
+	}
+
+	.edit-option {
+	  right: 18px;
 	}
 
 	.container-inner {
@@ -224,11 +227,7 @@ a {
 	  -o-transform: scale(1.1);
 	  transform: scale(1.1); 
 
-	  .close-option {
-	    display: block;
-	  }
-
-	  .edit-option {
+	  .root-option, .close-option, .edit-option {
 	    display: block;
 	  }
 
@@ -286,11 +285,6 @@ a {
     .container-items {
      
       .items {
-	display: none;
-      
-	&.active {
-	  display: block;
-	}
 
 	.tab, .folder {
 	  -webkit-transform-origin: 0 0;
@@ -317,10 +311,59 @@ a {
 	  .folder-title { 
 	    font-size: 24px;
 	    text-align: center;
+
+	    &.up {
+	      font-size: 48px;
+	    }
+	  }
+
+	  .close-option, .edit-option {
+            margin: 6px;
+	    font-size: 14px;
+	    display: none;
+	    position: absolute;
+	    top: 0px;
+	  }
+
+	  .close-option {
+	    right: 0px;
+	  }
+
+	  .edit-option {
+	    right: 21px;
+	  }
+
+	  .title-editor {
+	    
+	    input {
+	      width: 280px;
+	      display: block;
+	      height: 36px;
+	      margin: 60px 12px 0 12px;
+	    }
+	    .btn {
+              float: left;
+
+	      &.edit-title-save {
+                margin: 3px 0 0 12px;
+	      }
+
+	      &.edit-title-cancel {
+                margin: 3px 0 0 3px;
+	      }
+	    }
 	  }
 
 	  &:hover {
 	    cursor: pointer;
+
+	    .close-option {
+	      display: block;
+	    }
+
+	    .edit-option {
+	      display: block;
+	    }
 	  }
 	}
 
