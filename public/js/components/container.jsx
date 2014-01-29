@@ -43,7 +43,8 @@ var ContainerComponent = React.createClass({
   editOptionClicked: function(e) {
     e.stopPropagation();
     this.refs.containerInner.getDOMNode().className = "hide";
-    this.refs.containerRootOption.getDOMNode().className = "hide";
+    if(this.refs.containerRootOption)
+      this.refs.containerRootOption.getDOMNode().className = "hide";
     this.refs.containerCloseOption.getDOMNode().className = "hide";
     this.refs.containerEditOption.getDOMNode().className = "hide";
     this.refs.containerTitleEditor.getDOMNode().className = "";
@@ -64,7 +65,8 @@ var ContainerComponent = React.createClass({
   },
   hideInput: function() {
     this.refs.containerInner.getDOMNode().className = "container-inner";
-    this.refs.containerRootOption.getDOMNode().className = "root-option fa fa-home";
+    if(this.refs.containerRootOption)
+      this.refs.containerRootOption.getDOMNode().className = "root-option fa fa-home";
     this.refs.containerCloseOption.getDOMNode().className = "close-option fa fa-times";
     this.refs.containerEditOption.getDOMNode().className = "edit-option fa fa-pencil";
     this.refs.containerTitleEditor.getDOMNode().className = "hide";
