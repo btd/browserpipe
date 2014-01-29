@@ -132,22 +132,26 @@ var HomeComponent = React.createClass({
 	    </li>
 	</div>
 	<div className="container-items">
-	 <div className="items">
-	   { this.renderFolderUp() }
-	   { this.renderFolders() }
-	   { this.renderItems() }
-	   <div className="new-options">
-	     <div className="new-tab" title="Add new tab" onClick={ this.newTabClicked }>
-	       <i className="fa fa-plus"></i>
-	     </div>
-	     <div className="new-folder" title="Add new folder" onClick={ this.newFolderClicked }>
-	       <i className="fa fa-folder"></i>
-	     </div>
-	     <div className="new-note" title="Add new note" >
-	       <i className="fa fa-file"></i>
+	{ 
+	  this.state.browser.items.length > 0?
+	   <div className="items">
+	     { this.renderFolderUp() }
+	     { this.renderFolders() }
+	     { this.renderItems() }
+	     <div className="new-options">
+	       <div className="new-tab" title="Add new tab" onClick={ this.newTabClicked }>
+		 <i className="fa fa-plus"></i>
+	       </div>
+	       <div className="new-folder" title="Add new folder" onClick={ this.newFolderClicked }>
+		 <i className="fa fa-folder"></i>
+	       </div>
+	       <div className="new-note" title="Add new note" >
+		 <i className="fa fa-file"></i>
+	       </div>
 	     </div>
 	   </div>
-	 </div>
+	   : null
+	}
 	</div>
       </div>
     );
