@@ -25,7 +25,8 @@ var FolderComponent = React.createClass({
     this.refs.titleInput.getDOMNode().value = (this.props.folder.title? this.props.folder.title : '') ;
     this.refs.titleInput.getDOMNode().focus(); 
   },
-  saveFolderTitle: function() {    
+  saveFolderTitle: function(e) {    
+    e.stopPropagation();
     var self = this;
     _state.serverUpdateItem({
       _id: this.props.folder._id,
@@ -35,7 +36,7 @@ var FolderComponent = React.createClass({
     });
   },
   ifEnterSave: function(e) {
-    if(e.keyCode === 13) this.saveFolderTitle();
+    if(e.keyCode === 13) this.saveFolderTitle(e);
   },
   hideInput: function() {
     this.refs.folderTitle.getDOMNode().className = "folder-title";

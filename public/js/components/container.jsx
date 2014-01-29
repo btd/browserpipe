@@ -51,7 +51,8 @@ var ContainerComponent = React.createClass({
     this.refs.titleInput.getDOMNode().value = (this.state.container.title? this.state.container.title : '') ;
     this.refs.titleInput.getDOMNode().focus(); 
   },
-  saveContainerTitle: function() {    
+  saveContainerTitle: function(e) {    
+    e.stopPropagation();
     var self = this;
     _state.serverUpdateItem({
       _id: this.state.container._id,
@@ -61,7 +62,7 @@ var ContainerComponent = React.createClass({
     });
   },
   ifEnterSave: function(e) {
-    if(e.keyCode === 13) this.saveContainerTitle();
+    if(e.keyCode === 13) this.saveContainerTitle(e);
   },
   hideInput: function() {
     this.refs.containerInner.getDOMNode().className = "container-inner";
