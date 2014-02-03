@@ -46,7 +46,7 @@ var config = {
         }
     },
     development: {
-        appUrl: 'http://localhost:8080',
+        appUrl: 'http://localhost:4000',
         db: {
             uri: 'mongodb://localhost/listboardit-dev'
         }

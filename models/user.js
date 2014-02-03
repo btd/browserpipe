@@ -20,9 +20,7 @@ var UserSchema = new Schema({
     email: { type: String, required: true, validate: [ /\S+@\S+\.\S/, errorMsgs.invalid], trim: true, lowercase: true},
     password: { type: String, required: true},
 
-    laterListboard: { type: Schema.ObjectId, ref: 'Item' },
-    archiveListboard: { type: Schema.ObjectId, ref: 'Item' },
-    browserListboards: [{ type: Schema.ObjectId, ref: 'Item' }]
+    browser: { type: Schema.ObjectId, ref: 'Item' },
 });
 
 UserSchema.plugin(require('../util/mongoose-timestamp'));

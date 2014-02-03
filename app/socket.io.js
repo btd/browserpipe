@@ -2,9 +2,12 @@ var _ = require('lodash'),
     express = require('express'),
     mongoStore = require('connect-mongo')(express),
     config = require('../config'),
-    io = require('socket.io');
-
-var userUpdate = require('./controllers/user_update');
+    userUpdate = require('./controllers/user_update'),
+    browserInstance = require('./browser/main'),
+    Item = require('../models/item'),
+    io = require('socket.io'),
+    phantom=require('node-phantom'),
+    sanitizeHtml = require("sanitize-html");
 
 module.exports = function () {
 
@@ -116,9 +119,12 @@ module.exports = function () {
                 var client = userUpdate.waitUserUpdates(socket.handshake.user._id, function(event, data) {
                     socket.emit(event, data);
                 });
+	
+		var browser = browserInstance.initBrowser(socket);
 
                 socket.on('disconnect', function(){
                     client.end();
+		    browser.end();
                 });
             });
         }/*,

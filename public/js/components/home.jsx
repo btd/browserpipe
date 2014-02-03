@@ -5,81 +5,154 @@
 var _state = require('../state'),
     _ = require('lodash'),
     React = require('react'),
-    TopBarComponent = require('./top/top.bar'),
-    ListboardsPanelComponent = require('./center/listboards.panel'),
-    selection = require('../selection/selection'),
-    navigation = require('../navigation/navigation');
-
-var ItemsPanel = require('./center/items');
+    page = require('page'),
+    Container= require('./container'),
+    Folder = require('./folder'),
+    Tab= require('./tab');
 
 var HomeComponent = React.createClass({    
   getInitialState: function() {
       return {     
-          //isPanel1Active: _state.isPanel1Active,
-          //panelPinnedNumber: 0,
-          laterBoard: this.props.laterBoard,
-          archiveBoard: this.props.archiveBoard,
-          listboards: this.props.listboards,
-          //onePanel: this.props.onePanel,
-          selected1: this.props.selected1,
-          selected2: this.props.selected2,
-          selection: this.props.selection,
-          isExtensionInstalled: this.props.isExtensionInstalled
+          browser: this.props.browser,
+          selected: this.props.selected,
       };
   },
-
-  itemsPanel: function(num, obj, wide) {
-    return <ItemsPanel
-            num={num}
-            obj={obj}
-            wide={wide} />;
+  newContainerClicked: function() {
+    _state.serverAddItemToItem(this.state.browser._id, { type: 2 }, function(item) {
+      //TODO: navigation to the just added container is not working because websockets is taking more time to add it than ajax reponse.
+      //We should fix this by sending crud request to server via websockets instead of ajax.
+      setTimeout(function() {  page('/item/' + item._id) }, 500); 
+    });
   },
-
-  switchPanels: function() {
-    if(this.state.selected2) // disable it
-      _state.selected2 = null;
-    else
-      _state.selected2 = _state.selected1;
+  newTabClicked: function() {
+    _state.serverAddItemToItem(this.state.selected._id, { type: 0 }, function(item) {
+      //TODO: navigation to the just added container is not working because websockets is taking more time to add it than ajax reponse.
+      //We should fix this by sending crud request to server via websockets instead of ajax.
+      setTimeout(function() { page('/item/' + item._id) }, 500); 
+    });
   },
-
+  newFolderClicked: function() {
+    _state.serverAddItemToItem(this.state.selected._id, { type: 2 });
+  },
+  deleteActiveContainer: function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    _state.serverDeleteItem(this.state.selected, function(){
+      page('/');
+    });
+  },
+  folderUpClicked: function() {
+    page("/item/" + this.state.selected.parent);
+  },
+  renderFolderUp: function() {
+    if(this.state.selected && this.state.selected.type === 2 && this.state.selected.parent !== _state.browser._id)
+      return (
+	<div className="folder" onClick={ this.folderUpClicked } >
+	  <div className="folder-title up">...</div>
+	</div>
+      );
+    else return null;
+  },
+  renderFolders: function() {
+    if(!this.state.selected) return null;
+    else return this.state.selected.items.filter(function(itemId){
+      var item = _state.getItemById(itemId);
+      return item.type === 2;
+    }).map(function(folderId){
+      var folder = _state.getItemById(folderId);
+      return  <Folder folder={ folder } />
+    })
+  },
+  renderItems: function(container) {
+    if(!this.state.selected) return null;
+    else return this.state.selected.items.filter(function(itemId){
+      var item = _state.getItemById(itemId);
+      return item.type !== 2;
+    }).map(function(tabId){
+      var tab = _state.getItemById(tabId);
+      return  <Tab tab={ tab } />
+    })
+  },
   render: function() {
-    var listboardsPanel = <ListboardsPanelComponent
-      selected1= { this.state.selected1 }
-      selected2= { this.state.selected2 }
-      isExtensionInstalled={ this.state.isExtensionInstalled }
-      laterBoard = { this.state.laterBoard }
-      archiveBoard = { this.state.archiveBoard }
-      listboards= { this.state.listboards } />
-
-    var panel1, panel2;
-
-    if(this.state.selected1) {
-        //load panel1
-        panel1 = this.itemsPanel(1, this.state.selected1, this.state.selected2 == null);
-    }
-
-    if(this.state.selected2) {
-        //load panel2
-        panel2 = this.itemsPanel(2, this.state.selected2, false);
-    }
-
+    var self = this;
     return (
-      <div onClick={this.handleBodyClick} className="wrapper">
-        <div className="main-header">
-          <TopBarComponent 
-            switchPanels = { this.switchPanels }                
-            onePanel = { this.state.selected2 == null } 
-            performSearch = { this.performSearch } />  
-          { listboardsPanel }
-        </div>
-        <div className="main-content">
-          {panel1}
-          {panel2}
-        </div>
-        <div className="main-footer">
-          <small>@Listboard.it</small>
-        </div>
-        {this.state.dialogItemVisible? <div className="modal-backdrop fade in"></div> : null}
+      <div className="home" >
+	<div className="home-top">
+	  <div className="logo">Listboard.it</div>
+	  <div className="user-options">
+	    <li className="dropdown nav-option">
+	      <a draggable="false"  href="#" data-toggle="dropdown" className="dropdown-toggle">
+	        <i className="fa fa-user"></i>
+	      </a>
+	      <ul className="dropdown-menu">
+	        <li>
+		  <a draggable="false"  tabindex="-1" href="/settings">
+		    <i className="icon-none"><span>Settings</span></i>
+		  </a>
+		</li>
+		<li>
+		  <a draggable="false"  tabindex="-1" href="/help">
+		    <i className="icon-none"> <span>Help</span></i>
+		  </a>
+		</li>
+		<li className="divider"></li>
+		<li>
+		  <a draggable="false"  tabindex="-1" href="/logout">
+		    <i className="icon-none"><span>Logout </span></i>
+		  </a>
+                </li>
+	      </ul>
+	    </li>
+	  </div>
+	  <div className="search-box">
+	    <input type="text" placeholder="Find a tab"/>
+	  </div>
+	</div>
+	<div className="containers">
+	  {                   
+	    this.state.browser.items.map(function(containerId) {
+	      var container = _state.getItemById(containerId);
+	      return <Container container={ container } selected={ self.state.selected } /> 
+	    })
+	  }  
+	  <div className="new-container" title="Add new window" onClick={ this.newContainerClicked }><i className="fa fa-plus"></i></div>
+	</div>
+        <div className="container-options">
+	    <li className="dropdown nav-option">
+	      <a draggable="false"  href="#" data-toggle="dropdown" className="dropdown-toggle">
+	        <i className="fa fa-cog"></i>
+	      </a>
+	      <ul className="dropdown-menu">
+		<li>
+		  <a draggable="false" tabindex="-1" href="#" onClick={ this.deleteActiveContainer } >
+		    <i className="icon-none"><span>Delete</span></i>
+		  </a>
+                </li>
+	      </ul>
+	    </li>
+	</div>
+	<div className="container-items">
+	{ 
+	  this.state.browser.items.length > 0?
+	   <div className="items">
+	     { this.renderFolderUp() }
+	     { this.renderFolders() }
+	     { this.renderItems() }
+	     <div className="new-options">
+	       <div className="new-tab" title="Add new tab" onClick={ this.newTabClicked }>
+		 <i className="fa fa-plus"></i>
+	       </div>
+	       <div className="new-folder" title="Add new folder" onClick={ this.newFolderClicked }>
+		 <i className="fa fa-folder"></i>
+	       </div>
+	       <div className="new-note" title="Add new note" >
+		 <i className="fa fa-file"></i>
+	       </div>
+	     </div>
+	   </div>
+	   : null
+	}
+	</div>
       </div>
     );
   }
@@ -87,23 +160,13 @@ var HomeComponent = React.createClass({
 
 
 module.exports.render = function (
-    laterBoard,
-    archiveBoard,
-    listboards,
-    selected1,
-    selected2,
-    selection,
-    isExtensionInstalled
+    browser,
+    selected
   ) {
   return React.renderComponent(
     <HomeComponent 
-      laterBoard={laterBoard}
-      archiveBoard={archiveBoard}
-      listboards={listboards}
-      selected1={selected1}
-      selected2={selected2}
-      selection={selection}
-      isExtensionInstalled={isExtensionInstalled}/>,
-    document.getElementById('body-inner')
+      browser={browser}
+      selected={selected} />,
+    document.getElementById('home-section')
   );
 };

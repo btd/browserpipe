@@ -34,8 +34,7 @@ var ItemSchema = new Schema({
 
     deleted: { type: Boolean, default: false },
 
-    // when type 2
-    note: { type: String, trim: true } //TODO maybe combine note and url?
+    html: { type: String, trim: true }
 },{
     toObject: { virtuals: true },
     toJSON: { virtuals: true }
@@ -48,7 +47,7 @@ ItemSchema.index(
     { 
         title: 'text', 
         url: 'text', 
-        note: 'text'
+        html: 'text'
     }
 );
 
@@ -72,10 +71,14 @@ ItemSchema.index(
     };
 });
 
+
 ItemSchema.statics.byUserAndExternalId = function (user, externalId) {
-    return Item.by({ user: user, externalId: externalId });
+    return Item
+        .by({ user: user, externalId: externalId })
+        .select('_id items parent user type favicon screenshot url externalId browserKey lastSync title deleted'); //We exclude html to speed up
 };
 
+//TODO: for security reasons we should not use byId in the server but byIdAndUserId
 ItemSchema.statics.byId = function (id) {
     return Item.by({ _id: id});
 };
@@ -83,12 +86,21 @@ ItemSchema.statics.byId = function (id) {
 ItemSchema.statics.by = function (query) {
     return Item
         .findOne(query)
+	.select('_id items parent user type favicon screenshot url externalId browserKey lastSync title deleted')
+        .execWithPromise();
+};
+
+ItemSchema.statics.getHtml = function (id) {
+    return Item
+        .findOne({ _id: id})
+	.select('html')
         .execWithPromise();
 };
 
 ItemSchema.statics.all = function(query) {
     return Item
         .find(query)
+	.select('_id items parent user type favicon screenshot url externalId browserKey lastSync title deleted')
         .execWithPromise();
 }
 module.exports = Item = mongoose.model('Item', ItemSchema);
