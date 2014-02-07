@@ -5,9 +5,6 @@ var item = require('./data/item'),
     Item = item.Item,
     Items = item.Items;
 
-var typeObject = require('./data/typeobject'),
-    TypeObject = typeObject.TypeObject;
-
 $.ajaxSetup({
     dataType: 'json',
     contentType: 'application/json'

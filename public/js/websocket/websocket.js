@@ -1,5 +1,4 @@
-var _state = require('../state'),
-    io = require('socket.io');
+var io = require('socket.io');
 
 var socket; //socket.io client socket
 

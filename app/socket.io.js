@@ -4,10 +4,7 @@ var _ = require('lodash'),
     config = require('../config'),
     userUpdate = require('./controllers/user_update'),
     browserInstance = require('./browser/main'),
-    Item = require('../models/item'),
-    io = require('socket.io'),
-    phantom=require('node-phantom'),
-    sanitizeHtml = require("sanitize-html");
+    io = require('socket.io');
 
 module.exports = function () {
 

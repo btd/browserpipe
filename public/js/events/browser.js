@@ -1,4 +1,3 @@
-var _state = require('../state');
 
 module.exports = function (socket) {
 

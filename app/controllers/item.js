@@ -1,7 +1,6 @@
 /* jshint node: true */
 
 var _ = require('lodash'),
-    config = require('../../config'),
     Item = require('../../models/item'),
     responses = require('../responses'),
     errors = require('../errors'),
@@ -130,8 +129,7 @@ function removeItem(item) {
 
 //Remove item
 exports.delete = function(req, res) {
-    var item = req.currentItem,
-        user = req.user;
+    var item = req.currentItem;
 
     //1 delete parent reference
     if(item.parent) { //simple item

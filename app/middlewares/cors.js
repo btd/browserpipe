@@ -1,9 +1,9 @@
 var allowedOrigins = ['chrome-extension://bdmengenkddplhpffknebiahkofhcgkm']; //it is our chrome extension
 
-var allowedHeaders = ['X-Requested-With', 'Content-Type'].join(', ');
+//var allowedHeaders = ['X-Requested-With', 'Content-Type'].join(', ');
 
 function checkOrigin(req, res){
-    var origin = req.headers['origin'];
+    var origin = req.headers.origin;
     if(allowedOrigins.indexOf(origin) < 0) {
         res.end();
         return false;

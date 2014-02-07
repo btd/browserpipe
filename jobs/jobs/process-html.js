@@ -9,7 +9,6 @@ var path = require('path'),
     fs = require('fs');
 
 var Item = require('../../models/item');
-var Q = require('q');
 
 /**
  * Check if url is html page. Make HEAD request and check Content-Type header to be html.
