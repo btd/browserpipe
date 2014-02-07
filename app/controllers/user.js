@@ -1,7 +1,6 @@
 /* jshint node: true */
 
 var _ = require('lodash'),
-    q = require('q'),
     User = require('../../models/user'),
     Item = require('../../models/item');
 

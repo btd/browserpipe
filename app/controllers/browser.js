@@ -59,7 +59,7 @@ module.exports = function(app) {
                 var container = containerExternalIdCache[window.externalId];
                 if (!container) {
                     logger.debug('Container for window %d does not exists, create new one', window.externalId);
-                    var container = listboard.addContainer({
+                    container = listboard.addContainer({
                         title: 'browser window',
                         externalId: window.externalId
                     });

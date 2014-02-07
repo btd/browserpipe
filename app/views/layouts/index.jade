@@ -22,23 +22,25 @@ body
               .outer.inner 
                 .inner
                   h1#logo.pull-left
-                    a(href="/") Listboard.it
+                    a(href="/") browserpipe
                   ul.navbar.topbar
                     li
                       a(href="/") Home
                     li
-                      a.icon(href="http://twitter.com/listboardit", target="_blank")
-                        i.icon-twitter      
+                      a(href="/login") Login
+                    li
+                      a.icon(href="http://twitter.com/browserpipe", target="_blank")
+                        i.fa.fa-twitter      
             #index-center.span12
               .inner  
                   block content      
       block center
       .row-fluid
-      .row-fluid.blue.row-footer
+      .row-fluid.row-footer
         .span12
           footer
             p(class="footer-big")
               | Feel free to 
-              a(href="mailto:info@listboard.it", target="_blank") contact us
-            p(class="footer-small") Lisboard.it ©2013
+              a(href="mailto:info@browserpipe.com", target="_blank") contact us
+            p(class="footer-small") Browserpipe.com ©2013
     block footer

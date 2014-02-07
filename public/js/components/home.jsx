@@ -78,7 +78,7 @@ var HomeComponent = React.createClass({
     return (
       <div className="home" >
 	<div className="home-top">
-	  <div className="logo">Listboard.it</div>
+	  <div className="logo">browserpipe.com</div>
 	  <div className="user-options">
 	    <li className="dropdown nav-option">
 	      <a draggable="false"  href="#" data-toggle="dropdown" className="dropdown-toggle">

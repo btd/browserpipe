@@ -2,7 +2,6 @@
 
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
-    _ = require('lodash'),
     validation = require('./validation');
 
 var User;
@@ -26,7 +25,7 @@ var UserSchema = new Schema({
 UserSchema.plugin(require('../util/mongoose-timestamp'));
 
 UserSchema.set('toJSON', {
-    transform: function(doc, ret, options) {
+    transform: function(doc, ret) {
         delete ret.password;
         return ret;
     }

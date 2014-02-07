@@ -28,24 +28,21 @@ var BrowserComponent = React.createClass({
   render: function() {
     var self = this;
     return (
-      <div className="browser">
-        <div className="browser-commands" >
-	  <input type="text" className="url-input" ref="urlInput" value={this.state.selected.url} />
-	  <input type="button" className="url-btn" value="Go"  onClick={this.navigateToURL} />
-	  <div className="home-option" onClick={ this.homeOptionClicked } >
-	    <i className="fa fa-th-large"></i>
-	  </div>
-	  <div className="pin-option" onClick={ this.toggleBar } >
-	    <i className="fa fa-thumb-tack"></i>
-	  </div>
-        </div>
-        <iframe src='about:blank' className="browser-content">
-	</iframe>
+      <div>
+	<input type="text" className="url-input" ref="urlInput" defaultValue={this.state.selected.url} />
+	<input type="button" className="url-btn" value="Go"  onClick={this.navigateToURL} />
+	<div className="home-option" onClick={ this.homeOptionClicked } >
+	  <i className="fa fa-th-large"></i>
+	</div>
+	<div className="pin-option" onClick={ this.toggleBar } >
+	  <i className="fa fa-thumb-tack"></i>
+	</div>
       </div>
     );
   },
   componentDidUpdate: function() {
    websocket.send('browser.open', { itemId: this.state.selected._id });
+   $('.url-input').val(this.state.selected.url);
   },
   componentDidMount: function() {
    websocket.send('browser.open', { itemId: this.state.selected._id });
@@ -59,6 +56,6 @@ module.exports.render = function (
   return React.renderComponent(
     <BrowserComponent 
       selected={selected} />,
-    document.getElementById('browser-section')
+    document.getElementById('browser-commands')
   );
 };
