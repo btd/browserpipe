@@ -37,12 +37,7 @@ exports.addItemToItem = function(parent, req, res) {
         })
         .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
         .then(userUpdate.createItem.bind(null, req.user._id, item))
-        .then(userUpdate.updateItem.bind(null, req.user._id, parent))
-        .then(function() {
-            if(item.isBookmark()) {
-                launchItemJobs(req, res, item)
-            }
-        });
+        .then(userUpdate.updateItem.bind(null, req.user._id, parent));
 }
 
 // this method used to add item to another item (because item could not exists without any parent container)
