@@ -2,53 +2,53 @@
 
 var _state = require('./state'),
     page = require('page'),
-    HomeView = require('./components/home'),
-    BrowserView = require('./components/browser'),
+    DashboardComponent = require('./components/dashboard'),
+    TopBarComponent = require('./components/topbar'),
     $ = require('jquery'),
     websocket = require('./websocket/websocket');
 
 //Dropdown
 require('bootstrap-dropdown');
 
-var homeView, browserView; //react home component instance
+var topBarComponent, dashboardComponent; //react component instances
 
-var loadHomeView = function() {
-    $('#home-section').show();
-    $('#browser-section').hide();
-    if(!homeView){        
-       homeView = HomeView.render(
-         _state.browser,
-         _state.selected
-       );
-    } else {
-        homeView.setState({
-            selected: _state.selected
-        }); 
-    }
-}
-
-var loadBrowserView = function(item) {
-    $('#home-section').hide();
-    $('#browser-section').show();
-    if(!browserView){        
-       browserView = BrowserView.render(
+var loadTopBarComponent = function(item) {
+    if(!topBarComponent){        
+       topBarComponent = TopBarComponent.render(
          item
        );
     } else {
-        browserView.setState({
+        topBarComponent.setState({
             selected: item
         }); 
     }
 }
 
+var loadDashboardComponent = function() {
+    if(!dashboardComponent){        
+       dashboardComponent = DashboardComponent.render(
+         _state.selected
+       );
+    } else {
+        dashboardComponent.setState({
+            selected: _state.selected
+        }); 
+    }
+}
+
+var loadPage = function(item) {
+  $('#page-section .page-content').contents().find('body').empty();
+  websocket.send('browser.open', { itemId: item._id });
+}
+
 page('/', function () {
     setTimeout(function() {
-	if(_state.browser.items.length > 0)
-	  page('/item/' + _state.browser.items[0]); 
-	else {
-	  _state.selected = null;
-	  loadHomeView();
-	}
+	_state.selected = _state.browser;
+	loadTopBarComponent();
+	loadDashboardComponent();
+        $('#topbar-section').show();
+        $('#dashboard-section').show();
+        $('#page-section').hide();
     }, 0);
 });
 
@@ -59,10 +59,19 @@ page('/item/:id', function (ctx) {
         if(item) {
 	    if(item.type === 2) {
               _state.selected = item;
-              loadHomeView();
+	      loadTopBarComponent();
+              loadDashboardComponent();
+              $('#topbar-section').show();
+              $('#dashboard-section').show();
+              $('#page-section').hide();
 	    }
-	    else
-	      loadBrowserView(item);
+	    else {
+	      loadTopBarComponent(item);
+	      loadPage(item);
+              $('#topbar-section').show();
+              $('#dashboard-section').hide();
+              $('#page-section').show();
+	    }
         } else {
             page('/');
         }
@@ -91,7 +100,7 @@ var stateChanges = function() {
 
     var changeInItems = function(item) {
         if(_state.selected && (item._id === _state.selected._id || item.parent === _state.selected._id))
-            homeView.setState({
+            dashboardComponent.setState({
                 selected: _state.selected
             });
     }
@@ -101,7 +110,7 @@ var stateChanges = function() {
     _state.items.on('change', changeInItems);
 
     var changeInBrowser= function() {
-        homeView.setState({
+        dashboardComponent.setState({
             browser: _state.browser
         });
     };

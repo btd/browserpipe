@@ -2,7 +2,7 @@
 module.exports = function (socket) {
 
     socket.on('browser.set.html', function (html) {
-        $('#browser-section .browser-content').contents().find('body').html(html);
+        $('#page-section .page-content').contents().find('body').html(html);
     });
 
 };

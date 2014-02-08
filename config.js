@@ -8,7 +8,7 @@ var common = {
     storePath: './public/screenshots', // path where jobs server will store all its content, maybe we will need to separate it
     storeUrl: '/screenshots',
     screenshot: { // default screenshot settings
-        format: 'jpg',
+        format: 'png',
         width: 800,
         height: 600,
         defaultName: 'screenshot'
