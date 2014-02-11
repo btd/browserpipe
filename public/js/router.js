@@ -49,6 +49,7 @@ page('/', function () {
         $('#topbar-section').show();
         $('#dashboard-section').show();
         $('#page-section').hide();
+	$('html, body').removeClass('overflow-hidden');
     }, 0);
 });
 
@@ -64,6 +65,7 @@ page('/item/:id', function (ctx) {
               $('#topbar-section').show();
               $('#dashboard-section').show();
               $('#page-section').hide();
+	      $('html, body').removeClass('overflow-hidden');
 	    }
 	    else {
 	      loadTopBarComponent(item);
@@ -71,6 +73,7 @@ page('/item/:id', function (ctx) {
               $('#topbar-section').show();
               $('#dashboard-section').hide();
               $('#page-section').show();
+	      $('html, body').addClass('overflow-hidden');
 	    }
         } else {
             page('/');

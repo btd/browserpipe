@@ -7,6 +7,16 @@
   font-family: "Lucida Grande", "Lucida Unicode MS", sans-serif; 
 }
 
+html,body {
+  height:100%;
+  margin:0;
+  padding:0;
+}
+
+.overflow-hidden {
+  overflow:hidden;
+}
+
 body {
   color: #666;
   background-color: #f2eee8;
@@ -33,22 +43,47 @@ a {
   color: #ff6d16; 
 }
 
+.fa:hover {
+  cursor: pointer;
+  color: darken(#666, 15%);
+}
+
 #topbar-section {
+  height: 42px;
   
   .topbar-commands {
     z-index: 10000;
     width: 100%;
     .opacity(80);
     text-align: center;
-    margin: 6px 0;
+    margin: 12px 0 6px;
 
-    .url-input { 
-      width: 60%;
-      height: 36px;
-      margin-bottom: 0;
+    .navigate-options {
+      display: inline-block;
+      
+      .back-option, .forward-option {
+        display: inline-block;
+	font-size: 24px;
+	margin-right: 6px;
+      }
     }
-    .url-btn {
-      height: 30px;
+    .search-options {
+      display: inline-block;
+      margin-bottom: 10px;
+      vertical-align: middle;
+      font-size: 0;
+      white-space: nowrap;
+      width: 60%;
+      margin-bottom: 0;
+
+      .url-input { 
+	width: 90%;
+	height: 36px;
+      }
+      .url-btn {
+        width: 45px;
+	height: 36px;
+      }
     }
     .home-option {
       display: inline-block;
@@ -60,8 +95,10 @@ a {
       }
     }
     .user-options {
-      float: right;
-      margin: 6px 30px 3px;
+      margin: 6px 12px 3px;
+      position: absolute;
+      top: 0;
+      right: 0;
 
       .nav-option {
 	list-style: none;
@@ -81,9 +118,12 @@ a {
 }
 
 #dashboard-section {
-  margin-top: 18px;
+  height: 100%;
+  margin: -42px 0 0;
+  padding: 42px 0 0;
   
   .dashboard {
+    margin-top: 18px;
      
     .items {
       margin-left: 60px;
@@ -315,17 +355,18 @@ a {
 }
 
 #page-section {
+  height: 100%;
+  margin: -42px 0 0;
+  padding: 42px 0 0;
+
   .page-content {
-      position: fixed;
       background-color: #fff;
       height: 100%;
       width: 100%;
-      margin: 0;
-      border-top: 1px solid #666;
+      border-top: 1px solid #e6e6e6;
       border-left: 0;
       border-right: 0;
       border-bottom: 0;
-      padding: 0;
     }
 }
 

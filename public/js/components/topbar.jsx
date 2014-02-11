@@ -14,6 +14,10 @@ var TopBarComponent = React.createClass({
           selected: this.props.selected,
       };
   },
+  backOptionClicked: function() { 
+  },
+  forwardOptionClicked: function() { 
+  },
   homeOptionClicked: function() { 
     $('#page-section .page-content').contents().find('body').empty();
     $('.url-input').val('');
@@ -30,14 +34,24 @@ var TopBarComponent = React.createClass({
     var self = this;
     return (
       <div className="topbar-commands">
-	<input type="text" placeholder="Enter an URL or search a tab" className="url-input" ref="urlInput" defaultValue={this.state.selected? this.state.selected.url : ''} />
-	<input type="button" className="url-btn btn btn-warning" value="Go"  onClick={this.navigateToURL} />
+        <div className="navigate-options">
+	  <div className="back-option" onClick={ this.backOptionClicked } >
+	    <i className={"fa fa-arrow-circle-left" + (this.state.selected? "": " hide")}></i>
+	  </div>
+	  <div className="forward-option" onClick={ this.forwardOptionClicked } >
+	    <i className={"fa fa-arrow-circle-right" + (this.state.selected? "": " hide")}></i>
+	  </div>
+	</div>
+	<div className="search-options input-append">
+	  <input type="text" placeholder="Enter an URL or search a tab" className="url-input" ref="urlInput" defaultValue={this.state.selected? this.state.selected.url : ''} />
+	  <input type="button" className="url-btn btn btn-warning" value="Go"  onClick={this.navigateToURL} />
+	</div>
 	<div className="home-option" onClick={ this.homeOptionClicked } >
-	  <i className="fa fa-th-large"></i>
+	  <i className={"fa fa-th-large" + (this.state.selected? "": " hide")}></i>
 	</div>
 	<div className="user-options">
 	  <li className="nav-option pin-option" onClick={ this.toggleBar } >
-	    <i className="fa fa-thumb-tack"></i>
+	    <i className={"fa fa-thumb-tack" + (this.state.selected? "": " hide")}></i>
 	  </li>
 	  <li className="dropdown nav-option">
 	    <a draggable="false"  href="#" data-toggle="dropdown" className="dropdown-toggle">
