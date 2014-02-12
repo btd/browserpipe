@@ -13,7 +13,7 @@ var initBrowser = function (socket) {
     browser.once('html', function(data) {
       socket.emit("browser.set.html", data.html);
 
-      browser.once('screnshot', function(screenshot) {
+      browser.once('screenshot', function(screenshot) {
         var userId = socket.handshake.user._id;
         Item.byId(itemId).then(function (item) {
           if (item) {
