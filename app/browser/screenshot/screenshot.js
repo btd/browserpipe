@@ -1,17 +1,24 @@
 var config = require('../../../config'),
-    phantom=require('node-phantom');
-  
+  phantom = require('node-phantom');
+
+var crypto = require('crypto');
+
 var _ph;
 console.time("phantom-creation");
-phantom.create(function(err,ph) {
+phantom.create(function(err, ph) {
+  if(err) return console.error('Could not create PhantomJS instance', err);
   console.timeEnd("phantom-creation");
   _ph = ph;
 }, {
-  parameters:{
+  parameters: {
     'web-security': 'no',
-    'ignore-ssl-errors':'yes'
+    'ignore-ssl-errors': 'yes'
   }
 });
+
+function randomId() {
+  return  crypto.pseudoRandomBytes(64).toString('hex');
+}
 
 function getPicturePath(itemId) {
   var format = config.screenshot.format || 'png';
@@ -23,21 +30,24 @@ function getPictureUrl(itemId) {
   return config.storeUrl + '/' + itemId + '.' + format;
 }
 
-var generateScreenshot = function(html, itemId, callback) {
+var noScreenshotUrl = '/img/no_screenshot.png';
+
+var generateScreenshot = function(html, callback) {
+  var itemId = randomId();
   console.time("page-creation");
-  _ph.createPage(function(err,page) {
+  _ph.createPage(function(err, page) {
     console.timeEnd("page-creation");
-    page.set('content', html, function (error) {
-      if (error) {
+    page.set('content', html, function(error) {
+      if(error) {
         console.log('Error setting content: %s', error);
-	  callback('/img/no_screenshot.png');
+        callback(noScreenshotUrl);
       }
       else {
         var screenshot_path = getPicturePath(itemId);
         console.time("page-getScreenshot");
-        page.render(screenshot_path, function (error) {
+        page.render(screenshot_path, function(error) {
           console.timeEnd("page-getScreenshot");
-	  if (error) console.log('Error rendering page: %s', error);
+          if(error) console.log('Error rendering page: %s', error);
           callback(getPictureUrl(itemId));
         });
       }
@@ -45,4 +55,5 @@ var generateScreenshot = function(html, itemId, callback) {
   });
 }
 
-exports.generateScreenshot = generateScreenshot 
+exports.generateScreenshot = generateScreenshot;
+exports.noScreenshotUrl = noScreenshotUrl;
