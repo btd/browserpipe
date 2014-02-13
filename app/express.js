@@ -18,8 +18,8 @@ module.exports = function (app, config, passport) {
 
     // dynamic helpers
     app.use(function (req, res, next) {
-        res.locals.appName = 'Listboard.it';
-        res.locals.title = 'Visualize your information';
+        res.locals.appName = 'Browserpipe';
+        res.locals.title = 'Your browser everywhere';
 
         next();
     })
