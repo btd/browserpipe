@@ -1,4 +1,5 @@
-var Base = require('./base');
+var Base = require('./base'),
+    _ = require('lodash');
 
 var url = require('url');
 
