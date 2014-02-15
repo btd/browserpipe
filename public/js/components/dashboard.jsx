@@ -61,7 +61,7 @@ var DashboardComponent = React.createClass({
     var self = this;
     return (
       <div className="dashboard" >
-	 <div className="items">
+	 <div className="items clearfix">
 	   { this.renderFolderUp() }
 	   { this.renderFolders() }
 	   { this.renderItems() }

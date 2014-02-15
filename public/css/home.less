@@ -56,7 +56,7 @@ a {
     width: 100%;
     .opacity(80);
     text-align: center;
-    margin: 12px 0 6px;
+    padding: 3px 0 6px;
 
     .navigate-options {
       display: inline-block;
@@ -140,11 +140,10 @@ a {
       }
 
       .folder {
-	width: 320px; 
+	width: 252px; 
 	margin: 12px 20px;
 	float: left;
-	line-height: 220px;
-	height: 220px; 
+	height: 157px; 
 	overflow: hidden;
 	position: relative;
 	border: 1px solid #ccc;
@@ -156,8 +155,13 @@ a {
 	border-radius: 2px;
 	
 	.folder-title { 
-	  font-size: 24px;
+	  line-height: 27px;
+	  width: 252px; 
+	  height: 157px; 
+          display: table-cell;
+	  vertical-align: middle;
 	  text-align: center;
+	  font-size: 24px;
 
 	  &.up {
 	    font-size: 48px;
@@ -166,13 +170,29 @@ a {
 
 	.tabs-preview {
           overflow: hidden;
-          margin-top: 27px;
+          margin-top: 12px;
 
-	  .tab-preview {
+	  .tab-preview, .folder-preview {
             float: left;
-	    height: 66px;
-	    width: 96px;
-	    margin: 6px 5px;
+            height: 47px;
+            width: 75px;
+            margin: 9px 3px;
+	  }
+	  .folder-preview {
+	    overflow: hidden;
+	    position: relative;
+	    border: 1px solid #ccc;
+	    background-color: #ddd;
+	    
+	    .folder-title { 
+	      line-height: 12px;
+	      width: 75px; 
+	      height: 47px; 
+	      display: table-cell;
+	      vertical-align: middle;
+	      text-align: center;
+	      font-size: 10px;
+	    }
 	  }
 	}
 
@@ -233,8 +253,8 @@ a {
 
 	.tab-content {
 	  border: 1px solid black;
-	  height: 220px; 
-	  width: 320px; 
+	  height: 157px; 
+	  width: 252px; 
 	  overflow: hidden;
 	}
     
@@ -245,8 +265,8 @@ a {
 	  position: absolute;
 	  background-color: #000;
 	  z-index: 1000;
-	  width: 320px;
-	  height: 220px; 
+	  width: 252px;
+	  height: 157px; 
 	  color: #fff;
 
 	  &.hide {
@@ -286,7 +306,7 @@ a {
 	    font-size: 12px;
 	    margin-left: 6px;
 	    color: #333;
-	    width: 300px;
+	    width: 230px;
 	    text-overflow: ellipsis;
 	    overflow: hidden;
 	    white-space: nowrap;
@@ -304,8 +324,8 @@ a {
       .new-options {
 	position: relative;
 	margin: 12px 20px;
-	width: 320px;
-	height: 220px;
+	width: 252px;
+	height: 157px;
 	float: left;
 
 	.new-tab, .new-folder, .new-note {
@@ -330,23 +350,23 @@ a {
 	.new-tab {
 	  float: left;
 	  font-size: 80px;
-	  padding: 6px 16px;
-	  margin: 30px 120px;
+	  padding: 6px 16px; 
+          margin: 9px 75px;
 	}
 
 	.new-folder, .new-note {
 	  position: absolute;
-	  bottom: 30px;
+	  bottom: 6px;
 	  font-size: 24px;
 	  padding: 6px 9px;
 	}
 
 	.new-folder {
-	  left: 120px;
+	  left: 75px;
 	}
 
 	.new-note {
-	  left: 180px;
+	  left: 135px;
 	}
       
       }

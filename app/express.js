@@ -53,7 +53,15 @@ module.exports = function (app, config, passport) {
 
     app.use(express.favicon());
 
-    app.use(express.static(__dirname + '/../public')); //TODO we need this only for local development
+    //TODO we need this only for local development
+    app.use(function (req, res, next) {
+      if(req.url.indexOf("/screenshots/") === 0) {
+        res.setHeader("Cache-Control", "public, max-age=31557600000"); // one year
+        res.setHeader("Expires", new Date(Date.now() + 31557600000).toUTCString());
+      }
+      next();
+    });
+    app.use(express.static(__dirname + '/../public'));
 
     app.use(express.logger({ format: 'short', stream: {
         write: function(msg) {

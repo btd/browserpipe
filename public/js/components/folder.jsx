@@ -67,9 +67,11 @@ var FolderComponent = React.createClass({
     var self = this;
     return  <div className="tabs-preview clearfix">
       {
-	this.props.folder.items.slice(0, 6).map(function(tabId){
-          var tab = _state.getItemById(tabId);
-          return  <img className="tab-preview" src={ tab.screenshot } />
+	this.props.folder.items.slice(0, 6).map(function(itemId){
+          var item = _state.getItemById(itemId);
+	  if(item.type === 2) 
+	    return <div className="folder-preview"><div className="folder-title">{ item.title }</div></div>
+	  else return <img className="tab-preview" src={ item.screenshot } />
         })
       }
       </div>
