@@ -11,7 +11,13 @@ Browser.prototype = Object.create(require('events').EventEmitter.prototype);
 Browser.prototype.loadUrl = function(url) {
   var that = this;
   //TODO add browser cache?
-  request(url, function (error, response, body) {
+  request({
+    url: url,
+    headers: {
+      // we are a fresh firefox
+      'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:25.0) Gecko/20100101 Firefox/25.0'
+    }
+  }, function (error, response, body) {
     if(error) {
       that.emit('html', {
         title: error.message,
@@ -21,6 +27,13 @@ Browser.prototype.loadUrl = function(url) {
     } else {
       if(response.statusCode === 200) {
         parser.parseHTML(url, body, function (err, data) {
+          if(err) {
+            that.emit('html', {
+              title: error.message,
+              html: '<div>'+error.message+'</div>'
+            });
+            that.emit('screenshot', screenshot.noScreenshotUrl);
+          }
           that.emit('html', data);
           screenshot.generateScreenshot(data.html, function (screenshotURL) {
             that.emit('screenshot', screenshotURL);
