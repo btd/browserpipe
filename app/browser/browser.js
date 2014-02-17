@@ -6,10 +6,21 @@ function Browser() {
 
 }
 
+//If it cannot make a URL out of it, it searchs term in Google
+function processURL(url) {
+  //TODO improve regex to also accept data uris and urls that do not start with http or https
+  if(url.match(/^(ht|f)tps?:\/\/[a-z0-9-\.]+\.[a-z]{2,4}\/?([^\s<>\#%"\,\{\}\\|\\\^\[\]`]+)?$/))
+    return url;
+  else {
+    return "http://www.google.com/search?q=" + encodeURIComponent(url);
+  };
+}
+
 Browser.prototype = Object.create(require('events').EventEmitter.prototype);
 
 Browser.prototype.loadUrl = function(url) {
   var that = this;
+  var finalURL = processURL(url);
   //TODO add browser cache?
   request({
     url: url,
@@ -18,6 +29,7 @@ Browser.prototype.loadUrl = function(url) {
       'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:25.0) Gecko/20100101 Firefox/25.0'
     }
   }, function (error, response, body) {
+  request(finalURL, function (error, response, body) {
     if(error) {
       that.emit('html', {
         title: error.message,

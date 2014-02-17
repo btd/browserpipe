@@ -1,5 +1,8 @@
 var config = require('../../../config'),
-  phantom = require('node-phantom');
+  phantom = require('node-phantom'),
+  Canvas = require('canvas'),
+  Image = Canvas.Image,
+  fs = require('fs');
 
 var crypto = require('crypto');
 
@@ -25,12 +28,17 @@ function getPicturePath(itemId) {
   return config.storePath + '/' + itemId + '.' + format;
 }
 
+function getPicturePathFull(itemId) {
+  var format = config.screenshot.format || 'png';
+  return config.storePath + '/' + itemId + '-full.' + format;
+}
+
 function getPictureUrl(itemId) {
   var format = config.screenshot.format || 'png';
   return config.storeUrl + '/' + itemId + '.' + format;
 }
 
-var noScreenshotUrl = '/img/no_screenshot.png';
+var noScreenshotUrl = '/screenshots/no_screenshot.png';
 
 var generateScreenshot = function(html, callback) {
   var itemId = randomId();
@@ -43,13 +51,41 @@ var generateScreenshot = function(html, callback) {
         callback(noScreenshotUrl);
       }
       else {
-        var screenshot_path = getPicturePath(itemId);
-        console.time("page-getScreenshot");
-        page.render(screenshot_path, function(error) {
-          console.timeEnd("page-getScreenshot");
-          if(error) console.log('Error rendering page: %s', error);
-          callback(getPictureUrl(itemId));
-        });
+        var screenshot_path_full = getPicturePathFull(itemId);
+	//We have to wait a bit for phantomjs to finish creating page
+	setTimeout(function () {
+	  console.time("page-getScreenshot");
+	  page.render(screenshot_path_full, function(error) {
+	    console.timeEnd("page-getScreenshot");
+	    if(error) {
+	      console.log('Error rendering page: %s', error);
+	      callback(noScreenshotUrl);
+	    }
+	    else {
+	      console.time("page-cropScreenshot");
+	      var screenshot_path = getPicturePath(itemId);
+	      var img = new Image;
+	      img.onerror = function(error){
+		console.log('Error cropping screenshot: %s', error);
+		callback(noScreenshotUrl);
+	      };
+	      img.onload = function(){
+		var w = 252,
+		h = 157,
+		ratio = w / img.width,
+		canvas = new Canvas(w, h),
+		ctx = canvas.getContext('2d');
+		ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, w, img.height * ratio);
+		var out = fs.createWriteStream(screenshot_path);
+		var stream = canvas.pngStream({
+		});
+		stream.pipe(out);	      
+		callback(getPictureUrl(itemId));
+	      }
+	      img.src = screenshot_path_full;
+	    }
+	  });
+	}, 1000); 
       }
     })
   });
