@@ -78,7 +78,7 @@ HtmlWriteHandler.prototype.onCloseTag = function(name) {
 HtmlWriteHandler.prototype.onProcessingInstruction = function(name, value) {
 
   if(name == '!doctype') {
-    if(value == '!DOCTYPE html') this.html5 = true;
+    if(value.toLowerCase() == '!doctype html') this.html5 = true;
 
     this.content += '<' + value + '>';
   }
