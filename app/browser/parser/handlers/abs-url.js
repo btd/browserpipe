@@ -1,8 +1,10 @@
-var Base = require('./base'),
+var Base = require('./base');
 
 var url = require('url');
 
-var tags = { img: [ 'src', 'longdesc', 'usemap' ],
+var tags = { 
+  a: [ 'href' ],
+  img: [ 'src', 'longdesc', 'usemap' ],
   input: [ 'src', 'formaction', 'usemap' ],
   area: [ 'href' ],
   base: [ 'href' ],
@@ -16,7 +18,8 @@ var tags = { img: [ 'src', 'longdesc', 'usemap' ],
   link: [ 'href' ],
   button: [ 'formaction' ],
   command: [ 'icon' ],
-  html: [ 'manifest' ]};
+  html: [ 'manifest' ]
+};
 
 
 function replaceStyleUrl(style, replace) {

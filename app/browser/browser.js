@@ -13,7 +13,7 @@ function processURL(url) {
     return url;
   else {
     return "http://www.google.com/search?q=" + encodeURIComponent(url);
-  };
+  }
 }
 
 Browser.prototype = Object.create(require('events').EventEmitter.prototype);
@@ -29,37 +29,38 @@ Browser.prototype.loadUrl = function(url) {
       'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:25.0) Gecko/20100101 Firefox/25.0'
     }
   }, function (error, response, body) {
-  request(finalURL, function (error, response, body) {
-    if(error) {
-      that.emit('html', {
-        title: error.message,
-        html: '<div>'+error.message+'</div>'
-      });
-      that.emit('screenshot', screenshot.noScreenshotUrl);
-    } else {
-      if(response.statusCode === 200) {
-        parser.parseHTML(url, body, function (err, data) {
-          if(err) {
-            that.emit('html', {
-              title: error.message,
-              html: '<div>'+error.message+'</div>'
-            });
-            that.emit('screenshot', screenshot.noScreenshotUrl);
-          }
-          that.emit('html', data);
-          screenshot.generateScreenshot(data.html, function (screenshotURL) {
-            that.emit('screenshot', screenshotURL);
-          })
-        });
+    request(finalURL, function (error, response, body) {
+      if(error) {
+	that.emit('html', {
+	  title: error.message,
+	  html: '<div>'+error.message+'</div>'
+	});
+	that.emit('screenshot', screenshot.noScreenshotUrl);
       } else {
-        var msg = 'Not a 200 status code, but ' + response.statusCode;
-        that.emit('html', {
-          title: msg,
-          html: '<div>'+msg+'</div>'
-        });
-        that.emit('screenshot', screenshot.noScreenshotUrl);
+	if(response.statusCode === 200) {
+	  parser.parseHTML(url, body, function (err, data) {
+	    if(err) {
+	      that.emit('html', {
+		title: error.message,
+		html: '<div>'+error.message+'</div>'
+	      });
+	      that.emit('screenshot', screenshot.noScreenshotUrl);
+	    }
+	    that.emit('html', data);
+	    screenshot.generateScreenshot(data.html, function (screenshotURL) {
+	      that.emit('screenshot', screenshotURL);
+	    })
+	  });
+	} else {
+	  var msg = 'Not a 200 status code, but ' + response.statusCode;
+	  that.emit('html', {
+	    title: msg,
+	    html: '<div>'+msg+'</div>'
+	  });
+	  that.emit('screenshot', screenshot.noScreenshotUrl);
+	}
       }
-    }
+    });
   });
 };
 

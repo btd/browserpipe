@@ -10,7 +10,8 @@ module.exports.parseHTML = function(url, html, callback) {
   var handler = new SanitizeHandler({
     callback: callback
   })
-    .addNext((new AbsUrlHandler({ url: url })).addNext(new HtmlWriterHandler))
+    .addNext(new AbsUrlHandler({ url: url }))
+    .addNext(new HtmlWriterHandler)
     .addNext(new FaviconHandler({ url: url }))
     .addNext(new TitleHandler);
   

@@ -93,7 +93,7 @@ ItemSchema.statics.by = function (query) {
 ItemSchema.statics.getHtml = function (id) {
     return Item
         .findOne({ _id: id})
-	.select('html')
+	.select('_id url html')
         .execWithPromise();
 };
 

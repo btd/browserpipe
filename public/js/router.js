@@ -58,8 +58,8 @@ page('/item/:id', function (ctx) {
         var id = ctx.params.id;
         var item = _state.getItemById(id);
         if(item) {
+            _state.selected = item;
 	    if(item.type === 2) {
-              _state.selected = item;
 	      loadTopBarComponent();
               loadDashboardComponent();
               $('#topbar-section').show();
@@ -102,7 +102,9 @@ var initialize = function () {
 var stateChanges = function() {
 
     var changeInItems = function(item) {
-        if(_state.selected && (item._id === _state.selected._id || item.parent === _state.selected._id))
+        if(dashboardComponent && _state.selected && 
+	   ((item._id === _state.selected._id && item.type === 2) || item.parent === _state.selected._id)
+	 )
             dashboardComponent.setState({
                 selected: _state.selected
             });
@@ -113,6 +115,7 @@ var stateChanges = function() {
     _state.items.on('change', changeInItems);
 
     var changeInBrowser= function() {
+      if(dashboardComponent)
         dashboardComponent.setState({
             browser: _state.browser
         });
