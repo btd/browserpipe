@@ -4,10 +4,7 @@ var Item = require('../../models/item'),
 
 var initBrowser = function (socket) {
 
-  socket.on('browser.navigate', function (data) {
-    var url = data.url;
-    var itemId = data.itemId;
-
+  var navigate = function(url, itemId) {
     var browser = new Browser;
 
     browser.once('html', function(data) {
@@ -32,13 +29,23 @@ var initBrowser = function (socket) {
     });
 
     browser.loadUrl(url);
+  }
+
+  socket.on('browser.navigate', function (data) {
+    var url = data.url;
+    var itemId = data.itemId;
+    navigate(url, itemId);
   });
 
   socket.on('browser.open', function (data) {
     var itemId = data.itemId;
     Item.getHtml(itemId).then(function (item) {
-      if (item)
-        socket.emit("browser.set.html", item.html);
+      if (item && item.url){
+        if (item.html)
+          socket.emit("browser.set.html", item.html);
+	else 
+	  navigate(item.url, item._id);
+      }
     }).done();
   });
 

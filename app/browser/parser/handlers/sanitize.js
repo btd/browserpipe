@@ -30,10 +30,6 @@ SanitizeHandler.prototype.onOpenTag = function(name, attributes, next) {
       delete attributes[n];
     });
 
-    if(name == 'a' && attributes.href) {
-      attributes.href = ''; //delete it for now
-    }
-
     next();
   } else {
     this.stack.push(name);
