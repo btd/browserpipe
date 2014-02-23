@@ -21,7 +21,7 @@ InvitationSchema.plugin(require('../util/mongoose-timestamp'));
 var qfindOne = function (obj) {
     return Invitation
             .findOne(obj)            
-            .execWithPromise();
+            .exec();
 };
 
 InvitationSchema.statics.by = qfindOne;

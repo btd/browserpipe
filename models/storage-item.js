@@ -13,7 +13,7 @@ var StorageItem;
 
 var StorageItemSchema = new Schema({
   contentType: String,
-  contentLength: String,
+  contentLength: Number,
   lastModified: Date,
   name: String,
   url: String
@@ -28,7 +28,7 @@ StorageItemSchema.methods.getContent = function() {
 var qfindOne = function (obj) {
   return StorageItem
     .findOne(obj)
-    .execWithPromise();
+    .exec();
 };
 
 StorageItemSchema.statics.by = qfindOne;

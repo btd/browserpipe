@@ -85,8 +85,19 @@ Browser.prototype.produceError = function(err) {
   this.emit('screenshot', screenshot.noScreenshotUrl);
 };
 
+function addHeaderValue(si, headers, name, constructor) {
+  if(headers[name]) {
+    var fieldName = name.replace(/-[a-z]/g, function(match) {
+      return match[1].toUpperCase();
+    });
+
+    si[fieldName] = new (constructor || String)(headers[name]);
+  }
+}
+
 Browser.prototype.saveData = function(response, content) {
-  var fullPath = path.join(config.storage.path, randomId(), randomId(), randomId(), randomId());
+  var name = path.join(randomId(), randomId(), randomId(), randomId());
+  var fullPath = path.join(config.storage.path, name);
   return mkdirp(path.dirname(fullPath))
     .then(function() {
       return writeFile(fullPath, content);
@@ -94,11 +105,13 @@ Browser.prototype.saveData = function(response, content) {
     .then(function() {
       var si = new StorageItem({
         url: response.request.href,
-        contentType: response.headers['content-length'],
-        contentLength: response.headers['content-type'],
-        lastModified: new Date(response.headers['last-modified']), //TODO add other tags
-        name: fullPath
+        name: name
       });
+
+      addHeaderValue(si, response.headers, 'content-type');
+      addHeaderValue(si, response.headers, 'content-length');
+      addHeaderValue(si, response.headers, 'last-modified', Date);
+
       return Promise.cast(si.save()).then(function() {
         return Promise.fulfilled(si);
       });

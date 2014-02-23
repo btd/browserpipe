@@ -88,7 +88,7 @@ ItemSchema.statics.byId = function(id) {
 ItemSchema.statics.by = function(query) {
   return Item
     .findOne(query)
-    .select('_id items parent user type favicon screenshot url externalId browserKey lastSync title deleted')
+    .select('_id items parent user type favicon screenshot url externalId browserKey lastSync title deleted storageItem')
     .exec();
 };
 

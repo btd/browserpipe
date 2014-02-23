@@ -1,4 +1,5 @@
 var Item = require('../../models/item'),
+  StorageItem = require('../../models/storage-item'),
   userUpdate = require('../controllers/user_update'),
   Browser = require('./browser');
 
@@ -14,7 +15,7 @@ var initBrowser = function(socket) {
     });
 
     browser.on('end', function(data) {
-      var userId = socket.handshake.user._id;
+      //var userId = socket.handshake.user._id;
       return Item.byId(itemId).then(function(item) {
         if(item) {
           item.title = data.title;
@@ -22,13 +23,14 @@ var initBrowser = function(socket) {
           item.favicon = data.favicon;
           item.screenshot = data.screenshot;
 
-
           return data.storageItem.then(function(si) {
-            item.storageItem = si;
+            console.log(si);
+            item.storageItem = si._id;
 
             return Promise.cast(item.save())
               .then(function() {
-                userUpdate.updateItem(userId, item);
+                console.log('SAVED');
+                userUpdate.updateItem(item.user, item);
               })
           });
         }
@@ -46,12 +48,22 @@ var initBrowser = function(socket) {
 
   socket.on('browser.open', function(data) {
     var itemId = data.itemId;
-    return Item.byId(itemId).then(function(item) {
+    return Promise.cast(Item.byId(itemId)).then(function(item) {
+      console.log(item);
       if(item.storageItem) {
-        return StorageItem.byId(item.storageItem).then(function(stored) {
-          return stored.getContent();
-        })
-      } else {
+        console.log('Sid', item.storageItem);
+        return Promise.cast(StorageItem.by({ _id: item.storageItem }))
+          .then(function(stored) {
+            console.log('S', stored);
+            if(stored) {
+              return stored.getContent().then(function(content) {
+                socket.emit("browser.set.html",content);
+              })
+            } else if(item.url){
+              return navigate(item.url, itemId);
+            }
+          })
+      } else if(item.url){
         return navigate(item.url, itemId);
       }
     });

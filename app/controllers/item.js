@@ -2,6 +2,7 @@
 
 var _ = require('lodash'),
     Item = require('../../models/item'),
+    StorageItem = require('../../models/storage-item'),
     responses = require('../responses'),
     errors = require('../errors'),
 
@@ -97,10 +98,10 @@ exports.item = function(req, res, next, id) {
 //TODO need to send updates to client
 function removeItem(item) {
     return Item.all({ _id: { $in: item.items } }).then(function(items) {
-        return Q.all(items.map(removeItem));
+        return Promise.all(items.map(removeItem));
     }).then(function() {
         item.deleted = true;
-        return item.saveWithPromise();
+        return item.save();
     });
 }
 
@@ -113,7 +114,7 @@ exports.delete = function(req, res) {
         return Item.byId({ _id: item.parent })
             .then(function(parent) {
                 parent.items.remove(item._id);
-                return parent.saveWithPromise().then(userUpdate.updateItem.bind(null, req.user._id, parent));
+                return parent.save().then(userUpdate.updateItem.bind(null, req.user._id, parent));
             })
             .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
             .then(removeItem.bind(null, item))//2 delete item
@@ -140,4 +141,29 @@ exports.search = function(req, res) {
 
         res.json({ query: req.query, items: ids });
     });
+}
+
+exports.storageItem = function(req, res) {
+  res.header('X-Frame-Options', 'SAMEORIGIN');
+
+  var storageId = req.params['storageId'];
+
+  console.log(storageId);
+
+  return StorageItem.by({ _id: storageId }).then(function(si) {
+    if(si) {
+      return si.getContent().then(function(content) {
+        if(si.contentType) {
+          res.header('Content-Type', si.contentType);
+        }
+        if(si.contentLength) {
+          res.header('Content-Length', si.contentLength);
+        }
+
+        res.send(content);
+      })
+    } else {
+      res.send(404, 'Not found');
+    }
+  })
 }

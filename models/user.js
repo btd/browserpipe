@@ -67,7 +67,7 @@ UserSchema.statics.byEmail = function (email) {
 
 UserSchema.pre('save', function (done) {
     var that = this;
-    User.byEmail(this.email)
+    return User.byEmail(this.email)
         .then(function (otherUser) {
             if (otherUser && !otherUser._id.equals(that._id)) {
                 that.invalidate('email', errorMsgs.should_be_unique);
@@ -75,9 +75,7 @@ UserSchema.pre('save', function (done) {
             } else {
                 done();
             }
-        }).fail(function (err) {
-            done(err);
-        });
+        }, done);
 });
 
 module.exports = User = mongoose.model('User', UserSchema);
