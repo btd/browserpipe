@@ -2,55 +2,63 @@ var Item = require('../../models/item'),
   userUpdate = require('../controllers/user_update'),
   Browser = require('./browser');
 
-var initBrowser = function (socket) {
+var Promise = require('bluebird');
+
+var initBrowser = function(socket) {
 
   var navigate = function(url, itemId) {
     var browser = new Browser;
 
-    browser.once('html', function(data) {
+    browser.on('html', function(data) {
       socket.emit("browser.set.html", data.html);
+    });
 
-      browser.once('screenshot', function(screenshot) {
-        var userId = socket.handshake.user._id;
-        Item.byId(itemId).then(function (item) {
-          if (item) {
-            item.title = data.title;
-            item.url = url;
-            item.favicon = data.favicon
-            item.html = data.html;
-            item.screenshot = screenshot;
-            item.saveWithPromise()
-              .then(function () {
+    browser.on('end', function(data) {
+      var userId = socket.handshake.user._id;
+      return Item.byId(itemId).then(function(item) {
+        if(item) {
+          item.title = data.title;
+          item.url = url;
+          item.favicon = data.favicon;
+          item.screenshot = data.screenshot;
+
+
+          return data.storageItem.then(function(si) {
+            item.storageItem = si;
+
+            return Promise.cast(item.save())
+              .then(function() {
                 userUpdate.updateItem(userId, item);
               })
-          }
-        }).done();
-      });
+          });
+        }
+      })
     });
 
     browser.loadUrl(url);
-  }
+  };
 
-  socket.on('browser.navigate', function (data) {
+  socket.on('browser.navigate', function(data) {
     var url = data.url;
     var itemId = data.itemId;
     navigate(url, itemId);
   });
 
-  socket.on('browser.open', function (data) {
+  socket.on('browser.open', function(data) {
     var itemId = data.itemId;
-    Item.getHtml(itemId).then(function (item) {
-      if (item && item.url){
-        if (item.html)
-          socket.emit("browser.set.html", item.html);
-	else 
-	  navigate(item.url, item._id);
+    return Item.byId(itemId).then(function(item) {
+      if(item.storageItem) {
+        return StorageItem.byId(item.storageItem).then(function(stored) {
+          return stored.getContent();
+        })
+      } else {
+        return navigate(item.url, itemId);
       }
-    }).done();
+    });
   });
 
   return  {
-    end: function () {
+    end: function() {
       //put end code if any
     }
   }

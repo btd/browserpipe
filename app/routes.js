@@ -71,7 +71,7 @@ module.exports = function (app, passport) {
 
   app.param('query', auth.send401IfNotAuthenticated, item.query);
 
-  require('./controllers/browser')(app);
+  //require('./controllers/browser')(app);
 };
 
 

@@ -65,7 +65,7 @@ AbsUrlHandler.prototype.replaceUrl = function(_url) {
   else if(/^\s*$/.test(_url))
     return ""; //Empty = Return nothing
   else
-    return url.resolve(this.baseUrl, "../" + _url);
+    return url.resolve(this.baseUrl, _url);
 };
 
 AbsUrlHandler.prototype.onOpenTag = function(name, attributes, next) {

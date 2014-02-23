@@ -12,9 +12,8 @@ module.exports = function (passport) {
     });
 
     passport.deserializeUser(function (id, done) {
-        User.byId(id)
+        return User.byId(id)
             .then(done.bind(undefined, null), done)
-            .done();
     });
 
     // use local strategy
@@ -23,7 +22,7 @@ module.exports = function (passport) {
             passwordField: 'password'
         },
         function (email, password, done) {
-            User.byEmail(email)
+            return User.byEmail(email)
                 .then(function (user) {
                     if (!user) return done(null, false, error);
 
@@ -33,8 +32,7 @@ module.exports = function (passport) {
                         if(result) done(null, user);
                         else done(null, false, error);
                     });
-                }, done)
-                .done();
+                }, done);
         }
     ));
 };

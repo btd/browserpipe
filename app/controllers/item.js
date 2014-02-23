@@ -5,24 +5,9 @@ var _ = require('lodash'),
     responses = require('../responses'),
     errors = require('../errors'),
 
-    Q = require('q'),
-
-    jobs = new (require('../../jobs/manager'));
+    Promise = require('bluebird');
 
 var userUpdate = require('./user_update');
-
-function launchItemJobs(req, res, item) {
-    jobs.schedule('check-url', {
-        uri: item.url,
-        uniqueId: item._id.toString()
-    }).on('complete', function() {
-        Item.byId(item._id).then(function(item) {
-            if(item) {
-                userUpdate.updateItem(req.user._id, item);
-            }
-        }).done();
-    })
-}
 
 
 exports.addItemToItem = function(parent, req, res) {
@@ -30,15 +15,15 @@ exports.addItemToItem = function(parent, req, res) {
     item.parent = parent._id;
     item.user = req.user._id;
 
-    return item.saveWithPromise()
+    return Promise.cast(item.save())
         .then(function() {
             parent.items.push(item._id);
-            return parent.saveWithPromise();
+            return Promise.cast(parent.save());
         })
         .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
         .then(userUpdate.createItem.bind(null, req.user._id, item))
         .then(userUpdate.updateItem.bind(null, req.user._id, parent));
-}
+};
 
 // this method used to add item to another item (because item could not exists without any parent container)
 exports.addToItem = function(req, res) {
@@ -49,7 +34,7 @@ exports.addToItem = function(req, res) {
     if (errs) return errors.sendBadRequest(res);
 
     return exports.addItemToItem(req.currentItem, req, res);
-}
+};
 
 exports.addItemBookmarklet = function(req, res) {
     req.check('url').notEmpty();
@@ -64,7 +49,7 @@ exports.addItemBookmarklet = function(req, res) {
         redirect = query.url;
     }
 
-    Item.by({ _id: query.to || req.user.laterListboard, user: req.user._id }).then(function(parent) {
+    return Item.by({ _id: query.to || req.user.laterListboard, user: req.user._id }).then(function(parent) {
         if(parent) {
             var item = parent.addBookmark(_.pick(query, 'title', 'url'));
 
@@ -86,7 +71,6 @@ exports.addItemBookmarklet = function(req, res) {
             res.redirect(redirect);
         }
     })
-    .done();
 }
 
 //Update item
@@ -94,22 +78,20 @@ exports.update = function(req, res) {
     var item = req.currentItem;    
     _.merge(item, _.pick(req.body, 'title'));// for now only title can be changed, by idea will need to add url and note depending from type of item
     
-    item.saveWithPromise()
+    return item.save()
         .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
         .then(userUpdate.updateItem.bind(null, req.user._id, item))
-        .done();
 }
 
 //Find item by id
 exports.item = function(req, res, next, id) {
-    Item.by({ _id: id, user: req.user })
+    return Item.by({ _id: id, user: req.user })
         .then(function(item) {
             if (!item) return errors.sendNotFound(res);
 
             req.currentItem = item;
             next();
-        }, next)
-        .done();
+        }, next);
 }
 
 //TODO need to send updates to client

@@ -1,6 +1,6 @@
 MOCHA_OPTS= ./test
 REPORTER = spec
-JS= api app jobs models util logger.js config.js public/js
+JS= app jobs models util logger.js config.js public/js
 
 clean:
 	@rm -fr ./cache
@@ -34,7 +34,7 @@ start-prod: clean
 	@NODE_ENV=production ./node_modules/.bin/nodemon server.js
 
 lint:
-	@./node_modules/.bin/jshint --show-non-errors $(JS)
+	@./node_modules/.bin/jshint --reporter=node_modules/jshint-nice-reporter/index.js $(JS)
 
 
 jshint-jenkins:

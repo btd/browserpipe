@@ -19,7 +19,7 @@ var UserSchema = new Schema({
     email: { type: String, required: true, validate: [ /\S+@\S+\.\S/, errorMsgs.invalid], trim: true, lowercase: true},
     password: { type: String, required: true},
 
-    browser: { type: Schema.ObjectId, ref: 'Item' },
+    browser: { type: Schema.ObjectId, ref: 'Item' }
 });
 
 UserSchema.plugin(require('../util/mongoose-timestamp'));
@@ -53,7 +53,7 @@ UserSchema.methods.authenticate = function (password, callback) {
 };
 
 UserSchema.statics.by = function (obj) {
-    return User.findOne(obj).execWithPromise();
+    return User.findOne(obj).exec();
 };
 
 // 2 convinient wrappers to do not repeat in code also it populate internal doc

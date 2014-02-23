@@ -39,3 +39,4 @@ compiled-assets
 
 # where makefile build xml for jenkins
 /results/*
+public/storage
