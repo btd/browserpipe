@@ -5,9 +5,13 @@ var _state = require('../state'),
 module.exports = function(socket) {
 
   socket.on('browser.set.html', function(html) {
-    var doc = $('#page-section .page-content')[0].contentDocument;
+    var iframe = $('#page-section .page-content')[0];
+    //well it is horrible
+    iframe.src = 'javascript:vold(0)';
+    var doc = iframe.contentDocument || iframe.contentWindow.document;
     doc.open();
     doc.write(html);
+    doc.close();
     /*$('a', $body).click(function(e) {
       e.preventDefault();
       var url = $(e.target).attr('href').trim();
