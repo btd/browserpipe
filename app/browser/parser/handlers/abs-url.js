@@ -21,10 +21,15 @@ var tags = {
   html: [ 'manifest' ]
 };
 
+function unQuote(text) {
+  if(text[0] == '"' && text[text.length - 1] == '"') return text.substring(1, text.length - 1);
+  if(text[0] == "'" && text[text.length - 1] == "'") return text.substring(1, text.length - 1);
+  return text;
+}
 
 function replaceStyleUrl(style, replace) {
-  return style.replace(/url\((.*)\)/gi, function(_, url) {
-    return 'url(' + replace(url) + ')';
+  return style.replace(/url\(([^)]+)\)/g, function(_, url) {
+    return 'url(' + replace(unQuote(url)) + ')';
   });
 }
 
@@ -75,6 +80,10 @@ AbsUrlHandler.prototype.onOpenTag = function(name, attributes, next) {
     return that.replaceUrl(url);
   }
 
+  if(name == 'style') {
+    this.inStyle = true;
+  }
+
   if(replaceAttributes) {
     this.processTag(replaceAttributes, attributes);
   }
@@ -84,6 +93,24 @@ AbsUrlHandler.prototype.onOpenTag = function(name, attributes, next) {
   next();
 };
 
-//TODO process content of style
+AbsUrlHandler.prototype.onCloseTag = function(name, next) {
+  if(name == 'style') {
+    this.inStyle = false;
+  }
+  next();
+};
+
+AbsUrlHandler.prototype.onText = function(textObj, next) {
+  var that = this;
+  function replaceUrl(url) {
+    return that.replaceUrl(url);
+  }
+
+  if(this.inStyle) {
+    textObj.text = replaceStyleUrl(textObj.text, replaceUrl);
+  }
+
+  next();
+};
 
 module.exports = AbsUrlHandler;
