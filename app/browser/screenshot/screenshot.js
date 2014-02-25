@@ -25,17 +25,17 @@ function randomId() {
 
 function getPicturePath(itemId) {
   var format = config.screenshot.format || 'png';
-  return config.storePath + '/' + itemId + '.' + format;
+  return config.storage.path + '/' + itemId + '.' + format;
 }
 
 function getPicturePathFull(itemId) {
   var format = config.screenshot.format || 'png';
-  return config.storePath + '/' + itemId + '-full.' + format;
+  return config.storage.path + '/' + itemId + '-full.' + format;
 }
 
 function getPictureUrl(itemId) {
   var format = config.screenshot.format || 'png';
-  return config.storeUrl + '/' + itemId + '.' + format;
+  return config.storage.url + '/' + itemId + '.' + format;
 }
 
 var noScreenshotUrl = '/screenshots/no_screenshot.png';

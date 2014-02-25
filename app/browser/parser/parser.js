@@ -6,11 +6,17 @@ var SanitizeHandler = require('./handlers/sanitize');
 var FaviconHandler = require('./handlers/favicon');
 var AbsUrlHandler = require('./handlers/abs-url');
 
-module.exports.parseHTML = function(url, html, callback) {
+
+function HtmlProcessor(browser) {
+  this.browser = browser;
+}
+
+HtmlProcessor.prototype.process = function(url, html, callback) {
   var handler = new SanitizeHandler({
-    callback: callback
+    callback: callback,
+    browser: this.browser // as it first it can pass it to others
   })
-    .addNext((new AbsUrlHandler({ url: url })).addNext(new HtmlWriterHandler))
+    .addNext((new AbsUrlHandler({ url: url, browser: this.browser })).addNext(new HtmlWriterHandler))
     .addNext(new FaviconHandler({ url: url }))
     .addNext(new TitleHandler);
   
@@ -18,3 +24,5 @@ module.exports.parseHTML = function(url, html, callback) {
   parser.write(html);
   parser.done();
 };
+
+exports.HtmlProcessor = HtmlProcessor;

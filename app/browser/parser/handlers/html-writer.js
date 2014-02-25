@@ -19,7 +19,13 @@ var voidElements = { area: true,
   wbr: true };
 
 var HtmlWriteHandler = function() {
-  this.content = '';
+  this.head = '';
+  this.body = '';
+
+  this.writeHead = true;
+
+  this.stylesheetsDownloads = [];
+  this.stylesheetsAttributes = [];
 
   //before doctype we can remove whitespace
   this.removeExtraWhiteSpace = true;
@@ -30,58 +36,88 @@ var HtmlWriteHandler = function() {
 HtmlWriteHandler.prototype = Object.create(Base.prototype);
 
 HtmlWriteHandler.prototype.gather = function(obj) {
-  obj.html = this.content;
+  obj.content = [this.head, this.body];
+  obj.stylesheetsDownloads = this.stylesheetsDownloads;
+  obj.stylesheetsAttributes = this.stylesheetsAttributes;
+  obj.html5 = this.html5;
 };
 
+HtmlWriteHandler.prototype.add = function(text) {
+  if(this.writeHead) {
+    this.head += text;
+  } else {
+    this.body += text;
+  }
+};
+
+function isStylesheet(name, attributes) {
+  return name == 'link' && attributes.rel == 'stylesheet' && ((attributes.type && attributes.type == 'text/css') || !attributes.type) && attributes.href;
+}
+
 HtmlWriteHandler.prototype.onOpenTag = function(name, attributes) {
+  if(isStylesheet(name, attributes)) {
+    this.stylesheetsDownloads.push(this.browser._loadUrl(attributes.href));
+    this.stylesheetsAttributes.push(attributes);
+  } else {
+    this.add('<' + name);
+    for(var attr in attributes) {
+      // it does not un escape entities
+      this.add(' ' + attr + '="' + attributes[attr] + '"');
+    }
+    this.add('>');
 
-  this.content += '<' + name;
-  for(var attr in attributes) {
-    // it does not un escape entities
-    this.content += ' ' + attr + '="' + attributes[attr] + '"';
+    if(name == 'body') {
+      this.removeExtraWhiteSpace = false;
+    }
+    if(name == 'script' || name == 'style') {
+      this.removeExtraWhiteSpace = false;
+    }
   }
-  this.content += '>';
-
-  if(name == 'head') this.inHead = true;
-
-  if(this.inHead) {
-    if(name == 'script' || name == 'style') this.removeExtraWhiteSpace = false;
-  }
-
-  if(name == 'body') this.removeExtraWhiteSpace = false;
 };
 
 HtmlWriteHandler.prototype.onText = function(text) {
-
   if(this.removeExtraWhiteSpace)
-    this.content += text.replace(/\s+/g, ' ');
+    this.add(text.replace(/\s+/g, ' '));
   else
-    this.content += text;
+    this.add(text);
 };
 
 HtmlWriteHandler.prototype.onCloseTag = function(name) {
+  if(name == 'head') {
+    /*
+    i want that
+      html
+        head
+          ...
+          <- this place was the end
+
+        body
+     */
+    this.writeHead = false;
+  }
 
   if(this.html5 && voidElements[name]) {
     //do nothing as it is html5
   } else {
-    this.content += '</' + name + '>';
-  }
-  if(name == 'head') this.inHead = false;
-
-  if(this.inHead) {
-    if(name == 'script' || name == 'style') this.removeExtraWhiteSpace = true;
+    this.add('</' + name + '>');
   }
 
-  if(name == 'body') this.removeExtraWhiteSpace = true;
+  if(name == 'script' || name == 'style') {
+    this.removeExtraWhiteSpace = true;
+  }
+
+  if(name == 'body') {
+    this.removeExtraWhiteSpace = true;
+  }
 };
 
 HtmlWriteHandler.prototype.onProcessingInstruction = function(name, value) {
-
   if(name == '!doctype') {
     if(value.toLowerCase() == '!doctype html') this.html5 = true;
 
-    this.content += '<' + value + '>';
+    this.add('<' + value + '>');
   }
 };
 
 module.exports = HtmlWriteHandler;
+module.exports.voidElements = voidElements;

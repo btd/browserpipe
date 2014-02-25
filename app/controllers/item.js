@@ -148,8 +148,6 @@ exports.storageItem = function(req, res) {
 
   var storageId = req.params['storageId'];
 
-  console.log(storageId);
-
   return StorageItem.by({ _id: storageId }).then(function(si) {
     if(si) {
       return si.getContent().then(function(content) {

@@ -71,7 +71,7 @@ module.exports = function(grunt) {
                         shim: {                            
                             jquery: { path: "./public/bower_components/jquery/jquery.js", exports: "$" }
                         },
-                        debug: true,
+                        //debug: true,
                         transform: ['reactify']
                     }
                 }

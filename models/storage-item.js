@@ -25,6 +25,10 @@ StorageItemSchema.methods.getContent = function() {
   return fs.readFileAsync(path.join(config.storage.path, this.name), "utf8");
 };
 
+StorageItemSchema.methods.getUrl = function() {
+  return config.appUrl + '/storage-item/' + this._id.toString();
+};
+
 var qfindOne = function (obj) {
   return StorageItem
     .findOne(obj)
