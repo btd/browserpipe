@@ -64,6 +64,30 @@ function generateScreenshot(html) {
   })
 }
 
+function processCss(css, attributes) {
+  return Promise.all(css).then(function(datas) {
+    // concat by media attribute (ie8 does not support @media in css)
+    var chunks = [{ content: '', media: 'all'}];
+    datas.forEach(function(body, index) {
+      var attr = attributes[index];
+      var media = attr.media || 'all';
+      var lastChunk = chunks[chunks.length - 1];
+      if(lastChunk.media == media) {
+        lastChunk.content += body.content;
+      } else {
+        chunks.push({ content: body.content, media: media});
+      }
+    });
+
+    return chunks.map(function(data) {
+      return saveData({ content: data.content, headers: { 'content-type': 'text/css', 'content-length': data.content.length }})
+        .then(function(si) {
+          return [si, data.media];
+        })
+    });
+  });
+}
+
 var initBrowser = function(socket) {
 
   var navigate = function(url, itemId) {
@@ -71,17 +95,15 @@ var initBrowser = function(socket) {
 
     return browser._loadUrl(url)
       .then(function(data) {
-        logger.debug('Load data from url %s data type %s', url, data.type);
+        logger.debug('Load data from url %s data type %s html5 %s', url, data.type, data.html5);
         switch(data.type) {
           case 'html':
             //first we save all stylesheets
-            return Promise.map(data.stylesheetsDownloads, saveData)
-              .then(function(sheets) { //we save them on disk
+            return Promise.all(processCss(data.stylesheetsDownloads, data.stylesheetsAttributes))
+              .then(function(sheetData) { //we save them on disk
                 var linksHtml = '';
-                sheets.forEach(function(si, index) {
-                  var originalAttributes = data.stylesheetsAttributes[index];
-                  originalAttributes.href = si.getUrl();
-                  linksHtml += Browser.tag('link', originalAttributes, data.html5);
+                sheetData.forEach(function(si) {
+                  linksHtml += Browser.tag('link', { type: 'text/css', rel: 'stylesheet', href: si[0].getUrl(), media: si[1] }, data.html5);
                 });
 
                 data.content = data.content[0] + linksHtml + data.content[1];
