@@ -75,23 +75,25 @@ HtmlWriteHandler.prototype.onOpenTag = function(name, attributes) {
   }
 };
 
-HtmlWriteHandler.prototype.onText = function(text) {
+
+HtmlWriteHandler.prototype.onText = function(textObj) {
   if(this.removeExtraWhiteSpace)
-    this.add(text.replace(/\s+/g, ' '));
+    this.add(textObj.text.replace(/\s+/g, ' '));
   else
-    this.add(text);
+    this.add(textObj.text);
 };
+
 
 HtmlWriteHandler.prototype.onCloseTag = function(name) {
   if(name == 'head') {
     /*
-    i want that
-      html
-        head
-          ...
-          <- this place was the end
+     i want that
+     html
+     head
+     ...
+     <- this place was the end
 
-        body
+     body
      */
     this.writeHead = false;
   }

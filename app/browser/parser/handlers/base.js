@@ -64,4 +64,17 @@ function addBaseMethod(originalName, name) {
   }
 }
 
+BaseHandler.prototype.ontext = function(text) {
+  var that = this;
+  var newText = { text: text };
+  if(this.onText) {
+    this.onText(newText, function() {
+      that.callNext('ontext', [newText.text]);
+    });
+  } else {
+    that.callNext('ontext', [text]);
+  }
+}
+
+
 module.exports = BaseHandler;

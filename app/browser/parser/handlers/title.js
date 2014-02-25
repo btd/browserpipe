@@ -17,9 +17,9 @@ TitleHandler.prototype.onOpenTag = function(name, attributes) {
     this.isTitle = true;
   }
 };
-TitleHandler.prototype.onText = function(text) {
+TitleHandler.prototype.onText = function(textObj) {
   if(this.isTitle) {
-    this.content = text;
+    this.content = textObj.text;
   }
 };
 
