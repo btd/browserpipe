@@ -64,6 +64,8 @@ function generateScreenshot(html) {
   })
 }
 
+var absUrl = require('./parser/handlers/abs-url');
+
 function processCss(css, attributes) {
   return Promise.all(css).then(function(datas) {
     // concat by media attribute (ie8 does not support @media in css)
@@ -72,10 +74,13 @@ function processCss(css, attributes) {
       var attr = attributes[index];
       var media = attr.media || 'all';
       var lastChunk = chunks[chunks.length - 1];
+
+      var content = absUrl.replaceStyleUrl(body.content, absUrl.makeUrlReplacer(body.href));
+
       if(lastChunk.media == media) {
-        lastChunk.content += body.content;
+        lastChunk.content += content;
       } else {
-        chunks.push({ content: body.content, media: media});
+        chunks.push({ content: content, media: media});
       }
     });
 
