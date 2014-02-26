@@ -3,7 +3,7 @@ var config = require('../../config');
 
 var client = redis.createClient(config.redis.port, config.redis.host, config.redis.options);
 
-var prefix = config['socket.io'].userUpdateRedisKeyPrefix;
+var prefix = config['socket-io'].userUpdateRedisKeyPrefix;
 
 function userChannelName(userId) {
     return prefix + userId;

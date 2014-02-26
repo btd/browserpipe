@@ -3,6 +3,9 @@ function BaseHandler(options) {
   if(options && options.callback)
     this.callback = options.callback;
 
+  if(options && options.browser)
+    this.browser = options.browser;
+
   this.next = [];
 }
 
@@ -14,6 +17,7 @@ BaseHandler.prototype = {
   },
 
   addNext: function(next) {
+    next.browser = this.browser;
     this.next.push(next);
     return this;
   },
@@ -59,5 +63,18 @@ function addBaseMethod(originalName, name) {
     }
   }
 }
+
+BaseHandler.prototype.ontext = function(text) {
+  var that = this;
+  var newText = { text: text };
+  if(this.onText) {
+    this.onText(newText, function() {
+      that.callNext('ontext', [newText.text]);
+    });
+  } else {
+    that.callNext('ontext', [text]);
+  }
+}
+
 
 module.exports = BaseHandler;

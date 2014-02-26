@@ -66,12 +66,14 @@ module.exports = function (app, passport) {
 
   app.param('itemId', auth.send401IfNotAuthenticated, item.item);
 
+  app.get('/storage-item/:storageId', auth.send401IfNotAuthenticated, item.storageItem);
+
   //Search route  
   app.get(    '/search/:query',  auth.send401IfNotAuthenticated, item.search);    
 
   app.param('query', auth.send401IfNotAuthenticated, item.query);
 
-  require('./controllers/browser')(app);
+  //require('./controllers/browser')(app);
 };
 
 

@@ -36,7 +36,7 @@ SanitizeHandler.prototype.onOpenTag = function(name, attributes, next) {
   }
 };
 
-SanitizeHandler.prototype.onText = function(text, next) {
+SanitizeHandler.prototype.onText = function(_, next) {
   if(this.stack.length == 0) { // in this case we do not skipping anything
     next();
   }

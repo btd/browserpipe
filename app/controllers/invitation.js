@@ -6,15 +6,14 @@ var Invitation = require('../../models/invitation'),
 
 //Find listboard by id
 exports.invitation = function(req, res, next, id) {
-    Invitation.by({ _id: id, user: req.user })
+    return Invitation.by({ _id: id, user: req.user })
         .then(function(invitation) {
             //TODO: redirect to nice 404 page
             if (!invitation) return errors.sendNotFound(res);
 
             req.invitation = invitation;
             next();
-        }, next)
-        .done();
+        }, next);
 };
 
 exports.accepted = function(req, res, next) {	
@@ -27,8 +26,7 @@ exports.accepted = function(req, res, next) {
 //Create invitation
 exports.create = function (req, res) {
     var invitation = new Invitation(req.body); //TODO pick fields
-    invitation.saveWithPromise()
+    return invitation.save()
         .then(responses.sendModelId(res, invitation._id))
         .fail(errors.ifErrorSendBadRequest(res))
-        .done();
 }

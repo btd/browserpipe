@@ -9,6 +9,7 @@
     "moco": "btd/moco#~0.0.5",
     "messenger": "~1.3.5",
     "font-awesome": "~4.0.3",
-    "bootstrap": "~3.0.3"
+    "bootstrap": "~3.0.3",
+    "react": "~0.9.0"
   }
 }

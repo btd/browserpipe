@@ -4,6 +4,8 @@ var _ = require('lodash'),
     User = require('../../models/user'),
     Item = require('../../models/item');
 
+var Promise = require('bluebird');
+
 //Login form
 exports.login = function (req, res) {
     var errors = _.map(req.flash().error, function(error) { return { msg: error}});
@@ -44,8 +46,10 @@ exports.create = function (req, res, next) {
         
         return;
     }
+
+    var email = req.body.email.trim().toLowerCase();
    
-    User.byEmail(req.body.email)
+    return User.byEmail(email)
         .then(function(_user) {
             if(_user) {
                 req.flash('errors', [{ msg: 'Email already used' }]);
@@ -53,13 +57,14 @@ exports.create = function (req, res, next) {
             } else {
                 var user = new User(_.pick(req.body, 'email', 'name', 'password'));
                 user.provider = 'local' //for passport
+                user.email = email;
 
                 var browser = Item.newContainer({ title: 'Browser', user: user });
                 user.browser = browser;
 
-                return user.saveWithPromise()
+                return Promise.cast(user.save())
                     .then(function() {
-                        return browser.saveWithPromise();
+                        return browser.save();
                     })
                     .then(function () {
                         req.login(user, function (err) {
@@ -68,19 +73,17 @@ exports.create = function (req, res, next) {
                         })
                     }, next)
             }
-        }, next)
-        .done();
+        }, next);
 }
 
 
 //Find user by id
 exports.user = function (req, res, next, id) {
-    User.byId(id)
+    return User.byId(id)
         .then(function(user) {
             if (!user) return res.status(404).render('404');
 
             req.profile = user;
             next()
-        }).fail(next)
-        .done();
+        }, next);
 }

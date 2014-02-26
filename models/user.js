@@ -19,7 +19,7 @@ var UserSchema = new Schema({
     email: { type: String, required: true, validate: [ /\S+@\S+\.\S/, errorMsgs.invalid], trim: true, lowercase: true},
     password: { type: String, required: true},
 
-    browser: { type: Schema.ObjectId, ref: 'Item' },
+    browser: { type: Schema.ObjectId, ref: 'Item' }
 });
 
 UserSchema.plugin(require('../util/mongoose-timestamp'));
@@ -53,7 +53,7 @@ UserSchema.methods.authenticate = function (password, callback) {
 };
 
 UserSchema.statics.by = function (obj) {
-    return User.findOne(obj).execWithPromise();
+    return User.findOne(obj).exec();
 };
 
 // 2 convinient wrappers to do not repeat in code also it populate internal doc
@@ -67,7 +67,7 @@ UserSchema.statics.byEmail = function (email) {
 
 UserSchema.pre('save', function (done) {
     var that = this;
-    User.byEmail(this.email)
+    return User.byEmail(this.email)
         .then(function (otherUser) {
             if (otherUser && !otherUser._id.equals(that._id)) {
                 that.invalidate('email', errorMsgs.should_be_unique);
@@ -75,9 +75,7 @@ UserSchema.pre('save', function (done) {
             } else {
                 done();
             }
-        }).fail(function (err) {
-            done(err);
-        });
+        }, done);
 });
 
 module.exports = User = mongoose.model('User', UserSchema);

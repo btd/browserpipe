@@ -22,15 +22,8 @@ var tags = {
 };
 
 
-function replaceStyleUrl(style, replace) {
-  return style.replace(/url\((.*)\)/gi, function(_, url) {
-    return 'url(' + replace(url) + ')';
-  });
-}
-
 var AbsUrlHandler = function(options) {
-  this.baseUrl = options.url;
-  this.parsedUrl = url.parse(options.url);
+  this.urlReplaceFunc = makeUrlReplacer(options.url);
 
   Base.apply(this, arguments);
 };
@@ -53,19 +46,7 @@ AbsUrlHandler.prototype.processTag = function(replaceAttributes, attributes) {
 
 //http://stackoverflow.com/questions/7544550/javascript-regex-to-change-all-relative-urls-to-absolute
 AbsUrlHandler.prototype.replaceUrl = function(_url) {
-  if(/^(https?|file|ftps?|mailto|javascript|data:image\/[^;]{2,9};):/i.test(_url))
-    return _url; //Url is already absolute
-
-  if(_url.substring(0, 2) == "//")
-    return this.parsedUrl.protocol + _url;
-  else if(_url.charAt(0) == "/")
-    return this.parsedUrl.protocol + "//" + this.parsedUrl.host + _url;
-  else if(_url.substring(0, 2) == "./")
-    return url.resolve(this.baseUrl, _url);
-  else if(/^\s*$/.test(_url))
-    return ""; //Empty = Return nothing
-  else
-    return url.resolve(this.baseUrl, "../" + _url);
+  return this.urlReplaceFunc(_url);
 };
 
 AbsUrlHandler.prototype.onOpenTag = function(name, attributes, next) {
@@ -73,6 +54,10 @@ AbsUrlHandler.prototype.onOpenTag = function(name, attributes, next) {
   var that = this;
   function replaceUrl(url) {
     return that.replaceUrl(url);
+  }
+
+  if(name == 'style') {
+    this.inStyle = true;
   }
 
   if(replaceAttributes) {
@@ -84,6 +69,58 @@ AbsUrlHandler.prototype.onOpenTag = function(name, attributes, next) {
   next();
 };
 
-//TODO process content of style
+AbsUrlHandler.prototype.onCloseTag = function(name, next) {
+  if(name == 'style') {
+    this.inStyle = false;
+  }
+  next();
+};
+
+AbsUrlHandler.prototype.onText = function(textObj, next) {
+  var that = this;
+  function replaceUrl(url) {
+    return that.replaceUrl(url);
+  }
+
+  if(this.inStyle) {
+    textObj.text = replaceStyleUrl(textObj.text, replaceUrl);
+  }
+
+  next();
+};
+
+function makeUrlReplacer(baseUrl) {
+  var parsedUrl = url.parse(baseUrl);
+  return function(_url) {
+    if(/^(https?|file|ftps?|mailto|javascript|data:image\/[^;]{2,9};):/i.test(_url))
+      return _url; //Url is already absolute
+
+    if(_url.substring(0, 2) == "//")
+      return parsedUrl.protocol + _url;
+    else if(_url.charAt(0) == "/")
+      return parsedUrl.protocol + "//" + parsedUrl.host + _url;
+    else if(_url.substring(0, 2) == "./")
+      return url.resolve(baseUrl, _url);
+    else if(/^\s*$/.test(_url))
+      return ""; //Empty = Return nothing
+    else
+      return url.resolve(baseUrl, _url);
+  }
+}
+
+function unQuote(text) {
+  if(text[0] == '"' && text[text.length - 1] == '"') return text.substring(1, text.length - 1);
+  if(text[0] == "'" && text[text.length - 1] == "'") return text.substring(1, text.length - 1);
+  return text;
+}
+
+function replaceStyleUrl(style, replace) {
+  return style.replace(/url\(([^)]+)\)/g, function(_, url) {
+    return 'url(' + replace(unQuote(url)) + ')';
+  });
+}
+
 
 module.exports = AbsUrlHandler;
+module.exports.replaceStyleUrl = replaceStyleUrl;
+module.exports.makeUrlReplacer = makeUrlReplacer;

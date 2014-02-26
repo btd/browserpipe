@@ -1,7 +1,7 @@
 require('../logger');
 
-var Q = require('q');
-Q.longStackSupport = true;
+var Promise = require('bluebird');
+Promise.longStackTraces();
 
 var express = require('express'),
     fs = require('fs'),
@@ -12,13 +12,10 @@ var express = require('express'),
 var config = require('../config'),
     mongoose = require('mongoose');
 
-//patch mongoose to add promises;
-require('../util/mongoose-q');
-
 // Bootstrap db connection
 mongoose.connect(config.db.uri);
 // Bootstrap models
-var models_path = __dirname + '/../models'
+var models_path = __dirname + '/../models';
 fs.readdirSync(models_path).forEach(function (file) {
     require(models_path+'/'+file);
 });
@@ -33,6 +30,13 @@ var server = require('./express')(app, config, passport);
 
 // Bootstrap routes
 require('./routes')(app, passport);
+
+var logger = require('rufus').getLogger('app.unhandled');
+
+Promise.onPossiblyUnhandledRejection(function(e, promise){
+  logger.error('promise unhandled error', e);
+  throw e;
+});
 
 module.exports = server;
 
