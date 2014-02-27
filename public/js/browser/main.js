@@ -1,25 +1,16 @@
 var _state = require('../state'),
   page = require('page');
 
+var $iframe = $('#page-section .page-content');
+
 exports.open = function(itemId, url) {
-  $.ajax({ 
-    url: '/html-item/' + itemId, 
-    data: { url: url }, 
-    cache: true, 
-    dataType: 'html',
-    error: function (jqXHR, textStatus, error) {
-      //TODO: manage error properly
-      console.log(error);
-    },
-    success: function (html) { 
-      var iframe = $('#page-section .page-content')[0];
-      //well it is horrible
-      iframe.src = 'javascript:vold(0)';
-      var doc = iframe.contentDocument || iframe.contentWindow.document;
-      doc.open();
-      doc.write(html);
-      doc.close();
-      /*$('a', $body).click(function(e) {
+  var url = '/html-item/' + itemId + '?url=' + encodeURIComponent(url); 
+  if($iframe[0].src !== url) {
+    $iframe[0].src = url;
+    $iframe.off();
+    $iframe.load(function() {
+      var $body = $('#page-section .page-content').contents().find('body');
+      $('a', $body).click(function(e) {
 	e.preventDefault();
 	var url = $(e.target).attr('href').trim();
 	_state.serverAddItemToItem(_state.selected.parent, { type: 0, url: url }, function(item) {
@@ -29,7 +20,7 @@ exports.open = function(itemId, url) {
 	    page('/item/' + item._id);
 	  }, 500);
 	});
-      });*/
-    } 
-  });
+      });
+    });
+  }
 };

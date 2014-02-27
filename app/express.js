@@ -56,6 +56,7 @@ module.exports = function (app, config, passport) {
     //TODO we need this only for local development
     app.use(function (req, res, next) {
       if(req.url.indexOf("/screenshots/") === 0 
+	|| req.url.indexOf("/storage/") === 0 
 	|| req.url.indexOf("/storage-item/") === 0 
         || req.url.indexOf("/html-item/") === 0 
       ) {
