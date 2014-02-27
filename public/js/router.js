@@ -6,20 +6,21 @@ var _state = require('./state'),
   TopBarComponent = require('./components/topbar'),
   $ = require('jquery'),
   websocket = require('./websocket/websocket');
+  browser = require('./browser/main');
 
 //Dropdown
 require('bootstrap-dropdown');
 
 var topBarComponent, dashboardComponent; //react component instances
 
-var loadTopBarComponent = function(item) {
+var loadTopBarComponent = function() {
   if(!topBarComponent) {
     topBarComponent = TopBarComponent.render(
-      item
+      _state.selected
     );
   } else {
     topBarComponent.setState({
-      selected: item
+      selected: _state.selected
     });
   }
 }
@@ -38,7 +39,7 @@ var loadDashboardComponent = function() {
 
 var loadPage = function(item) {
   $('#page-section .page-content').contents().find('body').empty();
-  websocket.send('browser.open', { itemId: item._id });
+  if(item.url) browser.open(item._id, item.url);
 }
 
 page('/', function() {
@@ -68,9 +69,10 @@ page('/item/:id', function(ctx) {
         $('html, body').removeClass('overflow-hidden');
       }
       else {
-        loadTopBarComponent(item);
+        loadTopBarComponent();
         loadPage(item);
         $('#topbar-section').show();
+	$('.url-input').focus();
         $('#dashboard-section').hide();
         $('#page-section').show();
         $('html, body').addClass('overflow-hidden');

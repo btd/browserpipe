@@ -6,7 +6,7 @@ var _state = require('../state'),
     _ = require('lodash'),
     React = require('react'),
     page = require('page'),
-    websocket = require('../websocket/websocket');
+    browser = require('../browser/main');
 
 var TopBarComponent = React.createClass({    
   getInitialState: function() {
@@ -23,35 +23,50 @@ var TopBarComponent = React.createClass({
     $('.url-input').val('');
     page('/item/' + this.state.selected.parent);
   },
+  ifEnterNavigate: function(e) {
+    if(e.keyCode === 13) this.navigateToURL();
+  },
   navigateToURL: function() {
-     var url = this.refs.urlInput.getDOMNode().value.trim();
-     websocket.send('browser.navigate', { itemId: this.state.selected._id, url: url });
+    var url = this.refs.urlInput.getDOMNode().value.trim();
+    if(this.state.selected.type === 2 //if we are in a folder we create a new tab with url
+      || this.state.selected.url //If tab url is a "navigated" item, so we create a new tab for the new url
+    ){      
+      var parent = this.state.selected.type === 2? this.state.selected._id : this.state.selected.parent;
+      _state.serverAddItemToItem(parent, { type: 0, url: url }, function(item) {
+	//TODO: navigation to the just added container is not working because websockets is taking more time to add it than ajax reponse.
+	//We should fix this by sending crud request to server via websockets instead of ajax.
+	setTimeout(function() { 
+	  page('/item/' + item._id);
+          browser.open(item._id, url);
+	}, 500); 
+      });
+    }
+    else  browser.open(this.state.selected._id, url);
   },
   toggleBar: function(){
     //Toggle between bar fixed (pinned) or slide up&down (unpinned)
   },
   render: function() {
-    var self = this;
     return (
       <div className="topbar-commands">
         <div className="navigate-options">
 	  <div className="back-option" onClick={ this.backOptionClicked } >
-	    <i className={"fa fa-arrow-circle-left" + (this.state.selected? "": " hide")}></i>
+	    <i className={"fa fa-arrow-circle-left" + (this.state.selected.type!==2? "": " hide")}></i>
 	  </div>
 	  <div className="forward-option" onClick={ this.forwardOptionClicked } >
-	    <i className={"fa fa-arrow-circle-right" + (this.state.selected? "": " hide")}></i>
+	    <i className={"fa fa-arrow-circle-right" + (this.state.selected.type!==2? "": " hide")}></i>
 	  </div>
 	</div>
 	<div className="search-options input-append">
-	  <input type="text" placeholder="Enter an URL or search a tab" className="url-input" ref="urlInput" defaultValue={this.state.selected? this.state.selected.url : ''} />
+	  <input type="text" placeholder="Enter an URL or search a tab" className="url-input" ref="urlInput" onKeyPress={this.ifEnterNavigate} defaultValue={this.state.selected.type!==2? this.state.selected.url : ''} />
 	  <input type="button" className="url-btn btn btn-warning" value="Go"  onClick={this.navigateToURL} />
 	</div>
 	<div className="home-option" onClick={ this.homeOptionClicked } >
-	  <i className={"fa fa-th-large" + (this.state.selected? "": " hide")}></i>
+	  <i className={"fa fa-th-large" + (this.state.selected.type!==2? "": " hide")}></i>
 	</div>
 	<div className="user-options">
 	  <li className="nav-option pin-option" onClick={ this.toggleBar } >
-	    <i className={"fa fa-thumb-tack" + (this.state.selected? "": " hide")}></i>
+	    <i className={"fa fa-thumb-tack" + (this.state.selected.type!==2? "": " hide")}></i>
 	  </li>
 	  <li className="dropdown nav-option">
 	    <a draggable="false"  href="#" data-toggle="dropdown" className="dropdown-toggle">
@@ -81,7 +96,7 @@ var TopBarComponent = React.createClass({
     );
   },
   componentDidUpdate: function() {
-    if(this.state.selected)
+    if(this.state.selected.type!==2)
       $('.url-input').val(this.state.selected.url);
   }
 });
