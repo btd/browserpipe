@@ -114,7 +114,7 @@ exports.delete = function(req, res) {
         return Item.byId({ _id: item.parent })
             .then(function(parent) {
                 parent.items.remove(item._id);
-                return parent.save().then(userUpdate.updateItem.bind(null, req.user._id, parent));
+                return Promise.cast(parent.save()).then(userUpdate.updateItem.bind(null, req.user._id, parent));
             })
             .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
             .then(removeItem.bind(null, item))//2 delete item

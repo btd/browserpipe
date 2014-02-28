@@ -13,7 +13,12 @@ var Item = model()
     .attr('favicon') // String url for favicon
     .attr('url') // String
     .attr('type') // integer;
-    .attr('externalId'); // id of the tab if it has
+    .attr('externalId') // id of the tab if it has
+    .use(function(Model) { 
+      Model.prototype.isFolder = function() {
+	return this.type === 2;
+      }
+    });
 
 
 var Items = collection(Item)

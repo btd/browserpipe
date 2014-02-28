@@ -17,7 +17,6 @@ module.exports = function (app, passport) {
 
   //Home routes
   app.get(    '/item/:id1',                     auth.ensureLoggedIn('/login'), main.home);
-  app.get(    '/browser',                     auth.ensureLoggedIn('/login'), main.home);
 
   //Invitation routes
   var invitation = require('./controllers/invitation');
@@ -73,7 +72,8 @@ module.exports = function (app, passport) {
 
   app.param('query', auth.send401IfNotAuthenticated, item.query);
 
-  //require('./controllers/browser')(app);
+  var browser = require('./browser/main');
+  app.get('/html-item/:itemId', auth.send401IfNotAuthenticated, browser.htmlItem);
 };
 
 

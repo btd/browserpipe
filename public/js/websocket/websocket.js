@@ -5,7 +5,6 @@ var socket; //socket.io client socket
 var loadServerEvents = function() {
     require('../events/user')(socket);
     require('../events/item')(socket);
-    require('../events/browser')(socket);
 };
 
 module.exports.initialize = function(){

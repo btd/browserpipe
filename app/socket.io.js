@@ -3,7 +3,6 @@ var _ = require('lodash'),
   mongoStore = require('connect-mongo')(express),
   config = require('../config'),
   userUpdate = require('./controllers/user_update'),
-  browserInstance = require('./browser/main'),
   io = require('socket.io');
 
 module.exports = function() {
@@ -117,11 +116,8 @@ module.exports = function() {
           socket.emit(event, data);
         });
 
-        var browser = browserInstance.initBrowser(socket);
-
         socket.on('disconnect', function() {
           client.end();
-          browser.end();
         });
       });
     }/*,
