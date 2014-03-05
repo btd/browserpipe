@@ -12,7 +12,7 @@ var userUpdate = require('./user_update');
 
 
 exports.addItemToItem = function(parent, req, res) {
-    var item = new Item(_.pick(req.body, 'type', 'title', 'url'));
+    var item = new Item(_.pick(req.body, 'type', 'title', 'url', 'previous'));
     item.parent = parent._id;
     item.user = req.user._id;
 
@@ -20,6 +20,15 @@ exports.addItemToItem = function(parent, req, res) {
         .then(function() {
             parent.items.push(item._id);
             return Promise.cast(parent.save());
+        })
+        .then(function() {
+	  if(item.previous)
+	    return Item.byId({ _id: item.previous })
+	      .then(function(previous) {
+		previous.visible = false;
+		previous.next = item._id;
+                return Promise.cast(previous.save()).then(userUpdate.updateItem.bind(null, req.user._id, previous));
+              })
         })
         .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
         .then(userUpdate.createItem.bind(null, req.user._id, item))
@@ -74,12 +83,28 @@ exports.addItemBookmarklet = function(req, res) {
     })
 }
 
+var hideItem = function(req, itemId) {
+  return Item.byId({ _id: itemId })
+    .then(function(item) {
+      item.visible = false;
+      return Promise.cast(item.save()).then(userUpdate.updateItem.bind(null, req.user._id, item));
+    })
+}
+
 //Update item
 exports.update = function(req, res) {
     var item = req.currentItem;    
-    _.merge(item, _.pick(req.body, 'title'));// for now only title can be changed, by idea will need to add url and note depending from type of item
+    _.merge(item, _.pick(req.body, 'title', 'visible'));// for now only title can be changed, by idea will need to add url and note depending from type of item
     
-    return item.save()
+    return Promise.cast(item.save())
+        .then(function() {
+	  if(req.body.visible && item.previous)
+	    return hideItem(req, item.previous);
+        })
+        .then(function() {
+	  if(req.body.visible && item.next)
+	    return hideItem(req, item.next);
+        })
         .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
         .then(userUpdate.updateItem.bind(null, req.user._id, item))
 }

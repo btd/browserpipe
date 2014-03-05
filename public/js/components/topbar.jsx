@@ -15,30 +15,49 @@ var TopBarComponent = React.createClass({
       };
   },
   backOptionClicked: function() { 
+    var previous = this.state.selected.previous;
+    if(previous) {
+      _state.serverUpdateItem({
+	_id: previous,
+	visible: true
+      }, function() {
+        page('/item/' + previous);
+      });
+    }
   },
   forwardOptionClicked: function() { 
+    var next = this.state.selected.next;
+    if(next) {
+      _state.serverUpdateItem({
+	_id: next,
+	visible: true
+      }, function() {
+        page('/item/' + next);
+      });
+    }
   },
   homeOptionClicked: function() { 
     $('#page-section .page-content').contents().find('body').empty();
     $('.url-input').val('');
     page('/item/' + this.state.selected.parent);
   },
-  ifEnterNavigate: function(e) {
-    if(e.keyCode === 13) this.navigateToURL();
+  refreshOptionClicked: function() { 
+    this.navigateToURL(this.state.selected.url);
   },
-  navigateToURL: function() {
+  ifEnterNavigate: function(e) {
+    if(e.keyCode === 13) this.navigateEnteredURL();
+  },
+  navigateEnteredURL: function() {
     var url = this.refs.urlInput.getDOMNode().value.trim();
+    this.navigateToURL(url);
+  },
+  navigateToURL: function(url) {
     if(this.state.selected.isFolder() //if we are in a folder we create a new tab with url
       || this.state.selected.url //If tab url is a "navigated" item, so we create a new tab for the new url
     ){      
-      var parent = this.state.selected.isFolder()? this.state.selected._id : this.state.selected.parent;
-      _state.serverAddItemToItem(parent, { type: 0, url: url }, function(item) {
-	//TODO: navigation to the just added container is not working because websockets is taking more time to add it than ajax reponse.
-	//We should fix this by sending crud request to server via websockets instead of ajax.
-	setTimeout(function() { 
-	  page('/item/' + item._id);
-	}, 500); 
-      });
+      var parentId = this.state.selected.isFolder()? this.state.selected._id : this.state.selected.parent;
+      var previousId = this.state.selected.isFolder()? null : this.state.selected._id;
+      browser.createAndOpen(parentId, previousId, url);
     }
     else  browser.open(this.state.selected._id, url);
   },
@@ -51,15 +70,18 @@ var TopBarComponent = React.createClass({
         <span id="logo"><img src="/img/logo/logo-small.png" alt="Browserpipe logo small"/></span>
         <div className="navigate-options">
 	  <div className="back-option" onClick={ this.backOptionClicked } >
-	    <i className={"fa fa-arrow-circle-left" + (this.state.selected.isFolder()? " hide": "")}></i>
+	    <i className={"fa fa-arrow-circle-left" + (this.state.selected.isFolder()? " hide": (this.state.selected.previous? "" : " disabled"))}></i>
 	  </div>
 	  <div className="forward-option" onClick={ this.forwardOptionClicked } >
-	    <i className={"fa fa-arrow-circle-right" + (this.state.selected.isFolder()? " hide": "")}></i>
+	    <i className={"fa fa-arrow-circle-right" + (this.state.selected.isFolder()? " hide": (this.state.selected.next? "" : " disabled"))}></i>
+	  </div>
+	  <div className="refresh-option" onClick={ this.refreshOptionClicked } >
+	    <i className={"fa fa-refresh" + (this.state.selected.isFolder()? " hide": "")}></i>
 	  </div>
 	</div>
 	<div className="search-options input-append">
 	  <input type="text" placeholder="Enter an URL or search a tab" className="url-input" ref="urlInput" onKeyPress={this.ifEnterNavigate} defaultValue={this.state.selected.isFolder()? '': this.state.selected.url } />
-	  <input type="button" className="url-btn btn btn-warning" value="Go"  onClick={this.navigateToURL} />
+	  <input type="button" className="url-btn btn btn-warning" value="Go"  onClick={this.navigateEnteredURL} />
 	</div>
 	<div className="home-option" onClick={ this.homeOptionClicked } >
 	  <i className={"fa fa-th-large" + (this.state.selected.isFolder()? " hide": "")}></i>
