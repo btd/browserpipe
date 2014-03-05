@@ -3,9 +3,12 @@ var HtmlProcessor = require("./parser/parser").HtmlProcessor;
 
 var Promise = require('bluebird');
 
+var getCharset = require('http-buffer-charset');
+var Iconv  = require('iconv').Iconv;
 
-function Browser() {
+function Browser(langs) {
   this.htmlProcessor = new HtmlProcessor(this);
+  this.langs = langs;
 }
 
 //If it cannot make a URL out of it, it searchs term in Google
@@ -32,6 +35,23 @@ function cssContentType(m) {
   return m.indexOf('text/css') >= 0;
 }
 
+var csLength = 'charset='.length;
+
+function bodyToString(headers, body) {
+  var contentType = headers['content-type'].toLowerCase().split(';');
+  if(contentType.length > 1) {
+    var httpCharset = contentType[1].trim().substr(csLength);
+    var bufferCharset = getCharset(httpCharset);
+    if(!bufferCharset) {
+      var iconv = new Iconv(getCharset.resolveAliasCharset(httpCharset), 'UTF-8');
+      return iconv.convert(body);
+    }
+    return body.toString(bufferCharset);
+  } else {
+    return body.toString();
+  }
+}
+
 /**
   Load required url and return promise with processed content
  if type on resolved data presented it will be either html ot css
@@ -44,10 +64,14 @@ Browser.prototype._loadUrl = function(url) {
       url: processURL(url),
       headers: {
         // we are a fresh firefox
-        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:25.0) Gecko/20100101 Firefox/25.0'
-      }
-    }, function(error, response, body) {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:25.0) Gecko/20100101 Firefox/25.0',
+        'Accept-Language': that.langs
+      },
+      encoding: null // set body to buffer
+    }, function(error, response, _body) {
       if(error) return reject(error);
+
+      var body = bodyToString(response.headers, _body);
 
       if(response.statusCode === 200) {
         var contentType = response.headers['content-type'];

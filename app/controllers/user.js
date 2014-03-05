@@ -58,6 +58,9 @@ exports.create = function (req, res, next) {
                 var user = new User(_.pick(req.body, 'email', 'name', 'password'));
                 user.provider = 'local' //for passport
                 user.email = email;
+                if(req.headers['accept-language']) {
+                  user.langs = req.headers['accept-language'];
+                }
 
                 var browser = Item.newContainer({ title: 'Browser', user: user });
                 user.browser = browser;
