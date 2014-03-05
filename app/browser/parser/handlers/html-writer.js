@@ -88,12 +88,12 @@ HtmlWriteHandler.prototype.onCloseTag = function(name) {
   if(name == 'head') {
     /*
      i want that
-     html
-     head
+     <html>
+     <head>
      ...
      <- this place was the end
-
-     body
+      </head>
+     <body>
      */
     this.writeHead = false;
   }
@@ -115,9 +115,10 @@ HtmlWriteHandler.prototype.onCloseTag = function(name) {
 
 HtmlWriteHandler.prototype.onProcessingInstruction = function(name, value) {
   if(name == '!doctype') {
-    if(value.toLowerCase() == '!doctype html') this.html5 = true;
-
-    this.add('<' + value + '>');
+    //we will rewrite previous html with new doctype and assume it is html5 always
+    //TODO test this for xml+xhtml for XML <?xml ...>
+    this.html5 = true;
+    this.add('<!doctype html>');
   }
 };
 
