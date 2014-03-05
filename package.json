@@ -39,7 +39,9 @@
     "htmlparser2": "~3.5.0",
     "node-phantom": "~0.2.5",
     "canvas": "~1.1.2",
-    "bluebird": "^1.0.5"
+    "bluebird": "^1.0.5",
+    "http-buffer-charset": "0.0.2",
+    "iconv": "^2.0.7"
   },
   "devDependencies": {
     "mocha": "latest",
