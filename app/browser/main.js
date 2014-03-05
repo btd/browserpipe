@@ -70,7 +70,9 @@ var absUrl = require('./parser/handlers/abs-url');
 function processCss(css, attributes) {
   return Promise.all(css).then(function(datas) {
     // concat by media attribute (ie8 does not support @media in css)
-    var chunks = [{ content: '', media: 'all'}];
+    var chunks = [
+      { content: '', media: 'all'}
+    ];
     datas.forEach(function(body, index) {
       var attr = attributes[index];
       var media = attr.media || 'all';
@@ -94,66 +96,67 @@ function processCss(css, attributes) {
   });
 }
 
-var navigate = function(res, url, itemId) {
-  var browser = new Browser;
+var navigate = function(res, opts) {
+  var browser = new Browser(opts.languages);
 
-  return browser._loadUrl(url)
+  return browser._loadUrl(opts.url)
     .then(function(data) {
-      logger.debug('Load data from url %s data type %s html5 %s', url, data.type, data.html5);
+      logger.debug('Load data from url %s data type %s html5 %s', opts.url, data.type, data.html5);
       switch(data.type) {
-	case 'html':
-	  //first we save all stylesheets
-	  return Promise.all(processCss(data.stylesheetsDownloads, data.stylesheetsAttributes))
-	    .then(function(sheetData) { //we save them on disk
-	      var linksHtml = '';
-	      sheetData.forEach(function(si) {
-		linksHtml += Browser.tag('link', { type: 'text/css', rel: 'stylesheet', href: si[0].getUrl(), media: si[1] }, data.html5);
-	      });
+        case 'html':
+          //first we save all stylesheets
+          return Promise.all(processCss(data.stylesheetsDownloads, data.stylesheetsAttributes))
+            .then(function(sheetData) { //we save them on disk
+              var linksHtml = '';
+              sheetData.forEach(function(si) {
+                linksHtml += Browser.tag('link', { type: 'text/css', rel: 'stylesheet', href: si[0].getUrl(), media: si[1] }, data.html5);
+              });
 
-	      data.content = data.content[0] + linksHtml + data.content[1];
+              data.content = data.content[0] + linksHtml + data.content[1];
 
-	      res.send(data.content);
-	      return Promise.all([Item.byId(itemId), generateScreenshot(data.content), saveData(data)])
-		.spread(function(item, screenshotUrl, storageItem) {
-		  item.title = data.title;
-		  item.url = url;
-		  item.favicon = data.favicon;
-		  item.screenshot = screenshotUrl;
-		  item.storageItem = storageItem._id;
+              res.send(data.content);
+              return Promise.all([Item.byId(opts.itemId), generateScreenshot(data.content), saveData(data)])
+                .spread(function(item, screenshotUrl, storageItem) {
+                  item.title = data.title;
+                  item.url = opts.url;
+                  item.favicon = data.favicon;
+                  item.screenshot = screenshotUrl;
+                  item.storageItem = storageItem._id;
 
-		  return  Promise.cast(item.save())
-		    .then(function() {
-		      userUpdate.updateItem(item.user, item);
-		    })
-		});
-	    });
-	case 'css':
-	  return;
-	default:
-	  return;
+                  return  Promise.cast(item.save())
+                    .then(function() {
+                      userUpdate.updateItem(item.user, item);
+                    })
+                });
+            });
+        case 'css':
+          return;
+        default:
+          return;
       }
     })
 };
 
 exports.htmlItem = function(req, res) {
-  var item = req.currentItem;    
+  var item = req.currentItem;
+  var user = req.user;
   if(item.url) {
     logger.debug('Browser open %s for %s', item._id, item.url);
     if(item.storageItem) {
       return Promise.cast(StorageItem.by({ _id: item.storageItem }))
-	.then(function(stored) {
-	  if(stored) {
-	    return stored.getContent().then(function(content) {
-	      res.send(content);
-	    })
-	  } else if(item.url) {
-	    return navigate(res, item.url, item._id);
-	  }
-	  else return errors.sendInternalServer(res);
-	})
-    } else return navigate(res, item.url, item._id);
+        .then(function(stored) {
+          if(stored) {
+            return stored.getContent().then(function(content) {
+              res.send(content);
+            })
+          } else if(item.url) {
+            return navigate(res, { url: item.url, itemId: item._id, languages: user.langs });
+          }
+          else return errors.sendInternalServer(res);
+        })
+    } else return navigate(res, { url: item.url, itemId: item._id, languages: user.langs });
   }
-  else if(req.query.url) return navigate(res, req.query.url, item._id);
+  else if(req.query.url) return navigate(res, { url: req.query.url, itemId: item._id, languages: user.langs });
   else return errors.sendBadRequest(res);
 }
 
