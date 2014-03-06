@@ -65,7 +65,8 @@ module.exports = function (app, passport) {
 
   app.param('itemId', auth.send401IfNotAuthenticated, item.item);
 
-  app.get('/storage-item/:storageId', auth.send401IfNotAuthenticated, item.storageItem);
+  //TODO: we should allow phantomjs access in auth.send401IfNotAuthenticated in order to access items
+  app.get('/storage-item/:storageId'/*, auth.send401IfNotAuthenticated*/, item.storageItem);
 
   //Search route  
   app.get(    '/search/:query',  auth.send401IfNotAuthenticated, item.search);    

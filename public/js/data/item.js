@@ -7,6 +7,7 @@ var moco = require('moco'),
 var Item = model()
     .attr('_id', { primary: true }) // ObjectId text representation
     .attr('items', { default: [] }) // for type=2 container
+    .attr('order') //integer
     .attr('parent') //parent reference
     .attr('previous') //previous reference
     .attr('next') //next reference

@@ -39,9 +39,12 @@ var DashboardComponent = React.createClass({
   },
   renderFolders: function() {
     if(!this.state.selected) return null;
-    else return this.state.selected.items.filter(function(itemId){
+    else return _.sortBy(this.state.selected.items.filter(function(itemId){
       var item = _state.getItemById(itemId);
       return item.type === 2;
+    }), function(itemId){
+      var item = _state.getItemById(itemId);
+      return item.order;
     }).map(function(folderId){
       var folder = _state.getItemById(folderId);
       return  <Folder folder={ folder } />
@@ -49,11 +52,14 @@ var DashboardComponent = React.createClass({
   },
   renderItems: function(container) {
     if(!this.state.selected) return null;
-    else return this.state.selected.items.filter(function(itemId){
+    else return _.sortBy(this.state.selected.items.filter(function(itemId){
       var item = _state.getItemById(itemId);
       return item.type !== 2 && item.visible;
-    }).map(function(tabId){
-      var tab = _state.getItemById(tabId);
+    }), function(itemId){
+      var item = _state.getItemById(itemId);
+      return item.order;
+    }).map(function(itemId){
+      var tab = _state.getItemById(itemId);
       return  <Tab tab={ tab } />
     })
   },

@@ -57,9 +57,15 @@ var TopBarComponent = React.createClass({
     ){      
       var parentId = this.state.selected.isFolder()? this.state.selected._id : this.state.selected.parent;
       var previousId = this.state.selected.isFolder()? null : this.state.selected._id;
-      browser.createAndOpen(parentId, previousId, url);
+      var order = this.state.selected.isFolder()? null: this.state.selected.order; //order depends of it is a new item or navigation
+      browser.createAndOpen(
+        parentId, 
+	url, 
+	previousId, 
+	order
+      );
     }
-    else  browser.open(this.state.selected._id, url);
+    else  browser.open(url);
   },
   toggleBar: function(){
     //Toggle between bar fixed (pinned) or slide up&down (unpinned)

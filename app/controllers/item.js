@@ -12,9 +12,12 @@ var userUpdate = require('./user_update');
 
 
 exports.addItemToItem = function(parent, req, res) {
-    var item = new Item(_.pick(req.body, 'type', 'title', 'url', 'previous'));
+    var item = new Item(_.pick(req.body, 'type', 'title', 'url', 'order', 'previous'));
     item.parent = parent._id;
     item.user = req.user._id;
+
+    if(!item.order)
+      item.order = parent.items.length + 1;
 
     return Promise.cast(item.save())
         .then(function() {
@@ -94,7 +97,7 @@ var hideItem = function(req, itemId) {
 //Update item
 exports.update = function(req, res) {
     var item = req.currentItem;    
-    _.merge(item, _.pick(req.body, 'title', 'visible'));// for now only title can be changed, by idea will need to add url and note depending from type of item
+    _.merge(item, _.pick(req.body, 'title', 'order', 'visible'));// for now only title can be changed, by idea will need to add url and note depending from type of item
     
     return Promise.cast(item.save())
         .then(function() {
