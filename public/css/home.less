@@ -65,10 +65,25 @@ a {
     .navigate-options {
       display: inline-block;
       
-      .back-option, .forward-option {
+      .back-option, .forward-option, .refresh-option {
         display: inline-block;
 	font-size: 24px;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+
+	i.disabled {
+          color: #bbb;
+	}
+      }
+      .back-option, .forward-option {
 	margin-right: 6px;
+      }
+      .refresh-option {
+	margin-left: 12px;
       }
     }
     .search-options {
