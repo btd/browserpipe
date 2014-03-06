@@ -48,6 +48,7 @@ var TopBarComponent = React.createClass({
   render: function() {
     return (
       <div className="topbar-commands">
+        <span id="logo"><img src="/img/logo/logo-small.png" alt="Browserpipe logo small"/></span>
         <div className="navigate-options">
 	  <div className="back-option" onClick={ this.backOptionClicked } >
 	    <i className={"fa fa-arrow-circle-left" + (this.state.selected.isFolder()? " hide": "")}></i>
