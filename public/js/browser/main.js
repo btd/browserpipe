@@ -20,15 +20,15 @@ exports.open = function(url) {
 	  if(target && target.trim() === '_blank')
 	    self.createAndOpen(_state.selected.parent, url.trim());
 	  else
-	    self.createAndOpen(_state.selected.parent, url.trim(), _state.selected._id, _state.selected.order);
+	    self.createAndOpen(_state.selected.parent, url.trim(), _state.selected._id);
         }
       });
     });
   }
 };
 
-exports.createAndOpen = function(parentId, url, previousId, order) {
-  _state.serverAddItemToItem(parentId, { type: 0, url: url, previous: previousId, order: order}, function(item) {
+exports.createAndOpen = function(parentId, url, previousId) {
+  _state.serverAddItemToItem(parentId, { type: 0, url: url, previous: previousId}, function(item) {
     //TODO: navigation to the just added container is not working because websockets is taking more time to add it than ajax reponse.
     //We should fix this by sending crud request to server via websockets instead of ajax.
     setTimeout(function() {
