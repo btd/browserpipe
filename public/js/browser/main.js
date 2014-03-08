@@ -33,6 +33,6 @@ exports.createAndOpen = function(parentId, url, previousId) {
     //We should fix this by sending crud request to server via websockets instead of ajax.
     setTimeout(function() {
       page('/item/' + item._id);
-    }, 500);
+    }, 1000);
   });
 }

@@ -51,7 +51,7 @@ var DashboardComponent = React.createClass({
     if(!this.state.selected) return null;
     else return this.state.selected.items.filter(function(itemId){
       var item = _state.getItemById(itemId);
-      return item.type !== 2 && item.visible;
+      return item.type !== 2;
     }).map(function(itemId){
       var tab = _state.getItemById(itemId);
       return  <Tab tab={ tab } />
