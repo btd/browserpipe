@@ -92,7 +92,7 @@ exports.addItemBookmarklet = function(req, res) {
 //Update item
 exports.update = function(req, res) {
     var item = req.currentItem;    
-    _.merge(item, _.pick(req.body, 'title', 'items'));// for now only title and items can be changed, by idea will need to add url and note depending from type of item
+    _.merge(item, _.pick(req.body, 'title', 'items', 'scrollX', 'scrollY'));// for now only title and items can be changed, by idea will need to add url and note depending from type of item
     if(req.body.items)
      item.markModified('items'); 
 
