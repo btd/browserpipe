@@ -13,11 +13,10 @@ var ItemSchema = new Schema({
   items: [
     { type: Schema.ObjectId, ref: 'Item '}
   ],
+
   parent: { type: Schema.ObjectId, ref: 'Item' }, // not sure if it is need, but it seems it is easy to maintain it
   previous: { type: Schema.ObjectId, ref: 'Item' }, //previous item navigated
   next: { type: Schema.ObjectId, ref: 'Item' }, //next item navigated
-
-  visible: { type: Boolean, default: true },
 
   // owner
   user: { type: Schema.ObjectId, ref: 'User' },
@@ -81,7 +80,7 @@ ItemSchema.index(
 ItemSchema.statics.byUserAndExternalId = function(user, externalId) {
   return Item
     .by({ user: user, externalId: externalId })
-    .select('_id items parent previous next visible user type favicon screenshot url externalId browserKey lastSync title deleted'); //We exclude html to speed up
+    .select('_id items parent previous next user type favicon screenshot url externalId browserKey lastSync title deleted'); //We exclude html to speed up
 };
 
 //TODO: for security reasons we should not use byId in the server but byIdAndUserId
@@ -92,7 +91,7 @@ ItemSchema.statics.byId = function(id) {
 ItemSchema.statics.by = function(query) {
   return Item
     .findOne(query)
-    .select('_id items parent previous next visible user type favicon screenshot url externalId browserKey lastSync title deleted storageItem')
+    .select('_id items parent previous next user type favicon screenshot url externalId browserKey lastSync title deleted storageItem')
     .exec();
 };
 
@@ -111,7 +110,7 @@ ItemSchema.statics.getHtml = function(id) {
 ItemSchema.statics.all = function(query) {
   return Item
     .find(query)
-    .select('_id items parent previous next visible user type favicon screenshot url externalId browserKey lastSync title deleted')
+    .select('_id items parent previous next user type favicon screenshot url externalId browserKey lastSync title deleted')
     .exec();
 }
 module.exports = Item = mongoose.model('Item', ItemSchema);

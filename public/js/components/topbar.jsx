@@ -17,23 +17,33 @@ var TopBarComponent = React.createClass({
   backOptionClicked: function() { 
     var previous = this.state.selected.previous;
     if(previous) {
-      _state.serverUpdateItem({
-	_id: previous,
-	visible: true
-      }, function() {
-        page('/item/' + previous);
-      });
+      var parent = _state.getItemById(this.state.selected.parent);
+      var index = parent.items.indexOf(this.state.selected._id);
+      if(index >= 0) { 
+        parent.items[index] = previous;
+	_state.serverUpdateItem({
+	  _id: parent._id,
+	  items: parent.items
+	}, function() {
+	  page('/item/' + previous);
+	});
+      }
     }
   },
   forwardOptionClicked: function() { 
     var next = this.state.selected.next;
     if(next) {
-      _state.serverUpdateItem({
-	_id: next,
-	visible: true
-      }, function() {
-        page('/item/' + next);
-      });
+      var parent = _state.getItemById(this.state.selected.parent);
+      var index = parent.items.indexOf(this.state.selected._id);
+      if(index >= 0) { 
+        parent.items[index] = next;
+	_state.serverUpdateItem({
+	  _id: parent._id,
+	  items: parent.items
+	}, function() {
+	  page('/item/' + next);
+	});
+      }
     }
   },
   homeOptionClicked: function() { 
@@ -57,9 +67,13 @@ var TopBarComponent = React.createClass({
     ){      
       var parentId = this.state.selected.isFolder()? this.state.selected._id : this.state.selected.parent;
       var previousId = this.state.selected.isFolder()? null : this.state.selected._id;
-      browser.createAndOpen(parentId, previousId, url);
+      browser.createAndOpen(
+        parentId, 
+	url, 
+	previousId
+      );
     }
-    else  browser.open(this.state.selected._id, url);
+    else  browser.open(url);
   },
   toggleBar: function(){
     //Toggle between bar fixed (pinned) or slide up&down (unpinned)

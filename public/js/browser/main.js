@@ -3,9 +3,9 @@ var _state = require('../state'),
 
 var $iframe = $('#page-section .page-content');
 
-exports.open = function(itemId, url) {
+exports.open = function(url) {
   var self = this;
-  var url = '/html-item/' + itemId + '?url=' + encodeURIComponent(url);
+  var url = '/html-item/' + _state.selected._id + '?url=' + encodeURIComponent(url);
   if($iframe[0].src !== url) {
     $iframe[0].src = url;
     $iframe.off();
@@ -13,19 +13,26 @@ exports.open = function(itemId, url) {
       var $body = $('#page-section .page-content').contents().find('body');
       $('a', $body).click(function(e) {
         e.preventDefault();
-        var url = $(e.target).attr('href').trim();
-	self.createAndOpen(_state.selected.parent, itemId, url);
+	var $anchor = $(e.target);
+        var url = $anchor.attr('href');
+	if (url) {
+          var target = $anchor.attr('target');
+	  if(target && target.trim() === '_blank')
+	    self.createAndOpen(_state.selected.parent, url.trim());
+	  else
+	    self.createAndOpen(_state.selected.parent, url.trim(), _state.selected._id);
+        }
       });
     });
   }
 };
 
-exports.createAndOpen = function(parentId, previousId, url) {
-  _state.serverAddItemToItem(parentId, { type: 0, url: url, previous: previousId }, function(item) {
+exports.createAndOpen = function(parentId, url, previousId) {
+  _state.serverAddItemToItem(parentId, { type: 0, url: url, previous: previousId}, function(item) {
     //TODO: navigation to the just added container is not working because websockets is taking more time to add it than ajax reponse.
     //We should fix this by sending crud request to server via websockets instead of ajax.
     setTimeout(function() {
       page('/item/' + item._id);
-    }, 500);
+    }, 1000);
   });
 }
