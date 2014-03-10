@@ -40,52 +40,61 @@ function getPictureUrl(itemId) {
 
 var noScreenshotUrl = '/screenshots/no_screenshot.png';
 
-var generateScreenshot = function(html, callback) {
+var generateScreenshot = function(html, width, height, callback) {
   var itemId = randomId();
   console.time("page-creation");
   _ph.createPage(function(err, page) {
     console.timeEnd("page-creation");
-    page.set('content', html, function(error) {
+    page.set('viewportSize',{ width: width, height: height },function(error){
       if(error) {
-        console.log('Error setting content: %s', error);
-        callback(noScreenshotUrl);
+	console.log('Error setting viewportSize: %s', error);
+	callback(noScreenshotUrl);
       }
       else {
-        var screenshot_path_full = getPicturePathFull(itemId);
-        //We have to wait a bit for phantomjs to finish creating page
-        setTimeout(function() {
-          console.time("page-getScreenshot");
-          page.render(screenshot_path_full, function(error) {
-            console.timeEnd("page-getScreenshot");
-            if(error) {
-              console.log('Error rendering page: %s', error);
-              callback(noScreenshotUrl);
-            }
-            else {
-              console.time("page-cropScreenshot");
-              var screenshot_path = getPicturePath(itemId);
-              var img = new Image;
-              img.onerror = function(error) {
-                console.log('Error cropping screenshot: %s', error);
-                callback(noScreenshotUrl);
-              };
-              img.onload = function() {
-                var w = 252,
-                  h = 157,
-                  ratio = w / img.width,
-                  canvas = new Canvas(w, h),
-                  ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, w, img.height * ratio);
-                var out = fs.createWriteStream(screenshot_path);
-                var stream = canvas.pngStream({
-                });
-                stream.pipe(out);
-                callback(getPictureUrl(itemId));
-              }
-              img.src = screenshot_path_full;
-            }
-          });
-        }, 1000);
+	page.set('content', html, function(error) {
+	  if(error) {
+	    console.log('Error setting content: %s', error);
+	    callback(noScreenshotUrl);
+	  }
+	  else {
+	    var screenshot_path_full = getPicturePathFull(itemId);
+	    //We have to wait a bit for phantomjs to finish creating page
+	    setTimeout(function() {
+	      console.time("page-getScreenshot");
+	      page.render(screenshot_path_full, function(error) {
+		console.timeEnd("page-getScreenshot");
+		if(error) {
+		  console.log('Error rendering page: %s', error);
+		  callback(noScreenshotUrl);
+		}
+		else {
+		  console.time("page-cropScreenshot");
+		  var screenshot_path = getPicturePath(itemId);
+		  var img = new Image;
+		  img.onerror = function(error) {
+		    console.log('Error cropping screenshot: %s', error);
+		    callback(noScreenshotUrl);
+		  };
+		  img.onload = function() {
+		    var wratio = 252 / width,
+		        h = img.height * wratio,
+		        w = img.width * wratio,
+		        canvas = new Canvas(w, h),
+		        ctx = canvas.getContext('2d');
+		    //We do not crop image anymore;  
+		    ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, w, h);
+		    var out = fs.createWriteStream(screenshot_path);
+		    var stream = canvas.pngStream({
+		    });
+		    stream.pipe(out);
+		    callback(getPictureUrl(itemId));
+		  }
+		  img.src = screenshot_path_full;
+		}
+	      });
+	    }, 1000);
+	  }
+	})
       }
     })
   });

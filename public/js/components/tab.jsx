@@ -19,6 +19,12 @@ var TabComponent = React.createClass({
   openURLClicked: function(e) { 
     e.stopPropagation();
   },
+  getScreenshotTopAndLeft: function() {
+    var wratio = 252 / this.props.tab.windowWidth;
+    var top =  wratio * -this.props.tab.scrollY;
+    var left = wratio * -this.props.tab.scrollX;
+    return { top: top, left: left }
+  },
   render: function() {
     return (
       <div ref="tab" className="tab" >
@@ -36,7 +42,7 @@ var TabComponent = React.createClass({
           <div className="tab-mask-text" >Click to open</div>
         </div>
         <div className="tab-content">
-	  <img className="tab-screenshot" src={this.props.tab.screenshot} />
+	  <img className="tab-screenshot" src={this.props.tab.screenshot} style={ this.getScreenshotTopAndLeft() } />
 	</div>
         <div className="tab-footer">
 	  <img className="tab-favicon" src={this.props.tab.favicon} />

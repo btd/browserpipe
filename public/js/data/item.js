@@ -14,6 +14,10 @@ var Item = model()
     .attr('screenshot') // String
     .attr('favicon') // String url for favicon
     .attr('url') // String
+    .attr('scrollX') // integer;
+    .attr('scrollY') // integer;
+    .attr('windowWidth') // integer;
+    .attr('windowHeight') // integer;
     .attr('type') // integer;
     .attr('externalId') // id of the tab if it has
     .use(function(Model) { 

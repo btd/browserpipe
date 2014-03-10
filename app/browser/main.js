@@ -57,9 +57,9 @@ function saveData(data) {
     })
 }
 
-function generateScreenshot(html) {
+function generateScreenshot(html, width, height) {
   return new Promise(function(resolve, reject) {
-    screenshot.generateScreenshot(html, function(screenshotURL) {
+    screenshot.generateScreenshot(html, width, height, function(screenshotURL) {
       resolve(screenshotURL);
     })
   })
@@ -115,10 +115,12 @@ var navigate = function(res, opts) {
               data.content = data.content[0] + linksHtml + data.content[1];
 
               res.send(data.content);
-              return Promise.all([Item.byId(opts.itemId), generateScreenshot(data.content), saveData(data)])
+              return Promise.all([Item.byId(opts.itemId), generateScreenshot(data.content, opts.width, opts.height), saveData(data)])
                 .spread(function(item, screenshotUrl, storageItem) {
                   item.title = data.title;
                   item.url = opts.url;
+		  item.windowWidth = opts.width;
+		  item.windowHeight = opts.height;
                   item.favicon = data.favicon;
                   item.screenshot = screenshotUrl;
                   item.storageItem = storageItem._id;
@@ -140,6 +142,8 @@ var navigate = function(res, opts) {
 exports.htmlItem = function(req, res) {
   var item = req.currentItem;
   var user = req.user;
+  var width = req.query.width;
+  var height = req.query.height;
   if(item.url) {
     logger.debug('Browser open %s for %s', item._id, item.url);
     if(item.storageItem) {
@@ -150,13 +154,13 @@ exports.htmlItem = function(req, res) {
               res.send(content);
             })
           } else if(item.url) {
-            return navigate(res, { url: item.url, itemId: item._id, languages: user.langs });
+            return navigate(res, { url: item.url, itemId: item._id, languages: user.langs, width: width, height: height });
           }
           else return errors.sendInternalServer(res);
         })
-    } else return navigate(res, { url: item.url, itemId: item._id, languages: user.langs });
+    } else return navigate(res, { url: item.url, itemId: item._id, languages: user.langs, width: width, height: height });
   }
-  else if(req.query.url) return navigate(res, { url: req.query.url, itemId: item._id, languages: user.langs });
+  else if(req.query.url) return navigate(res, { url: req.query.url, itemId: item._id, languages: user.langs, width: width, height: height });
   else return errors.sendBadRequest(res);
 }
 

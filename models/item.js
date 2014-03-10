@@ -29,6 +29,9 @@ var ItemSchema = new Schema({
   screenshot: { type: String, trim: true },
   url: { type: String, trim: true },
 
+  windowWidth: { type: Number }, //Width of client window
+  windowHeight: { type: Number }, //Height of client window
+
   // only for browsers
   externalId: { type: String, trim: true },
   browserKey: { type: String, trim: true },
@@ -36,6 +39,10 @@ var ItemSchema = new Schema({
 
   // common for all types
   title: { type: String, trim: true },
+
+  // scroll position
+  scrollX: { type: Number },
+  scrollY: { type: Number },
 
   deleted: { type: Boolean, default: false },
 
@@ -76,11 +83,12 @@ ItemSchema.index(
   };
 });
 
+var selectFields = '_id items parent scrollX scrollY windowWidth windowHeight previous next user type favicon screenshot url externalId browserKey lastSync title deleted';
 
 ItemSchema.statics.byUserAndExternalId = function(user, externalId) {
   return Item
     .by({ user: user, externalId: externalId })
-    .select('_id items parent previous next user type favicon screenshot url externalId browserKey lastSync title deleted'); //We exclude html to speed up
+    .select(selectFields); //We exclude html to speed up
 };
 
 //TODO: for security reasons we should not use byId in the server but byIdAndUserId
@@ -91,7 +99,7 @@ ItemSchema.statics.byId = function(id) {
 ItemSchema.statics.by = function(query) {
   return Item
     .findOne(query)
-    .select('_id items parent previous next user type favicon screenshot url externalId browserKey lastSync title deleted storageItem')
+    .select(selectFields) //We exclude html to speed up
     .exec();
 };
 
@@ -110,7 +118,7 @@ ItemSchema.statics.getHtml = function(id) {
 ItemSchema.statics.all = function(query) {
   return Item
     .find(query)
-    .select('_id items parent previous next user type favicon screenshot url externalId browserKey lastSync title deleted')
+    .select(selectFields) //We exclude html to speed up
     .exec();
 }
 module.exports = Item = mongoose.model('Item', ItemSchema);
