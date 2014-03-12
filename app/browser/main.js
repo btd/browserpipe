@@ -137,7 +137,17 @@ var navigate = function(res, opts) {
           return;
       }
     })
+    .catch(statusCodeError, function(e){
+      res.status(e.statusCode).send('Error');
+    })
+    .error(function (e) {
+      res.status(500).send('Error');
+    })
 };
+
+var statusCodeError = function (e) {
+  return e.statusCode >= 400 && e.statusCode < 500;
+}
 
 exports.htmlItem = function(req, res) {
   var item = req.currentItem;
