@@ -77,7 +77,7 @@ Browser.prototype._loadUrl = function(url) {
         var contentType = response.headers['content-type'];
         if(htmlContentType(contentType)) {
           that.htmlProcessor.process(url, body, function(err, data) {
-            if(err) return reject(err);
+            if(err) return reject({ msg: err });
 
             data.type = 'html';// type i assume that it is like enumeration with basic types html, image, css, script etc - so no specific
             data.headers = response.headers;
@@ -92,7 +92,7 @@ Browser.prototype._loadUrl = function(url) {
           return resolve({ content: body, headers: response.headers, href: response.request.href });
         }
       } else {
-        return reject(new Error('Not a 200 status code, but ' + response.statusCode));
+        return reject({ msg: response.statusCode + ' response', statusCode: response.statusCode });
       }
     });
   });
