@@ -124,7 +124,7 @@ var navigate = function(res, opts) {
                   item.favicon = data.favicon;
                   item.screenshot = screenshotUrl;
                   item.storageItem = storageItem._id;
-		  item.statusCode = 200;
+                  item.statusCode = 200;
 
                   return  Promise.cast(item.save())
                     .then(function() {
