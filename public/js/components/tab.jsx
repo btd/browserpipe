@@ -20,10 +20,13 @@ var TabComponent = React.createClass({
     e.stopPropagation();
   },
   getScreenshotTopAndLeft: function() {
-    var wratio = 252 / this.props.tab.windowWidth;
-    var top =  wratio * -this.props.tab.scrollY;
-    var left = wratio * -this.props.tab.scrollX;
-    return { top: top, left: left }
+    if(this.props.tab.scrollY && this.props.tab.scrollX) {
+      var wratio = 252 / this.props.tab.windowWidth;
+      var top =  wratio * -this.props.tab.scrollY;
+      var left = wratio * -this.props.tab.scrollX;
+      return { top: top, left: left }
+    }
+    else return { top: 0, left: 0 }
   },
   render: function() {
     return (
