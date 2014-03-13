@@ -38,8 +38,7 @@ lint:
 
 
 jshint-jenkins:
-	@./node_modules/.bin/jshint  --reporter=checkstyle-reporter.js $(JS) 1> results/checkstyle.xml
-
+	@./node_modules/.bin/jshint  --reporter=checkstyle-reporter.js $(JS) 1> results/checkstyle.xml || exit 0
 
 install:
 	bower install
