@@ -46,6 +46,8 @@ var ItemSchema = new Schema({
 
   deleted: { type: Boolean, default: false },
 
+  statusCode: { type: Number }, //http response code
+
   storageItem: { type: Schema.ObjectId, ref: 'StorageItem' }
 }, {
   toObject: { virtuals: true },

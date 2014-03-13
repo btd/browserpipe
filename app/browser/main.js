@@ -124,6 +124,7 @@ var navigate = function(res, opts) {
                   item.favicon = data.favicon;
                   item.screenshot = screenshotUrl;
                   item.storageItem = storageItem._id;
+                  item.statusCode = 200;
 
                   return  Promise.cast(item.save())
                     .then(function() {
@@ -137,16 +138,46 @@ var navigate = function(res, opts) {
           return;
       }
     })
-    .catch(statusCodeError, function(e){
-      res.status(e.statusCode).send('Error');
+    .catch(StatusCode4XXError, function(e){
+      manageItemCodeError(res, opts, e.statusCode);
     })
     .error(function (e) {
-      res.status(500).send('Error');
+      manageItemCodeError(res, opts, 500);
     })
 };
 
-var statusCodeError = function (e) {
+var StatusCode4XXError = function (e) {
   return e.statusCode >= 400 && e.statusCode < 500;
+}
+
+var manageItemCodeError = function(res, opts, code) {
+  sendItemCodeErrorResponse(res, code);
+  Item.byId(opts.itemId)
+    .then(function(item) {
+      item.title = opts.url;
+      //TODO: we can have better images in the future regarding the error code
+      item.screenshot = screenshot.noScreenshotUrl;
+      item.windowWidth = opts.width;
+      item.windowHeight = opts.height;
+      item.statusCode = code;
+      Promise.cast(item.save())
+        .then(function() {
+          userUpdate.updateItem(item.user, item);
+        })
+    });
+}
+
+var sendItemCodeErrorResponse = function(res, code) {
+  //TODO: use templates
+  var html = '';
+  switch(code) {
+    case 400: html = '<center><h2>Invalid request</h2></center>'; break;
+    case 401: html = '<center><h2>You are not authorized to view this page</h2></center>'; break;
+    case 403: html = '<center><h2>You are not authorized to view this page</h2></center>'; break;
+    case 404: html = '<center><h2>Page not found</h2></center>'; break;
+    default: html = '<center><h2>Sorry, there was a problem displaying the page</h2></center>';
+  }
+  res.status(code).send(html); 
 }
 
 exports.htmlItem = function(req, res) {
@@ -156,7 +187,9 @@ exports.htmlItem = function(req, res) {
   var height = req.query.height;
   if(item.url) {
     logger.debug('Browser open %s for %s', item._id, item.url);
-    if(item.storageItem) {
+    if(item.statusCode && item.statusCode !== 200)
+	sendItemCodeErrorResponse(res, item.statusCode);
+    else if(item.storageItem) {
       return Promise.cast(StorageItem.by({ _id: item.storageItem }))
         .then(function(stored) {
           if(stored) {
