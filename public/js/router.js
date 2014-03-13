@@ -5,7 +5,7 @@ var _state = require('./state'),
   DashboardComponent = require('./components/dashboard'),
   TopBarComponent = require('./components/topbar'),
   $ = require('jquery'),
-  websocket = require('./websocket/websocket');
+  websocket = require('./websocket/websocket'),
   browser = require('./browser/main');
 
 //Dropdown

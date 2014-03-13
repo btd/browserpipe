@@ -16,7 +16,8 @@ var StorageItemSchema = new Schema({
   contentLength: Number,
   lastModified: Date,
   name: String,
-  url: String
+  url: String,
+  user: { type: Schema.ObjectId, ref: 'User' }
 });
 
 StorageItemSchema.plugin(require('../util/mongoose-timestamp'));

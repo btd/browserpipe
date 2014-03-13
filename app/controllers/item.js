@@ -80,7 +80,7 @@ exports.addItemBookmarklet = function(req, res) {
                 .then(userUpdate.updateItem.bind(null, req.user._id, parent))
                 .then(function() {
                     if(item.isBookmark()) {
-                        launchItemJobs(req, res, item)
+
                     }
                 });
         } else {
@@ -161,7 +161,7 @@ exports.search = function(req, res) {
 }
 
 exports.storageItem = function(req, res) {
-  res.header('X-Frame-Options', 'SAMEORIGIN');
+
 
   var storageId = req.params['storageId'];
 
