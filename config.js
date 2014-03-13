@@ -66,7 +66,7 @@ var config = {
     mincer: {
       preprocess: [
         'font/**',
-        'img/index/**',
+        'img/**',
         'js/index.js',
         'js/apps/main.js',
         'css/index.css',

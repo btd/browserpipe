@@ -10,6 +10,8 @@ doctype html
 head
     include ../includes/head
 
+    meta(name="google-site-verification" content="u2O7qR10aqvB2oIS7PStlpDGD2xICBOqMsu6PuhMAKA")
+
     //Application styles
     != stylesheet_tag('css/index')
     
@@ -23,7 +25,7 @@ body
                 .inner
                   h1#logo.pull-left
                     a(href="/")
-                      img(src="/img/logo/logo.png", alt="Browserpipe logo")
+                      != image_tag("img/logo/logo.png", { alt: "Browserpipe logo"})
                   ul.navbar.topbar
                     li
                       a(href="/") Home
