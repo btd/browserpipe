@@ -9,8 +9,14 @@ var _state = require('../state'),
     page = require('page');
 
 var TabComponent = React.createClass({    
-  tabMaskClicked: function() {
+  tabClicked: function() {
     page("/item/" + this.props.tab._id);
+  },
+  maskClicked: function(e) {
+    e.stopPropagation();
+  },
+  selectOptionClicked: function(e) { 
+    e.stopPropagation();
   },
   removeOptionClicked: function(e) {
     e.stopPropagation();
@@ -30,19 +36,21 @@ var TabComponent = React.createClass({
   },
   render: function() {
     return (
-      <div ref="tab" className="tab" >
-        <div className="tab-mask" onClick={ this.tabMaskClicked } >
-          <div className="tab-mask-options">
-            <div className="tab-mask-option" onClick={ this.removeOptionClicked } >
+      <div ref="tab" className="tab" onClick={ this.tabClicked } >
+        <div className="mask" onClick={ this.maskClicked } >
+          <div className="mask-options">
+            <div className="mask-option left" onClick={ this.selectOptionClicked } >
+              <input type="checkbox" className="select-item" />
+            </div>
+            <div className="mask-option right" onClick={ this.removeOptionClicked } >
               <i className="fa fa-times"></i>
             </div>
-            <div className="tab-mask-option">
+            <div className="mask-option right">
               <a target="_blank" href={ this.props.tab.url } onClick={ this.openURLClicked }  >
 	        <i className="fa fa-share"></i>
 	      </a>
             </div>
           </div>
-          <div className="tab-mask-text" >Click to open</div>
         </div>
         <div className="tab-content">
 	  <img className="tab-screenshot" src={this.props.tab.screenshot} style={ this.getScreenshotTopAndLeft() } />
