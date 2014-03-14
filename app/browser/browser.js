@@ -12,19 +12,17 @@ function Browser(langs) {
 }
 
 //If it cannot make a URL out of it, it searchs term in Google
-function processURL(url) {
-  //TODO improve regex to also accept data uris and urls that do not start with http or https
-  if(url.match(/^https?:\/\/[a-z0-9-\.]+\.[a-z]{2,4}\/?([^\s<>\#%"\,\{\}\\|\\\^\[\]`]+)?$/))
-    return url;
-  else {
-    /* TODO
-     We can load only for now http + https content (and proce ss only html)
-     But even with this regexp above restrinct on fully valid urls like
-     http://mongoosejs.com/docs/api.html#promise-js
-     */
-    return url; // TODO think about it more
-    //return "http://www.google.com/search?q=" + encodeURIComponent(url);
-  }
+function processUrl(url) {
+  //Best way to know if it is valid is to try it (at least for now)
+  //Besides it fails fast as it is a DNS check
+  return [
+    url, 
+    'http://' + url, 
+    'https://' + url, 
+    'http://www.' + url,
+    'https://www.' + url,
+    'http://www.google.com/search?q=' + encodeURIComponent(url)
+  ];
 }
 
 function htmlContentType(m) {
@@ -52,16 +50,12 @@ function bodyToString(headers, body) {
   }
 }
 
-/**
-  Load required url and return promise with processed content
- if type on resolved data presented it will be either html ot css
- */
-Browser.prototype._loadUrl = function(url) {
-  var that = this;
+var processPage = function(url) {
 
+  var that = this;
   return new Promise(function(resolve, reject) {
     request({
-      url: processURL(url),
+      url: url,
       headers: {
         // we are a fresh firefox
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:25.0) Gecko/20100101 Firefox/25.0',
@@ -97,6 +91,32 @@ Browser.prototype._loadUrl = function(url) {
     });
   });
 };
+
+var ENOTFOUNDError = function (urls) {
+  return function (e) {
+    return e.code === 'ENOTFOUND' && urls.length > 0
+  }
+}
+
+var processNextUrl = function(urls) {
+  var that = this;
+  console.log(urls);
+  var url = urls.shift();
+  console.log('processing ' + url);
+  return processPage.call(this, url)
+         .catch(ENOTFOUNDError(urls), function(e){
+           return processNextUrl.call(that, urls);
+         })
+}
+
+/**
+  Load required url and return promise with processed content
+ if type on resolved data presented it will be either html ot css
+ */
+Browser.prototype._loadUrl = function(url) {  
+  var urls = processUrl(url);
+  return processNextUrl.call(this, urls);
+}
 
 var voidElements = require('./parser/handlers/html-writer').voidElements;
 
