@@ -100,9 +100,7 @@ var ENOTFOUNDError = function (urls) {
 
 var processNextUrl = function(urls) {
   var that = this;
-  console.log(urls);
   var url = urls.shift();
-  console.log('processing ' + url);
   return processPage.call(this, url)
          .catch(ENOTFOUNDError(urls), function(e){
            return processNextUrl.call(that, urls);
