@@ -3,6 +3,22 @@ var _state = require('../state'),
 
 var $iframe = $('#page-section .page-content');
 
+var showNewItemMessage = function(newItem) {
+  var msg = Messenger().post({
+    message: "Opened link in new tab",
+    hideAfter: 6,
+    actions: {
+      view: {
+	label: "View",
+	action: function(){
+	  page('/item/' + newItem._id);
+	  msg.hide()
+	}
+      }
+    }
+  });
+};
+
 exports.open = function(url) {
   var self = this;
   var url = '/html-item/' + _state.selected._id + '?url=' + encodeURIComponent(url) + '&width=' + $(window).width() + '&height=' + $(window).height();
@@ -28,8 +44,13 @@ exports.open = function(url) {
         var url = $anchor.attr('href');
 	if (url) {
           var target = $anchor.attr('target');
-	  if(e.ctrlKey)
-	    self.create(_state.selected.parent, url.trim());
+	  if(e.ctrlKey) {
+	    self.create(
+	      _state.selected.parent, 
+	      url.trim(),
+	      showNewItemMessage
+	    );
+	  }
 	  else if(target && target.trim() === '_blank')
 	    self.createAndOpen(_state.selected.parent, url.trim());
 	  else
@@ -44,11 +65,12 @@ exports.open = function(url) {
   }
 };
 
-exports.create = function(parentId, url) {
+exports.create = function(parentId, url, callback) {
   _state.serverAddItemToItem(parentId, { type: 0, url: url }, function(item) {
     //TODO: navigation to the just added container is not working because websockets is taking more time to add it than ajax reponse.
     //We should fix this by sending crud request to server via websockets instead of ajax.
     setTimeout(function() {
+      if(callback) callback(item);
       $.ajax({
 	url : ('/html-item/' + item._id + '?url=' + encodeURIComponent(url) + '&width=' + $(window).width() + '&height=' + $(window).height()),
 	cache: true

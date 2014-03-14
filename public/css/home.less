@@ -2,6 +2,7 @@
 // Rules import
 @import "common/colors.less";
 @import "common/util.less";
+@import "messenger/messenger.less";
 
 * {
   font-family: "Lucida Grande", "Lucida Unicode MS", sans-serif; 
@@ -19,8 +20,23 @@ html,body {
 
 body {
   color: #666;
-  background-color: #f2eee8;
-  background-image: image_url('img/common/bg-pattern.png');
+  background-color: #fff;
+}
+
+.messenger {
+
+  .alert-info {
+    background-color: #f89406;
+    border-color: #ff6600;
+    color: #fff;
+  }
+  .messenger-message {
+    .messenger-actions {
+      a {
+        color: #fff;
+      }
+    }
+  }
 }
 
 h1 {
@@ -49,6 +65,8 @@ a {
 }
 
 #topbar-section {
+  background-color: #f2eee8;
+  background-image: image_url('img/common/bg-pattern.png');
   height: 42px;
   
   #logo {
@@ -156,6 +174,55 @@ a {
 	-moz-transition: all 0.3s ease;
 	-o-transition: all 0.3s ease;
 	transition: all 0.3s ease;
+
+	.mask {
+	  display: none;
+	  opacity: 0.8;
+	  position: absolute;
+	  background-color: #000;
+	  z-index: 1000;
+	  width: 252px;
+	  height: 21px; 
+	  color: #fff;
+
+	  &.hide {
+	    display: none !important;
+	  }
+
+	  .mask-options {
+	     padding-right: 12px;
+
+	     .mask-option {
+	       margin-left: 12px;
+	    
+	       &.left {
+                 float: left;
+	       }
+	       &.right {
+                 float: right;
+	       }
+	       input {
+		 margin-top: 0;
+	       }
+	       i {
+		 color: #fff;
+		 
+		 &:hover {
+		   color: #CCC;
+		 }   
+	       }
+	     }
+	   }
+	}
+
+	&:hover {
+	  cursor: pointer;
+
+	  .mask {
+	    display: block;
+	  }
+	}
+
       }
 
       .folder {
@@ -215,29 +282,13 @@ a {
 	  }
 	}
 
-	.close-option, .edit-option {
-	  margin: 6px;
-	  font-size: 14px;
-	  display: none;
-	  position: absolute;
-	  top: 0px;
-	}
-
-	.close-option {
-	  right: 0px;
-	}
-
-	.edit-option {
-	  right: 21px;
-	}
-
 	.title-editor {
 	  
 	  input {
-	    width: 280px;
+	    width: 221px;
 	    display: block;
 	    height: 36px;
-	    margin: 60px 12px 0 12px;
+	    margin: 48px 12px 0 12px;
 	  }
 	  .btn {
 	    float: left;
@@ -252,17 +303,6 @@ a {
 	  }
 	}
 
-	&:hover {
-	  cursor: pointer;
-
-	  .close-option {
-	    display: block;
-	  }
-
-	  .edit-option {
-	    display: block;
-	  }
-	}
       }
 
       .tab { 
@@ -283,43 +323,6 @@ a {
 	  }
 	}
     
-	.tab-mask {
-	  cursor: pointer;
-	  display: none;
-	  opacity: 0.8;
-	  position: absolute;
-	  background-color: #000;
-	  z-index: 1000;
-	  width: 252px;
-	  height: 157px; 
-	  color: #fff;
-
-	  &.hide {
-	    display: none !important;
-	  }
-
-	  .tab-mask-options {
-	     padding-right: 12px;
-
-	     .tab-mask-option {
-	       float: right;
-	       margin-left: 12px;
-	    
-	       i {
-		 color: #fff;
-		 
-		 &:hover {
-		   color: #CCC;
-		 }   
-	       }
-	     }
-	   }
-	  .tab-mask-text {
-	    text-align: center;
-	    margin-top: 75px;
-	  }
-	}
-
 	.tab-footer {
 	  height: 25px;
 
@@ -339,11 +342,6 @@ a {
 	  }
 	}
 
-	&:hover {
-	  .tab-mask {
-	    display: block;
-	  }
-	}
       }
 
       .new-options {

@@ -10,6 +10,8 @@ var _state = require('./state'),
 
 //Dropdown
 require('bootstrap-dropdown');
+//Notification system
+require('messenger');
 
 var topBarComponent, dashboardComponent; //react component instances
 
