@@ -85,7 +85,7 @@ ItemSchema.index(
   };
 });
 
-var selectFields = '_id items parent scrollX scrollY windowWidth windowHeight previous next user type favicon screenshot url externalId browserKey lastSync title deleted';
+var selectFields = '_id items storageItem parent scrollX scrollY windowWidth windowHeight previous next user type favicon screenshot url externalId browserKey lastSync title deleted';
 
 ItemSchema.statics.byUserAndExternalId = function(user, externalId) {
   return Item
