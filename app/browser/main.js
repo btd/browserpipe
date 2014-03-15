@@ -23,7 +23,6 @@ function randomId() {
   return  crypto.pseudoRandomBytes(2).toString('hex');
 }
 
-
 function addHeaderValue(si, headers, name, constructor) {
   if(headers[name]) {
     var fieldName = name.replace(/-[a-z]/g, function(match) {
@@ -96,10 +95,30 @@ function processCss(css, attributes) {
   });
 }
 
+var sendAndSaveContent = function(res, opts, data) {
+  res.send(data.content);
+  return Promise.all([Item.byId(opts.itemId), generateScreenshot(data.content, opts.width, opts.height), saveData(data)])
+    .spread(function(item, screenshotUrl, storageItem) {
+      item.title = data.title;
+      item.url = opts.url;
+      item.windowWidth = opts.width;
+      item.windowHeight = opts.height;
+      item.favicon = data.favicon;
+      item.screenshot = screenshotUrl;
+      item.storageItem = storageItem._id;
+      item.statusCode = 200;
+
+      return  Promise.cast(item.save())
+	.then(function() {
+	  userUpdate.updateItem(item.user, item);
+	})
+    });
+}
+
 var navigate = function(res, opts) {
   var browser = new Browser(opts.languages);
 
-  return browser._loadUrl(opts.url)
+  return browser._loadUrl(opts.url, true)
     .then(function(data) {
       logger.debug('Load data from url %s data type %s html5 %s', opts.url, data.type, data.html5);
       switch(data.type) {
@@ -113,27 +132,21 @@ var navigate = function(res, opts) {
               });
 
               data.content = data.content[0] + linksHtml + data.content[1];
-
-              res.send(data.content);
-              return Promise.all([Item.byId(opts.itemId), generateScreenshot(data.content, opts.width, opts.height), saveData(data)])
-                .spread(function(item, screenshotUrl, storageItem) {
-                  item.title = data.title;
-                  item.url = opts.url;
-		  item.windowWidth = opts.width;
-		  item.windowHeight = opts.height;
-                  item.favicon = data.favicon;
-                  item.screenshot = screenshotUrl;
-                  item.storageItem = storageItem._id;
-                  item.statusCode = 200;
-
-                  return  Promise.cast(item.save())
-                    .then(function() {
-                      userUpdate.updateItem(item.user, item);
-                    })
-                });
+	      return sendAndSaveContent(res, opts, data);
             });
+	    break;
         case 'css':
-          return;
+	  return sendAndSaveContent(res, opts, data);
+          break;
+        case 'js':
+	  return sendAndSaveContent(res, opts, data);
+          break;
+        case 'text':
+	  return sendAndSaveContent(res, opts, data);
+          break;
+        case 'img':
+	  return sendAndSaveContent(res, opts, data);
+          break;
         default:
           return;
       }
@@ -142,6 +155,7 @@ var navigate = function(res, opts) {
       manageItemCodeError(res, opts, e.statusCode);
     })
     .error(function (e) {
+      logger.debug('Error loading url %s:', opts.url, e);
       manageItemCodeError(res, opts, 500);
     })
 };

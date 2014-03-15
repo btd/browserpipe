@@ -1,5 +1,10 @@
-var request = require('request');
-var HtmlProcessor = require("./parser/parser").HtmlProcessor;
+var request = require('request'),
+    parser = require("./parser/parser"),
+    HtmlProcessor = parser.HtmlProcessor,
+    CssToHtmlProcessor = parser.CssToHtmlProcessor,
+    JsToHtmlProcessor = parser.JsToHtmlProcessor,
+    TextToHtmlProcessor = parser.TextToHtmlProcessor,
+    ImageToHtmlProcessor = parser.ImageToHtmlProcessor;
 
 var Promise = require('bluebird');
 
@@ -8,6 +13,10 @@ var Iconv  = require('iconv').Iconv;
 
 function Browser(langs) {
   this.htmlProcessor = new HtmlProcessor(this);
+  this.cssToHtmlProcessor = new CssToHtmlProcessor(this);
+  this.jsToHtmlProcessor = new JsToHtmlProcessor(this);
+  this.textToHtmlProcessor = new TextToHtmlProcessor(this);
+  this.imageToHtmlProcessor = new ImageToHtmlProcessor(this);
   this.langs = langs;
 }
 
@@ -33,6 +42,20 @@ function cssContentType(m) {
   return m.indexOf('text/css') >= 0;
 }
 
+function jsContentType(m) {
+  return m.indexOf('/x-javascript') >= 0
+    || m.indexOf('/javascript') >= 0
+    || m.indexOf('/ecmascript') >= 0;
+}
+
+function textContentType(m) {
+  return m.indexOf('/plain') >= 0;
+}
+
+function imageContentType(m) {
+  return m.indexOf('image/') >= 0;
+}
+
 var csLength = 'charset='.length;
 
 function bodyToString(headers, body) {
@@ -50,7 +73,7 @@ function bodyToString(headers, body) {
   }
 }
 
-var processPage = function(url) {
+var processPage = function(url, isMainUrl) {
 
   var that = this;
   return new Promise(function(resolve, reject) {
@@ -69,20 +92,90 @@ var processPage = function(url) {
 
       if(response.statusCode === 200) {
         var contentType = response.headers['content-type'];
-        if(htmlContentType(contentType)) {
-          that.htmlProcessor.process(url, body, function(err, data) {
-            if(err) return reject({ msg: err });
+        
+	//If is an html request	
+	if(htmlContentType(contentType)) {
+	  if(isMainUrl) {
+	    that.htmlProcessor.process(url, body, function(err, data) {
+	      if(err) return reject({ msg: err });
 
-            data.type = 'html';// type i assume that it is like enumeration with basic types html, image, css, script etc - so no specific
-            data.headers = response.headers;
-            data.href = response.request.href;
+	      data.type = 'html';// type i assume that it is like enumeration with basic types html, image, css, script etc - so no specific
+	      data.headers = response.headers;
+	      data.href = response.request.href;
 
-            return resolve(data);
-          });
-        } else if(cssContentType(contentType)){
+	      return resolve(data);
+	    });
+	  }
+	  else return resolve({ content: body, type: 'html', headers: response.headers, href: response.request.href });
+	}
+	
+	//If is a css request
+        else if(cssContentType(contentType)){
+	  if(isMainUrl) { //We show css file 
+	    that.cssToHtmlProcessor.process(body, function(err, data) {
+	      if(err) return reject({ msg: err });
+
+	      data.type = 'css';
+	      data.headers = response.headers;
+	      data.href = response.request.href;
+
+	      return resolve(data);
+	    })
+	  }
           //there i should process css with minification/concatanation etc
-          return resolve({ content: body, type: 'css', headers: response.headers, href: response.request.href });
-        } else {
+	  else return resolve({ content: body, type: 'css', headers: response.headers, href: response.request.href });
+        } 
+	
+	//If is a js request
+        else if(jsContentType(contentType)){
+	  if(isMainUrl) { //We show js file 
+	    that.jsToHtmlProcessor.process(body, function(err, data) {
+	      if(err) return reject({ msg: err });
+
+	      data.type = 'js';
+	      data.headers = response.headers;
+	      data.href = response.request.href;
+
+	      return resolve(data);
+	    })
+	  }
+	  else return resolve({ content: body, type: 'js', headers: response.headers, href: response.request.href });
+        } 
+	
+	//If is a text request
+        else if(textContentType(contentType)){
+	  if(isMainUrl) { //We show text file 
+	    that.textToHtmlProcessor.process(body, function(err, data) {
+	      if(err) return reject({ msg: err });
+
+	      data.type = 'text';
+	      data.headers = response.headers;
+	      data.href = response.request.href;
+
+	      return resolve(data);
+	    })
+	  }
+	  else return resolve({ content: body, type: 'text', headers: response.headers, href: response.request.href });
+        } 
+	
+	//If is a img request
+        else if(imageContentType(contentType)){
+	  if(isMainUrl) { //We show img file 
+	    that.imageToHtmlProcessor.process(url, function(err, data) {
+	      if(err) return reject({ msg: err });
+
+	      data.type = 'img';
+	      data.headers = response.headers;
+	      data.href = response.request.href;
+
+	      return resolve(data);
+	    })
+	  }
+	  else return resolve({ content: body, type: 'img', headers: response.headers, href: response.request.href });
+        } 
+	
+	//Other type of request
+	else {
           return resolve({ content: body, headers: response.headers, href: response.request.href });
         }
       } else {
@@ -92,18 +185,18 @@ var processPage = function(url) {
   });
 };
 
-var ENOTFOUNDError = function (urls) {
+var InvalidUrlError = function (urls) {
   return function (e) {
-    return e.code === 'ENOTFOUND' && urls.length > 0
+    return urls.length > 0
   }
 }
 
-var processNextUrl = function(urls) {
+var processNextUrl = function(urls, isMainUrl) {
   var that = this;
   var url = urls.shift();
-  return processPage.call(this, url)
-         .catch(ENOTFOUNDError(urls), function(e){
-           return processNextUrl.call(that, urls);
+  return processPage.call(this, url, isMainUrl)
+         .catch(InvalidUrlError(urls), function(e){
+           return processNextUrl.call(that, urls, isMainUrl);
          })
 }
 
@@ -111,9 +204,9 @@ var processNextUrl = function(urls) {
   Load required url and return promise with processed content
  if type on resolved data presented it will be either html ot css
  */
-Browser.prototype._loadUrl = function(url) {  
+Browser.prototype._loadUrl = function(url, isMainUrl) {  
   var urls = processUrl(url);
-  return processNextUrl.call(this, urls);
+  return processNextUrl.call(this, urls, isMainUrl);
 }
 
 var voidElements = require('./parser/handlers/html-writer').voidElements;

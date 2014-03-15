@@ -78,56 +78,83 @@ var TopBarComponent = React.createClass({
   toggleBar: function(){
     //Toggle between bar fixed (pinned) or slide up&down (unpinned)
   },
+  breadcrumbItemClicked: function(e) {
+    e.preventDefault();
+    var id = $(e.target).data('bpipe-item-id');
+    page('/item/' + id);
+  },
+  renderBreadcrumb: function() {
+    var breadcrumbItems = [];
+    var last = true;
+    var item = this.state.selected;
+    while(item) {
+      breadcrumbItems.unshift(this.renderBreadcrumbItem(item, last));
+      item = item.parent? _state.getItemById(item.parent) : null;
+      last = false;
+    }
+    return  <ol className="breadcrumb">{ breadcrumbItems }</ol>
+  },
+  renderBreadcrumbItem: function(item, last) {
+    var title = item.isFolder()? (item.parent? (item.title? item.title : '[No name]') : 'Home') : (item.title? item.title : item.url);
+    return <li className={ last? 'active' : ''} >
+             { !item.isFolder() && item.favicon? <img src={ item.favicon } alt="Item Favicon" /> : '' }
+             { last? title : <a data-bpipe-item-id={ item._id } href="#" onClick={ this.breadcrumbItemClicked }>{ title }</a> }
+             { last? '' : <span className="divider">/</span> }
+           </li>
+  },
   render: function() {
     return (
-      <div className="topbar-commands">
-        <span id="logo"><img src="/img/logo/logo-small.png" alt="Browserpipe logo small"/></span>
-        <div className="navigate-options">
-	  <div className="back-option" onClick={ this.backOptionClicked } >
-	    <i className={"fa fa-arrow-circle-left" + (this.state.selected.isFolder()? " hide": (this.state.selected.previous? "" : " disabled"))}></i>
+      <div>
+	<div className="topbar-commands">
+	  <span id="logo"><img src="/img/logo/logo-small.png" alt="Browserpipe logo small"/></span>
+	  <div className="navigate-options">
+	    <div className="back-option" onClick={ this.backOptionClicked } >
+	      <i className={"fa fa-arrow-circle-left" + (this.state.selected.isFolder()? " hide": (this.state.selected.previous? "" : " disabled"))}></i>
+	    </div>
+	    <div className="forward-option" onClick={ this.forwardOptionClicked } >
+	      <i className={"fa fa-arrow-circle-right" + (this.state.selected.isFolder()? " hide": (this.state.selected.next? "" : " disabled"))}></i>
+	    </div>
+	    <div className="refresh-option" onClick={ this.refreshOptionClicked } >
+	      <i className={"fa fa-refresh" + (this.state.selected.isFolder()? " hide": "")}></i>
+	    </div>
 	  </div>
-	  <div className="forward-option" onClick={ this.forwardOptionClicked } >
-	    <i className={"fa fa-arrow-circle-right" + (this.state.selected.isFolder()? " hide": (this.state.selected.next? "" : " disabled"))}></i>
+	  <div className="search-options input-append">
+	    <input type="text" placeholder="Enter an URL or search a tab" className="url-input" ref="urlInput" onKeyPress={this.ifEnterNavigate} defaultValue={this.state.selected.isFolder()? '': this.state.selected.url } />
+	    <input type="button" className="url-btn btn btn-warning" value="Go"  onClick={this.navigateEnteredURL} />
 	  </div>
-	  <div className="refresh-option" onClick={ this.refreshOptionClicked } >
-	    <i className={"fa fa-refresh" + (this.state.selected.isFolder()? " hide": "")}></i>
+	  <div className="home-option" onClick={ this.homeOptionClicked } >
+	    <i className={"fa fa-th-large" + (this.state.selected.isFolder()? " hide": "")}></i>
+	  </div>
+	  <div className="user-options">
+	    <li className="nav-option pin-option" onClick={ this.toggleBar } >
+	      <i className={"fa fa-thumb-tack" + (this.state.selected.isFolder()? " hide": "")}></i>
+	    </li>
+	    <li className="dropdown nav-option">
+	      <a draggable="false"  href="#" data-toggle="dropdown" className="dropdown-toggle">
+		<i className="fa fa-user"></i>
+	      </a>
+	      <ul className="dropdown-menu">
+		<li>
+		  <a draggable="false"  tabindex="-1" href="/settings">
+		    <i className="icon-none"><span>Settings</span></i>
+		  </a>
+		</li>
+		<li>
+		  <a draggable="false"  tabindex="-1" href="/help">
+		    <i className="icon-none"> <span>Help</span></i>
+		  </a>
+		</li>
+		<li className="divider"></li>
+		<li>
+		  <a draggable="false"  tabindex="-1" href="/logout">
+		    <i className="icon-none"><span>Logout </span></i>
+		  </a>
+		</li>
+	      </ul>
+	    </li>
 	  </div>
 	</div>
-	<div className="search-options input-append">
-	  <input type="text" placeholder="Enter an URL or search a tab" className="url-input" ref="urlInput" onKeyPress={this.ifEnterNavigate} defaultValue={this.state.selected.isFolder()? '': this.state.selected.url } />
-	  <input type="button" className="url-btn btn btn-warning" value="Go"  onClick={this.navigateEnteredURL} />
-	</div>
-	<div className="home-option" onClick={ this.homeOptionClicked } >
-	  <i className={"fa fa-th-large" + (this.state.selected.isFolder()? " hide": "")}></i>
-	</div>
-	<div className="user-options">
-	  <li className="nav-option pin-option" onClick={ this.toggleBar } >
-	    <i className={"fa fa-thumb-tack" + (this.state.selected.isFolder()? " hide": "")}></i>
-	  </li>
-	  <li className="dropdown nav-option">
-	    <a draggable="false"  href="#" data-toggle="dropdown" className="dropdown-toggle">
-	      <i className="fa fa-user"></i>
-	    </a>
-	    <ul className="dropdown-menu">
-	      <li>
-		<a draggable="false"  tabindex="-1" href="/settings">
-		  <i className="icon-none"><span>Settings</span></i>
-		</a>
-	      </li>
-	      <li>
-		<a draggable="false"  tabindex="-1" href="/help">
-		  <i className="icon-none"> <span>Help</span></i>
-		</a>
-	      </li>
-	      <li className="divider"></li>
-	      <li>
-		<a draggable="false"  tabindex="-1" href="/logout">
-		  <i className="icon-none"><span>Logout </span></i>
-		</a>
-	      </li>
-	    </ul>
-	  </li>
-	</div>
+	{ this.renderBreadcrumb() }
       </div>
     );
   },

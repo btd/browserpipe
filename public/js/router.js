@@ -106,9 +106,11 @@ var initialize = function() {
 var stateChanges = function() {
 
   var changeInItems = function(item) {
-    if(dashboardComponent && _state.selected &&
-      ((item._id === _state.selected._id && item.type === 2) || item.parent === _state.selected._id)
-      )
+    if(topBarComponent && (item._id === _state.selected._id || item.parent === _state.selected._id))
+      topBarComponent.setState({
+        selected: _state.selected
+      });
+    if(dashboardComponent && (item._id === _state.selected._id || item.parent === _state.selected._id))
       dashboardComponent.setState({
         selected: _state.selected
       });
