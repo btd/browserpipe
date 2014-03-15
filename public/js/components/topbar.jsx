@@ -86,18 +86,18 @@ var TopBarComponent = React.createClass({
   renderBreadcrumb: function() {
     var breadcrumbItems = [];
     var last = true;
-    var folderId = this.state.selected.isFolder()? this.state.selected._id : this.state.selected.parent;
-    while(folderId) {
-      var folder = _state.getItemById(folderId);
-      breadcrumbItems.unshift(this.renderBreadcrumbItem(folder, last));
-      folderId = folder.parent;
+    var item = this.state.selected;
+    while(item) {
+      breadcrumbItems.unshift(this.renderBreadcrumbItem(item, last));
+      item = item.parent? _state.getItemById(item.parent) : null;
       last = false;
     }
     return  <ol className="breadcrumb">{ breadcrumbItems }</ol>
   },
   renderBreadcrumbItem: function(item, last) {
-    var title = item.parent? (item.title? item.title : '[No name]') : 'Home';
+    var title = item.isFolder()? (item.parent? (item.title? item.title : '[No name]') : 'Home') : (item.title? item.title : item.url);
     return <li className={ last? 'active' : ''} >
+             { !item.isFolder() && item.favicon? <img src={ item.favicon } alt="Item Favicon" /> : '' }
              { last? title : <a data-bpipe-item-id={ item._id } href="#" onClick={ this.breadcrumbItemClicked }>{ title }</a> }
              { last? '' : <span className="divider">/</span> }
            </li>

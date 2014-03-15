@@ -185,9 +185,9 @@ var processPage = function(url, isMainUrl) {
   });
 };
 
-var ENOTFOUNDError = function (urls) {
+var InvalidUrlError = function (urls) {
   return function (e) {
-    return e.code === 'ENOTFOUND' && urls.length > 0
+    return urls.length > 0
   }
 }
 
@@ -195,7 +195,7 @@ var processNextUrl = function(urls, isMainUrl) {
   var that = this;
   var url = urls.shift();
   return processPage.call(this, url, isMainUrl)
-         .catch(ENOTFOUNDError(urls), function(e){
+         .catch(InvalidUrlError(urls), function(e){
            return processNextUrl.call(that, urls, isMainUrl);
          })
 }

@@ -23,7 +23,6 @@ function randomId() {
   return  crypto.pseudoRandomBytes(2).toString('hex');
 }
 
-
 function addHeaderValue(si, headers, name, constructor) {
   if(headers[name]) {
     var fieldName = name.replace(/-[a-z]/g, function(match) {
@@ -156,6 +155,7 @@ var navigate = function(res, opts) {
       manageItemCodeError(res, opts, e.statusCode);
     })
     .error(function (e) {
+      logger.debug('Error loading url %s:', opts.url, e);
       manageItemCodeError(res, opts, 500);
     })
 };
