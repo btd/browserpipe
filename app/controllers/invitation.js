@@ -2,7 +2,8 @@
 
 var Invitation = require('../../models/invitation'),
     responses = require('../responses'),
-    errors = require('../errors');
+    errors = require('../errors'),
+    Promise = require('bluebird');
 
 //Find listboard by id
 exports.invitation = function(req, res, next, id) {
@@ -26,7 +27,7 @@ exports.accepted = function(req, res, next) {
 //Create invitation
 exports.create = function (req, res) {
     var invitation = new Invitation(req.body); //TODO pick fields
-    return invitation.save()
+    return Promise.cast(invitation.save())
         .then(responses.sendModelId(res, invitation._id))
-        .fail(errors.ifErrorSendBadRequest(res))
+        .error(errors.ifErrorSendBadRequest(res))
 }
