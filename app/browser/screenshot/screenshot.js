@@ -102,3 +102,16 @@ var generateScreenshot = function(html, width, height, callback) {
 
 exports.generateScreenshot = generateScreenshot;
 exports.noScreenshotUrl = noScreenshotUrl;
+
+
+function onExit() {
+  _ph && _ph.exit();
+}
+
+process.on('exit', onExit);
+
+//catches ctrl+c event
+process.on('SIGINT', onExit);
+
+//catches uncaught exceptions
+process.on('uncaughtException', onExit);
