@@ -11,7 +11,6 @@ var _ph;
 
 phantom.create(function(err, ph) {
   if(err) return console.error('Could not create PhantomJS instance', err);
-  console.timeEnd("phantom-creation");
   _ph = ph;
 }, {
   parameters: {
@@ -20,25 +19,6 @@ phantom.create(function(err, ph) {
   }
 });
 
-function ensureExit(ph) {
-  var pid = ph && ph._phantom && ph._phantom.pid;
-  if(pid) {
-    process.kill(pid, 'SIGINT');
-  }
-}
-
-process.on('exit', function() {
-  ensureExit(_ph);
-});
-
-require('../../rpc').add(/stop/,
-  function(m, done) {
-    this.write('stoping phantomJs\n');
-    _ph.exit(function() {
-      ensureExit(_ph);
-      done();
-    });
-  });
 
 function randomId() {
   return  crypto.pseudoRandomBytes(64).toString('hex');
