@@ -38,5 +38,7 @@ Promise.onPossiblyUnhandledRejection(function(e, promise){
   throw e;
 });
 
+require('./rpc')({ filename: './rpc.sock' });
+
 module.exports = server;
 
