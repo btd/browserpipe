@@ -21,9 +21,14 @@ phantom.create(function(err, ph) {
 
 require('../../rpc').add(/stop/,
   function(m, done) {
-    this.write('stop phantomJs\n');
+    this.write('stoping phantomJs\n');
+    var pid = _ph && _ph._phantom && _ph._phantom.pid;
     _ph.exit(function() {
-      done();
+      var t = setTimeout(function() {
+        process.kill(pid, 'SIGINT');
+        done();
+      }, 1000);
+
     });
   });
 
