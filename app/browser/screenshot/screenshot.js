@@ -7,7 +7,8 @@ var config = require('../../../config'),
 var crypto = require('crypto');
 
 var _ph;
-console.time("phantom-creation");
+
+
 phantom.create(function(err, ph) {
   if(err) return console.error('Could not create PhantomJS instance', err);
   console.timeEnd("phantom-creation");
@@ -19,16 +20,23 @@ phantom.create(function(err, ph) {
   }
 });
 
+function ensureExit(ph) {
+  var pid = ph && ph._phantom && ph._phantom.pid;
+  if(pid) {
+    process.kill(pid, 'SIGINT');
+  }
+}
+
+process.on('exit', function() {
+  ensureExit(_ph);
+});
+
 require('../../rpc').add(/stop/,
   function(m, done) {
     this.write('stoping phantomJs\n');
-    var pid = _ph && _ph._phantom && _ph._phantom.pid;
     _ph.exit(function() {
-      var t = setTimeout(function() {
-        process.kill(pid, 'SIGINT');
-        done();
-      }, 1000);
-
+      ensureExit(_ph);
+      done();
     });
   });
 
