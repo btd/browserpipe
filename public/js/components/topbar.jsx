@@ -135,6 +135,11 @@ var TopBarComponent = React.createClass({
 	      </a>
 	      <ul className="dropdown-menu">
 		<li>
+		  <a tabindex="-1" href={ "javascript:(function(){BROWSERPIPE_DOMAIN='" + window.location.protocol + "//" + window.location.host + "';_my_script=document.createElement('SCRIPT');_my_script.type='text/javascript';_my_script.src=BROWSERPIPE_DOMAIN+'/js/bookmarklet/bookmarklet.js?x='+(Math.random());document.getElementsByTagName('head')[0].appendChild(_my_script);})();"}>
+		    <i className="icon-none"><span>✚ Add to Browserpipe</span></i>
+		  </a>
+		</li>
+		<li>
 		  <a draggable="false"  tabindex="-1" href="/settings">
 		    <i className="icon-none"><span>Settings</span></i>
 		  </a>

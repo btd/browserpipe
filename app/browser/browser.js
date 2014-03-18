@@ -209,6 +209,21 @@ Browser.prototype._loadUrl = function(url, isMainUrl) {
   return processNextUrl.call(this, urls, isMainUrl);
 }
 
+Browser.prototype._saveHtml = function(url, html) {
+  var that = this;
+  return new Promise(function(resolve, reject) {
+    that.htmlProcessor.process(url, html, function(err, data) {
+      if(err) return reject({ msg: err });
+
+      data.type = 'html';// type i assume that it is like enumeration with basic types html, image, css, script etc - so no specific
+      data.headers = [];
+      data.href = url;
+
+      return resolve(data);
+    });
+  });
+}
+
 var voidElements = require('./parser/handlers/html-writer').voidElements;
 
 Browser.tag = function(name, attributes, html5) {

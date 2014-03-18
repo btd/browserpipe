@@ -1,6 +1,7 @@
 var Item = require('../../models/item'),
   StorageItem = require('../../models/storage-item'),
   userUpdate = require('../controllers/user_update'),
+  responses = require('../responses'),
   errors = require('../errors'),
   Browser = require('./browser');
 
@@ -97,22 +98,35 @@ function processCss(css, attributes) {
 
 var sendAndSaveContent = function(res, opts, data) {
   res.send(data.content);
-  return Promise.all([Item.byId(opts.itemId), generateScreenshot(data.content, opts.width, opts.height), saveData(data)])
-    .spread(function(item, screenshotUrl, storageItem) {
-      item.title = data.title;
-      item.url = opts.url;
-      item.windowWidth = opts.width;
-      item.windowHeight = opts.height;
-      item.favicon = data.favicon;
-      item.screenshot = screenshotUrl;
-      item.storageItem = storageItem._id;
-      item.statusCode = 200;
-
-      return  Promise.cast(item.save())
-	.then(function() {
-	  userUpdate.updateItem(item.user, item);
-	})
+  return Promise.all([
+      Item.byId(opts.itemId), 
+      generateScreenshot(data.content, opts.width, opts.height), 
+      saveData(data), 
+      opts.url, 
+      opts.width,
+      opts.height,
+      data
+    ])
+    .spread(saveContent)
+    .then(function(item) {
+      userUpdate.updateItem(item.user, item);
     });
+}
+
+var saveContent = function(item, screenshotUrl, storageItem, url, width, height, data) {
+    item.title = data.title;
+    item.url = url;
+    item.windowWidth = width;
+    item.windowHeight = height;
+    item.favicon = data.favicon;
+    item.screenshot = screenshotUrl;
+    item.storageItem = storageItem._id;
+    item.statusCode = 200;
+
+    return  Promise.cast(item.save())
+      .then(function() {
+	return item; 
+      });
 }
 
 var navigate = function(res, opts) {
@@ -221,3 +235,67 @@ exports.htmlItem = function(req, res) {
   else return errors.sendBadRequest(res);
 }
 
+
+exports.htmlBookmaklet = function(req, res) {
+
+  res.header("Access-Control-Allow-Origin", req.get('origin'));
+  res.header("Access-Control-Allow-Credentials", true);
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+
+  req.check('url').notEmpty();
+  req.check('html').notEmpty();
+
+  var errs = req.validationErrors();
+  if (errs) return errors.sendBadRequest(res);
+
+  var user = req.user;
+  var url = req.body.url;
+  var html = req.body.html;
+  var width = req.body.width;
+  var height = req.body.height;
+
+  //We save item on root
+  var item = new Item({ url: url , type: 0, parent: user.browser, user: user._id });
+
+  var browser = new Browser(user.langs);
+
+  browser._saveHtml(url, html)
+    .then(function(data) {
+      logger.debug('Saving html from url %s data type %s html5 %s', url, data.type, data.html5);
+      //first we save all stylesheets
+      return Promise.all(processCss(data.stylesheetsDownloads, data.stylesheetsAttributes))
+	.then(function(sheetData) { //we save them on disk
+	  var linksHtml = '';
+	  sheetData.forEach(function(si) {
+	    linksHtml += Browser.tag('link', { type: 'text/css', rel: 'stylesheet', href: si[0].getUrl(), media: si[1] }, data.html5);
+	  });
+
+	  data.content = data.content[0] + linksHtml + data.content[1];
+	  return Promise.all([
+	    item, 
+	    generateScreenshot(data.content, width, height), 
+	    saveData(data), 
+	    url, 
+	    width,
+	    height,
+	    data
+	  ])
+	    .spread(saveContent)
+            .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
+            .then(userUpdate.createItem.bind(null, req.user._id, item))
+	    .then(function() {
+	      return Item.byId({ _id: item.parent })
+	        .then(function(parent) {
+	          parent.items.push(item._id);
+	          parent.markModified('items'); 
+	          return Promise.cast(parent.save())
+                    .then(userUpdate.updateItem.bind(null, req.user._id, parent));
+		})
+	    })
+	});
+    })
+    .error(function() {
+      errors.sendBadRequest(res);
+    })
+    .done();
+}

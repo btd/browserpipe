@@ -6,6 +6,10 @@ var logger = require('rufus').getLogger('express');
 // App settings and middleware
 module.exports = function(app, config, passport) {
 
+  //We update the limits of the size we accept
+  app.use(express.json({limit: '30mb'}));
+  app.use(express.urlencoded({limit: '30mb'}));
+
   // set views path, template engine and default layout
   app.set('views', __dirname + '/views')
   app.set('view engine', 'jade')
@@ -28,6 +32,7 @@ module.exports = function(app, config, passport) {
   //app.use(express.bodyParser()); replace it with explicit formats
   app.use(express.urlencoded());
   app.use(express.json());
+
   // so it is as it was but without multipart (for file uploads)
   //app.use(express.methodOverride()); we do not use it now
 

@@ -52,43 +52,6 @@ exports.addToItem = function(req, res) {
     return exports.addItemToItem(req.currentItem, req, res);
 };
 
-exports.addItemBookmarklet = function(req, res) {
-    req.check('url').notEmpty();
-
-    var errs = req.validationErrors();
-    if (errs) return errors.sendBadRequest(res);
-
-    var redirect = 'back';
-
-    var query = req.query;
-    if(query.next === 'same') {
-        redirect = query.url;
-    }
-
-    return Item.by({ _id: query.to || req.user.laterListboard, user: req.user._id }).then(function(parent) {
-        if(parent) {
-            var item = parent.addBookmark(_.pick(query, 'title', 'url'));
-
-            return item.saveWithPromise()
-                .then(function() {
-                    return parent.saveWithPromise();
-                })
-                .then(function(){
-                    res.redirect(redirect);
-                })
-                .then(userUpdate.createItem.bind(null, req.user._id, item))
-                .then(userUpdate.updateItem.bind(null, req.user._id, parent))
-                .then(function() {
-                    if(item.isBookmark()) {
-
-                    }
-                });
-        } else {
-            res.redirect(redirect);
-        }
-    })
-}
-
 //Update item
 exports.update = function(req, res) {
     var item = req.currentItem;    
