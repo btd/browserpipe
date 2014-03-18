@@ -49,6 +49,7 @@ module.exports = function(options) {
   }
 
   server.listen(options.filename, function() { //'listening' listener
+    fs.chmodSync(options.filename, options.permissions);
     logger.info('RPC server now listening for %s', options.filename);
   });
 };
