@@ -9,52 +9,55 @@ var showNewItemMessage = function(newItem) {
     hideAfter: 6,
     actions: {
       view: {
-	label: "View",
-	action: function(){
-	  page('/item/' + newItem._id);
-	  msg.hide()
-	}
+        label: "View",
+        action: function() {
+          page('/item/' + newItem._id);
+          msg.hide()
+        }
       }
     }
   });
 };
 
+var scrollTimeout;
+
 exports.open = function(url) {
   var self = this;
-  var url = '/html-item/' + _state.selected._id + '?url=' + encodeURIComponent(url) + '&width=' + $(window).width() + '&height=' + $(window).height();
+  var url = _state.selected.storageUrl ? _state.selected.storageUrl :
+    ('/html-item/' + _state.selected._id + '?url=' + encodeURIComponent(url) + '&width=' + $(window).width() + '&height=' + $(window).height());
   if($iframe[0].src !== url) {
     $iframe[0].src = url;
     $iframe.off();
     $iframe.load(function() {
       var $contents = $($iframe.contents());
       var $body = $contents.find('body');
-      $contents.scroll(function () { 
-	clearTimeout($.data(this, 'scrollTimer'));
-	$.data(this, 'scrollTimer', setTimeout(function() {
-	  _state.serverUpdateItem({
-	    _id: _state.selected._id,
-	    scrollX: $contents.scrollLeft(),
-	    scrollY: $contents.scrollTop()
-	  });
-	}, 250));
+      $contents.scroll(function() {//TODO use lodash.debounce
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(function() {
+          _state.serverUpdateItem({
+            _id: _state.selected._id,
+            scrollX: $contents.scrollLeft(),
+            scrollY: $contents.scrollTop()
+          });
+        }, 250);
       });
       $('a', $body).click(function(e) {
         e.preventDefault();
-	var $anchor = $(e.target);
+        var $anchor = $(e.target);
         var url = $anchor.attr('href');
-	if (url) {
+        if(url) {
           var target = $anchor.attr('target');
-	  if(e.ctrlKey) {
-	    self.create(
-	      _state.selected.parent, 
-	      url.trim(),
-	      showNewItemMessage
-	    );
-	  }
-	  else if(target && target.trim() === '_blank')
-	    self.createAndOpen(_state.selected.parent, url.trim());
-	  else
-	    self.createAndOpen(_state.selected.parent, url.trim(), _state.selected._id);
+          if(e.ctrlKey) {
+            self.create(
+              _state.selected.parent,
+              url.trim(),
+              showNewItemMessage
+            );
+          }
+          else if(target && target.trim() === '_blank')
+            self.createAndOpen(_state.selected.parent, url.trim());
+          else
+            self.createAndOpen(_state.selected.parent, url.trim(), _state.selected._id);
         }
       });
       if(_state.selected.scrollX)
@@ -72,8 +75,8 @@ exports.create = function(parentId, url, callback) {
     setTimeout(function() {
       if(callback) callback(item);
       $.ajax({
-	url : ('/html-item/' + item._id + '?url=' + encodeURIComponent(url) + '&width=' + $(window).width() + '&height=' + $(window).height()),
-	cache: true
+        url: ('/html-item/' + item._id + '?url=' + encodeURIComponent(url) + '&width=' + $(window).width() + '&height=' + $(window).height()),
+        cache: true
       });
     }, 1000);
   });

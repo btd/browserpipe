@@ -43,19 +43,8 @@ module.exports = function (app, passport) {
   var listboard = require('./controllers/listboard');
   app.param('listboardId', auth.send401IfNotAuthenticated, listboard.listboard);
 
-    //@Deprecated: there is only one listboard of type 1 (later) and listboars of type 0 are created from extensions installation
-  //app.post(  '/listboards',                auth.send401IfNotAuthenticated, listboard.create);
-  //app.put(   '/listboards/:listboardId',   auth.send401IfNotAuthenticated, listboard.update);
-  //app.delete('/listboards/:listboardId',   auth.send401IfNotAuthenticated, listboard.destroy);
-
   //Containers routes
   var item = require('./controllers/item');
-  //var container = require('./controllers/container');
-  //app.post(   '/listboards/:listboardId/containers',                   auth.send401IfNotAuthenticated, item.addToListboard);
-  //app.put(    '/listboards/:listboardId/containers/:containerId',    auth.send401IfNotAuthenticated, item.update);
-  //app.put(    '/listboards/:listboardId/containers/:itemId/items',   auth.send401IfNotAuthenticated, item.copymoveitems);
-  //app.post(   '/listboards/:listboardId/containers/:itemId/items',   auth.send401IfNotAuthenticated, item.add);
-  //app.delete( '/listboards/:listboardId/containers/:itemId',         auth.send401IfNotAuthenticated, item.destroy);
 
   app.post(  '/items/:itemId/items', auth.send401IfNotAuthenticated, item.addToItem);
   app.put(   '/items/:itemId',       auth.send401IfNotAuthenticated, item.update);
@@ -64,11 +53,7 @@ module.exports = function (app, passport) {
   app.get('/add', auth.ensureLoggedIn('/login'), item.addItemBookmarklet);
 
   app.param('itemId', auth.send401IfNotAuthenticated, item.item);
-
-  //TODO: we should allow phantomjs access in auth.send401IfNotAuthenticated in order to access items
-  app.get('/storage-item/:storageId'/*, auth.send401IfNotAuthenticated*/, item.storageItem);
-
-  //Search route  
+  //Search route
   app.get(    '/search/:query',  auth.send401IfNotAuthenticated, item.search);    
 
   app.param('query', auth.send401IfNotAuthenticated, item.query);
