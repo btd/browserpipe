@@ -7,7 +7,7 @@ var common = {
   cookieSecret: 'd5bSD5N0dl3Vs1SwXw6pMkxS',
   storage: {
     path: './public/storage',
-    url: '/storage'
+    url: '/public/storage'
   },
   screenshot: { // default screenshot settings
     format: 'png',

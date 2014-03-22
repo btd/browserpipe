@@ -3,8 +3,6 @@
 var mongoose = require('mongoose'),
   Schema = mongoose.Schema;
 
-var StorageItem = require('./storage-item');
-
 var Item;
 
 //There are to types of items: folder-item and note-item
@@ -48,22 +46,15 @@ var ItemSchema = new Schema({
 
   statusCode: { type: Number }, //http response code
 
-  storageItem: { type: Schema.ObjectId, ref: 'StorageItem' }
+  // this is a path inside storage - it does not contain whole path with storage prefix
+  path: { type: String }
 }, {
   toObject: { virtuals: true },
   toJSON: { virtuals: true }
 });
 
 ItemSchema.plugin(require('../util/mongoose-timestamp'));
-ItemSchema.plugin(require('mongoose-text-search'));
 
-ItemSchema.index(
-  {
-    title: 'text',
-    url: 'text',
-    html: 'text'
-  }
-);
 
 ['Bookmark', 'Note', 'Container'].forEach(function(elem, index) {
   ItemSchema.methods['is' + elem] = function() {
@@ -85,13 +76,11 @@ ItemSchema.index(
   };
 });
 
-var selectFields = '_id items storageItem parent scrollX scrollY windowWidth windowHeight previous next user type favicon screenshot url externalId browserKey lastSync title deleted';
+var file = require('../util/file');
 
-ItemSchema.statics.byUserAndExternalId = function(user, externalId) {
-  return Item
-    .by({ user: user, externalId: externalId })
-    .select(selectFields); //We exclude html to speed up
-};
+ItemSchema.virtual('storageUrl').get(function() {
+  return this.path && file.url(this.path);
+});
 
 //TODO: for security reasons we should not use byId in the server but byIdAndUserId
 ItemSchema.statics.byId = function(id) {
@@ -101,26 +90,14 @@ ItemSchema.statics.byId = function(id) {
 ItemSchema.statics.by = function(query) {
   return Item
     .findOne(query)
-    .select(selectFields) //We exclude html to speed up
     .exec();
 };
 
-ItemSchema.statics.getHtml = function(id) {
-  return Item
-      .findOne({ _id: id})
-      .select('_id url storageItem')
-      .exec()
-      .then(function(item) {
-        if(item) {
-          return StorageItem.by({ _id: item.storageItem });
-        }
-      })
-};
 
 ItemSchema.statics.all = function(query) {
   return Item
     .find(query)
-    .select(selectFields) //We exclude html to speed up
     .exec();
 }
+
 module.exports = Item = mongoose.model('Item', ItemSchema);

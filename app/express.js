@@ -76,8 +76,8 @@ module.exports = function(app, config, passport) {
 
   // All next thing to make socket.io + express + passport friends
   // Create http server
-  var http = require('http')
-  var server = http.createServer(app)
+  var http = require('http');
+  var server = http.createServer(app);
 
   // Configure socket.io
   var sio = require('./socket.io');
