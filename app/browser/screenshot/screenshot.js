@@ -11,7 +11,6 @@ var _ph;
 
 phantom.create(function(err, ph) {
   if(err) return console.error('Could not create PhantomJS instance', err);
-  console.timeEnd("phantom-creation");
   _ph = ph;
 }, {
   parameters: {
