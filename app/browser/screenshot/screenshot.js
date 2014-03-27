@@ -1,13 +1,11 @@
 var config = require('../../../config'),
-  phantom = require('node-phantom'),
-  Canvas = require('canvas'),
-  Image = Canvas.Image,
-  fs = require('fs');
+  phantom = require('node-phantom');
 
-var crypto = require('crypto');
+var gm = require('gm');
+
+var file = require('../../../util/file');
 
 var _ph;
-
 
 phantom.create(function(err, ph) {
   if(err) return console.error('Could not create PhantomJS instance', err);
@@ -19,98 +17,57 @@ phantom.create(function(err, ph) {
   }
 });
 
-function ensureExit(ph) {
-  var pid = ph && ph._phantom && ph._phantom.pid;
-  if(pid) {
-    process.kill(pid, 'SIGINT');
-  }
-}
 
-process.on('exit', function() {
-  ensureExit(_ph);
-});
+var noScreenshotUrl = '/public/screenshots/no_screenshot.png';
 
-require('../../rpc').add(/stop/,
-  function(m, done) {
-    this.write('stoping phantomJs\n');
-    _ph.exit(function() {
-      ensureExit(_ph);
-      done();
-    });
-  });
+var thumbnailWidth = 260;
 
-function randomId() {
-  return  crypto.pseudoRandomBytes(64).toString('hex');
-}
-
-function getPicturePath(itemId) {
-  var format = config.screenshot.format || 'png';
-  return config.storage.path + '/' + itemId + '.' + format;
-}
-
-function getPicturePathFull(itemId) {
-  var format = config.screenshot.format || 'png';
-  return config.storage.path + '/' + itemId + '-full.' + format;
-}
-
-function getPictureUrl(itemId) {
-  var format = config.screenshot.format || 'png';
-  return config.storage.url + '/' + itemId + '.' + format;
-}
-
-var noScreenshotUrl = '/screenshots/no_screenshot.png';
+var badResult = { success: false, screenshotFull: false, screenshotSmall: noScreenshotUrl };
 
 var generateScreenshot = function(html, width, height, callback) {
-  var itemId = randomId();
-  console.time("page-creation");
   _ph.createPage(function(err, page) {
-    console.timeEnd("page-creation");
+
+    //TODO we should set base width, because if user get screenshots on cellphone and then see them on PC it is a strange
     page.set('viewportSize', { width: width, height: height }, function(error) {
       if(error) {
         console.log('Error setting viewportSize: %s', error);
-        callback(noScreenshotUrl);
-      }
-      else {
+        callback(badResult);
+      } else {
         page.set('content', html, function(error) {
           if(error) {
             console.log('Error setting content: %s', error);
-            callback(noScreenshotUrl);
-          }
-          else {
-            var screenshot_path_full = getPicturePathFull(itemId);
+            callback(badResult);
+          } else {
+            var name = file.randomName('.png');
+            var fullPath = file.fullRandomPath(name);
+
             //We have to wait a bit for phantomjs to finish creating page
             setTimeout(function() {
-              console.time("page-getScreenshot");
-              page.render(screenshot_path_full, function(error) {
-                console.timeEnd("page-getScreenshot");
-                if(error) {
-                  console.log('Error rendering page: %s', error);
-                  callback(noScreenshotUrl);
-                }
-                else {
-                  console.time("page-cropScreenshot");
-                  var screenshot_path = getPicturePath(itemId);
-                  var img = new Image;
-                  img.onerror = function(error) {
-                    console.log('Error cropping screenshot: %s', error);
-                    callback(noScreenshotUrl);
-                  };
-                  img.onload = function() {
-                    var wratio = 252 / width,
-                      h = img.height * wratio,
-                      w = img.width * wratio,
-                      canvas = new Canvas(w, h),
-                      ctx = canvas.getContext('2d');
-                    //We do not crop image anymore;
-                    ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, w, h);
-                    var out = fs.createWriteStream(screenshot_path);
-                    var stream = canvas.pngStream({
-                    });
-                    stream.pipe(out);
-                    callback(getPictureUrl(itemId));
+              return file.mkdirp(fullPath).then(function() {
+                page.render(fullPath, function(error) {
+                  if(error) {
+                    console.log('Error rendering page: %s', error);
+                    callback(badResult);
+                  } else {
+                    var screenshotSmall = file.randomName('.png');
+                    var screenshotSmallPath = file.fullRandomPath(screenshotSmall);
+                    return file.mkdirp(screenshotSmallPath).then(function() {
+                      gm(fullPath)
+                        .resize(thumbnailWidth)
+                        .write(screenshotSmallPath, function(err) {
+                          if(err) {
+                            console.log('Error resizing page: %s', err);
+                            return callback({ success: true, screenshotFull: file.url(name) });
+                          }//XXX
+                          callback({ success: true, screenshotFull: file.url(name), screenshotSmall: file.url(screenshotSmall) });
+                        })
+                    }, function() {
+                      callback({ success: true, screenshotFull: file.url(name) });//XXX
+                    })
                   }
-                  img.src = screenshot_path_full;
-                }
+                })
+              }, function() {
+                callback(badResult);
               });
             }, 1000);
           }

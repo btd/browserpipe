@@ -21,12 +21,12 @@ var TopBarComponent = React.createClass({
       var index = parent.items.indexOf(this.state.selected._id);
       if(index >= 0) { 
         parent.items[index] = previous;
-	_state.serverUpdateItem({
-	  _id: parent._id,
-	  items: parent.items
-	}, function() {
-	  page('/item/' + previous);
-	});
+        _state.serverUpdateItem({
+            _id: parent._id,
+            items: parent.items
+        }, function() {
+            page('/item/' + previous);
+        });
       }
     }
   },
@@ -69,8 +69,8 @@ var TopBarComponent = React.createClass({
       var previousId = this.state.selected.isFolder()? null : this.state.selected._id;
       browser.createAndOpen(
         parentId, 
-	url, 
-	previousId
+        url,
+        previousId
       );
     }
     else  browser.open(url);

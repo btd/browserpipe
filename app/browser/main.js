@@ -1,5 +1,4 @@
 var Item = require('../../models/item'),
-  StorageItem = require('../../models/storage-item'),
   userUpdate = require('../controllers/user_update'),
   responses = require('../responses'),
   errors = require('../errors'),
@@ -9,58 +8,21 @@ var logger = require('rufus').getLogger('browser');
 
 var Promise = require('bluebird');
 
-var path = require('path'),
-  crypto = require('crypto');
-
 var screenshot = require('./screenshot/screenshot');
 
-var writeFile = Promise.promisify(require("fs").writeFile);
-var mkdirp = Promise.promisify(require('mkdirp'));
-
 var config = require('../../config');
+var file = require('../../util/file');
 
-
-function randomId() {
-  return  crypto.pseudoRandomBytes(2).toString('hex');
-}
-
-function addHeaderValue(si, headers, name, constructor) {
-  if(headers[name]) {
-    var fieldName = name.replace(/-[a-z]/g, function(match) {
-      return match[1].toUpperCase();
-    });
-
-    si[fieldName] = new (constructor || String)(headers[name]);
-  }
-}
+var contentType = require('../../util/content-type');
 
 function saveData(data) {
-  var name = path.join(randomId(), randomId(), randomId(), randomId());
-  var fullPath = path.join(config.storage.path, name);
-  return mkdirp(path.dirname(fullPath))
-    .then(function() {
-      return writeFile(fullPath, data.content);
-    })
-    .then(function() {
-      var si = new StorageItem({
-        url: data.href,
-        name: name
-      });
-
-      addHeaderValue(si, data.headers, 'content-type');
-      addHeaderValue(si, data.headers, 'content-length');
-      addHeaderValue(si, data.headers, 'last-modified', Date);
-
-      return Promise.cast(si.save()).then(function() {
-        return Promise.fulfilled(si);
-      });
-    })
+  return file.saveData(data.content, contentType.resolveExtension(contentType.process(data.headers['content-type']).type));
 }
 
 function generateScreenshot(html, width, height) {
   return new Promise(function(resolve, reject) {
-    screenshot.generateScreenshot(html, width, height, function(screenshotURL) {
-      resolve(screenshotURL);
+    screenshot.generateScreenshot(html, width, height, function(screenshotData) {
+      resolve(screenshotData.screenshotSmall || screenshot.noScreenshotUrl);
     })
   })
 }
@@ -89,8 +51,8 @@ function processCss(css, attributes) {
 
     return chunks.map(function(data) {
       return saveData({ content: data.content, headers: { 'content-type': 'text/css', 'content-length': data.content.length }})
-        .then(function(si) {
-          return [si, data.media];
+        .then(function(name) {
+          return [name, data.media];
         })
     });
   });
@@ -113,14 +75,14 @@ var sendAndSaveContent = function(res, opts, data) {
     });
 }
 
-var saveContent = function(item, screenshotUrl, storageItem, url, width, height, data) {
+var saveContent = function(item, screenshotUrl, path, url, width, height, data) {
     item.title = data.title;
     item.url = url;
     item.windowWidth = width;
     item.windowHeight = height;
     item.favicon = data.favicon;
     item.screenshot = screenshotUrl;
-    item.storageItem = storageItem._id;
+    item.path = path;
     item.statusCode = 200;
 
     return  Promise.cast(item.save())
@@ -137,46 +99,50 @@ var navigate = function(res, opts) {
       logger.debug('Load data from url %s data type %s html5 %s', opts.url, data.type, data.html5);
       switch(data.type) {
         case 'html':
-          //first we save all stylesheets
-          return Promise.all(processCss(data.stylesheetsDownloads, data.stylesheetsAttributes))
-            .then(function(sheetData) { //we save them on disk
-              var linksHtml = '';
-              sheetData.forEach(function(si) {
-                linksHtml += Browser.tag('link', { type: 'text/css', rel: 'stylesheet', href: si[0].getUrl(), media: si[1] }, data.html5);
-              });
 
-              data.content = data.content[0] + linksHtml + data.content[1];
-	      return sendAndSaveContent(res, opts, data);
-            });
-	    break;
+          if(data.stylesheetsDownloads && data.stylesheetsAttributes) {
+            return Promise.all(processCss(data.stylesheetsDownloads || [], data.stylesheetsAttributes || []))
+              .then(function(sheetData) { //we save them on disk
+                var linksHtml = '';
+                sheetData.forEach(function(si) {
+                  linksHtml += Browser.tag('link', { type: 'text/css', rel: 'stylesheet', href: file.url(si[0]), media: si[1] });
+                });
+
+                data.content = data.content[0] + linksHtml + data.content[1];
+                return sendAndSaveContent(res, opts, data);
+              });
+          } else {
+            return sendAndSaveContent(res, opts, data);
+          }
+          break;
         case 'css':
-	  return sendAndSaveContent(res, opts, data);
+          return sendAndSaveContent(res, opts, data);
           break;
         case 'js':
-	  return sendAndSaveContent(res, opts, data);
+          return sendAndSaveContent(res, opts, data);
           break;
         case 'text':
-	  return sendAndSaveContent(res, opts, data);
+          return sendAndSaveContent(res, opts, data);
           break;
         case 'img':
-	  return sendAndSaveContent(res, opts, data);
+          return sendAndSaveContent(res, opts, data);
           break;
         default:
           return;
       }
     })
-    .catch(StatusCode4XXError, function(e){
+    .catch(StatusCode4XXError, function(e) {
       manageItemCodeError(res, opts, e.statusCode);
     })
-    .error(function (e) {
+    .error(function(e) {
       logger.debug('Error loading url %s:', opts.url, e);
       manageItemCodeError(res, opts, 500);
     })
 };
 
-var StatusCode4XXError = function (e) {
+var StatusCode4XXError = function(e) {
   return e.statusCode >= 400 && e.statusCode < 500;
-}
+};
 
 var manageItemCodeError = function(res, opts, code) {
   sendItemCodeErrorResponse(res, code);
@@ -199,13 +165,22 @@ var sendItemCodeErrorResponse = function(res, code) {
   //TODO: use templates
   var html = '';
   switch(code) {
-    case 400: html = '<center><h2>Invalid request</h2></center>'; break;
-    case 401: html = '<center><h2>You are not authorized to view this page</h2></center>'; break;
-    case 403: html = '<center><h2>You are not authorized to view this page</h2></center>'; break;
-    case 404: html = '<center><h2>Page not found</h2></center>'; break;
-    default: html = '<center><h2>Sorry, there was a problem displaying the page</h2></center>';
+    case 400:
+      html = '<center><h2>Invalid request</h2></center>';
+      break;
+    case 401:
+      html = '<center><h2>You are not authorized to view this page</h2></center>';
+      break;
+    case 403:
+      html = '<center><h2>You are not authorized to view this page</h2></center>';
+      break;
+    case 404:
+      html = '<center><h2>Page not found</h2></center>';
+      break;
+    default:
+      html = '<center><h2>Sorry, there was a problem displaying the page</h2></center>';
   }
-  res.status(code).send(html); 
+  res.status(code).send(html);
 }
 
 exports.htmlItem = function(req, res) {
@@ -215,21 +190,13 @@ exports.htmlItem = function(req, res) {
   var height = req.query.height;
   if(item.url) {
     logger.debug('Browser open %s for %s', item._id, item.url);
-    if(item.statusCode && item.statusCode !== 200)
-	sendItemCodeErrorResponse(res, item.statusCode);
-    else if(item.storageItem) {
-      return Promise.cast(StorageItem.by({ _id: item.storageItem }))
-        .then(function(stored) {
-          if(stored) {
-            return stored.getContent().then(function(content) {
-              res.send(content);
-            })
-          } else if(item.url) {
-            return navigate(res, { url: item.url, itemId: item._id, languages: user.langs, width: width, height: height });
-          }
-          else return errors.sendInternalServer(res);
-        })
-    } else return navigate(res, { url: item.url, itemId: item._id, languages: user.langs, width: width, height: height });
+    if(item.statusCode && item.statusCode !== 200) {
+      sendItemCodeErrorResponse(res, item.statusCode);
+    } else if(item.path) {
+      return res.redirect(file.url(item.path));
+    } else {
+      return navigate(res, { url: item.url, itemId: item._id, languages: user.langs, width: width, height: height });
+    }
   }
   else if(req.query.url) return navigate(res, { url: req.query.url, itemId: item._id, languages: user.langs, width: width, height: height });
   else return errors.sendBadRequest(res);
@@ -238,9 +205,9 @@ exports.htmlItem = function(req, res) {
 
 exports.htmlBookmaklet = function(req, res) {
 
-  res.header("Access-Control-Allow-Origin", req.get('origin'));
-  res.header("Access-Control-Allow-Credentials", true);
-  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  res.setHeader("Access-Control-Allow-Origin", req.get('origin'));
+  res.setHeader("Access-Control-Allow-Credentials", true);
+  res.setHeader("Access-Control-Allow-Headers", "X-Requested-With");
 
   req.check('url').notEmpty();
   req.check('html').notEmpty();
