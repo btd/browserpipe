@@ -81,12 +81,20 @@ Browser.prototype.processPage = function(url, isMainUrl) {
               });
               break;
 
+	    //TODO: review text and images urls that are not working
+            /*case 'img':
+              ct.type = 'text/html';
+              response.headers['content-type'] = ct.toString();//TODO check if we use another headers
+              imgToHtml(url , function(err, html) {
+                resolve({ content: html, type: 'html', headers: response.headers, href: response.request.href});
+              });
+
             default:
               ct.type = 'text/html';
               response.headers['content-type'] = ct.toString();//TODO check if we use another headers
               textToHtml(body, function(err, html) {
                 resolve({ content: html, type: 'html', headers: response.headers, href: response.request.href});
-              });
+              });*/
           }
         } else { // url relative to main url like css on html page
           return resolve({ content: body, type: baseType, headers: response.headers, href: response.request.href });
@@ -110,7 +118,7 @@ Browser.prototype.processNextUrl = function(urls, isMainUrl) {
   var that = this;
   return this.processPage(url, isMainUrl)
     .catch(InvalidUrlError(urls), function(e) {
-      return this.processNextUrl(urls, isMainUrl);
+      return that.processNextUrl(urls, isMainUrl);
     })
 }
 

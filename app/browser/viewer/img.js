@@ -12,7 +12,7 @@ function tpl(url) {
 }
 
 module.exports = function(url, callback) {
-  return callback(null, { content: tpl(fixedEncodeURI(url)) });
+  return callback(null, tpl(fixedEncodeURI(url)));
 }
 
 function fixedEncodeURI (str) {

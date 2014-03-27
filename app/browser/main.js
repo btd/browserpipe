@@ -234,10 +234,12 @@ exports.htmlBookmaklet = function(req, res) {
 	.then(function(sheetData) { //we save them on disk
 	  var linksHtml = '';
 	  sheetData.forEach(function(si) {
-	    linksHtml += Browser.tag('link', { type: 'text/css', rel: 'stylesheet', href: si[0].getUrl(), media: si[1] }, data.html5);
+	    linksHtml += Browser.tag('link', { type: 'text/css', rel: 'stylesheet', href: file.url(si[0]), media: si[1] });
 	  });
 
 	  data.content = data.content[0] + linksHtml + data.content[1];
+	  data.headers['content-type'] = "text/html";
+
 	  return Promise.all([
 	    item, 
 	    generateScreenshot(data.content, width, height), 
