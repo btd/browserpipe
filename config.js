@@ -9,10 +9,8 @@ var common = {
     path: './public/storage',
     url: '/public/storage'
   },
-  screenshot: { // default screenshot settings
-    format: 'png',
-    width: 800,
-    height: 600
+  screenshot: {
+    extension: '.png'
   },
   'socket-io': {
     userUpdateRedisKeyPrefix: 'user_update:',

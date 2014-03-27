@@ -38,7 +38,7 @@ var generateScreenshot = function(html, width, height, callback) {
             console.log('Error setting content: %s', error);
             callback(badResult);
           } else {
-            var name = file.randomName('.png');
+            var name = file.randomName(config.screenshot.extension);
             var fullPath = file.fullRandomPath(name);
 
             //We have to wait a bit for phantomjs to finish creating page

@@ -27,7 +27,7 @@ exports.mkdirp = function(p) {
 }
 
 exports.url = function(p) {
-  return path.join(config.storage.url, p);
+  return config.appUrl + path.join(config.storage.url, p);
 }
 
 exports.saveData = function saveData(content, ext) {
