@@ -61,10 +61,10 @@ Browser.prototype.processPage = function(url, isMainUrl) {
       if(error) return reject(error);
 
       var ct = contentType.process(response.headers['content-type']);
-      var body = bodyToString(ct.charset, _body);
+      var baseType = contentType.resolveType(ct.type);
+      var body = contentType.isBinary(ct.type) ? _body: bodyToString(ct.charset, _body);
 
       if(response.statusCode === 200) {
-        var baseType = contentType.resolveType(ct.type);
 
         // main url means that user request this url
         if(isMainUrl) {
@@ -81,9 +81,16 @@ Browser.prototype.processPage = function(url, isMainUrl) {
               });
               break;
 
+            case 'img':
+              ct.type = 'text/html';
+              response.headers['content-type'] = ct.toString();
+              imgToHtml(body, function(err, html) {//TODO we need to save image first
+                resolve({ content: html, type: 'html', headers: response.headers, href: response.request.href});
+              });
+
             default:
               ct.type = 'text/html';
-              response.headers['content-type'] = ct.toString();//TODO check if we use another headers
+              response.headers['content-type'] = ct.toString();
               textToHtml(body, function(err, html) {
                 resolve({ content: html, type: 'html', headers: response.headers, href: response.request.href});
               });

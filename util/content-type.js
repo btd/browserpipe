@@ -2,8 +2,9 @@ var csLength = 'charset='.length;
 
 exports.process = function(rawContentType) {
   var splitted = rawContentType.trim().toLowerCase().split(";");
-  return splitted.length == 2 ? { type: splitted[0], charset: splitted[1].trim().substr(csLength) } :
-  { type: splitted[0] };
+  return splitted.length == 2 ?
+    new ContentType(splitted[0], splitted[1].trim().substr(csLength)) :
+    new ContentType(splitted[0]);
 };
 
 function ContentType(type, charset) {
@@ -42,6 +43,22 @@ exports.resolveType = function(contentType) {
 
     default:
       return 'other';
+  }
+}
+
+exports.isBinary = function(contentType) {
+  switch(contentType) {
+    case 'text/html':
+    case 'application/xhtml+xml':
+    case 'application/xml':
+    case 'text/css':
+    case 'application/x-javascript':
+    case 'application/javascript':
+    case 'application/ecmascript':
+      return false;
+
+    default:
+      return true;
   }
 }
 
