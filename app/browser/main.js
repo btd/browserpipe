@@ -9,14 +9,9 @@ var Promise = require('bluebird');
 
 var screenshot = require('./screenshot/screenshot');
 
-var config = require('../../config');
 var file = require('../../util/file');
 
 var contentType = require('../../util/content-type');
-
-function saveData(data) {
-  return file.saveData(data.content, contentType.resolveExtension(contentType.process(data.headers['content-type']).type));
-}
 
 function generateScreenshot(html, width, height) {
   return new Promise(function(resolve, reject) {
@@ -26,40 +21,10 @@ function generateScreenshot(html, width, height) {
   })
 }
 
-var absUrl = require('./parser/handlers/abs-url');
-
-function processCss(css, attributes) {
-  return Promise.all(css).then(function(datas) {
-    // concat by media attribute (ie8 does not support @media in css)
-    var chunks = [
-      { content: '', media: 'all'}
-    ];
-    datas.forEach(function(body, index) {
-      var attr = attributes[index];
-      var media = attr.media || 'all';
-      var lastChunk = chunks[chunks.length - 1];
-
-      var content = absUrl.replaceStyleUrl(body.content, absUrl.makeUrlReplacer(body.href));
-
-      if(lastChunk.media == media) {
-        lastChunk.content += content;
-      } else {
-        chunks.push({ content: content, media: media});
-      }
-    });
-
-    return chunks.map(function(data) {
-      return saveData({ content: data.content, headers: { 'content-type': 'text/css', 'content-length': data.content.length }})
-        .then(function(name) {
-          return [name, data.media];
-        })
-    });
-  });
-}
 
 var sendAndSaveContent = function(res, opts, data) {
   res.send(data.content);
-  return Promise.all([Item.byId(opts.itemId), generateScreenshot(data.content, opts.width, opts.height), saveData(data)])
+  return Promise.all([Item.byId(opts.itemId), generateScreenshot(data.content, opts.width, opts.height), Browser.save(data.content, data.contentType)])
     .spread(function(item, screenshotUrl, path) {
       item.title = data.title;
       item.url = opts.url;
@@ -75,44 +40,21 @@ var sendAndSaveContent = function(res, opts, data) {
           userUpdate.updateItem(item.user, item);
         })
     });
-}
+};
 
 var navigate = function(res, opts) {
   var browser = new Browser(opts.languages);
 
   return browser._loadUrl(opts.url, true)
     .then(function(data) {
-      logger.debug('Load data from url %s data type %s html5 %s', opts.url, data.type, data.html5);
+      logger.debug('Load data from url %s data type %s html5 %s', opts.url, data.type);
       switch(data.type) {
         case 'html':
-
-          if(data.stylesheetsDownloads && data.stylesheetsAttributes) {
-            return Promise.all(processCss(data.stylesheetsDownloads || [], data.stylesheetsAttributes || []))
-              .then(function(sheetData) { //we save them on disk
-                var linksHtml = '';
-                sheetData.forEach(function(si) {
-                  linksHtml += Browser.tag('link', { type: 'text/css', rel: 'stylesheet', href: file.url(si[0]), media: si[1] });
-                });
-
-                data.content = data.content[0] + linksHtml + data.content[1];
-                return sendAndSaveContent(res, opts, data);
-              });
-          } else {
-            return sendAndSaveContent(res, opts, data);
-          }
-          break;
         case 'css':
-          return sendAndSaveContent(res, opts, data);
-          break;
         case 'js':
-          return sendAndSaveContent(res, opts, data);
-          break;
         case 'text':
-          return sendAndSaveContent(res, opts, data);
-          break;
         case 'img':
           return sendAndSaveContent(res, opts, data);
-          break;
         default:
           return;
       }
