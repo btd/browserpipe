@@ -177,7 +177,7 @@ Browser.prototype.processNextUrl = function(urls, isMainUrl) {
   var that = this;
   return this.processPage(url, isMainUrl)
     .catch(InvalidUrlError(urls), function(e) {
-      return this.processNextUrl(urls, isMainUrl);
+      return that.processNextUrl(urls, isMainUrl);
     })
 }
 
