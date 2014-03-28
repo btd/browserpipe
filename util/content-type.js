@@ -1,5 +1,8 @@
 var csLength = 'charset='.length;
 
+var url = require('url');
+var pathMod = require('path');
+
 exports.process = function(rawContentType) {
   var splitted = rawContentType.trim().toLowerCase().split(";");
   return splitted.length == 2 ?
@@ -45,6 +48,29 @@ exports.resolveType = function(contentType) {
       return 'other';
   }
 }
+
+exports.guessByUrl = function(url) {
+  var parsedUrl = url.parse(url);
+  var ext = pathMod.extname(parsedUrl.path);
+
+  switch(ext) {
+    case '.jpg':
+    case '.jpeg':
+      return new ContentType('image/jpeg');
+
+    case '.gif':
+      return new ContentType('image/gif');
+
+    case '.png':
+      return new ContentType('image/png');
+
+    default:
+      return new ContentType('application/octet-stream');
+  }
+};
+
+exports.CSS = new ContentType('text/css');
+exports.HTML = new ContentType('text/html');
 
 exports.isBinary = function(contentType) {
   switch(contentType) {

@@ -35,7 +35,9 @@ var generateScreenshot = function(html, width, height, callback) {
       } else {
         page.set('content', html, function(error) {
           page.evaluate(function() {
-            document.body.bgColor = 'white';
+            if(!document.body.style.background) {
+              document.body.style.backgroundColor = 'white';
+            }
           }, function() {
 
 
