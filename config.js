@@ -10,7 +10,9 @@ var common = {
     url: '/public/storage'
   },
   screenshot: {
-    extension: '.png'
+    extension: '.jpg',
+    baseWidth: 1200,
+    thumbnailWidth: 260
   },
   'socket-io': {
     userUpdateRedisKeyPrefix: 'user_update:',
