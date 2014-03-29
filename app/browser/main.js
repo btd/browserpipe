@@ -1,5 +1,6 @@
 var Item = require('../../models/item'),
   userUpdate = require('../controllers/user_update'),
+  responses = require('../responses'),
   errors = require('../errors'),
   Browser = require('./browser');
 
@@ -21,26 +22,32 @@ function generateScreenshot(html, width, height) {
   })
 }
 
-
 var sendAndSaveContent = function(res, opts, data) {
   res.send(data.content);
-  return Promise.all([Item.byId(opts.itemId), generateScreenshot(data.content, opts.width, opts.height), Browser.save(data.content, data.contentType)])
-    .spread(function(item, screenshotUrl, path) {
-      item.title = data.title;
-      item.url = opts.url;
-      item.windowWidth = opts.width;
-      item.windowHeight = opts.height;
-      item.favicon = data.favicon;
+  return Item.byId(opts.itemId)
+    .then(function(item) {
+        return saveContent(item, opts.url, data.content, data.contentType, opts.width, opts.height, data.title, data.favicon)
+          .then(function() { userUpdate.updateItem(item.user, item); });
+    });
+}  
+
+var saveContent = function(item, url, content, contentType, width, height, title, favicon) {
+  return Promise.all([
+    generateScreenshot(content, width, height), 
+    Browser.save(content, contentType)
+  ]).spread(function(screenshotUrl, path) {
+      item.title = title;
+      item.url = url;
+      item.windowWidth = width;
+      item.windowHeight = height;
+      item.favicon = favicon;
       item.screenshot = screenshotUrl;
       item.path = path;
       item.statusCode = 200;
 
       return  Promise.cast(item.save())
-        .then(function() {
-          userUpdate.updateItem(item.user, item);
-        })
     });
-};
+}
 
 var navigate = function(res, opts) {
   var browser = new Browser(opts.languages);
@@ -130,3 +137,51 @@ exports.htmlItem = function(req, res) {
   else return errors.sendBadRequest(res);
 }
 
+
+exports.htmlBookmaklet = function(req, res) {
+
+  res.setHeader("Access-Control-Allow-Origin", req.get('origin'));
+  res.setHeader("Access-Control-Allow-Credentials", true);
+  res.setHeader("Access-Control-Allow-Headers", "X-Requested-With");
+
+  req.check('url').notEmpty();
+  req.check('html').notEmpty();
+
+  var errs = req.validationErrors();
+  if (errs) return errors.sendBadRequest(res);
+
+  var user = req.user;
+  var url = req.body.url;
+  var html = req.body.html;
+  var charset = req.body.charset;
+  var width = req.body.width;
+  var height = req.body.height;
+
+  //We save item on root
+  var item = new Item({ url: url , type: 0, parent: user.browser, user: user._id });
+        
+  var ct = contentType.process('text/html');
+
+  var browser = new Browser(user.langs);
+
+  return browser.processHtml(url, browser.bodyToString(charset, html), ct)
+    .then(function(data) {
+      logger.debug('Load data from bookmarklet url %s', url);
+      return saveContent(item, url, data.content, data.contentType, width, height, data.title, data.favicon)
+	.then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
+	.then(userUpdate.createItem.bind(null, req.user._id, item))
+	.then(function() {
+	  return Item.byId({ _id: item.parent })
+	    .then(function(parent) {
+	      parent.items.push(item._id);
+	      parent.markModified('items'); 
+	      return Promise.cast(parent.save())
+		.then(userUpdate.updateItem.bind(null, req.user._id, parent));
+	    })
+	})
+    })
+    .error(function(e) {
+      logger.debug('Error processing bookmarklet for url %s:', url, e);
+      errors.sendBadRequest(res);
+    })
+}
