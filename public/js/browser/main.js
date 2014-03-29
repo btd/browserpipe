@@ -29,9 +29,10 @@ exports.open = function(url) {
   if($iframe[0].src !== url) {
     $iframe[0].src = url;
     $iframe.off();
+    var $contents = $($iframe.contents());
+    var $body = $contents.find('body');
+    $body.empty();
     $iframe.load(function() {
-      var $contents = $($iframe.contents());
-      var $body = $contents.find('body');
       $contents.scroll(function() {//TODO use lodash.debounce
         var scrollX = $contents.scrollLeft();
         var scrollY = $contents.scrollTop();

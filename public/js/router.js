@@ -40,8 +40,23 @@ var loadDashboardComponent = function() {
 }
 
 var loadPage = function(item) {
-  $('#page-section .page-content').contents().find('body').empty();
   if(item.url) browser.open(item._id, item.url);
+}
+
+var prepareFolderElements = function() {
+  $('#topbar-section .url-input').val('');
+  $('#topbar-section').show();
+  $('#dashboard-section').show();
+  $('#page-section').hide();
+  $('html, body').removeClass('overflow-hidden');
+}
+
+var prepareTabElements = function() {
+  $('#topbar-section').show();
+  $('.url-input').focus();
+  $('#dashboard-section').hide();
+  $('#page-section').show();
+  $('html, body').addClass('overflow-hidden');
 }
 
 page('/', function() {
@@ -49,10 +64,7 @@ page('/', function() {
     _state.selected = _state.browser;
     loadTopBarComponent();
     loadDashboardComponent();
-    $('#topbar-section').show();
-    $('#dashboard-section').show();
-    $('#page-section').hide();
-    $('html, body').removeClass('overflow-hidden');
+    prepareFolderElements();
   }, 0);
 });
 
@@ -65,19 +77,12 @@ page('/item/:id', function(ctx) {
       if(item.type === 2) {
         loadTopBarComponent();
         loadDashboardComponent();
-        $('#topbar-section').show();
-        $('#dashboard-section').show();
-        $('#page-section').hide();
-        $('html, body').removeClass('overflow-hidden');
+	prepareFolderElements();
       }
       else {
         loadTopBarComponent();
         loadPage(item);
-        $('#topbar-section').show();
-	$('.url-input').focus();
-        $('#dashboard-section').hide();
-        $('#page-section').show();
-        $('html, body').addClass('overflow-hidden');
+	prepareTabElements();
       }
     } else {
       page('/');
