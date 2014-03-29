@@ -25,41 +25,27 @@ module.exports = function (app, passport) {
 
   app.param('invitationId', invitation.invitation);
 
-  //Extension
-  app.get(    '/clients/chrome/extension.crx', auth.send401IfNotAuthenticated, main.chromeExtension);
-
-  //Bookmark
-  app.get('//:url(*)', function(req, res) {
-    console.log('yesss ')
-    res.send('thx');
-  })
-
-  app.param('url', function(req, res, next, id) {
-    console.log(id);
-    next();
-  });
-
-  //Listboards routes
-  var listboard = require('./controllers/listboard');
-  app.param('listboardId', auth.send401IfNotAuthenticated, listboard.listboard);
-
-  //Containers routes
+  //Items routes
   var item = require('./controllers/item');
 
   app.post(  '/items/:itemId/items', auth.send401IfNotAuthenticated, item.addToItem);
   app.put(   '/items/:itemId',       auth.send401IfNotAuthenticated, item.update);
   app.delete('/items/:itemId',       auth.send401IfNotAuthenticated, item.delete);
 
-  app.get('/add', auth.ensureLoggedIn('/login'), item.addItemBookmarklet);
-
   app.param('itemId', auth.send401IfNotAuthenticated, item.item);
-  //Search route
+
+  //Search route  
   app.get(    '/search/:query',  auth.send401IfNotAuthenticated, item.search);    
 
   app.param('query', auth.send401IfNotAuthenticated, item.query);
 
+  //HTML for item
   var browser = require('./browser/main');
   app.get('/html-item/:itemId', auth.send401IfNotAuthenticated, browser.htmlItem);
+
+  //Bookmarlet
+  app.post('/add', auth.ensureLoggedIn('/login'), browser.htmlBookmaklet);
+
 };
 
 

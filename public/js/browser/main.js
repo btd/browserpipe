@@ -19,27 +19,33 @@ var showNewItemMessage = function(newItem) {
   });
 };
 
-var scrollTimeout;
+var scrollTimeout, loading = false;
 
 exports.open = function(url) {
+  loading = true;
   var self = this;
   var url = _state.selected.storageUrl ? _state.selected.storageUrl :
     ('/html-item/' + _state.selected._id + '?url=' + encodeURIComponent(url) + '&width=' + $(window).width() + '&height=' + $(window).height());
   if($iframe[0].src !== url) {
     $iframe[0].src = url;
     $iframe.off();
+    var $contents = $($iframe.contents());
+    var $body = $contents.find('body');
+    $body.empty();
     $iframe.load(function() {
-      var $contents = $($iframe.contents());
-      var $body = $contents.find('body');
       $contents.scroll(function() {//TODO use lodash.debounce
-        clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(function() {
-          _state.serverUpdateItem({
-            _id: _state.selected._id,
-            scrollX: $contents.scrollLeft(),
-            scrollY: $contents.scrollTop()
-          });
-        }, 250);
+        var scrollX = $contents.scrollLeft();
+        var scrollY = $contents.scrollTop();
+        if(!loading && (_state.selected.scrollX !== scrollX || _state.selected.scrollY !== scrollY)) {
+	  clearTimeout(scrollTimeout);
+	  scrollTimeout = setTimeout(function() {
+	    _state.serverUpdateItem({
+	      _id: _state.selected._id,
+	      scrollX: scrollX,
+	      scrollY: scrollY
+	    });
+	  }, 250);
+	}
       });
       $('a', $body).click(function(e) {
         e.preventDefault();
@@ -64,6 +70,7 @@ exports.open = function(url) {
         $contents.scrollLeft(_state.selected.scrollX);
       if(_state.selected.scrollY)
         $contents.scrollTop(_state.selected.scrollY);
+      loading = false;
     });
   }
 };

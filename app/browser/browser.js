@@ -42,7 +42,7 @@ function processUrl(url) {
   ];
 }
 
-function bodyToString(charset, body) {
+Browser.prototype.bodyToString = function(charset, body) {
   if(charset) {
     var bufferCharset = getCharset(charset);
     if(!bufferCharset) {
@@ -106,7 +106,7 @@ Browser.prototype.processPage = function(url, isMainUrl) {
       var baseType = contentType.resolveType(ct.type);
 
       if(response.statusCode === 200) {
-        var body = contentType.isBinary(ct.type) ? _body : bodyToString(ct.charset, _body);
+        var body = contentType.isBinary(ct.type) ? _body : that.bodyToString(ct.charset, _body);
 
         // main url means that user request this url
         if(isMainUrl) {

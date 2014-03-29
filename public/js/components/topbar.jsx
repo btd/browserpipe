@@ -46,10 +46,10 @@ var TopBarComponent = React.createClass({
       }
     }
   },
-  homeOptionClicked: function() { 
+  logoClicked: function() { 
     $('#page-section .page-content').contents().find('body').empty();
     $('.url-input').val('');
-    page('/item/' + this.state.selected.parent);
+    page('/item/' + _state.browser._id);
   },
   refreshOptionClicked: function() { 
     this.navigateToURL(this.state.selected.url);
@@ -74,9 +74,6 @@ var TopBarComponent = React.createClass({
       );
     }
     else  browser.open(url);
-  },
-  toggleBar: function(){
-    //Toggle between bar fixed (pinned) or slide up&down (unpinned)
   },
   breadcrumbItemClicked: function(e) {
     e.preventDefault();
@@ -106,7 +103,7 @@ var TopBarComponent = React.createClass({
     return (
       <div>
 	<div className="topbar-commands">
-	  <span id="logo"><img src="/img/logo/logo-small.png" alt="Browserpipe logo small"/></span>
+	  <span id="logo" onClick={ this.logoClicked } ><img src="/img/logo/logo-small.png" alt="Browserpipe logo small"/></span>
 	  <div className="navigate-options">
 	    <div className="back-option" onClick={ this.backOptionClicked } >
 	      <i className={"fa fa-arrow-circle-left" + (this.state.selected.isFolder()? " hide": (this.state.selected.previous? "" : " disabled"))}></i>
@@ -122,18 +119,18 @@ var TopBarComponent = React.createClass({
 	    <input type="text" placeholder="Enter an URL or search a tab" className="url-input" ref="urlInput" onKeyPress={this.ifEnterNavigate} defaultValue={this.state.selected.isFolder()? '': this.state.selected.url } />
 	    <input type="button" className="url-btn btn btn-warning" value="Go"  onClick={this.navigateEnteredURL} />
 	  </div>
-	  <div className="home-option" onClick={ this.homeOptionClicked } >
-	    <i className={"fa fa-th-large" + (this.state.selected.isFolder()? " hide": "")}></i>
-	  </div>
 	  <div className="user-options">
-	    <li className="nav-option pin-option" onClick={ this.toggleBar } >
-	      <i className={"fa fa-thumb-tack" + (this.state.selected.isFolder()? " hide": "")}></i>
-	    </li>
 	    <li className="dropdown nav-option">
 	      <a draggable="false"  href="#" data-toggle="dropdown" className="dropdown-toggle">
 		<i className="fa fa-user"></i>
 	      </a>
 	      <ul className="dropdown-menu">
+		<li>
+		  <a tabindex="-1" href={ "javascript:(function(){BROWSERPIPE_DOMAIN='" + window.location.protocol + "//" + window.location.host + "';_my_script=document.createElement('SCRIPT');_my_script.type='text/javascript';_my_script.src=BROWSERPIPE_DOMAIN+'/js/bookmarklet/bookmarklet.js?x='+(Math.random());document.getElementsByTagName('head')[0].appendChild(_my_script);})();"}>
+		    <i className="icon-none"><span>✚ Add to Browserpipe</span></i>
+		  </a>
+		</li>
+		<li className="divider"></li>
 		<li>
 		  <a draggable="false"  tabindex="-1" href="/settings">
 		    <i className="icon-none"><span>Settings</span></i>
