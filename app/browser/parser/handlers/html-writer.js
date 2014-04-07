@@ -2,7 +2,8 @@ var Base = require('./base');
 
 //http://www.w3.org/TR/html5/syntax.html#void-elements
 // this tag should not be closed
-var voidElements = { area: true,
+var voidElements = {
+  area: true,
   base: true,
   br: true,
   col: true,
@@ -16,7 +17,8 @@ var voidElements = { area: true,
   param: true,
   source: true,
   track: true,
-  wbr: true };
+  wbr: true
+};
 
 var HtmlWriteHandler = function() {
   this.head = '';
@@ -24,6 +26,7 @@ var HtmlWriteHandler = function() {
 
   this.writeHead = true;
 
+  this.hasDoctype = false;
   this.stylesheetsDownloads = [];
   this.stylesheetsAttributes = [];
 
@@ -55,6 +58,8 @@ function isStylesheet(name, attributes) {
 }
 
 HtmlWriteHandler.prototype.onOpenTag = function(name, attributes) {
+  if(!this.hasDoctype) this.addDoctype();
+
   if(isStylesheet(name, attributes)) {
     this.stylesheetsDownloads.push(this.browser._loadUrl(attributes.href));
     this.stylesheetsAttributes.push(attributes);
@@ -92,7 +97,7 @@ HtmlWriteHandler.prototype.onCloseTag = function(name) {
      <head>
      ...
      <- this place was the end
-      </head>
+     </head>
      <body>
      */
     this.writeHead = false;
@@ -117,10 +122,17 @@ HtmlWriteHandler.prototype.onProcessingInstruction = function(name, value) {
   if(name == '!doctype') {
     //we will rewrite previous html with new doctype and assume it is html5 always
     //TODO test this for xml+xhtml for XML <?xml ...>
-    this.html5 = true;
-    this.add('<!doctype html>');
+    this.addDoctype();
   }
 };
+
+HtmlWriteHandler.prototype.addDoctype = function() {
+  if(!this.hasDoctype) {
+    this.html5 = true;
+    this.add('<!doctype html>');
+    this.hasDoctype = true;
+  }
+}
 
 module.exports = HtmlWriteHandler;
 module.exports.voidElements = voidElements;
