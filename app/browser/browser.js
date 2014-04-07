@@ -22,8 +22,6 @@ function saveData(data, ct) {
 function Browser(langs) {
   this.htmlProcessor = new HtmlProcessor(this);
   this.langs = langs;
-
-  this.downloadQueue = {};
 }
 
 Browser.save = saveData;
@@ -51,37 +49,30 @@ Browser.prototype.bodyToString = function(charset, body) {
     }
     return body.toString(bufferCharset);
   } else {
-    return body.toString();//TODO need to add in some way check on default encoding
+    return body.toString();//TODO need to add in some way check on default encoding (which is latin-1)
   }
 }
 //TODO try to parse buffer begining to find <meta> with charset
 
 function processCss(css, attributes) {
+//TODO remove @charset inside
   return Promise.all(css).then(function(datas) {
-    // concat by media attribute (ie8 does not support @media in css)
-    var chunks = [
-      { content: '', media: 'all'}
-    ];
+    var allContent = '';
+
     datas.forEach(function(body, index) {
       var attr = attributes[index];
       var media = attr.media || 'all';
-      var lastChunk = chunks[chunks.length - 1];
 
       var content = absUrl.replaceStyleUrl(body.content, absUrl.makeUrlReplacer(body.href));
 
-      if(lastChunk.media == media) {
-        lastChunk.content += content;
+      if(media && media != 'all') {
+        allContent += '@media ' + media + ' { ' + content + '} '; //TODO is it possible to have nested media queries?
       } else {
-        chunks.push({ content: content, media: media});
+        allContent += content;
       }
     });
 
-    return chunks.map(function(data) {
-      return Browser.save(data.content, contentType.CSS)
-        .then(function(name) {
-          return [name, data.media];
-        })
-    });
+    return Browser.save(allContent, contentType.CSS);
   });
 }
 
@@ -152,14 +143,10 @@ Browser.prototype.processHtml = function(baseUrl, htmlText, ct) {
       data.href = baseUrl;
       data.contentType = ct;
 
-      return Promise.all(processCss(data.stylesheetsDownloads || [], data.stylesheetsAttributes || []))
-        .then(function(sheetData) { //we save them on disk
-          var linksHtml = '';
-          sheetData.forEach(function(si) {
-            linksHtml += Browser.tag('link', { type: 'text/css', rel: 'stylesheet', href: file.url(si[0]), media: si[1] });
-          });
+      return processCss(data.stylesheetsDownloads || [], data.stylesheetsAttributes || []).then(function(sheetName) { //we saved them on disk
+          var linkHtml = Browser.tag('link', { type: contentType.CSS.toString(), rel: 'stylesheet', href: file.url(sheetName) });
 
-          data.content = data.content[0] + linksHtml + data.content[1];
+          data.content = data.content[0] + linkHtml + data.content[1];
           return resolve(data);
         });
     });
