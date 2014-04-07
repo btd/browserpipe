@@ -11,7 +11,10 @@ var common = {
   },
   screenshot: {
     extension: '.jpg',
-    baseWidth: 1200,
+    viewportSize: {
+      width: 1280,
+      height: 1024
+    },
     thumbnailWidth: 260
   },
   'socket-io': {

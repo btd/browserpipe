@@ -39,7 +39,12 @@ var loadDashboardComponent = function() {
   }
 }
 
+function cleanBrowserIframe() {
+  $('#page-section .page-content')[0].src = "about:blank";
+}
+
 var loadPage = function(item) {
+  cleanBrowserIframe();
   if(item.url) browser.open(item._id, item.url);
 }
 
@@ -77,12 +82,12 @@ page('/item/:id', function(ctx) {
       if(item.type === 2) {
         loadTopBarComponent();
         loadDashboardComponent();
-	prepareFolderElements();
+        prepareFolderElements();
       }
       else {
         loadTopBarComponent();
         loadPage(item);
-	prepareTabElements();
+        prepareTabElements();
       }
     } else {
       page('/');

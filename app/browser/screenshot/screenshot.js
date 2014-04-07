@@ -23,7 +23,7 @@ var badResult = { success: false, screenshotFull: false, screenshotSmall: noScre
 
 var generateScreenshot = function(html, width, height, callback) {
   _ph.createPage(function(err, page) {
-    page.set('viewportSize', { width: config.screenshot.baseWidth }, function(error) {
+    page.set('viewportSize', config.screenshot.viewportSize, function(error) {
       if(error) {
         console.log('Error setting viewportSize: %s', error);
         callback(badResult);
