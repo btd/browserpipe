@@ -32,7 +32,8 @@ var browserifyAliases = [
   bowerAlias('emitter/index.js', 'emitter'),
   bowerAlias('moco/index.js', 'moco'),
   bowerAlias('messenger/build/js/messenger.js', 'messenger'),
-  bowerAlias('bootstrap/js/dropdown.js', 'bootstrap-dropdown')
+  bowerAlias('bootstrap/js/dropdown.js', 'bootstrap-dropdown'),
+  bowerAlias('bootstrap/js/modal.js', 'bootstrap-modal')
 ];
 
 module.exports = function(grunt) {

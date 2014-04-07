@@ -51,7 +51,6 @@ h1 {
 
 p {
   font-family: "Open Sans", sans-serif;
-  text-align: center;
   font-weight: 300; 
 }
 
@@ -62,6 +61,24 @@ a {
 .fa:hover {
   cursor: pointer;
   color: darken(#666, 15%);
+}
+
+.modal-bookmarklet-content{
+  .bookmarklet {
+    margin-top: 27px;
+
+    .bookmarklet-link {
+      border: 2px dashed #f89406;
+      margin-right: 6px;
+      padding: 3px 6px;
+      color: #f89406;
+
+      &:hover {
+	cursor: grab;
+        text-decoration: none;
+      }
+    }
+  }
 }
 
 #topbar-section {
@@ -78,7 +95,7 @@ a {
     }
   }
   .topbar-commands {
-    z-index: 10000;
+    z-index: 20;
     position: relative;
     width: 100%;
     text-align: center;
@@ -202,7 +219,7 @@ a {
 	  opacity: 0.8;
 	  position: absolute;
 	  background-color: #000;
-	  z-index: 1000;
+	  z-index: 10;
 	  width: 252px;
 	  height: 21px; 
 	  color: #fff;

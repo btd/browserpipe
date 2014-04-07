@@ -10,6 +10,8 @@ var _state = require('./state'),
 
 //Dropdown
 require('bootstrap-dropdown');
+//Modal
+require('bootstrap-modal');
 //Notification system
 require('messenger');
 

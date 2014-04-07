@@ -1,9 +1,12 @@
 extends ../layouts/home
 
 block body   
-    #topbar-section
-    #dashboard-section
-    #page-section
-        iframe(src='about:blank', class="page-content")
-    #hiddenEventDiv
-    include ../includes/footer
+  #topbar-section
+  #dashboard-section
+  #page-section
+    iframe(src='about:blank', class="page-content")
+  #hiddenEventDiv
+  #modal(class="modal fade")
+    .modal-dialog
+      .modal-content
+  include ../includes/footer
