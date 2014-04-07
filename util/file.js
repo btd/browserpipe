@@ -10,12 +10,10 @@ var config = require('../config');
 
 
 function randomId(bits) {
-  bits = bits || 2;
   return  crypto.pseudoRandomBytes(bits).toString('hex');
 }
-
 exports.randomName = function(ext) {
-  return path.join(randomId(), randomId(), randomId(), randomId() + ext);
+  return path.join.apply(path, config.storage.pathConfig.map(randomId)) + ext;
 }
 
 exports.fullRandomPath = function(p, ext) {
@@ -32,6 +30,10 @@ exports.url = function(p) {
 
 exports.saveData = function saveData(content, ext) {
   var name = exports.randomName(ext);
+  return exports.saveDataByName(content, name);
+};
+
+exports.saveDataByName = function(content, name) {
   var fullPath = path.join(config.storage.path, name);
   return exports.mkdirp(fullPath)
     .then(function() {
@@ -40,4 +42,4 @@ exports.saveData = function saveData(content, ext) {
     .then(function() {
       return name;
     })
-};
+}

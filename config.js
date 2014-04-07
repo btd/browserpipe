@@ -7,7 +7,8 @@ var common = {
   cookieSecret: 'd5bSD5N0dl3Vs1SwXw6pMkxS',
   storage: {
     path: './public/storage',
-    url: '/public/storage'
+    url: '/public/storage',
+    pathConfig: [2, 2, 2, 2]//it is number of bits used in chunks for sub folders like AAAA/BBBB/CCCC/DDDD
   },
   screenshot: {
     extension: '.jpg',
