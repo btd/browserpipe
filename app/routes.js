@@ -1,4 +1,5 @@
-var auth = require('./middlewares/authorization');
+var auth = require('./middlewares/authorization'),
+    cors = require('./middlewares/cors');
 
 module.exports = function (app, passport) {
 
@@ -49,7 +50,7 @@ module.exports = function (app, passport) {
 
   //Bookmarlet routes
   var bookmarklet = require('./controllers/bookmarklet');
-  app.get('/bookmarklet/login', bookmarklet.login);
+  app.get('/bookmarklet/login',  cors.allowAllAccess, bookmarklet.login);
   app.post('/bookmarklet/session', passport.authenticate('local', { successReturnToOrRedirect: '/bookmarklet/add', failureRedirect: '/bookmarklet/login', badRequestMessage: "Please enter valid email and password", failureFlash: true }));
   app.get('/bookmarklet/start', auth.ensureLoggedIn('/bookmarklet/login'), bookmarklet.start);
   app.post('/bookmarklet/add', auth.send401IfNotAuthenticated, browser.htmlBookmarklet);
