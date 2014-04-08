@@ -29,11 +29,11 @@ var sendAndSaveContent = function(res, opts, data) {
         return saveContent(item, opts.url, data.content, data.contentType, opts.width, opts.height, data.title, data.favicon)
           .then(function() { userUpdate.updateItem(item.user, item); });
     });
-}  
+}
 
 var saveContent = function(item, url, content, contentType, width, height, title, favicon) {
   return Promise.all([
-    generateScreenshot(content, width, height), 
+    generateScreenshot(content, width, height),
     Browser.save(content, contentType)
   ]).spread(function(screenshotUrl, path) {
       item.title = title;
@@ -44,7 +44,7 @@ var saveContent = function(item, url, content, contentType, width, height, title
       item.screenshot = screenshotUrl;
       item.path = path;
       item.statusCode = 200;
-
+      
       return  Promise.cast(item.save())
     });
 }
@@ -138,7 +138,7 @@ exports.htmlItem = function(req, res) {
 }
 
 
-exports.htmlBookmaklet = function(req, res) {
+exports.htmlBookmarklet = function(req, res) {
 
   res.setHeader("Access-Control-Allow-Origin", req.get('origin'));
   res.setHeader("Access-Control-Allow-Credentials", true);
@@ -152,14 +152,15 @@ exports.htmlBookmaklet = function(req, res) {
 
   var user = req.user;
   var url = req.body.url;
+  var parentId = req.body.parent;
   var html = req.body.html;
   var charset = req.body.charset;
   var width = req.body.width;
   var height = req.body.height;
 
   //We save item on root
-  var item = new Item({ url: url , type: 0, parent: user.browser, user: user._id });
-        
+  var item = new Item({ url: url , type: 0, parent: parentId, user: user._id });
+
   var ct = contentType.process('text/html');
 
   var browser = new Browser(user.langs);
@@ -174,7 +175,7 @@ exports.htmlBookmaklet = function(req, res) {
 	  return Item.byId({ _id: item.parent })
 	    .then(function(parent) {
 	      parent.items.push(item._id);
-	      parent.markModified('items'); 
+	      parent.markModified('items');
 	      return Promise.cast(parent.save())
 		.then(userUpdate.updateItem.bind(null, req.user._id, parent));
 	    })

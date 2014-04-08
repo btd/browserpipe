@@ -1,0 +1,44 @@
+doctype html
+//if lt IE 7
+  <html class="no-js lt-ie9 lt-ie8 lt-ie7">
+//if IE 7
+  <html class="no-js lt-ie9 lt-ie8">
+//if IE 8
+  <html class="no-js lt-ie9">
+//if gt IE 8
+  <html class="no-js">
+if !pickFolder
+  body
+    script.
+      window.parent.postMessage("save", "*");
+else
+  //- TODO: DO THE PICK FOLDER MODAL
+  head
+    include ../includes/head
+    
+    //Application styles
+    != stylesheet_tag('css/bookmarklet')
+
+  body.modal-open
+    .modal.fade.in(role="dialog", aria-labelledby="browserpipe-modal", aria-hidden="false", style="display: block;")
+      .modal-dialog
+        .modal-content
+           .modal-header
+             button#close_opt.close(data-dismiss="modal", aria-hidden="true") ×
+             != image_tag("img/logo/logo.png", { alt: "Browserpipe logo"})
+           .modal-body
+            .container-fluid
+              .row-fluid
+                .span12
+                  .row-fluid
+                    h3 Pick a folder
+           .modal-footer
+             button#btnsave.btn.btn-warning.btn-big(type='submit') Save               
+             button#btncancel.btn.btn-warning.btn-big(data-dismiss="modal") Cancel    
+    .modal-backdrop.fade.in
+    script.
+      var sendDestroy = function(){window.parent.postMessage("destroy", "*");};
+      var saveToFolder = function(){window.parent.postMessage("save_" + selectedFolder, "*");};
+      document.getElementById('btnsave').onclick = saveToFolder;
+      document.getElementById('btncancel').onclick = sendDestroy;
+      document.getElementById('close_opt').onclick = sendDestroy;
