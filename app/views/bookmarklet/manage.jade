@@ -7,38 +7,27 @@ doctype html
   <html class="no-js lt-ie9">
 //if gt IE 8
   <html class="no-js">
-if !pickFolder
-  body
-    script.
-      window.parent.postMessage("save", "*");
-else
-  //- TODO: DO THE PICK FOLDER MODAL
-  head
-    include ../includes/head
-    
-    //Application styles
-    != stylesheet_tag('css/bookmarklet')
+head
+  include ../includes/head
+  
+  //Application styles
+  != stylesheet_tag('css/bookmarklet')
 
-  body.modal-open
-    .modal.fade.in(role="dialog", aria-labelledby="browserpipe-modal", aria-hidden="false", style="display: block;")
-      .modal-dialog
-        .modal-content
-           .modal-header
-             button#close_opt.close(data-dismiss="modal", aria-hidden="true") ×
-             != image_tag("img/logo/logo.png", { alt: "Browserpipe logo"})
-           .modal-body
-            .container-fluid
-              .row-fluid
-                .span12
-                  .row-fluid
-                    h3 Pick a folder
-           .modal-footer
-             button#btnsave.btn.btn-warning.btn-big(type='submit') Save               
-             button#btncancel.btn.btn-warning.btn-big(data-dismiss="modal") Cancel    
-    .modal-backdrop.fade.in
-    script.
-      var sendDestroy = function(){window.parent.postMessage("destroy", "*");};
-      var saveToFolder = function(){window.parent.postMessage("save_" + selectedFolder, "*");};
-      document.getElementById('btnsave').onclick = saveToFolder;
-      document.getElementById('btncancel').onclick = sendDestroy;
-      document.getElementById('close_opt').onclick = sendDestroy;
+body.modal-bookmarklet
+  button#close_opt.close(data-dismiss="modal", aria-hidden="true") ×
+  != image_tag("img/logo/logo.png", { alt: "Browserpipe logo"})
+  .container-fluid
+    .row-fluid
+      .span12
+        .row-fluid
+  script.
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-42652416-1', 'listboard.it');
+    ga('send', 'pageview');
+  script.
+    var sendDestroy = function(){window.parent.postMessage("destroy", "*");};
+    var saveToFolder = function(){window.parent.postMessage("save_" + selectedFolder, "*");};
+    document.getElementById('close_opt').onclick = sendDestroy;

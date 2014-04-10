@@ -52,7 +52,7 @@ module.exports = function (app, passport) {
   var bookmarklet = require('./controllers/bookmarklet');
   app.get('/bookmarklet/login',  cors.allowAllAccess, bookmarklet.login);
   app.post('/bookmarklet/session', passport.authenticate('local', { successReturnToOrRedirect: '/bookmarklet/add', failureRedirect: '/bookmarklet/login', badRequestMessage: "Please enter valid email and password", failureFlash: true }));
-  app.get('/bookmarklet/start', auth.ensureLoggedIn('/bookmarklet/login'), bookmarklet.start);
+  app.get('/bookmarklet/start', cors.allowAllAccess, auth.ensureLoggedIn('/bookmarklet/login'), bookmarklet.start);
   app.post('/bookmarklet/add', auth.send401IfNotAuthenticated, browser.htmlBookmarklet);
 
 };

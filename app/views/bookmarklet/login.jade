@@ -9,34 +9,27 @@ doctype html
   <html class="no-js">
 head
   include ../includes/head
-  
+
   //Application styles
   != stylesheet_tag('css/bookmarklet')
 
-body.modal-open
-  .modal.fade.in(role="dialog", aria-labelledby="browserpipe-modal", aria-hidden="false", style="display: block;")
-    .modal-dialog
-      .modal-content
-         .modal-header
-           button#close_opt.close(data-dismiss="modal", aria-hidden="true") ×
-           != image_tag("img/logo/logo.png", { alt: "Browserpipe logo"})
-         .modal-body
-          .container-fluid
-            .row-fluid
-              .span12
-                .row-fluid
-                  form#login(target="_self",action="/bookmarklet/session", method="post")
-                    .control-group
-                      .controls
-                        input#email(type='text', name="email", placeholder='Email')
+body.modal-bookmarklet
+  button#close_opt.close(data-dismiss="modal", aria-hidden="true") ×
+  != image_tag("img/logo/logo.png", { alt: "Browserpipe logo"})
+  .container-fluid
+    .row-fluid
+      .span12
+        .row-fluid
+          form#login(target="_self",action="/bookmarklet/session", method="post")
+            .control-group
+              .controls
+                input#email(type='text', name="email", placeholder='Email')
 
-                    .control-group
-                      .controls
-                        input#password(type='password', name="password", placeholder='Password')
-         .modal-footer
-           button#btnlogin.btn.btn-warning.btn-big(type='submit') Login               
-           button#btncancel.btn.btn-warning.btn-big(data-dismiss="modal") Cancel    
-  .modal-backdrop.fade.in
+            .control-group
+              .controls
+                input#password(type='password', name="password", placeholder='Password')
+  button#btnlogin.btn.btn-warning.btn-big(type='submit') Login
+  button#btncancel.btn.btn-warning.btn-big(data-dismiss="modal") Cancel
   script.
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),

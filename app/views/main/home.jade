@@ -1,6 +1,6 @@
 extends ../layouts/home
 
-block body   
+block body
   #topbar-section
   #dashboard-section
   #page-section
@@ -9,4 +9,6 @@ block body
   #modal(class="modal fade")
     .modal-dialog
       .modal-content
+  script.
+    console.log(window != window.parent);
   include ../includes/footer
