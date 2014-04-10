@@ -27,9 +27,16 @@ var sendAndSaveContent = function(res, opts, data) {
   return Item.byId(opts.itemId)
     .then(function(item) {
         return saveContent(item, opts.url, data.content, data.contentType, opts.width, opts.height, data.title, data.favicon)
-          .then(function() { userUpdate.updateItem(item.user, item); });
+          .then(function() { userUpdate.updateItem(item.user, item); })
+          .then(function() {
+            if(data.contentNext) {
+              return data.contentNext.then(function(nextHtml) {
+                return saveContent(item, opts.url, nextHtml, data.contentType, opts.width, opts.height, data.title, data.favicon)
+              });
+            }
+          });
     });
-}  
+};
 
 var saveContent = function(item, url, content, contentType, width, height, title, favicon) {
   return Promise.all([
@@ -45,9 +52,9 @@ var saveContent = function(item, url, content, contentType, width, height, title
       item.path = path;
       item.statusCode = 200;
 
-      return  Promise.cast(item.save())
+      return Promise.cast(item.save())
     });
-}
+};
 
 var navigate = function(res, opts) {
   var browser = new Browser(opts.languages);

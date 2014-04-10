@@ -6,19 +6,6 @@ var SanitizeHandler = require('./handlers/sanitize');
 var FaviconHandler = require('./handlers/favicon');
 var AbsUrlHandler = require('./handlers/abs-url');
 
-var tagsToReplace = {
-  '&': '&amp;',
-  '<': '&lt;',
-  '>': '&gt;'
-};
-
-var replaceTag = function(tag) {
-  return tagsToReplace[tag] || tag;
-}
-
-var safeTagsReplace = function(str) {
-  return str.replace(/[&<>]/g, replaceTag);
-}
 
 //Process html file to optimize and clean it into new html
 function HtmlProcessor(browser) {

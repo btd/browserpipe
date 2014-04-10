@@ -1,32 +1,29 @@
 var Base = require('./base');
+var browserUtil = require('../../util');
 
-//http://www.w3.org/TR/html5/syntax.html#void-elements
-// this tag should not be closed
-var voidElements = {
-  area: true,
-  base: true,
-  br: true,
-  col: true,
-  embed: true,
-  hr: true,
-  img: true,
-  input: true,
-  keygen: true,
-  link: true,
-  meta: true,
-  param: true,
-  source: true,
-  track: true,
-  wbr: true
-};
+var Promise = require('bluebird');
+
+var file = require('../../../../util/file');
+var contentType = require('../../../../util/content-type');
+
+var absUrl = require('./abs-url');
+
+function saveData(data, ct) {
+  return file.saveData(data, contentType.resolveExtension(ct.type));
+}
 
 var HtmlWriteHandler = function() {
-  this.head = '';
-  this.body = '';
 
-  this.writeHead = true;
+  this.styleChunks = [];
+  this.imgChunks = [];
+
+  this.currentStyleChunk = '';
+  this.currentImgChunk = '';
+
+  this.resetChunk = false;
 
   this.hasDoctype = false;
+
   this.stylesheetsDownloads = [];
   this.stylesheetsAttributes = [];
 
@@ -38,19 +35,72 @@ var HtmlWriteHandler = function() {
 
 HtmlWriteHandler.prototype = Object.create(Base.prototype);
 
+function processCss(css, attributes) {
+//TODO remove @charset inside
+  return Promise.all(css).then(function(datas) {
+    var allContent = '';
+
+    datas.forEach(function(body, index) {
+      var attr = attributes[index];
+      var media = attr.media || 'all';
+
+      var content = absUrl.replaceStyleUrl(body.content, absUrl.makeUrlReplacer(body.href));
+
+      if(media && media != 'all') {
+        allContent += '@media ' + media + ' { ' + content + '} '; //TODO is it possible to have nested media queries?
+      } else {
+        allContent += content;
+      }
+    });
+
+    return saveData(allContent, contentType.CSS);
+  });
+}
+
 HtmlWriteHandler.prototype.gather = function(obj) {
-  obj.content = [this.head, this.body];
-  obj.stylesheetsDownloads = this.stylesheetsDownloads;
-  obj.stylesheetsAttributes = this.stylesheetsAttributes;
-  obj.html5 = this.html5;
+  var that = this;
+  this.resetStyleChunk();
+  this.resetImgChunk();
+
+  var stylesheets = processCss(this.stylesheetsDownloads, this.stylesheetsAttributes).then(function(sheetName) {
+    var linkHtml = browserUtil.openTag('link', { type: contentType.CSS.toString(), rel: 'stylesheet', href: file.url(sheetName) });
+
+    return linkHtml;
+  });
+
+  obj.contentPromise = stylesheets.then(function(link) {
+    return that.styleChunks[0] + link + that.styleChunks[1];
+  });
+
+  obj.contentPromiseWithImages = stylesheets.then(function(link) {
+    that.imgChunks[0] += link;
+    return Promise.all(that.imgChunks).then(function(chunks) {
+      return chunks.join('');
+    })
+  });
+};
+
+HtmlWriteHandler.prototype.resetImgChunk = function() {
+  this.imgChunks.push(this.currentImgChunk);
+  this.currentImgChunk = '';
+};
+
+HtmlWriteHandler.prototype.resetStyleChunk = function() {
+  this.styleChunks.push(this.currentStyleChunk);
+  this.currentStyleChunk = '';
 };
 
 HtmlWriteHandler.prototype.add = function(text) {
-  if(this.writeHead) {
-    this.head += text;
-  } else {
-    this.body += text;
-  }
+  this.addImg(text);
+  this.addStyle(text);
+};
+
+HtmlWriteHandler.prototype.addImg = function(text) {
+  this.currentImgChunk += text;
+};
+
+HtmlWriteHandler.prototype.addStyle = function(text) {
+  this.currentStyleChunk += text;
 };
 
 function isStylesheet(name, attributes) {
@@ -58,24 +108,32 @@ function isStylesheet(name, attributes) {
 }
 
 HtmlWriteHandler.prototype.onOpenTag = function(name, attributes) {
-  if(!this.hasDoctype) this.addDoctype();
+  this.addDoctype();
+
+  if(name == 'body' || name == 'script' || name == 'style') {
+    this.removeExtraWhiteSpace = false;
+  }
 
   if(isStylesheet(name, attributes)) {
     this.stylesheetsDownloads.push(this.browser._loadUrl(attributes.href));
     this.stylesheetsAttributes.push(attributes);
   } else {
-    this.add('<' + name);
-    for(var attr in attributes) {
-      // it does not un escape entities
-      this.add(' ' + attr + '="' + attributes[attr] + '"');
-    }
-    this.add('>');
+    if(name == 'img') {
+      this.resetImgChunk();//flush everything before
 
-    if(name == 'body') {
-      this.removeExtraWhiteSpace = false;
-    }
-    if(name == 'script' || name == 'style') {
-      this.removeExtraWhiteSpace = false;
+      //add <img> tag via promise
+      this.imgChunks.push(this.browser._loadUrl(attributes.src)
+        .then(function(data) {//TODO check on datauri
+          return saveData(data.content, data.contentType);
+        })
+        .then(function(name) {
+          attributes.src = file.url(name);
+          return browserUtil.openTag('img', attributes);
+        }));
+      //for first version we load it as is
+      this.addStyle(browserUtil.openTag(name, attributes, false));
+    } else {
+      this.add(browserUtil.openTag(name, attributes, false));//TODO check what if inside attribute will be quote? Probably will be need to unescape and escape eveything
     }
   }
 };
@@ -100,20 +158,17 @@ HtmlWriteHandler.prototype.onCloseTag = function(name) {
      </head>
      <body>
      */
-    this.writeHead = false;
+    this.resetStyleChunk();
+    this.resetImgChunk();
   }
 
-  if(this.html5 && voidElements[name]) {
+  if(browserUtil.voidElements[name]) {
     //do nothing as it is html5
   } else {
     this.add('</' + name + '>');
   }
 
-  if(name == 'script' || name == 'style') {
-    this.removeExtraWhiteSpace = true;
-  }
-
-  if(name == 'body') {
+  if(name == 'script' || name == 'style' || name == 'body') {
     this.removeExtraWhiteSpace = true;
   }
 };
@@ -128,11 +183,9 @@ HtmlWriteHandler.prototype.onProcessingInstruction = function(name, value) {
 
 HtmlWriteHandler.prototype.addDoctype = function() {
   if(!this.hasDoctype) {
-    this.html5 = true;
     this.add('<!doctype html>');
     this.hasDoctype = true;
   }
-}
+};
 
 module.exports = HtmlWriteHandler;
-module.exports.voidElements = voidElements;

@@ -13,8 +13,6 @@ var Promise = require('bluebird');
 var getCharset = require('http-buffer-charset');
 var Iconv = require('iconv').Iconv;
 
-var absUrl = require('./parser/handlers/abs-url');
-
 function saveData(data, ct) {
   return file.saveData(data, contentType.resolveExtension(ct.type));
 }
@@ -54,27 +52,7 @@ Browser.prototype.bodyToString = function(charset, body) {
 }
 //TODO try to parse buffer begining to find <meta> with charset
 
-function processCss(css, attributes) {
-//TODO remove @charset inside
-  return Promise.all(css).then(function(datas) {
-    var allContent = '';
 
-    datas.forEach(function(body, index) {
-      var attr = attributes[index];
-      var media = attr.media || 'all';
-
-      var content = absUrl.replaceStyleUrl(body.content, absUrl.makeUrlReplacer(body.href));
-
-      if(media && media != 'all') {
-        allContent += '@media ' + media + ' { ' + content + '} '; //TODO is it possible to have nested media queries?
-      } else {
-        allContent += content;
-      }
-    });
-
-    return Browser.save(allContent, contentType.CSS);
-  });
-}
 
 Browser.prototype.processPage = function(url, isMainUrl) {
   var that = this;
@@ -103,9 +81,7 @@ Browser.prototype.processPage = function(url, isMainUrl) {
         if(isMainUrl) {
           switch(baseType) {
             case 'html':
-              return that.processHtml(url, body, ct).then(function(data) {
-                return resolve(data);
-              });
+              return that.processHtml(url, body, ct).then(resolve);
             case 'img':
               return saveData(body, ct).then(function(path) {
                 ct.type = 'text/html';
@@ -143,21 +119,20 @@ Browser.prototype.processHtml = function(baseUrl, htmlText, ct) {
       data.href = baseUrl;
       data.contentType = ct;
 
-      return processCss(data.stylesheetsDownloads || [], data.stylesheetsAttributes || []).then(function(sheetName) { //we saved them on disk
-          var linkHtml = Browser.tag('link', { type: contentType.CSS.toString(), rel: 'stylesheet', href: file.url(sheetName) });
-
-          data.content = data.content[0] + linkHtml + data.content[1];
-          return resolve(data);
-        });
+      return data.contentPromise.then(function(html) {
+        data.content = html;
+        data.contentNext = data.contentPromiseWithImages;
+        return resolve(data);
+      });
     });
   });
-}
+};
 
 var InvalidUrlError = function(urls) {
   return function(e) {
     return urls.length > 0
   }
-}
+};
 
 Browser.prototype.processNextUrl = function(urls, isMainUrl) {
   var url = urls.shift();
@@ -166,7 +141,7 @@ Browser.prototype.processNextUrl = function(urls, isMainUrl) {
     .catch(InvalidUrlError(urls), function(e) {
       return that.processNextUrl(urls, isMainUrl);
     })
-}
+};
 
 /**
  Load required url and return promise with processed content
@@ -175,22 +150,7 @@ Browser.prototype.processNextUrl = function(urls, isMainUrl) {
 Browser.prototype._loadUrl = function(url, isMainUrl) {
   var urls = processUrl(url);
   return this.processNextUrl(urls, isMainUrl);
-}
+};
 
-var voidElements = require('./parser/handlers/html-writer').voidElements;
-
-Browser.tag = function(name, attributes) {
-  var text = '';
-  text += '<' + name;
-  for(var attr in attributes) {
-    // it does not un escape entities
-    text += ' ' + attr + '="' + attributes[attr] + '"';
-  }
-  text += '>';
-  if(voidElements[name]) {
-  }
-  else text += '</' + name + '>';
-  return text;
-}
 
 module.exports = Browser;
