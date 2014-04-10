@@ -19,16 +19,11 @@ phantom.create(function(err, ph) {
 
 
 var noScreenshotUrl = '/public/screenshots/no_screenshot.png';
-
-var thumbnailWidth = 260;
-
 var badResult = { success: false, screenshotFull: false, screenshotSmall: noScreenshotUrl };
 
 var generateScreenshot = function(html, width, height, callback) {
   _ph.createPage(function(err, page) {
-
-    //TODO we should set base width, because if user get screenshots on cellphone and then see them on PC it is a strange
-    page.set('viewportSize', { width: width, height: height }, function(error) {
+    page.set('viewportSize', config.screenshot.viewportSize, function(error) {
       if(error) {
         console.log('Error setting viewportSize: %s', error);
         callback(badResult);
@@ -39,8 +34,6 @@ var generateScreenshot = function(html, width, height, callback) {
               document.body.style.backgroundColor = 'white';
             }
           }, function() {
-
-
             if(error) {
               console.log('Error setting content: %s', error);
               callback(badResult);
@@ -60,7 +53,7 @@ var generateScreenshot = function(html, width, height, callback) {
                       var screenshotSmallPath = file.fullRandomPath(screenshotSmall);
                       return file.mkdirp(screenshotSmallPath).then(function() {
                         gm(fullPath)
-                          .resize(thumbnailWidth)
+                          .resize(config.screenshot.thumbnailWidth)
                           .write(screenshotSmallPath, function(err) {
                             if(err) {
                               console.log('Error resizing page: %s', err);
