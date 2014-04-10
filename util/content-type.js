@@ -17,7 +17,7 @@ function ContentType(type, charset) {
 
 ContentType.prototype = {
   toString: function() {
-    return this.type + this.charset ? '; charset=' + this.charset : '';
+    return this.type + (this.charset ? '; charset=' + this.charset : '');
   }
 }
 

@@ -13,8 +13,6 @@ var Promise = require('bluebird');
 var getCharset = require('http-buffer-charset');
 var Iconv = require('iconv').Iconv;
 
-var absUrl = require('./parser/handlers/abs-url');
-
 function saveData(data, ct) {
   return file.saveData(data, contentType.resolveExtension(ct.type));
 }
@@ -22,8 +20,6 @@ function saveData(data, ct) {
 function Browser(langs) {
   this.htmlProcessor = new HtmlProcessor(this);
   this.langs = langs;
-
-  this.downloadQueue = {};
 }
 
 Browser.save = saveData;
@@ -51,39 +47,12 @@ Browser.prototype.bodyToString = function(charset, body) {
     }
     return body.toString(bufferCharset);
   } else {
-    return body.toString();//TODO need to add in some way check on default encoding
+    return body.toString();//TODO need to add in some way check on default encoding (which is latin-1)
   }
 }
 //TODO try to parse buffer begining to find <meta> with charset
 
-function processCss(css, attributes) {
-  return Promise.all(css).then(function(datas) {
-    // concat by media attribute (ie8 does not support @media in css)
-    var chunks = [
-      { content: '', media: 'all'}
-    ];
-    datas.forEach(function(body, index) {
-      var attr = attributes[index];
-      var media = attr.media || 'all';
-      var lastChunk = chunks[chunks.length - 1];
 
-      var content = absUrl.replaceStyleUrl(body.content, absUrl.makeUrlReplacer(body.href));
-
-      if(lastChunk.media == media) {
-        lastChunk.content += content;
-      } else {
-        chunks.push({ content: content, media: media});
-      }
-    });
-
-    return chunks.map(function(data) {
-      return Browser.save(data.content, contentType.CSS)
-        .then(function(name) {
-          return [name, data.media];
-        })
-    });
-  });
-}
 
 Browser.prototype.processPage = function(url, isMainUrl) {
   var that = this;
@@ -112,9 +81,7 @@ Browser.prototype.processPage = function(url, isMainUrl) {
         if(isMainUrl) {
           switch(baseType) {
             case 'html':
-              return that.processHtml(url, body, ct).then(function(data) {
-                return resolve(data);
-              });
+              return that.processHtml(url, body, ct).then(resolve);
             case 'img':
               return saveData(body, ct).then(function(path) {
                 ct.type = 'text/html';
@@ -152,25 +119,20 @@ Browser.prototype.processHtml = function(baseUrl, htmlText, ct) {
       data.href = baseUrl;
       data.contentType = ct;
 
-      return Promise.all(processCss(data.stylesheetsDownloads || [], data.stylesheetsAttributes || []))
-        .then(function(sheetData) { //we save them on disk
-          var linksHtml = '';
-          sheetData.forEach(function(si) {
-            linksHtml += Browser.tag('link', { type: 'text/css', rel: 'stylesheet', href: file.url(si[0]), media: si[1] });
-          });
-
-          data.content = data.content[0] + linksHtml + data.content[1];
-          return resolve(data);
-        });
+      return data.contentPromise.then(function(html) {
+        data.content = html;
+        data.contentNext = data.contentPromiseWithImages;
+        return resolve(data);
+      });
     });
   });
-}
+};
 
 var InvalidUrlError = function(urls) {
   return function(e) {
     return urls.length > 0
   }
-}
+};
 
 Browser.prototype.processNextUrl = function(urls, isMainUrl) {
   var url = urls.shift();
@@ -179,7 +141,7 @@ Browser.prototype.processNextUrl = function(urls, isMainUrl) {
     .catch(InvalidUrlError(urls), function(e) {
       return that.processNextUrl(urls, isMainUrl);
     })
-}
+};
 
 /**
  Load required url and return promise with processed content
@@ -188,22 +150,7 @@ Browser.prototype.processNextUrl = function(urls, isMainUrl) {
 Browser.prototype._loadUrl = function(url, isMainUrl) {
   var urls = processUrl(url);
   return this.processNextUrl(urls, isMainUrl);
-}
+};
 
-var voidElements = require('./parser/handlers/html-writer').voidElements;
-
-Browser.tag = function(name, attributes) {
-  var text = '';
-  text += '<' + name;
-  for(var attr in attributes) {
-    // it does not un escape entities
-    text += ' ' + attr + '="' + attributes[attr] + '"';
-  }
-  text += '>';
-  if(voidElements[name]) {
-  }
-  else text += '</' + name + '>';
-  return text;
-}
 
 module.exports = Browser;
