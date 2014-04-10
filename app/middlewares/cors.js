@@ -38,7 +38,7 @@ function checkCredentials(req, res) {
     return true;
 }
 
-function CORS(app, method, url) {
+module.exports.CORS = function(app, method, url) {
     method = method.toLowerCase();
     var args = Array.prototype.slice.call(arguments, 3);
     app.options(url, function(req, res) {
@@ -59,4 +59,11 @@ function CORS(app, method, url) {
     app[method.toLowerCase()].apply(app, args);
 }
 
-module.exports = CORS;
+
+module.exports.allowAllAccess = function(req, res, next) {
+  res.setHeader("Access-Control-Allow-Origin", req.get('origin'));
+  res.setHeader("Access-Control-Allow-Credentials", true);
+  res.setHeader("Access-Control-Allow-Headers", "X-Requested-With");
+  next();
+}
+
