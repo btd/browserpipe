@@ -1,6 +1,6 @@
 var csLength = 'charset='.length;
 
-var url = require('url');
+var Url = require('url');
 var pathMod = require('path');
 
 exports.process = function(rawContentType) {
@@ -50,7 +50,7 @@ exports.resolveType = function(contentType) {
 }
 
 exports.guessByUrl = function(url) {
-  var parsedUrl = url.parse(url);
+  var parsedUrl = Url.parse(url);
   var ext = pathMod.extname(parsedUrl.path);
 
   switch(ext) {

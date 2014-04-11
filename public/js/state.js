@@ -15,7 +15,8 @@ var model = require('moco').model;
 var State1 = model()
     .attr('browser')
     .attr('items', { collection: Items })
-    .attr('selected')
+    .attr('selectedFolder')
+    .attr('selectedItem')
     .use(model.nestedObjects);
 
 _.extend(State1.prototype, {
@@ -25,7 +26,7 @@ _.extend(State1.prototype, {
         //Load items
         this.loadItems(initialOptions.items || []);
 
-        this.selected = this.browser = this.getItemById(initialOptions.user.browser);
+        this.browser = this.getItemById(initialOptions.user.browser);
     },
 
     //////////////////////////////////////////ITEMS//////////////////////////////////////
@@ -57,7 +58,7 @@ _.extend(State1.prototype, {
         this.items.removeById(itemId);
     },
     serverAddItemToItem: function (parentId, item, success) {
-	item.parent = parentId;
+	      item.parent = parentId;
         $.ajax({
             url: '/items/' + parentId + '/items',
             type: "POST",
@@ -84,7 +85,7 @@ _.extend(State1.prototype, {
 
 
     ///////////////////////////////////////////SEARCH///////////////////////////////////////
-    
+
     searchItem: function (query, success) {
         return $.ajax({
             url: '/search/' + query,

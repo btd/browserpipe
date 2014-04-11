@@ -8,14 +8,17 @@ var _state = require('../state'),
     React = require('react'),
     page = require('page');
 
-var FolderComponent = React.createClass({    
+var FolderComponent = React.createClass({
   folderClicked: function() {
-    page("/item/" + this.props.folder._id);
+    if(_state.selectedItem)
+      _state.selectedFolder = _state.getItemById(this.props.folder._id);
+    else
+      page("/item/" + this.props.folder._id);
   },
   maskClicked: function(e) {
     e.stopPropagation();
   },
-  selectOptionClicked: function(e) { 
+  selectOptionClicked: function(e) {
     e.stopPropagation();
   },
   closeOptionClicked: function(e) {
@@ -29,9 +32,9 @@ var FolderComponent = React.createClass({
     this.refs.folderEditOption.getDOMNode().className = "hide";
     this.refs.folderTitleEditor.getDOMNode().className = "";
     this.refs.titleInput.getDOMNode().value = (this.props.folder.title? this.props.folder.title : '') ;
-    this.refs.titleInput.getDOMNode().focus(); 
+    this.refs.titleInput.getDOMNode().focus();
   },
-  saveFolderTitle: function(e) {    
+  saveFolderTitle: function(e) {
     e.stopPropagation();
     var self = this;
     _state.serverUpdateItem({
@@ -58,7 +61,7 @@ var FolderComponent = React.createClass({
     e.stopPropagation();
   },
   renderTitleEditor: function() {
-    return ( 
+    return (
       <div className="title-editor" >
 	<input ref="titleInput" type="text" defaultValue={this.props.folder.title} onKeyPress={this.ifEnterSave} onClick={this.inputClicked} />
 	<button onClick={ this.saveFolderTitle } className="btn edit-title-save" type="button"><i className="fa fa-check"></i></button>
@@ -84,7 +87,7 @@ var FolderComponent = React.createClass({
       {
 	this.props.folder.items.slice(0, 6).map(function(itemId){
           var item = _state.getItemById(itemId);
-	  if(item.type === 2) 
+	  if(item.type === 2)
 	    return <div className="folder-preview"><div className="folder-title">{ item.title }</div></div>
 	  else return <div className="tab-preview"><img src={ item.screenshot } style={ self.getScreenshotTopAndLeft(item) } /></div>
         })
@@ -108,18 +111,18 @@ var FolderComponent = React.createClass({
           </div>
         </div>
 	<div ref="folderInner" >
-	{ 
+	{
 	  (this.props.folder.title && this.props.folder.title.trim() !== '')?
-	  this.renderItemTitle() : 
-	  this.renderItemScreenshots() 
+	  this.renderItemTitle() :
+	  this.renderItemScreenshots()
 	}
 	</div>
-	<div ref="folderTitleEditor" className="hide" > 
+	<div ref="folderTitleEditor" className="hide" >
 	{ this.renderTitleEditor() }
 	</div>
       </div>
     );
   }
-});  
+});
 
-module.exports = FolderComponent 
+module.exports = FolderComponent

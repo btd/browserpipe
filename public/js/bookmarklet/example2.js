@@ -21,9 +21,12 @@ javascript:(function(e){
         var elem = doc.getElementById(bid);
         if(elem){ doc.body.removeChild( elem ); elem = null}
       }
+      function expand(exp) { if(exp) s.style.width= "90%"; else s.style.width= "240px";}
       function process(e){
         if(e.origin !== domain) return;
         switch(e.data){
+          case "expand": expand(true); break;
+          case "collapse": expand(false); break;
           case "save":  //This one redirects to the item in Browserpipe
             save(function(id){
               if(onClose==="redirect") window.location = domain + "/item/" + id;

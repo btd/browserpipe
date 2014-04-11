@@ -200,6 +200,7 @@ a {
   padding: 66px 0 0;
 
   .dashboard {
+    overflow-y: auto;
 
     .items {
       margin-left: 60px;
@@ -448,10 +449,22 @@ a {
 }
 
 #page-section {
+  position: absolute;
+  right: 240px;
+  left: 0px;
   height: 100%;
-  margin: -66px 0 0;
-  padding: 66px 0 0;
 
+  #page-header {
+    background-color: #ddd;
+
+    .message {
+      font-size: 13px;
+    }
+    .close-option {
+      float: right;
+      margin-right: 12px;
+    }
+  }
   .page-content {
       background-color: #fff;
       height: 100%;
