@@ -77,11 +77,6 @@ exports.addItemBookmarklet = function(req, res) {
         })
         .then(userUpdate.createItem.bind(null, req.user._id, item))
         .then(userUpdate.updateItem.bind(null, req.user._id, parent))
-        .then(function() {
-          if(item.isBookmark()) {
-
-          }
-        });
     } else {
       res.redirect(redirect);
     }
@@ -91,13 +86,33 @@ exports.addItemBookmarklet = function(req, res) {
 //Update item
 exports.update = function(req, res) {
   var item = req.currentItem;
-  _.merge(item, _.pick(req.body, 'title', 'items', 'scrollX', 'scrollY'));
+  var oldParentId = item.parent; //In case parent is changed
+
+  _.merge(item, _.pick(req.body, 'parent', 'title', 'items', 'scrollX', 'scrollY'));
   if(req.body.items)
     item.markModified('items');
 
   return Promise.cast(item.save())
     .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
     .then(userUpdate.updateItem.bind(null, req.user._id, item))
+    .then(function() {
+      if(req.body.parent && req.body.parent !== oldParentId) //Update new parent
+        return Item.byId({ _id: item.parent })
+          .then(function(parent) {
+            parent.items.push(item._id);
+            parent.markModified('items');
+            return Promise.cast(parent.save()).then(userUpdate.updateItem.bind(null, req.user._id, parent));
+          })
+    })
+    .then(function() {
+      if(req.body.parent && req.body.parent !== oldParentId) //Update old parent
+        return Item.byId({ _id: oldParentId })
+          .then(function(oldParent) {
+            oldParent.items.remove(item._id);
+            oldParent.markModified('items');
+            return Promise.cast(oldParent.save()).then(userUpdate.updateItem.bind(null, req.user._id, oldParent));
+          })
+    })
 }
 
 //Find item by id

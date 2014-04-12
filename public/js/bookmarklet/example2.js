@@ -7,15 +7,15 @@ javascript:(function(e){
       var bid = "BPIPE_bookmarklet_iframe", elem = doc.getElementById(bid);
       if(elem){ return }
       function encode(data) {return encodeURIComponent(data).replace(/%20/g, '+');}
-      function save(success) {
+      function save(parent, success) {
         var xhr = new XMLHttpRequest();
         xhr.open('POST', domain + '/bookmarklet/add',true);
         xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xhr.withCredentials = true ;
         xhr.onreadystatechange=function() {
-          if (xhr.readyState==4) success(JSON.parse(xhr.responseText)._id);
+          if (success && xhr.readyState==4) success(JSON.parse(xhr.responseText)._id);
         }
-        xhr.send("url="+encode(e.location.href)+"&parent="+parentFolder+"&title="+encode(doc.title)+"&width="+encode(doc.documentElement.clientWidth)+"&height="+encode(doc.documentElement.clientHeight)+"&html="+encode(doc.documentElement.innerHTML)+"&charset="+encode(doc.characterSet)+"&v=1.1");
+        xhr.send("url="+encode(e.location.href)+"&parent="+parent+"&title="+encode(doc.title)+"&width="+encode(doc.documentElement.clientWidth)+"&height="+encode(doc.documentElement.clientHeight)+"&html="+encode(doc.documentElement.innerHTML)+"&charset="+encode(doc.characterSet)+"&v=1.1");
       }
       function destroy() {
         var elem = doc.getElementById(bid);
@@ -24,15 +24,11 @@ javascript:(function(e){
       function expand(exp) { if(exp) s.style.width= "90%"; else s.style.width= "240px";}
       function process(e){
         if(e.origin !== domain) return;
-        switch(e.data){
+        if(e.data.substring(0, 5)==="save_")
+          save(e.data.substring(5));
+        else switch(e.data){
           case "expand": expand(true); break;
           case "collapse": expand(false); break;
-          case "save":  //This one redirects to the item in Browserpipe
-            save(function(id){
-              if(onClose==="redirect") window.location = domain + "/item/" + id;
-              else if(onClose==="closetab") setTimeout(function(){var ww = window.open(window.location, '_self'); ww.close(); }, 1000);
-              else destroy();
-            }); break;
           case "destroy": destroy(); break;
         }
       }
@@ -40,7 +36,7 @@ javascript:(function(e){
       var s = doc.createElement("iframe");
       s.id= bid;
       s.src= domain;
-      d.innerHTML = '<div style="position:absolute;margin:auto;top:0;right:0;bottom:0;left:0;width:48px;height:48px;z-index:-100;"><img src="http://localhost:4000/img/loader.gif"/></div>';
+      d.innerHTML = '<div style="position:absolute;margin:auto;top:0;right:0;bottom:0;left:0;width:48px;height:48px;z-index:-100;"><img src="' + domain + '/img/loader.gif"/></div>';
       d.style.backgroundColor = "#FFF";
       d.style.position = s.style.position= "fixed";
       d.style.top= s.style.top= "0";

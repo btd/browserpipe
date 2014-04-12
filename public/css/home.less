@@ -233,6 +233,32 @@ a {
       margin: -51px 0 0;
       padding: 51px 0 0;
 
+      .move-option, .add-option {
+        position: absolute;
+        bottom: 0;
+        z-index: 100;
+        padding-top: 6px;
+        height: 32px;
+        width: 90px;
+        color: #fff;
+        display: inline-block;
+        background-color: #ff6d16;
+        font-size: 13px;
+        font-weight: bold;
+
+        .fa {
+          font-size: 21px;
+          margin-right: 6px;
+        }
+        &:hover {
+          cursor: pointer;
+          background-color: darken(#ff6d16, 15%);
+        }
+      }
+      .move-option {
+      }
+      .add-option {
+      }
       .items {
         overflow-y: auto;
         height: 100%;
