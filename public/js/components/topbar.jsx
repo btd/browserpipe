@@ -9,66 +9,32 @@ var _state = require('../state'),
     browser = require('../browser/main');
 
 var TopBarComponent = React.createClass({
-  /*backOptionClicked: function() {
-    var previous = this.state.selected.previous;
-    if(previous) {
-      var parent = _state.getItemById(this.state.selected.parent);
-      var index = parent.items.indexOf(this.state.selected._id);
-      if(index >= 0) {
-        parent.items[index] = previous;
-        _state.serverUpdateItem({
-            _id: parent._id,
-            items: parent.items
-        }, function() {
-            page('/item/' + previous);
-        });
-      }
-    }
-  },
-  forwardOptionClicked: function() {
-    var next = this.state.selected.next;
-    if(next) {
-      var parent = _state.getItemById(this.state.selected.parent);
-      var index = parent.items.indexOf(this.state.selected._id);
-      if(index >= 0) {
-        parent.items[index] = next;
-        _state.serverUpdateItem({
-          _id: parent._id,
-          items: parent.items
-        }, function() {
-          page('/item/' + next);
-        });
-      }
-    }
-  },*/
   logoClicked: function() {
-//    $('#page-section .page-content').contents().find('body').empty();
-//    $('.url-input').val('');
-//    page('/item/' + _state.browser._id);
+    if(_state.selectedItem)
+      _state.selectedFolder = _state.getItemById(_state.browser._id);
+    else
+      page("/item/" + _state.browser._id);
   },
-  /*refreshOptionClicked: function() {
-    this.navigateToURL(this.state.selected.url);
-  },*/
+  newFolderClicked: function() {
+    _state.serverAddItemToItem(this.props.selectedFolder._id, { type: 2 });
+  },
+  folderUpClicked: function() {                                                                                                                 
+    if(_state.selectedItem)                                                                                                                     
+      _state.selectedFolder = _state.getItemById(this.props.selectedFolder.parent);                                                             
+    else                                                                                                                                        
+      page("/item/" + this.props.selectedFolder.parent);                                                                                        
+  },        
   ifEnterNavigate: function(e) {
     if(e.keyCode === 13) this.navigateEnteredURL();
   },
   navigateEnteredURL: function() {
     var url = this.refs.urlInput.getDOMNode().value.trim();
-    this.navigateToURL(url);
-  },
-  navigateToURL: function(url) {
-    /*if(this.state.selected.isFolder() //if we are in a folder we create a new tab with url
-      || this.state.selected.url //If tab url is a "navigated" item, so we create a new tab for the new url
-    ){
-      var parentId = this.state.selected.isFolder()? this.state.selected._id : this.state.selected.parent;
-      var previousId = this.state.selected.isFolder()? null : this.state.selected._id;
-      browser.createAndOpen(
-        parentId,
-        url,
-        previousId
-      );
-    }
-    else  browser.open(url);*/
+    var parentId = _state.selectedFolder._id;
+    browser.createAndOpen(
+      parentId,
+      url,
+      null
+    );
   },
   breadcrumbItemClicked: function(e) {
     e.preventDefault();
@@ -121,7 +87,7 @@ var TopBarComponent = React.createClass({
         <div className="topbar-commands">
           <span id="logo" onClick={ this.logoClicked } ><img src="/img/logo/logo-small.png" alt="Browserpipe logo small"/></span>
           <div className="search-options input-append">
-            <input type="text" placeholder="Enter an URL or search a tab" className="url-input" ref="urlInput" onKeyPress={this.ifEnterNavigate} defaultValue=/*{this.state.selected.isFolder()? '': this.state.selected.url }*/ '' />
+            <input type="text" placeholder="Enter an URL or search a tab" className="url-input" ref="urlInput" onKeyPress={this.ifEnterNavigate} />
             <input type="button" className="url-btn btn btn-warning" value="Go"  onClick={this.navigateEnteredURL} />
           </div>
           <div className="user-options">
@@ -165,7 +131,15 @@ var TopBarComponent = React.createClass({
             </li>
           </div>
         </div>
-        { this.renderBreadcrumb() }
+        <div className="sub-bar">
+          { this.renderBreadcrumb() }
+          <div className={"folder-up" + (this.props.selectedFolder.parent?'':' hide')} title="Go one folder up" onClick={ this.folderUpClicked }>
+            <i className="fa fa-level-up"></i>
+          </div>
+          <div className="new-folder" title="Add new folder" onClick={ this.newFolderClicked }>
+            <i className="fa fa-folder"></i>
+          </div>
+        </div>
       </div>
     );
   },

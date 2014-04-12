@@ -29,7 +29,7 @@ var loadDashboardComponent = function() {
     dashboardComponent.setState({
       isIframe: isIframe,
       selectedFolder: _state.selectedFolder,
-      selectedIte: _state.selectedItem
+      selectedItem: _state.selectedItem
     });
   }
 }
@@ -46,7 +46,7 @@ var loadPageHeaderComponent = function() {
       pageHeaderComponent.setState({
         isIframe: isIframe,
         selectedFolder: _state.selectedFolder,
-        selectedIte: _state.selectedItem
+        selectedItem: _state.selectedItem
       });
     }
 }
@@ -125,23 +125,18 @@ var initialize = function() {
 
 var stateChanges = function() {
 
-  var changeInItems = function(item) {
-    if(dashboardComponent && (item._id === _state.selectedFolder._id || item._id === _state.selectedItem._id || item.parent === _state.selectedItem._id))
-      dashboardComponent.setState({
-        selectedFolder: _state.selectedFolder,
-        selectedIte: _state.selectedItem,
-      });
-  }
-
-  _state.items.on('add', changeInItems);
-  _state.items.on('remove', changeInItems);
-  _state.items.on('change', changeInItems);
-
-  var changeInSelectedFolder= function() {
-    loadDashboardComponent();
-    loadPageHeaderComponent();
+  var changeInSelected = function() {
+    if(_state.selectedFolder) { //This means load finished
+      loadDashboardComponent();
+      loadPageHeaderComponent();
+    }
   };
-  _state.on('change:selectedFolder', changeInSelectedFolder);
+
+  _state.items.on('add', changeInSelected);
+  _state.items.on('remove', changeInSelected);
+  _state.items.on('change', changeInSelected);
+  _state.on('change:selectedFolder', changeInSelected);
+  _state.on('change:selectedItem', changeInSelected);
 }
 
 module.exports = initialize;

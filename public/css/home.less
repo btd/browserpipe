@@ -97,6 +97,8 @@ a {
   background-color: #f2eee8;
   background-image: image_url('img/common/bg-pattern.png');
   height: 51px;
+  z-index: 100;
+  position: relative;
 
   #logo {
     width: 22px;
@@ -114,30 +116,6 @@ a {
     width: 100%;
     text-align: right;
 
-    .navigate-options {
-      display: inline-block;
-
-      .back-option, .forward-option, .refresh-option {
-        display: inline-block;
-        font-size: 24px;
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -khtml-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-
-        i.disabled {
-          color: #bbb;
-        }
-      }
-      .back-option, .forward-option {
-        margin-right: 6px;
-      }
-      .refresh-option {
-        margin-left: 12px;
-      }
-    }
     .search-options {
       display: inline-block;
       margin-bottom: 10px;
@@ -196,232 +174,215 @@ a {
       }
     }
   }
-  .breadcrumb {
-    overflow: hidden;
-    text-align: left;
-    padding: 2px 15px;
-    margin : 0;
+  .sub-bar {
     height: 24px;
+    background-color: #f5f5f5;
+    padding: 2px 0 0 15px;
 
-    li {
-      display: inline;
+    .breadcrumb {
+      overflow: hidden;
+      text-align: left;
+      padding: 0; 
+      position: absolute;
+      right: 52px;
+      left: 15px;
+      margin: 0;
+      height: 24px;
 
-      img {
-        margin: 0 3px 3px 0;
+      li {
+        display: inline;
+
+        img {
+          margin: 0 3px 3px 0;
+        }
       }
+    }
+    .new-folder, .folder-up {
+      position: absolute;
+      font-size: 14px;
+      padding: 0 3px;
+      border: 1px dashed #999;
+      cursor: default;
+      -webkit-transition: all 0.3s ease;
+      -moz-transition: all 0.3s ease;
+      -o-transition: all 0.3s ease;
+      transition: all 0.3s ease;
+
+      &:hover {
+        cursor: pointer;
+        color: #333;
+        border-color: #333;
+      }
+    }
+    .new-folder {
+      right: 6px;
+    }
+    .folder-up {
+      right: 36px;
     }
   }
 }
 
 #dashboard-section {
-  height: 100%;
-  margin: -51px 0 0;
-  padding: 51px 0 0;
 
   .dashboard {
-    overflow-y: auto;
+    height: 100%;
 
-    .items {
+    .dashboard-content {
+      height: 100%;
+      margin: -51px 0 0;
+      padding: 51px 0 0;
 
-      .tab, .folder {
-        -webkit-transform-origin: 0 0;
-        -moz-transform-origin: 0 0;
-        -ms-transform-origin: 0 0;
-        transform-origin: 0 0;
-        -webkit-transition: all 0.3s ease;
-        -moz-transition: all 0.3s ease;
-        -o-transition: all 0.3s ease;
-        transition: all 0.3s ease;
+      .items {
+        overflow-y: auto;
+        height: 100%;
 
-        .mask {
-          display: none;
-          opacity: 0.8;
-          position: absolute;
-          background-color: #000;
-          z-index: 10;
-          width: 205px;
-          height: 21px;
-          color: #fff;
-
-          &.hide {
-            display: none !important;
-          }
-
-          .mask-options {
-             padding-right: 12px;
-
-             .mask-option {
-               margin-left: 12px;
-
-               &.left {
-                 float: left;
-               }
-               &.right {
-                 float: right;
-               }
-               input {
-                 margin-top: 0;
-               }
-               i {
-                 color: #fff;
-
-                 &:hover {
-                   color: #CCC;
-                 }
-               }
-             }
-           }
-        }
-
-        &:hover {
-          cursor: pointer;
-
-          .mask {
-            display: block;
-          }
-        }
-
-      }
-
-      .folder {
-        width: 205px;
-        height: 115px;
-        margin: 6px 9px 0;
-        float: left;
-        overflow: hidden;
-        position: relative;
-        border: 1px solid #ccc;
-        background-color: #ddd;
-        -webkit-border-radius: 2px;
-        -moz-border-radius: 2px;
-        -ms-border-radius: 2px;
-        -o-border-radius: 2px;
-        border-radius: 2px;
-
-        .folder-title {
-          line-height: 24px;
-          width: 205px;
-          height: 115px;
-          display: table-cell;
-          vertical-align: middle;
-          text-align: center;
-          font-size: 21px;
-
-          &.up {
-            font-size: 48px;
-          }
-        }
-
-        .title-editor {
-
-          input {
-            width: 180px;
-            display: block;
-            height: 36px;
-            margin: 48px 12px 0 12px;
-          }
-          .btn {
-            float: left;
-
-            &.edit-title-save {
-              margin: 3px 0 0 12px;
-            }
-
-            &.edit-title-cancel {
-              margin: 3px 0 0 3px;
-            }
-          }
-        }
-
-      }
-
-      .tab {
-        margin: 6px 9px 0;
-        float: left;
-        position: relative;
-
-        .tab-content {
-          border: 1px solid black;
-          width: 205px;
-          height: 115px;
-          overflow: hidden;
-          position: relative;
-
-          .tab-screenshot {
-            max-width: none;
-            position: absolute;
-          }
-        }
-
-        .tab-footer {
-          height: 25px;
-
-          .tab-favicon {
-            float: left;
-            margin-top: 3px;
-          }
-          .tab-title {
-            font-size: 12px;
-            margin-left: 3px;
-            color: #333;
-            width: 186px;
-            text-overflow: ellipsis;
-            overflow: hidden;
-            white-space: nowrap;
-            display: inline-block;
-          }
-        }
-
-      }
-
-      .new-options {
-        position: relative;
-        margin: 6px 9px;
-        width: 205px;
-        height: 115px;
-        float: left;
-
-        .new-tab, .new-folder, .new-note {
-          border: 2px dashed #999;
-          cursor: default;
+        .tab, .folder {
+          -webkit-transform-origin: 0 0;
+          -moz-transform-origin: 0 0;
+          -ms-transform-origin: 0 0;
+          transform-origin: 0 0;
           -webkit-transition: all 0.3s ease;
           -moz-transition: all 0.3s ease;
           -o-transition: all 0.3s ease;
           transition: all 0.3s ease;
 
+          .mask {
+            display: none;
+            opacity: 0.8;
+            position: absolute;
+            background-color: #000;
+            z-index: 10;
+            width: 205px;
+            height: 21px;
+            color: #fff;
+
+            &.hide {
+              display: none !important;
+            }
+
+            .mask-options {
+               padding-right: 12px;
+
+               .mask-option {
+                 margin-left: 12px;
+
+                 &.left {
+                   float: left;
+                 }
+                 &.right {
+                   float: right;
+                 }
+                 input {
+                   margin-top: 0;
+                 }
+                 i {
+                   color: #fff;
+
+                   &:hover {
+                     color: #CCC;
+                   }
+                 }
+               }
+             }
+          }
+
           &:hover {
             cursor: pointer;
-            color: #333;
-            border-color: #333;
+
+            .mask {
+              display: block;
+            }
           }
 
-          &.hide {
-            display: none !important;
-          }
         }
 
-        .new-tab {
+        .folder {
+          width: 205px;
+          height: 115px;
+          margin: 6px 9px 0;
           float: left;
-          font-size: 80px;
-          padding: 6px 16px;
-          margin: 9px 75px;
+          overflow: hidden;
+          position: relative;
+          border: 1px solid #ccc;
+          background-color: #ddd;
+          -webkit-border-radius: 2px;
+          -moz-border-radius: 2px;
+          -ms-border-radius: 2px;
+          -o-border-radius: 2px;
+          border-radius: 2px;
+
+          .folder-title {
+            line-height: 24px;
+            width: 205px;
+            height: 115px;
+            display: table-cell;
+            vertical-align: middle;
+            text-align: center;
+            font-size: 21px;
+          }
+
+          .title-editor {
+
+            input {
+              width: 180px;
+              display: block;
+              height: 36px;
+              margin: 48px 12px 0 12px;
+            }
+            .btn {
+              float: left;
+
+              &.edit-title-save {
+                margin: 3px 0 0 12px;
+              }
+
+              &.edit-title-cancel {
+                margin: 3px 0 0 3px;
+              }
+            }
+          }
+
         }
 
-        .new-folder, .new-note {
-          position: absolute;
-          bottom: 6px;
-          font-size: 24px;
-          padding: 6px 9px;
-        }
+        .tab {
+          margin: 6px 9px 0;
+          float: left;
+          position: relative;
 
-        .new-folder {
-          left: 75px;
-        }
+          .tab-content {
+            border: 1px solid black;
+            width: 205px;
+            height: 115px;
+            overflow: hidden;
+            position: relative;
 
-        .new-note {
-          left: 135px;
-        }
+            .tab-screenshot {
+              max-width: none;
+              position: absolute;
+            }
+          }
 
+          .tab-footer {
+            height: 25px;
+
+            .tab-favicon {
+              float: left;
+              margin-top: 3px;
+            }
+            .tab-title {
+              font-size: 12px;
+              margin-left: 3px;
+              color: #333;
+              width: 186px;
+              text-overflow: ellipsis;
+              overflow: hidden;
+              white-space: nowrap;
+              display: inline-block;
+            }
+          }
+
+        }
       }
     }
   }
@@ -438,11 +399,32 @@ a {
     height: 24px;
     background-color: #ddd;
 
+    .back-option, .forward-option, .refresh-option {
+      display: inline-block;
+      font-size: 14px;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+
+      i.disabled {
+        color: #bbb;
+      }
+    }
+    .back-option, .forward-option {
+      margin: 0 6px;
+    }
+    .refresh-option {
+      margin-left: 12px;
+    }
     .message {
       font-size: 13px;
       margin-left: 18px;
     }
     .close-option {
+      color: #666;
       float: right;
       margin-right: 12px;
     }
