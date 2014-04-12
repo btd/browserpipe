@@ -63,36 +63,14 @@ var FolderComponent = React.createClass({
   renderTitleEditor: function() {
     return (
       <div className="title-editor" >
-	<input ref="titleInput" type="text" defaultValue={this.props.folder.title} onKeyPress={this.ifEnterSave} onClick={this.inputClicked} />
-	<button onClick={ this.saveFolderTitle } className="btn edit-title-save" type="button"><i className="fa fa-check"></i></button>
-	<button onClick={ this.cancelTitleEdit } className="btn edit-title-cancel" type="button"><i className="fa fa-times"></i></button>
+        <input ref="titleInput" type="text" defaultValue={this.props.folder.title} onKeyPress={this.ifEnterSave} onClick={this.inputClicked} />
+        <button onClick={ this.saveFolderTitle } className="btn edit-title-save" type="button"><i className="fa fa-check"></i></button>
+        <button onClick={ this.cancelTitleEdit } className="btn edit-title-cancel" type="button"><i className="fa fa-times"></i></button>
       </div>
     );
   },
   renderItemTitle: function() {
-    return <div ref="folderTitle" className="folder-title">{ this.props.folder.title } </div>
-  },
-  getScreenshotTopAndLeft: function(tab) {
-    if(tab.scrollY >= 0 && tab.scrollX >= 0) {
-      var wratio = 75 / tab.windowWidth;
-      var top =  wratio * -tab.scrollY;
-      var left = wratio * -tab.scrollX;
-      return { top: top, left: left }
-    }
-    else return { top: 0, left: 0 }
-  },
-  renderItemScreenshots: function() {
-    var self = this;
-    return  <div className="tabs-preview clearfix">
-      {
-	this.props.folder.items.slice(0, 6).map(function(itemId){
-          var item = _state.getItemById(itemId);
-	  if(item.type === 2)
-	    return <div className="folder-preview"><div className="folder-title">{ item.title }</div></div>
-	  else return <div className="tab-preview"><img src={ item.screenshot } style={ self.getScreenshotTopAndLeft(item) } /></div>
-        })
-      }
-      </div>
+    return <div ref="folderTitle" className="folder-title">{ this.props.folder.title? this.props.folder.title : "New folder" } </div>
   },
   render: function() {
     return (
@@ -110,16 +88,12 @@ var FolderComponent = React.createClass({
             </div>
           </div>
         </div>
-	<div ref="folderInner" >
-	{
-	  (this.props.folder.title && this.props.folder.title.trim() !== '')?
-	  this.renderItemTitle() :
-	  this.renderItemScreenshots()
-	}
-	</div>
-	<div ref="folderTitleEditor" className="hide" >
-	{ this.renderTitleEditor() }
-	</div>
+        <div ref="folderInner" >
+        { this.renderItemTitle() }
+        </div>
+        <div ref="folderTitleEditor" className="hide" >
+        { this.renderTitleEditor() }
+        </div>
       </div>
     );
   }

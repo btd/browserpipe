@@ -36,18 +36,22 @@ javascript:(function(e){
           case "destroy": destroy(); break;
         }
       }
+      var d = doc.createElement("div");
       var s = doc.createElement("iframe");
       s.id= bid;
       s.src= domain;
-      s.style.position= "fixed";
-      s.style.top= "0";
-      s.style.right= "0";
-      s.style.height= "100%";
-      s.style.width= "240px";
-      s.style.zIndex= "16777270";
-      s.style.border= "none";
+      d.innerHTML = '<div style="position:absolute;margin:auto;top:0;right:0;bottom:0;left:0;width:48px;height:48px;z-index:-100;"><img src="http://localhost:4000/img/loader.gif"/></div>';
+      d.style.backgroundColor = "#FFF";
+      d.style.position = s.style.position= "fixed";
+      d.style.top= s.style.top= "0";
+      d.style.right= s.style.right= "0";
+      d.style.height= s.style.height= "100%";
+      d.style.width= s.style.width= "240px";
+      d.style.zIndex= s.style.zIndex= "16777270";
+      d.style.border= s.style.border= "none";
       s.style.visibility= "hidden";
-      s.onload=function(){ this.style.visibility="visible"; };
+      s.onload=function(){ this.style.visibility="visible"; doc.body.removeChild(d); d = null}
+      doc.body.appendChild(d);
       doc.body.appendChild(s);
       var o=e.addEventListener?"addEventListener":"attachEvent";
       var u=o=="attachEvent"?"onmessage":"message";

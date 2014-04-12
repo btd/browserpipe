@@ -39,6 +39,18 @@ body {
   }
 }
 
+.loader {
+  position: absolute;
+  margin: auto;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 48px;
+  height: 48px;
+  z-index:-100;
+}
+
 h1 {
   font-family: "Open Sans", sans-serif;
   text-align: center;
@@ -84,11 +96,12 @@ a {
 #topbar-section {
   background-color: #f2eee8;
   background-image: image_url('img/common/bg-pattern.png');
-  height: 66px;
+  height: 51px;
 
   #logo {
+    width: 22px;
     float: left;
-    margin: 3px 0 0 12px;
+    margin: 2px 0 0 12px;
 
     &:hover {
       cursor: pointer;
@@ -96,10 +109,10 @@ a {
   }
   .topbar-commands {
     z-index: 20;
+    height: 27px;
     position: relative;
     width: 100%;
-    text-align: center;
-    padding: 3px 0 6px;
+    text-align: right;
 
     .navigate-options {
       display: inline-block;
@@ -131,21 +144,23 @@ a {
       vertical-align: middle;
       font-size: 0;
       white-space: nowrap;
-      width: 60%;
-      margin-bottom: 0;
+      width: 33%;
+      margin: 1px 112px 0 0;
 
       .url-input {
         width: 90%;
-        height: 36px;
+        height: 24px;
       }
       .url-btn {
-        width: 45px;
-        height: 36px;
+        width:  36px;
+        height: 24px;
+        line-height: 10px;
+        padding: 4px 6px;
       }
     }
     .user-options {
       text-align: left;
-      margin: 12px 12px 3px;
+      margin: 3px 3px 0 0;
       position: absolute;
       top: 0;
       right: 0;
@@ -158,8 +173,9 @@ a {
         a {
           color: #666;
         }
-        .dropdown-toggle {
-          font-size: 18px;
+        #expand-bookmarklet, #collapse-bookmarklet, #close-bookmarklet, .dropdown-toggle {
+          margin-left: 6px;
+          font-size: 14px;
         }
         .dropdown-menu {
           left: inherit;
@@ -181,11 +197,14 @@ a {
     }
   }
   .breadcrumb {
+    overflow: hidden;
     text-align: left;
     padding: 2px 15px;
     margin : 0;
+    height: 24px;
 
     li {
+      display: inline;
 
       img {
         margin: 0 3px 3px 0;
@@ -196,14 +215,13 @@ a {
 
 #dashboard-section {
   height: 100%;
-  margin: -66px 0 0;
-  padding: 66px 0 0;
+  margin: -51px 0 0;
+  padding: 51px 0 0;
 
   .dashboard {
     overflow-y: auto;
 
     .items {
-      margin-left: 60px;
 
       .tab, .folder {
         -webkit-transform-origin: 0 0;
@@ -221,7 +239,7 @@ a {
           position: absolute;
           background-color: #000;
           z-index: 10;
-          width: 252px;
+          width: 205px;
           height: 21px;
           color: #fff;
 
@@ -266,10 +284,10 @@ a {
       }
 
       .folder {
-        width: 252px;
-        margin: 12px 20px;
+        width: 205px;
+        height: 115px;
+        margin: 6px 9px 0;
         float: left;
-        height: 157px;
         overflow: hidden;
         position: relative;
         border: 1px solid #ccc;
@@ -282,8 +300,8 @@ a {
 
         .folder-title {
           line-height: 24px;
-          width: 252px;
-          height: 157px;
+          width: 205px;
+          height: 115px;
           display: table-cell;
           vertical-align: middle;
           text-align: center;
@@ -294,49 +312,10 @@ a {
           }
         }
 
-        .tabs-preview {
-          overflow: hidden;
-          margin-top: 12px;
-
-          .tab-preview, .folder-preview {
-            float: left;
-            height: 47px;
-            width: 75px;
-            margin: 9px 3px;
-          }
-          .tab-preview {
-            position: relative;
-            overflow: hidden;
-            background-color: #fff;
-
-            img {
-              position: absolute;
-              max-width: none;
-              zoom: 23%;
-            }
-          }
-          .folder-preview {
-            overflow: hidden;
-            position: relative;
-            border: 1px solid #ccc;
-            background-color: #ddd;
-
-            .folder-title {
-              line-height: 12px;
-              width: 75px;
-              height: 47px;
-              display: table-cell;
-              vertical-align: middle;
-              text-align: center;
-              font-size: 10px;
-            }
-          }
-        }
-
         .title-editor {
 
           input {
-            width: 221px;
+            width: 180px;
             display: block;
             height: 36px;
             margin: 48px 12px 0 12px;
@@ -357,14 +336,14 @@ a {
       }
 
       .tab {
-        margin: 12px 20px 0;
+        margin: 6px 9px 0;
         float: left;
         position: relative;
 
         .tab-content {
           border: 1px solid black;
-          height: 157px;
-          width: 252px;
+          width: 205px;
+          height: 115px;
           overflow: hidden;
           position: relative;
 
@@ -383,9 +362,9 @@ a {
           }
           .tab-title {
             font-size: 12px;
-            margin-left: 6px;
+            margin-left: 3px;
             color: #333;
-            width: 230px;
+            width: 186px;
             text-overflow: ellipsis;
             overflow: hidden;
             white-space: nowrap;
@@ -397,9 +376,9 @@ a {
 
       .new-options {
         position: relative;
-        margin: 12px 20px;
-        width: 252px;
-        height: 157px;
+        margin: 6px 9px;
+        width: 205px;
+        height: 115px;
         float: left;
 
         .new-tab, .new-folder, .new-note {
@@ -455,10 +434,13 @@ a {
   height: 100%;
 
   #page-header {
+    position: relative;
+    height: 24px;
     background-color: #ddd;
 
     .message {
       font-size: 13px;
+      margin-left: 18px;
     }
     .close-option {
       float: right;
@@ -466,13 +448,12 @@ a {
     }
   }
   .page-content {
+      margin: -24px 0 0;
+      padding: 24px 0 0;
       background-color: #fff;
       height: 100%;
       width: 100%;
-      border-top: 1px solid #e6e6e6;
-      border-left: 0;
-      border-right: 0;
-      border-bottom: 0;
+      border: 0;
     }
 }
 

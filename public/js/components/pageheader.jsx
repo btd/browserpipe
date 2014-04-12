@@ -16,7 +16,7 @@ var PageHeaderComponent = React.createClass({
   },
   closeOptionClicked: function() {
     page("/item/" + this.state.selectedFolder._id);
-    if($('#expand-dashboard').is(':visible')) //if expand option is visible, it was collapsed before
+    if(!$('#topbar-section').hasClass('expanded')) //if expand option is visible, it was collapsed before
       window.parent.postMessage("collapse", "*");
   },
   render: function() {

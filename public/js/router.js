@@ -51,12 +51,7 @@ var loadPageHeaderComponent = function() {
     }
 }
 
-function cleanBrowserIframe() {
-  $('#page-section .page-content')[0].src = "about:blank";
-}
-
 var loadPage = function(item) {
-  cleanBrowserIframe();
   if(isIframe)
     window.parent.postMessage("expand", "*");
   if(item.url) browser.open(item._id, item.url);
@@ -97,7 +92,7 @@ page('/item/:id', function(ctx) {
       }
       else {
         _state.selectedItem = item;
-        if(!_state.selectedFolder) 
+        if(!_state.selectedFolder)
           _state.selectedFolder = _state.getItemById(item.parent);
         loadDashboardComponent();
         loadPageHeaderComponent();

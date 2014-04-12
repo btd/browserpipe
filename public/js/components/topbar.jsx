@@ -78,17 +78,23 @@ var TopBarComponent = React.createClass({
     else
       page("/item/" + id);
   },
-  expand: function(e) {
+  closeBookmarklet: function(e) {
+    e.preventDefault();
+    window.parent.postMessage("destroy", "*");
+  },
+  expandBookmarklet: function(e) {
     e.preventDefault();
     window.parent.postMessage("expand", "*");
-    this.refs.expandOption.getDOMNode().className = "hide";
-    this.refs.collapseOption.getDOMNode().className = "";
+    $('#expand-bookmarklet').addClass('hide');
+    $('#collapse-bookmarklet').removeClass('hide');
+    $('#topbar-section').addClass('expanded');
   },
-  collapse: function(e) {
+  collapseBookmarklet: function(e) {
     e.preventDefault();
     window.parent.postMessage("collapse", "*");
-    this.refs.expandOption.getDOMNode().className = "";
-    this.refs.collapseOption.getDOMNode().className = "hide";
+    $('#expand-bookmarklet').removeClass('hide');
+    $('#collapse-bookmarklet').addClass('hide');
+    $('#topbar-section').removeClass('expanded');
   },
   renderBreadcrumb: function() {
     var breadcrumbItems = [];
@@ -120,10 +126,10 @@ var TopBarComponent = React.createClass({
           </div>
           <div className="user-options">
             <li className="dropdown nav-option">
-              <a id="expand-dashboard" draggable="false" onClick={ this.expand } ref="expandOption" className={ this.props.isIframe && !_state.selectedItem? '' : 'hide' }>
+              <a id="expand-bookmarklet" draggable="false" onClick={ this.expandBookmarklet } className='hide'>
                 <i className="fa fa-expand"></i>
               </a>
-              <a draggable="false" onClick={ this.collapse } ref="collapseOption" className='hide'>
+              <a id="collapse-bookmarklet" draggable="false" onClick={ this.collapseBookmarklet } className='hide'>
                 <i className="fa fa-compress"></i>
               </a>
               <a draggable="false"  href="#" data-toggle="dropdown" className="dropdown-toggle">
@@ -153,6 +159,9 @@ var TopBarComponent = React.createClass({
                   </a>
                 </li>
               </ul>
+              <a id="close-bookmarklet" draggable="false" onClick={ this.closeBookmarklet } className={ this.props.isIframe? '' : 'hide' }>
+                <i className="fa fa-times"></i>
+              </a>
             </li>
           </div>
         </div>
@@ -161,8 +170,18 @@ var TopBarComponent = React.createClass({
     );
   },
   componentDidUpdate: function() {
-    //if(!this.state.selected.isFolder())
-      //$('.url-input').val(this.state.selected.url);
+    if(!this.props.isIframe || _state.selectedItem) {
+      $('#expand-bookmarklet').addClass('hide');
+      $('#collapse-bookmarklet').addClass('hide');
+    }
+    else if (!$('#topbar-section').hasClass('expanded')) {
+      $('#expand-bookmarklet').removeClass('hide');
+      $('#collapse-bookmarklet').addClass('hide');
+    }
+    else {
+      $('#expand-bookmarklet').addClass('hide');
+      $('#collapse-bookmarklet').removeClass('hide');
+    }
   }
 });
 

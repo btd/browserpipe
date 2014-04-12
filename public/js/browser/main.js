@@ -23,14 +23,15 @@ var scrollTimeout, loading = false;
 
 exports.open = function(url) {
   loading = true;
-  $iframe[0].src = "about:blank";
   var self = this;
   var url = _state.selectedItem.storageUrl ? _state.selectedItem.storageUrl :
     ('/html-item/' + _state.selectedItem._id + '?url=' + encodeURIComponent(url) + '&width=' + $(window).width() + '&height=' + $(window).height());
   if($iframe[0].src !== url) {
+    $iframe.hide();
     $iframe[0].src = url;
     $iframe.off();
     $iframe.load(function() {
+      $iframe.show();
       var $contents = $($iframe.contents());
       var $body = $contents.find('body');
       $contents.scroll(function() {//TODO use lodash.debounce
