@@ -67,6 +67,9 @@ var config = {
     db: {
       uri: 'mongodb://localhost/listboardit'
     },
+    storage: {
+      url: '/storage'
+    },
     mincer: {
       preprocess: [
         'font/**',
@@ -88,7 +91,7 @@ Object.keys(config).forEach(function(key) {
     auto_reconnect: true,
     collection: 'sessions',
     url: config[key].db.uri
-  }
+  };
 
   config[key].env = key;
 });
