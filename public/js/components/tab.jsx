@@ -53,7 +53,7 @@ var TabComponent = React.createClass({
           </div>
         </div>
         <div className={"tab-content" + (this.props.selectedItem && this.props.selectedItem._id === this.props.tab._id? " selected": "") }>
-          <img className="tab-screenshot" src={this.props.tab.screenshot} style={ this.getScreenshotTopAndLeft() } />
+          <img className="tab-screenshot" src={this.props.tab.screenshot? this.props.tab.screenshot: '/img/loader.gif'} style={ this.props.tab.screenshot? this.getScreenshotTopAndLeft() : {top: '30px', left: '72px'} } />
         </div>
         <div className="tab-footer">
           <img className="tab-favicon" src={this.props.tab.favicon} />

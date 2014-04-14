@@ -172,24 +172,28 @@ exports.htmlBookmarklet = function(req, res) {
 
   var browser = new Browser(user.langs);
 
-  return browser.processHtml(url, browser.bodyToString(charset, html), ct)
-    .then(function(data) {
-      logger.debug('Load data from bookmarklet url %s', url);
-      return saveContent(item, url, data.content, data.contentType, width, height, data.title, data.favicon)
-	.then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
-	.then(userUpdate.createItem.bind(null, req.user._id, item))
-	.then(function() {
-	  return Item.byId({ _id: item.parent })
-	    .then(function(parent) {
-	      parent.items.push(item._id);
-	      parent.markModified('items');
-	      return Promise.cast(parent.save())
-		.then(userUpdate.updateItem.bind(null, req.user._id, parent));
-	    })
-	})
+  Promise.cast(item.save())
+    .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
+    .then(userUpdate.createItem.bind(null, req.user._id, item))
+    .then(function() {
+      return Item.byId({ _id: item.parent })
+        .then(function(parent) {
+          parent.items.push(item._id);
+          parent.markModified('items');
+          return Promise.cast(parent.save())
+            .then(userUpdate.updateItem.bind(null, req.user._id, parent));
+        })
     })
-    .error(function(e) {
-      logger.debug('Error processing bookmarklet for url %s:', url, e);
-      errors.sendBadRequest(res);
+    .then(function() {
+      return browser.processHtml(url, browser.bodyToString(charset, html), ct)
+        .then(function(data) {
+          logger.debug('Load data from bookmarklet url %s', url);
+          return saveContent(item, url, data.content, data.contentType, width, height, data.title, data.favicon)
+            .then(userUpdate.updateItem.bind(null, req.user._id, item))
+        })
+        .error(function(e) {
+          logger.debug('Error processing bookmarklet for url %s:', url, e);
+          errors.sendBadRequest(res);
+        })
     })
 }

@@ -44,7 +44,8 @@ javascript:(function(e){
         d.style.height= s.style.height= "100%";
         d.style.width= s.style.width= "240px";
         d.style.zIndex= s.style.zIndex= "1999999999";
-        d.style.border= s.style.border= "none";
+        d.style.borderLeft= s.style.borderLeft= "6px solid #ff6d16";
+        d.style.borderRight= s.style.borderRight= d.style.borderTop= s.style.borderTop= d.style.borderBottom= s.style.borderBottom= "none";
         s.style.visibility= "hidden";
         s.onload=function(){ this.style.visibility="visible"; doc.body.removeChild(d); d = null}
         doc.body.appendChild(d);
