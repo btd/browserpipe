@@ -7,7 +7,7 @@ module.exports = function (app, passport) {
   var main = require('./controllers/main');
   app.get('/', main.home);
 
-  //User ro(s
+  //User routes
   var users = require('./controllers/user')  ;
   app.get('/login', users.login);
   app.get('/logout', users.logout);
