@@ -63,7 +63,7 @@ var config = {
     }
   },
   production: {
-    appUrl: 'http://listboard.it',
+    appUrl: 'https://browserpipe.com',
     db: {
       uri: 'mongodb://localhost/listboardit'
     },
