@@ -7,7 +7,7 @@ module.exports = function (app, passport) {
   var main = require('./controllers/main');
   app.get('/', main.home);
 
-  //User routes
+  //User ro(s
   var users = require('./controllers/user')  ;
   app.get('/login', users.login);
   app.get('/logout', users.logout);
@@ -17,7 +17,7 @@ module.exports = function (app, passport) {
   app.param('userId', users.user);
 
   //Home routes
-  app.get(    '/item/:id1',                     auth.ensureLoggedIn('/login'), main.home);
+  app.get('/item/:id1', cors.allowAllAccess, auth.ensureLoggedIn('/login'), main.home);
 
   //Modal routes
   var modal = require('./controllers/modal');
@@ -49,7 +49,7 @@ module.exports = function (app, passport) {
   app.get('/html-item/:itemId', auth.send401IfNotAuthenticated, browser.htmlItem);
 
   //Bookmarlet routes
-  app.post('/bookmarklet/add', auth.send401IfNotAuthenticated, browser.htmlBookmarklet);
+  app.post('/bookmarklet/add', cors.allowAllAccess, auth.send401IfNotAuthenticated, browser.htmlBookmarklet);
 
 };
 
