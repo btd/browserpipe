@@ -1,10 +1,12 @@
 extends ../layouts/home
 
-block body   
-  #topbar-section
-  #dashboard-section
+block body
+  span#dashboard-section
   #page-section
+    #page-header
     iframe(src='about:blank', class="page-content")
+    .loader
+      img(src="http://localhost:4000/img/loader.gif")
   #hiddenEventDiv
   #modal(class="modal fade")
     .modal-dialog

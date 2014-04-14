@@ -6,40 +6,35 @@ var _state = require('../state'),
     _ = require('lodash'),
     React = require('react'),
     page = require('page'),
+    TopBarComponent = require('./topbar'),
     Folder = require('./folder'),
     Tab= require('./tab');
 
-var DashboardComponent = React.createClass({    
+var DashboardComponent = React.createClass({
   getInitialState: function() {
-      return {     
-          selected: this.props.selected
+      return {
+          selectedFolder: this.props.selectedFolder,
+          selectedItem: this.props.selectedItem,
+          addedByBookmarklet: false
       };
   },
-  newTabClicked: function() {
-    _state.serverAddItemToItem(this.state.selected._id, { type: 0 }, function(item) {
-      //TODO: navigation to the just added container is not working because websockets is taking more time to add it than ajax reponse.
-      //We should fix this by sending crud request to server via websockets instead of ajax.
-      setTimeout(function() { page('/item/' + item._id) }, 500); 
+  moveTab: function() {
+    _state.serverUpdateItem({
+      _id: this.state.selectedItem._id,
+      parent: this.state.selectedFolder._id
+    }, function() {
+      var msg = Messenger().post({
+        message: "Tab moved",
+        hideAfter: 6
+      });
     });
   },
-  newFolderClicked: function() {
-    _state.serverAddItemToItem(this.state.selected._id, { type: 2 });
-  },
-  folderUpClicked: function() {
-    page("/item/" + this.state.selected.parent);
-  },
-  renderFolderUp: function() {
-    if(this.state.selected && this.state.selected.type === 2 && this.state.selected._id !== _state.browser._id)
-      return (
-	<div className="folder" onClick={ this.folderUpClicked } >
-	  <div className="folder-title up">...</div>
-	</div>
-      );
-    else return null;
+  addTabByBookmarklet: function() {
+    window.parent.postMessage("save_" + this.state.selectedFolder._id, "*");
+    this.setState({ addedByBookmarklet: true});
   },
   renderFolders: function() {
-    if(!this.state.selected) return null;
-    else return this.state.selected.items.filter(function(itemId){
+    return this.state.selectedFolder.items.filter(function(itemId){
       var item = _state.getItemById(itemId);
       return item.type === 2;
     }).map(function(folderId){
@@ -47,36 +42,38 @@ var DashboardComponent = React.createClass({
       return  <Folder folder={ folder } />
     })
   },
-  renderItems: function(container) {
-    if(!this.state.selected) return null;
-    else return this.state.selected.items.filter(function(itemId){
+  renderItems: function() {
+    var self = this;
+    return this.state.selectedFolder.items.filter(function(itemId){
       var item = _state.getItemById(itemId);
       return item.type !== 2;
     }).map(function(itemId){
       var tab = _state.getItemById(itemId);
-      return  <Tab tab={ tab } />
+      return  <Tab tab={ tab } selectedItem={ self.state.selectedItem } />
     })
   },
+  renderOptions: function() {
+    if(this.state.selectedItem && this.state.selectedItem.parent !== this.state.selectedFolder._id) {
+      return <div className="move-option" onClick={ this.moveTab }><i className="fa fa-level-up"></i><span>Move here</span></div>;
+    }
+    else if(!this.state.selectedItem && this.props.isIframe && !this.state.addedByBookmarklet) {
+      return <div className="add-option" onClick={ this.addTabByBookmarklet }><i className="fa fa-level-up"></i><span>Add here</span></div>;
+    }
+  },
   render: function() {
-    var self = this;
     return (
-      <div className="dashboard" >
-	 <div className="items clearfix">
-	   { this.renderFolderUp() }
-	   { this.renderFolders() }
-	   { this.renderItems() }
-	   <div className="new-options">
-	     <div className="new-tab" title="Add new tab" onClick={ this.newTabClicked }>
-	       <i className="fa fa-plus"></i>
-	     </div>
-	     <div className="new-folder" title="Add new folder" onClick={ this.newFolderClicked }>
-	       <i className="fa fa-folder"></i>
-	     </div>
-	     <div className="new-note" title="Add new note" >
-	       <i className="fa fa-file"></i>
-	     </div>
-	   </div>
-	 </div>
+      <div className="dashboard" style={{width: (this.state.selectedItem?"240px":"100%"), position: "absolute", right: 0 }}>
+        <TopBarComponent
+          selectedFolder={ this.state.selectedFolder }
+          selectedItem={ this.state.selectedItem }
+          isIframe= { this.props.isIframe } />
+        <div className="dashboard-content">
+          <div className="items clearfix">
+            { this.renderFolders() }
+            { this.renderItems() }
+          </div>
+          { this.renderOptions() }
+        </div>
       </div>
     );
   }
@@ -84,11 +81,15 @@ var DashboardComponent = React.createClass({
 
 
 module.exports.render = function (
-    selected
+    isIframe,
+    selectedFolder,
+    selectedItem
   ) {
   return React.renderComponent(
-    <DashboardComponent 
-      selected={selected} />,
+    <DashboardComponent
+      isIframe={isIframe}
+      selectedFolder={selectedFolder}
+      selectedItem={selectedItem} />,
     document.getElementById('dashboard-section')
   );
 };

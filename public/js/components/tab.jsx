@@ -8,21 +8,21 @@ var _state = require('../state'),
     React = require('react'),
     page = require('page');
 
-var TabComponent = React.createClass({    
+var TabComponent = React.createClass({
   tabClicked: function() {
     page("/item/" + this.props.tab._id);
   },
   maskClicked: function(e) {
     e.stopPropagation();
   },
-  selectOptionClicked: function(e) { 
+  selectOptionClicked: function(e) {
     e.stopPropagation();
   },
   removeOptionClicked: function(e) {
     e.stopPropagation();
     _state.serverDeleteItem(this.props.tab);
   },
-  openURLClicked: function(e) { 
+  openURLClicked: function(e) {
     e.stopPropagation();
   },
   getScreenshotTopAndLeft: function() {
@@ -52,16 +52,16 @@ var TabComponent = React.createClass({
             </div>
           </div>
         </div>
-        <div className="tab-content">
-	  <img className="tab-screenshot" src={this.props.tab.screenshot} style={ this.getScreenshotTopAndLeft() } />
-	</div>
+        <div className={"tab-content" + (this.props.selectedItem && this.props.selectedItem._id === this.props.tab._id? " selected": "") }>
+          <img className="tab-screenshot" src={this.props.tab.screenshot} style={ this.getScreenshotTopAndLeft() } />
+        </div>
         <div className="tab-footer">
-	  <img className="tab-favicon" src={this.props.tab.favicon} />
-	  <span className="tab-title" alt={ this.props.tab.title } >{ this.props.tab.title }</span>
-	</div>
+          <img className="tab-favicon" src={this.props.tab.favicon} />
+          <span className="tab-title" alt={ this.props.tab.title } >{ this.props.tab.title }</span>
+        </div>
       </div>
     );
   }
-});  
+});
 
-module.exports = TabComponent 
+module.exports = TabComponent

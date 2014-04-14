@@ -41,9 +41,9 @@ javascript:(function(e){
       s.src= domain + "/bookmarklet/start?&pick_folder=" + encode(pickFolder) + "&v=1.1";
       s.style.position= "fixed";
       s.style.top= "0";
-      s.style.left= "0";
+      s.style.right= "0";
       s.style.height= "100%";
-      s.style.width= "100%";
+      s.style.width= "240px";
       s.style.zIndex= "16777270";
       s.style.border= "none";
       s.style.visibility= "hidden";

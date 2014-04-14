@@ -22,6 +22,7 @@ var Item = model()
   .attr('externalId') // id of the tab if it has
   .attr('path')
   .attr('storageUrl')
+  .attr('createdAt')
   .use(function(Model) {
     Model.prototype.isFolder = function() {
       return this.type === 2;

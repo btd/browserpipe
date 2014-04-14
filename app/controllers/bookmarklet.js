@@ -1,5 +1,7 @@
 /* jshint node: true */
-var _ = require('lodash')
+var _ = require('lodash');
+var Item = require('../../models/item');
+var config = require('../../config');
 
 //Login dialog
 exports.login = function (req, res) {
@@ -12,9 +14,15 @@ exports.login = function (req, res) {
 }
 
 //Serve bookmarklet
-exports.start = function (req, res) {
+exports.start = function (req, res, next) {
 
-  res.render('bookmarklet/manage', {
-      pickFolder: req.query.pick_folder === 0
-  });
+  return Item.all({ user: req.user._id, deleted: false }).then(function(items) {
+      res.render('main/home', {
+          user: req.user,
+          items: items,
+          config: {
+              appUrl: config.appUrl
+          }
+      })
+  }, next)
 }

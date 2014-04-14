@@ -1,6 +1,7 @@
 # general things
 .DS_Store
 .idea
+*.swp
 
 node_modules/
 bower_components/

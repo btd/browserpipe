@@ -3,7 +3,7 @@
 var _state = require('./state'),
   page = require('page'),
   DashboardComponent = require('./components/dashboard'),
-  TopBarComponent = require('./components/topbar'),
+  PageHeaderComponent = require('./components/pageheader'),
   $ = require('jquery'),
   websocket = require('./websocket/websocket'),
   browser = require('./browser/main');
@@ -15,63 +15,66 @@ require('bootstrap-modal');
 //Notification system
 require('messenger');
 
-var topBarComponent, dashboardComponent; //react component instances
-
-var loadTopBarComponent = function() {
-  if(!topBarComponent) {
-    topBarComponent = TopBarComponent.render(
-      _state.selected
-    );
-  } else {
-    topBarComponent.setState({
-      selected: _state.selected
-    });
-  }
-}
+var dashboardComponent, pageHeaderComponent; //react component instances
+var isIframe = (window != window.parent);
 
 var loadDashboardComponent = function() {
   if(!dashboardComponent) {
     dashboardComponent = DashboardComponent.render(
-      _state.selected
+      isIframe,
+      _state.selectedFolder,
+      _state.selectedItem
     );
   } else {
     dashboardComponent.setState({
-      selected: _state.selected
+      isIframe: isIframe,
+      selectedFolder: _state.selectedFolder,
+      selectedItem: _state.selectedItem
     });
   }
 }
 
-function cleanBrowserIframe() {
-  $('#page-section .page-content')[0].src = "about:blank";
+var loadPageHeaderComponent = function() {
+  if(_state.selectedItem)
+    if(!pageHeaderComponent) {
+      pageHeaderComponent = PageHeaderComponent.render(
+        isIframe,
+        _state.selectedFolder,
+        _state.selectedItem
+      );
+    } else {
+      pageHeaderComponent.setState({
+        isIframe: isIframe,
+        selectedFolder: _state.selectedFolder,
+        selectedItem: _state.selectedItem
+      });
+    }
 }
 
 var loadPage = function(item) {
-  cleanBrowserIframe();
+  if(isIframe)
+    window.parent.postMessage("expand", "*");
   if(item.url) browser.open(item._id, item.url);
 }
 
-var prepareFolderElements = function() {
-  $('#topbar-section .url-input').val('');
-  $('#topbar-section').show();
-  $('#dashboard-section').show();
+
+var prepareDashboardElements = function() {
   $('#page-section').hide();
   $('html, body').removeClass('overflow-hidden');
 }
 
 var prepareTabElements = function() {
-  $('#topbar-section').show();
-  $('.url-input').focus();
-  $('#dashboard-section').hide();
   $('#page-section').show();
   $('html, body').addClass('overflow-hidden');
 }
 
 page('/', function() {
   setTimeout(function() {
-    _state.selected = _state.browser;
-    loadTopBarComponent();
+    _state.selectedItem = null;
+    _state.selectedFolder = _state.browser;
     loadDashboardComponent();
-    prepareFolderElements();
+    loadPageHeaderComponent();
+    prepareDashboardElements();
   }, 0);
 });
 
@@ -80,14 +83,19 @@ page('/item/:id', function(ctx) {
     var id = ctx.params.id;
     var item = _state.getItemById(id);
     if(item) {
-      _state.selected = item;
       if(item.type === 2) {
-        loadTopBarComponent();
+        _state.selectedItem = null;
+        _state.selectedFolder = item;
         loadDashboardComponent();
-        prepareFolderElements();
+        loadPageHeaderComponent();
+        prepareDashboardElements();
       }
       else {
-        loadTopBarComponent();
+        _state.selectedItem = item;
+        if(!_state.selectedFolder)
+          _state.selectedFolder = _state.getItemById(item.parent);
+        loadDashboardComponent();
+        loadPageHeaderComponent();
         loadPage(item);
         prepareTabElements();
       }
@@ -117,29 +125,18 @@ var initialize = function() {
 
 var stateChanges = function() {
 
-  var changeInItems = function(item) {
-    if(topBarComponent && (item._id === _state.selected._id || item.parent === _state.selected._id))
-      topBarComponent.setState({
-        selected: _state.selected
-      });
-    if(dashboardComponent && (item._id === _state.selected._id || item.parent === _state.selected._id))
-      dashboardComponent.setState({
-        selected: _state.selected
-      });
-  }
-
-  _state.items.on('add', changeInItems);
-  _state.items.on('remove', changeInItems);
-  _state.items.on('change', changeInItems);
-
-  var changeInBrowser = function() {
-    if(dashboardComponent)
-      dashboardComponent.setState({
-        browser: _state.browser
-      });
+  var changeInSelected = function() {
+    if(_state.selectedFolder) { //This means load finished
+      loadDashboardComponent();
+      loadPageHeaderComponent();
+    }
   };
 
-  _state.browser.on('change', changeInBrowser);
+  _state.items.on('add', changeInSelected);
+  _state.items.on('remove', changeInSelected);
+  _state.items.on('change', changeInSelected);
+  _state.on('change:selectedFolder', changeInSelected);
+  _state.on('change:selectedItem', changeInSelected);
 }
 
 module.exports = initialize;

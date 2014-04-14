@@ -23,23 +23,25 @@ var scrollTimeout, loading = false;
 
 exports.open = function(url) {
   loading = true;
-  $iframe[0].src = "about:blank";
   var self = this;
-  var url = _state.selected.storageUrl ? _state.selected.storageUrl :
-    ('/html-item/' + _state.selected._id + '?url=' + encodeURIComponent(url) + '&width=' + $(window).width() + '&height=' + $(window).height());
+  var url = _state.selectedItem.storageUrl ? _state.selectedItem.storageUrl :
+    ('/html-item/' + _state.selectedItem._id + '?url=' + encodeURIComponent(url) + '&width=' + $(window).width() + '&height=' + $(window).height());
   if($iframe[0].src !== url) {
-
+    $iframe.hide();
     $iframe[0].src = url;
     $iframe.off();
     $iframe.load(function() {
+      $iframe.show();
+      var $contents = $($iframe.contents());
+      var $body = $contents.find('body');
       $contents.scroll(function() {//TODO use lodash.debounce
         var scrollX = $contents.scrollLeft();
         var scrollY = $contents.scrollTop();
-        if(!loading && (_state.selected.scrollX !== scrollX || _state.selected.scrollY !== scrollY)) {
+        if(!loading && (_state.selectedItem.scrollX !== scrollX || _state.selectedItem.scrollY !== scrollY)) {
           clearTimeout(scrollTimeout);
           scrollTimeout = setTimeout(function() {
             _state.serverUpdateItem({
-              _id: _state.selected._id,
+              _id: _state.selectedItem._id,
               scrollX: scrollX,
               scrollY: scrollY
             });
@@ -54,21 +56,21 @@ exports.open = function(url) {
           var target = $anchor.attr('target');
           if(e.ctrlKey) {
             self.create(
-              _state.selected.parent,
+              _state.selectedItem.parent,
               url.trim(),
               showNewItemMessage
             );
           }
           else if(target && target.trim() === '_blank')
-            self.createAndOpen(_state.selected.parent, url.trim());
+            self.createAndOpen(_state.selectedItem.parent, url.trim());
           else
-            self.createAndOpen(_state.selected.parent, url.trim(), _state.selected._id);
+            self.createAndOpen(_state.selectedItem.parent, url.trim(), _state.selectedItem._id);
         }
       });
-      if(_state.selected.scrollX)
-        $contents.scrollLeft(_state.selected.scrollX);
-      if(_state.selected.scrollY)
-        $contents.scrollTop(_state.selected.scrollY);
+      if(_state.selectedItem.scrollX)
+        $contents.scrollLeft(_state.selectedItem.scrollX);
+      if(_state.selectedItem.scrollY)
+        $contents.scrollTop(_state.selectedItem.scrollY);
       loading = false;
     });
   }
