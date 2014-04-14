@@ -25,6 +25,4 @@ exports.start = function (req, res, next) {
           }
       })
   }, next)
-  //res.render('bookmarklet/manage', {
-  //});
 }

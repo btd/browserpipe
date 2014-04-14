@@ -35,7 +35,7 @@ javascript:(function(e){
         var d = doc.createElement("div");
         var s = doc.createElement("iframe");
         s.id= bid;
-        s.src= domain;
+        s.src= domain + "/item" + "XXXXXXXXXXXXXXXX"; //ROOT ID, WE NEED THIS TO REDIRECT TO LOGIN IF IT IS NOT LOGGED IN INSTEAD OF INDEX
         d.innerHTML = "<div style='position:absolute;margin:auto;top:0;right:0;bottom:0;left:0;width:48px;height:48px;z-index:-100;'><img src='" + domain + "/img/loader.gif'/></div>";
         d.style.backgroundColor = "#FFF";
         d.style.position = s.style.position= "fixed";
