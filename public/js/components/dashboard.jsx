@@ -43,12 +43,13 @@ var DashboardComponent = React.createClass({
     })
   },
   renderItems: function() {
+    var self = this;
     return this.state.selectedFolder.items.filter(function(itemId){
       var item = _state.getItemById(itemId);
       return item.type !== 2;
     }).map(function(itemId){
       var tab = _state.getItemById(itemId);
-      return  <Tab tab={ tab } />
+      return  <Tab tab={ tab } selectedItem={ self.state.selectedItem } />
     })
   },
   renderOptions: function() {
@@ -61,7 +62,7 @@ var DashboardComponent = React.createClass({
   },
   render: function() {
     return (
-      <div className="dashboard" style={{width: (_state.selectedItem?"240px":"100%"), position: "absolute", right: 0 }}>
+      <div className="dashboard" style={{width: (this.state.selectedItem?"240px":"100%"), position: "absolute", right: 0 }}>
         <TopBarComponent
           selectedFolder={ this.state.selectedFolder }
           selectedItem={ this.state.selectedItem }

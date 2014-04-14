@@ -18,12 +18,12 @@ var TopBarComponent = React.createClass({
   newFolderClicked: function() {
     _state.serverAddItemToItem(this.props.selectedFolder._id, { type: 2 });
   },
-  folderUpClicked: function() {                                                                                                                 
-    if(_state.selectedItem)                                                                                                                     
-      _state.selectedFolder = _state.getItemById(this.props.selectedFolder.parent);                                                             
-    else                                                                                                                                        
-      page("/item/" + this.props.selectedFolder.parent);                                                                                        
-  },        
+  folderUpClicked: function() {
+    if(_state.selectedItem)
+      _state.selectedFolder = _state.getItemById(this.props.selectedFolder.parent);
+    else
+      page("/item/" + this.props.selectedFolder.parent);
+  },
   ifEnterNavigate: function(e) {
     if(e.keyCode === 13) this.navigateEnteredURL();
   },
@@ -102,12 +102,16 @@ var TopBarComponent = React.createClass({
                 <i className="fa fa-user"></i>
               </a>
               <ul className="dropdown-menu">
-                <li>
-                  <a data-toggle="modal" href="/modal/bookmarklet" data-target="#modal">
-                    <i className="icon-none"><span>Bookmarklets</span></i>
-                  </a>
-                </li>
-                <li className="divider"></li>
+                { this.props.isIframe? null :
+                  (<li >
+                    <a data-toggle="modal" href="/modal/bookmarklet" data-target="#modal">
+                      <i className="icon-none"><span>Bookmarklets</span></i>
+                    </a>
+                  </li>)
+                }
+                { this.props.isIframe? null :
+                  <li className="divider"></li>
+                }
                 <li>
                   <a draggable="false"  tabindex="-1" href="/settings">
                     <i className="icon-none"><span>Settings</span></i>
