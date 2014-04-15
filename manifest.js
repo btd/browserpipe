@@ -1,10 +1,15 @@
 var manifests = {};
 var Url = require('url');
+var Fs = require('fs');
+
 function loadManifest(manifestPath, prependUrl) {
     var manifest = manifests[manifestPath];
     if(!manifest) {
         try {
-            manifest = require(manifestPath);
+            manifest = JSON.parse(Fs.readFileSync(manifestPath, 'utf8'));
+            if(manifests[manifestPath] && process.env.NODE_ENV != 'development') {
+                manifests[manifestPath] = manifest;
+            }
         } catch(e) {
             manifest = {};
         }
