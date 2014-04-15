@@ -11,7 +11,8 @@ var browserify = require('browserify');
 
 var rev = require('./gulp-rev');
 
-var minify = false;
+var argv = require('optimist').argv;
+var minify = !!argv.min;
 
 var manifestSettings = { manifestPath: './dist/manifest.json', from: './public', to: './dist' };
 
@@ -129,4 +130,14 @@ gulp.task('build', function(callback) {
 
 gulp.task('default', function(callback) {
     runSequence('clean', 'build', callback);
+});
+
+gulp.task('watch', function() {
+    gulp.watch('public/css/**/*', ['styles']);
+
+    gulp.watch('public/js/**/*', ['script-main', 'script-index']);
+
+    gulp.watch('public/img/**/*', ['images']);
+
+    gulp.watch('public/font/**/*', ['fonts']);
 });

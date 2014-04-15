@@ -1,7 +1,14 @@
 var manifests = {};
 var Url = require('url');
 function loadManifest(manifestPath, prependUrl) {
-    var manifest = manifests[manifestPath] = manifests[manifestPath] || require(manifestPath);
+    var manifest = manifests[manifestPath];
+    if(!manifest) {
+        try {
+            manifest = require(manifestPath);
+        } catch(e) {
+            manifest = {};
+        }
+    }
 
     return {
         url: function(origUrl) {
