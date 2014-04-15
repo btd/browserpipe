@@ -7,7 +7,7 @@ var Invitation = require('../../models/invitation'),
 
 //Find listboard by id
 exports.invitation = function(req, res, next, id) {
-    return Invitation.by({ _id: id, user: req.user })
+    return Invitation.by({ _id: id })
         .then(function(invitation) {
             //TODO: redirect to nice 404 page
             if (!invitation) return errors.sendNotFound(res);
@@ -17,10 +17,10 @@ exports.invitation = function(req, res, next, id) {
         }, next);
 };
 
-exports.accepted = function(req, res, next) {	
-	if (req.invitation && req.invitation.accepted) 
+exports.accepted = function(req, res, next) {
+	if (req.invitation && req.invitation.accepted)
 		next();
-	else 
+	else
 		return errors.sendNotFound(res);
 };
 

@@ -9,7 +9,9 @@ var _state = require('../state'),
 
 var TopBarComponent = React.createClass({
   logoClicked: function() {
-    if(_state.selectedItem)
+    if(this.props.isIframe)
+      window.open('/', '_blank');
+    else if(_state.selectedItem)
       _state.selectedFolder = _state.getItemById(_state.browser._id);
     else
       page("/item/" + _state.browser._id);
@@ -61,6 +63,17 @@ var TopBarComponent = React.createClass({
     $('#collapse-bookmarklet').addClass('hide');
     $('#topbar-section').removeClass('expanded');
   },
+  moveTab: function() {
+    _state.serverUpdateItem({
+      _id: this.props.selectedItem._id,
+      parent: this.props.selectedFolder._id
+    }, function() {
+      var msg = Messenger().post({
+        message: "Tab moved",
+        hideAfter: 6
+      });
+    });
+  },
   renderBreadcrumb: function() {
     var breadcrumbItems = [];
     var last = true;
@@ -70,7 +83,7 @@ var TopBarComponent = React.createClass({
       folder = folder.parent? _state.getItemById(folder.parent) : null;
       last = false;
     }
-    return  <ol className="breadcrumb">{ breadcrumbItems }</ol>
+    return  <div className="breadcrumb"><ol className="breadcrumb-inner">{ breadcrumbItems }</ol></div>
   },
   renderBreadcrumbItem: function(item, last) {
     var title = item.isFolder()? (item.parent? (item.title? item.title : '[No name]') : 'Home') : (item.title? item.title : item.url);
@@ -80,23 +93,33 @@ var TopBarComponent = React.createClass({
              { last? '' : <span className="divider">/</span> }
            </li>
   },
+  renderMoveOption: function() {
+    if(this.props.selectedItem && this.props.selectedItem.parent !== this.props.selectedFolder._id)
+      return <div className="move-to-folder" title="Move tab to this folder" onClick={ this.moveTab }>
+        <i className="fa fa-caret-square-o-down"></i>
+      </div>
+  },
   render: function() {
     return (
       <div id="topbar-section">
         <div className="topbar-commands">
-          <span id="logo" onClick={ this.logoClicked } ><img src={"<%= url('img/logo/logo-small.png') %>"} alt="Browserpipe logo small"/></span>
+          <div className="bookmarklet-options nav-option">
+            <a id="close-bookmarklet" draggable="false" onClick={ this.closeBookmarklet } className={ this.props.isIframe? '' : 'hide' }>
+              <i className="fa fa-times"></i>
+            </a>
+            <a id="expand-bookmarklet" draggable="false" onClick={ this.expandBookmarklet } className='hide'>
+              <i className="fa fa-expand"></i>
+            </a>
+            <a id="collapse-bookmarklet" draggable="false" onClick={ this.collapseBookmarklet } className='hide'>
+              <i className="fa fa-compress"></i>
+            </a>
+          </div>
           <div className="search-options input-append">
             <input type="text" placeholder="Enter an URL or search a tab" className="url-input" ref="urlInput" onKeyPress={this.ifEnterNavigate} />
             <input type="button" className="url-btn btn btn-warning" value="Go"  onClick={this.navigateEnteredURL} />
           </div>
           <div className="user-options">
             <li className="dropdown nav-option">
-              <a id="expand-bookmarklet" draggable="false" onClick={ this.expandBookmarklet } className='hide'>
-                <i className="fa fa-expand"></i>
-              </a>
-              <a id="collapse-bookmarklet" draggable="false" onClick={ this.collapseBookmarklet } className='hide'>
-                <i className="fa fa-compress"></i>
-              </a>
               <a draggable="false"  href="#" data-toggle="dropdown" className="dropdown-toggle">
                 <i className="fa fa-user"></i>
               </a>
@@ -128,17 +151,16 @@ var TopBarComponent = React.createClass({
                   </a>
                 </li>
               </ul>
-              <a id="close-bookmarklet" draggable="false" onClick={ this.closeBookmarklet } className={ this.props.isIframe? '' : 'hide' }>
-                <i className="fa fa-times"></i>
-              </a>
             </li>
           </div>
+          <span id="logo" onClick={ this.logoClicked } ><img src={"<%= url('img/logo/logo-small.png') %>"} alt="Browserpipe logo small"/></span>
         </div>
         <div className="sub-bar">
-          { this.renderBreadcrumb() }
           <div className={"folder-up" + (this.props.selectedFolder.parent?'':' hide')} title="Go one folder up" onClick={ this.folderUpClicked }>
             <i className="fa fa-level-up"></i>
           </div>
+          { this.renderBreadcrumb() }
+          { this.renderMoveOption() }
           <div className="new-folder" title="Add new folder" onClick={ this.newFolderClicked }>
             <i className="fa fa-folder"></i>
           </div>

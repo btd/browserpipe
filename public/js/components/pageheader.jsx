@@ -72,7 +72,7 @@ var PageHeaderComponent = React.createClass({
         </div>
         <span className="message">{ "This is a snapshot of the page as it appeared on " + this.state.selectedItem.createdAt + ". To open the page "}<a target="_blank" href={this.state.selectedItem.url}>click here</a></span>
         <a draggable="false" onClick={ this.closeOptionClicked } className="close-option">
-          <i className="fa fa-times"></i>
+          <i className="fa fa-angle-double-right"></i>
         </a>
       </div>
     );

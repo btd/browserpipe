@@ -17,17 +17,6 @@ var DashboardComponent = React.createClass({
           addedByBookmarklet: false
       };
   },
-  moveTab: function() {
-    _state.serverUpdateItem({
-      _id: this.state.selectedItem._id,
-      parent: this.state.selectedFolder._id
-    }, function() {
-      var msg = Messenger().post({
-        message: "Tab moved",
-        hideAfter: 6
-      });
-    });
-  },
   addTabByBookmarklet: function() {
     window.parent.postMessage("save_" + this.state.selectedFolder._id, "*");
     this.setState({ addedByBookmarklet: true});
@@ -51,12 +40,9 @@ var DashboardComponent = React.createClass({
       return  <Tab tab={ tab } selectedItem={ self.state.selectedItem } />
     })
   },
-  renderOptions: function() {
-    if(this.state.selectedItem && this.state.selectedItem.parent !== this.state.selectedFolder._id) {
-      return <div className="move-option" onClick={ this.moveTab }><i className="fa fa-level-up"></i><span>Move here</span></div>;
-    }
-    else if(!this.state.selectedItem && this.props.isIframe && !this.state.addedByBookmarklet) {
-      return <div className="add-option" onClick={ this.addTabByBookmarklet }><i className="fa fa-level-up"></i><span>Add here</span></div>;
+  renderAddOption: function() {
+    if(!this.state.selectedItem && this.props.isIframe && !this.state.addedByBookmarklet) {
+      return <div className="add-option" onClick={ this.addTabByBookmarklet }><span>Add here</span><i className="fa fa-level-up"></i></div>;
     }
   },
   render: function() {
@@ -71,7 +57,7 @@ var DashboardComponent = React.createClass({
             { this.renderFolders() }
             { this.renderItems() }
           </div>
-          { this.renderOptions() }
+          { this.renderAddOption() }
         </div>
       </div>
     );
