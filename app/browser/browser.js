@@ -13,16 +13,12 @@ var Promise = require('bluebird');
 var getCharset = require('http-buffer-charset');
 var Iconv = require('iconv').Iconv;
 
-function saveData(data, ct) {
-  return file.saveData(data, contentType.resolveExtension(ct.type));
-}
+var util = require('./util');
 
 function Browser(langs) {
   this.htmlProcessor = new HtmlProcessor(this);
   this.langs = langs;
 }
-
-Browser.save = saveData;
 
 //If it cannot make a URL out of it, it searchs term in Google
 function processUrl(url) {
@@ -83,7 +79,7 @@ Browser.prototype.processPage = function(url, isMainUrl) {
             case 'html':
               return that.processHtml(url, body, ct).then(resolve);
             case 'img':
-              return saveData(body, ct).then(function(path) {
+              return util.saveData(body, ct).then(function(path) {
                 ct.type = 'text/html';
                 response.headers['content-type'] = ct.toString();
 

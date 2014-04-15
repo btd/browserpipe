@@ -67,9 +67,6 @@ var config = {
     db: {
       uri: 'mongodb://localhost/listboardit'
     },
-    storage: {
-      url: '/storage'
-    },
     mincer: {
       preprocess: [
         'font/**',
@@ -85,7 +82,7 @@ var config = {
 };
 
 Object.keys(config).forEach(function(key) {
-  config[key] = _.merge(config[key], common);
+  config[key] = _.merge({}, common, config[key]);
 
   config[key]["connect-mongo"] = {
     auto_reconnect: true,

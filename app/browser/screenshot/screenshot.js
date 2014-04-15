@@ -42,7 +42,7 @@ var generateScreenshot = function(html, width, height, callback) {
               var fullPath = file.fullRandomPath(name);
 
               //We have to wait a bit for phantomjs to finish creating page
-              setTimeout(function() {
+              //setTimeout(function() {
                 return file.mkdirp(fullPath).then(function() {
                   page.render(fullPath, function(error) {
                     if(error) {
@@ -69,7 +69,7 @@ var generateScreenshot = function(html, width, height, callback) {
                 }, function() {
                   callback(badResult);
                 });
-              }, 1000);
+              //}, 1000);
             }
           })
         })

@@ -11,11 +11,11 @@ head
   include ../includes/head
   
   //Application styles
-  != stylesheet_tag('css/bookmarklet')
+  link(type="text/css", rel="stylesheet", href=asset_url('css/bookmarklet'))
 
 body.modal-bookmarklet
   button#close_opt.close(data-dismiss="modal", aria-hidden="true") ×
-  != image_tag("img/logo/logo.png", { alt: "Browserpipe logo"})
+  img(src=asset_url("img/logo/logo.png"), alt="Browserpipe logo")
   .container-fluid
     .row-fluid
       .span12

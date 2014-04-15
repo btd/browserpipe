@@ -3,7 +3,6 @@
  */
 
 var _state = require('../state'),
-    _ = require('lodash'),
     React = require('react'),
     page = require('page'),
     browser = require('../browser/main');
@@ -85,7 +84,7 @@ var TopBarComponent = React.createClass({
     return (
       <div id="topbar-section">
         <div className="topbar-commands">
-          <span id="logo" onClick={ this.logoClicked } ><img src="/img/logo/logo-small.png" alt="Browserpipe logo small"/></span>
+          <span id="logo" onClick={ this.logoClicked } ><img src={"<%= url('img/logo/logo-small.png') %>"} alt="Browserpipe logo small"/></span>
           <div className="search-options input-append">
             <input type="text" placeholder="Enter an URL or search a tab" className="url-input" ref="urlInput" onKeyPress={this.ifEnterNavigate} />
             <input type="button" className="url-btn btn btn-warning" value="Go"  onClick={this.navigateEnteredURL} />
@@ -113,18 +112,18 @@ var TopBarComponent = React.createClass({
                   <li className="divider"></li>
                 }
                 <li>
-                  <a draggable="false"  tabindex="-1" href="/settings">
+                  <a draggable="false"  tabIndex="-1" href="/settings">
                     <i className="icon-none"><span>Settings</span></i>
                   </a>
                 </li>
                 <li>
-                  <a draggable="false"  tabindex="-1" href="/help">
+                  <a draggable="false"  tabIndex="-1" href="/help">
                     <i className="icon-none"> <span>Help</span></i>
                   </a>
                 </li>
                 <li className="divider"></li>
                 <li>
-                  <a draggable="false"  tabindex="-1" href="/logout">
+                  <a draggable="false"  tabIndex="-1" href="/logout">
                     <i className="icon-none"><span>Logout </span></i>
                   </a>
                 </li>

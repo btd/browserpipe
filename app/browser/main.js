@@ -10,6 +10,8 @@ var Promise = require('bluebird');
 
 var screenshot = require('./screenshot/screenshot');
 
+var util = require('./util');
+
 var file = require('../../util/file');
 
 var contentType = require('../../util/content-type');
@@ -22,7 +24,7 @@ function generateScreenshot(html, width, height) {
   })
 }
 
-var sendAndSaveContent = function(res, opts, data) {
+function sendAndSaveContent(res, opts, data) {
   res.send(data.content);
   return Item.byId(opts.itemId)
     .then(function(item) {
@@ -36,12 +38,12 @@ var sendAndSaveContent = function(res, opts, data) {
             }
           });
     });
-};
+}
 
-var saveContent = function(item, url, content, contentType, width, height, title, favicon) {
+function saveContent(item, url, content, contentType, width, height, title, favicon) {
   return Promise.all([
     generateScreenshot(content, width, height),
-    Browser.save(content, contentType)
+    item.path ? util.saveDataByName(content, item.path) : util.saveData(content, contentType)
   ]).spread(function(screenshotUrl, path) {
       item.title = title;
       item.url = url;
@@ -54,9 +56,9 @@ var saveContent = function(item, url, content, contentType, width, height, title
 
       return Promise.cast(item.save())
     });
-};
+}
 
-var navigate = function(res, opts) {
+function navigate(res, opts) {
   var browser = new Browser(opts.languages);
 
   return browser._loadUrl(opts.url, true)

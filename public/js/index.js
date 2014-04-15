@@ -1,4 +1,5 @@
 //= require ../bower_components/jquery/jquery.js
+var $ = require('jquery');
 
 /*global $: true, ga: true*/
 $(function() {

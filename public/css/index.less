@@ -9,7 +9,7 @@ body {
   position: relative;
   color: @grey1;
   background-color: #f2eee8;
-  background-image: image_url('img/common/bg-pattern.png');
+  background-image: url('<%= url("img/common/bg-pattern.png") %>');
 }
 
 .container-fluid {
@@ -91,7 +91,7 @@ header{
     font-weight:600;
     margin-bottom: 40px;
     padding-bottom: 20px;
-    background: image_url('img/index/line.png') no-repeat 5% bottom;
+    background: url('<%= url("img/index/line.png") %>') no-repeat 5% bottom;
   }
 }
 
