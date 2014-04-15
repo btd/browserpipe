@@ -3,14 +3,11 @@ var browserUtil = require('../../util');
 
 var Promise = require('bluebird');
 
+var util = require('../../util');
 var file = require('../../../../util/file');
 var contentType = require('../../../../util/content-type');
 
 var absUrl = require('./abs-url');
-
-function saveData(data, ct) {
-  return file.saveData(data, contentType.resolveExtension(ct.type));
-}
 
 var HtmlWriteHandler = function() {
 
@@ -53,7 +50,7 @@ function processCss(css, attributes) {
       }
     });
 
-    return saveData(allContent, contentType.CSS);
+    return util.saveData(allContent, contentType.CSS);
   });
 }
 
@@ -124,7 +121,7 @@ HtmlWriteHandler.prototype.onOpenTag = function(name, attributes) {
       //add <img> tag via promise
       this.imgChunks.push(this.browser._loadUrl(attributes.src)
         .then(function(data) {//TODO check on datauri
-          return saveData(data.content, data.contentType);
+          return util.saveData(data.content, data.contentType);
         })
         .then(function(name) {
           attributes.src = file.url(name);

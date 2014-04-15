@@ -36,14 +36,14 @@ block center
       .row-fluid 
         .inner
           #demoappcont
-            != image_tag('img/index/capture.png')
+            img(src=asset_url("img/index/capture.png"))
           
           .box.features-box.clearfix
             h2 
               i.fa.fa-heart
               | &nbsp;&nbsp; You will love it!
             #container-capture
-              != image_tag('img/index/container-capture.png')                                     
+              img(src=asset_url("img/index/container-capture.png"))
             .features          
               h4 
                 i.fa.fa-check
@@ -119,4 +119,4 @@ block footer
     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
     ga('create', 'UA-42652416-1', 'listboard.it');
     ga('send', 'pageview');
-  != javascript_tag('js/index')
+  script(src=asset_url('js/index.js'))

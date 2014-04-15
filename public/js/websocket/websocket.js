@@ -1,4 +1,4 @@
-var io = require('socket.io');
+var io = require('socket.io-client');
 
 var socket; //socket.io client socket
 

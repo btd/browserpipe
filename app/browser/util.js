@@ -1,3 +1,6 @@
+var contentType = require('../../util/content-type');
+var file = require('../../util/file');
+
 var reEscapedHtml = /&(?:amp|lt|gt|quot|#39);/g,
   reUnescapedHtml = /[&<>"']/g;
 
@@ -88,4 +91,16 @@ exports.openTag = function(name, attributes, escapeAttributes) {
   text += '>';
   return text;
 }
+
+function saveData(data, ct) {
+    return file.saveData(data, contentType.resolveExtension(ct.type));
+}
+
+function saveDataByName(data, name) {
+    return file.saveDataByName(data, name);
+}
+
+exports.saveData = saveData;
+
+exports.saveDataByName = saveDataByName;
 

@@ -26,10 +26,6 @@ var common = {
     host: '127.0.0.1',
     port: 6379,
     options: {}
-  },
-  mincer: {
-    url: '/public',
-    roots: './public'
   }
 };
 
@@ -49,43 +45,18 @@ var config = {
     appUrl: 'http://000staging.listboard.it',
     db: {
       uri: 'mongodb://localhost/listboardit-stage'
-    },
-    mincer: {
-      preprocess: [
-        'img/index/**',
-        'font/**',
-        'css/index.css',
-        'css/app.css',
-        'js/index.js',
-        'js/apps/main.js'
-      ],
-      manifest: path.join(__dirname, 'compiled-assets')
     }
   },
   production: {
     appUrl: 'https://browserpipe.com',
     db: {
       uri: 'mongodb://localhost/listboardit'
-    },
-    storage: {
-      url: '/storage'
-    },
-    mincer: {
-      preprocess: [
-        'font/**',
-        'img/**',
-        'js/index.js',
-        'js/apps/main.js',
-        'css/index.css',
-        'css/app.css'
-      ],
-      manifest: path.join(__dirname, 'compiled-assets')
     }
   }
 };
 
 Object.keys(config).forEach(function(key) {
-  config[key] = _.merge(config[key], common);
+  config[key] = _.merge({}, common, config[key]);
 
   config[key]["connect-mongo"] = {
     auto_reconnect: true,

@@ -2,6 +2,9 @@ var express = require('express'),
   mongoStore = require('connect-mongo')(express);
 
 var logger = require('rufus').getLogger('express');
+var config = require('../config');
+
+var manifest = require('../manifest')('./dist/manifest.json', '/public');
 
 // App settings and middleware
 module.exports = function(app, config, passport) {
@@ -15,26 +18,20 @@ module.exports = function(app, config, passport) {
   app.set('view engine', 'jade')
   app.set('view options', {'layout': false});
 
-  var cm = new (require('./connect-mincer'))(config.mincer);
-  require('./middlewares/less-mincer')(cm.environment);
-  app.use(cm.middleware());
-  app.use(config.mincer.url, cm.createServer());
+  //var cm = new (require('./connect-mincer'))(config.mincer);
+  //require('./middlewares/less-mincer')(cm.environment);
+  //app.use(cm.middleware());
+  //app.use(config.mincer.url, cm.createServer());
 
   // dynamic helpers
   app.use(function(req, res, next) {
     res.locals.appName = 'Browserpipe';
     res.locals.title = 'Your browser everywhere';
 
+    res.locals.asset_url = manifest.url;
+
     next();
-  })
-
-  // bodyParser should be above methodOverride
-  //app.use(express.bodyParser()); replace it with explicit formats
-  app.use(express.urlencoded());
-  app.use(express.json());
-
-  // so it is as it was but without multipart (for file uploads)
-  //app.use(express.methodOverride()); we do not use it now
+  });
 
   // parameters validator
   var expressValidator = require('express-validator');
@@ -47,7 +44,7 @@ module.exports = function(app, config, passport) {
   app.use(express.session({
     secret: config.cookieSecret,
     store: new mongoStore(config["connect-mongo"])
-  }))
+  }));
 
   // use passport session
   app.use(passport.initialize());
@@ -59,6 +56,8 @@ module.exports = function(app, config, passport) {
   app.use(express.favicon());
 
   app.use(express.static(__dirname + '/../public'));
+  app.use('/public/storage', express.static(__dirname + '/../public/storage'));
+  app.use('/public', express.static(__dirname + '/../dist'));
 
   app.use(express.logger({ format: 'short', stream: {
     write: function(msg) {

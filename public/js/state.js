@@ -1,5 +1,4 @@
-var $ = require('jquery'),
-    _ = require('lodash');
+var $ = require('jquery');
 
 var item = require('./data/item'),
     Item = item.Item,
@@ -19,7 +18,7 @@ var State1 = model()
     .attr('selectedItem')
     .use(model.nestedObjects);
 
-_.extend(State1.prototype, {
+var proto = {
 
     loadInitialData: function (initialOptions) {
 
@@ -32,7 +31,7 @@ _.extend(State1.prototype, {
     //////////////////////////////////////////ITEMS//////////////////////////////////////
     //Load
     loadItems: function (from) {
-        _.each(from, this.addItem, this);
+        from.forEach(this.addItem, this);
     },
 
 
@@ -41,7 +40,7 @@ _.extend(State1.prototype, {
         return this.items.byId(itemId);
     },
     getItemsByIds: function(itemIds) {
-        return _.map(itemIds, this.getItemById, this);
+        return itemIds.map(this.getItemById, this);
     },
 
     //CRUD
@@ -51,8 +50,11 @@ _.extend(State1.prototype, {
     },
     updateItem: function (itemUpdate) {
         var item = this.getItemById(itemUpdate._id);
-        if (item)
-            _.extend(item, itemUpdate);
+        if (item) {
+            for(var p in itemUpdate) {
+                item[p] = itemUpdate[p];
+            }
+        }
     },
     removeItem: function (itemId) {
         this.items.removeById(itemId);
@@ -92,11 +94,11 @@ _.extend(State1.prototype, {
             type: "GET",
             success: success
         });
-    },
+    }
+};
 
-    ///////////////////////////////////////////SEARCH///////////////////////////////////////
-
-
-});
+for(var p in proto) {
+    State1.prototype[p] = proto[p];
+}
 
 module.exports = new State1();

@@ -3,7 +3,6 @@
  */
 
 var _state = require('../state'),
-    _ = require('lodash'),
     React = require('react'),
     page = require('page'),
     browser = require('../browser/main');

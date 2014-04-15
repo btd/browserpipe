@@ -3,7 +3,6 @@
  */
 
 var _state = require('../state'),
-    _ = require('lodash'),
     React = require('react'),
     page = require('page'),
     browser = require('../browser/main');
@@ -136,25 +135,25 @@ var TopBarComponent = React.createClass({
                   <li className="divider"></li>
                 }
                 <li>
-                  <a draggable="false"  tabindex="-1" href="/settings">
+                  <a draggable="false"  tabIndex="-1" href="/settings">
                     <i className="icon-none"><span>Settings</span></i>
                   </a>
                 </li>
                 <li>
-                  <a draggable="false"  tabindex="-1" href="/help">
+                  <a draggable="false"  tabIndex="-1" href="/help">
                     <i className="icon-none"> <span>Help</span></i>
                   </a>
                 </li>
                 <li className="divider"></li>
                 <li>
-                  <a draggable="false"  tabindex="-1" href="/logout">
+                  <a draggable="false"  tabIndex="-1" href="/logout">
                     <i className="icon-none"><span>Logout </span></i>
                   </a>
                 </li>
               </ul>
             </li>
           </div>
-          <span id="logo" onClick={ this.logoClicked } ><img src="/img/logo/logo-small.png" alt="Browserpipe logo small"/></span>
+          <span id="logo" onClick={ this.logoClicked } ><img src={"<%= url('img/logo/logo-small.png') %>"} alt="Browserpipe logo small"/></span>
         </div>
         <div className="sub-bar">
           <div className={"folder-up" + (this.props.selectedFolder.parent?'':' hide')} title="Go one folder up" onClick={ this.folderUpClicked }>
