@@ -16,5 +16,7 @@
     "newcap": false,
     "supernew": true,
     "unused": true,
-    "eqnull": true
+    "eqnull": true,
+    "eqeqeq": false,
+    "-W041": false
 }

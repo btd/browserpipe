@@ -1,6 +1,8 @@
 var contentType = require('../../util/content-type');
 var file = require('../../util/file');
 
+var url = require('url');
+
 var reEscapedHtml = /&(?:amp|lt|gt|quot|#39);/g,
   reUnescapedHtml = /[&<>"']/g;
 
@@ -90,17 +92,51 @@ exports.openTag = function(name, attributes, escapeAttributes) {
   });
   text += '>';
   return text;
-}
+};
 
 function saveData(data, ct) {
     return file.saveData(data, contentType.resolveExtension(ct.type));
 }
 
-function saveDataByName(data, name) {
-    return file.saveDataByName(data, name);
-}
-
 exports.saveData = saveData;
 
-exports.saveDataByName = saveDataByName;
+exports.saveDataByName = file.saveDataByName;
+
+
+function makeUrlReplacer(baseUrl) {
+    var parsedUrl = url.parse(baseUrl);
+    return function(_url) {
+        if(/^(https?|file|ftps?|mailto|javascript|data:image\/[^;]{2,9};):/i.test(_url))
+            return _url; //Url is already absolute
+
+        if(_url.substring(0, 2) == "//")
+            return parsedUrl.protocol + _url;
+        else if(_url.charAt(0) == "/")
+            return parsedUrl.protocol + "//" + parsedUrl.host + _url;
+        else if(_url.substring(0, 2) == "./")
+            return url.resolve(baseUrl, _url);
+        else if(/^\s*$/.test(_url))
+            return ""; //Empty = Return nothing
+        else
+            return url.resolve(baseUrl, _url);
+    }
+}
+
+exports.makeUrlReplacer = makeUrlReplacer;
+
+function unQuote(text) {
+    if(text[0] == '"' && text[text.length - 1] == '"') return text.substring(1, text.length - 1);
+    if(text[0] == "'" && text[text.length - 1] == "'") return text.substring(1, text.length - 1);
+    return text;
+}
+
+exports.unQuote = unQuote;
+
+function replaceStyleUrl(style, replace) {
+    return style.replace(/url\(([^)]+)\)/g, function(_, url) {
+        return 'url(' + replace(unQuote(url)) + ')';
+    });
+}
+
+exports.replaceStyleUrl = replaceStyleUrl;
 

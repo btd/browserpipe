@@ -17,7 +17,7 @@ var file = require('../../util/file');
 var contentType = require('../../util/content-type');
 
 function generateScreenshot(html, width, height) {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function(resolve/*, reject*/) {
     screenshot.generateScreenshot(html, width, height, function(screenshotData) {
       resolve(screenshotData.screenshotSmall || screenshot.noScreenshotUrl);
     })
@@ -82,7 +82,7 @@ function navigate(res, opts) {
       logger.debug('Error loading url %s:', opts.url, e);
       manageItemCodeError(res, opts, 500);
     })
-};
+}
 
 var StatusCode4XXError = function(e) {
   return e.statusCode >= 400 && e.statusCode < 500;

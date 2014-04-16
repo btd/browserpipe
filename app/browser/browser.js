@@ -66,7 +66,20 @@ Browser.prototype.processPage = function(url, isMainUrl) {
 
       var ct = response.headers['content-type'] ?
         contentType.process(response.headers['content-type']) :
-        contentType.guessByUrl(response.request.href);//TODO is any other way? not touching content
+        contentType.guessByUrl(response.request.href);
+
+      /*TODO
+       for html we need to parse content to find <meta> tags, because deault html encoding is latin 1 (to be clear some ISO-...)
+       for css encoding need to check @charset at the begining of css stylesheet or assume it is UTF-8;
+
+       So we need some generic module that can check N first bytes in Buffer
+       for some subsequence (by W3C spec we can really assume it is string in latin1)
+
+       for html it will be <meta charset="(.*)"> or <meta http-equiv="Content-Type: text/html; charset=(.*)> <--- something like this
+       for css we need to check just for @charset (.*); <-- value can be quoted
+
+       other content we can check with mmagic to do not rely on url
+       */
 
       var baseType = contentType.resolveType(ct.type);
 
@@ -125,7 +138,7 @@ Browser.prototype.processHtml = function(baseUrl, htmlText, ct) {
 };
 
 var InvalidUrlError = function(urls) {
-  return function(e) {
+  return function(/*e*/) {
     return urls.length > 0
   }
 };
@@ -134,7 +147,7 @@ Browser.prototype.processNextUrl = function(urls, isMainUrl) {
   var url = urls.shift();
   var that = this;
   return this.processPage(url, isMainUrl)
-    .catch(InvalidUrlError(urls), function(e) {
+    .catch(InvalidUrlError(urls), function(/*e*/) {
       return that.processNextUrl(urls, isMainUrl);
     })
 };

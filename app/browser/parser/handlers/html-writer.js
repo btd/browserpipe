@@ -7,7 +7,6 @@ var util = require('../../util');
 var file = require('../../../../util/file');
 var contentType = require('../../../../util/content-type');
 
-var absUrl = require('./abs-url');
 
 var HtmlWriteHandler = function() {
 
@@ -41,7 +40,7 @@ function processCss(css, attributes) {
       var attr = attributes[index];
       var media = attr.media || 'all';
 
-      var content = absUrl.replaceStyleUrl(body.content, absUrl.makeUrlReplacer(body.href));
+      var content = util.replaceStyleUrl(body.content, util.makeUrlReplacer(body.href));
 
       if(media && media != 'all') {
         allContent += '@media ' + media + ' { ' + content + '} '; //TODO is it possible to have nested media queries?

@@ -1,6 +1,6 @@
 var Base = require('./base');
 
-var url = require('url');
+var util = require('../../util');
 
 var tags = { 
   a: [ 'href' ],
@@ -23,7 +23,7 @@ var tags = {
 
 
 var AbsUrlHandler = function(options) {
-  this.urlReplaceFunc = makeUrlReplacer(options.url);
+  this.urlReplaceFunc = util.makeUrlReplacer(options.url);
 
   Base.apply(this, arguments);
 };
@@ -64,7 +64,7 @@ AbsUrlHandler.prototype.onOpenTag = function(name, attributes, next) {
     this.processTag(replaceAttributes, attributes);
   }
   if(attributes.style) {
-    attributes.style = replaceStyleUrl(attributes.style, replaceUrl);
+    attributes.style = util.replaceStyleUrl(attributes.style, replaceUrl);
   }
   next();
 };
@@ -83,44 +83,12 @@ AbsUrlHandler.prototype.onText = function(textObj, next) {
   }
 
   if(this.inStyle) {
-    textObj.text = replaceStyleUrl(textObj.text, replaceUrl);
+    textObj.text = util.replaceStyleUrl(textObj.text, replaceUrl);
   }
 
   next();
 };
 
-function makeUrlReplacer(baseUrl) {
-  var parsedUrl = url.parse(baseUrl);
-  return function(_url) {
-    if(/^(https?|file|ftps?|mailto|javascript|data:image\/[^;]{2,9};):/i.test(_url))
-      return _url; //Url is already absolute
-
-    if(_url.substring(0, 2) == "//")
-      return parsedUrl.protocol + _url;
-    else if(_url.charAt(0) == "/")
-      return parsedUrl.protocol + "//" + parsedUrl.host + _url;
-    else if(_url.substring(0, 2) == "./")
-      return url.resolve(baseUrl, _url);
-    else if(/^\s*$/.test(_url))
-      return ""; //Empty = Return nothing
-    else
-      return url.resolve(baseUrl, _url);
-  }
-}
-
-function unQuote(text) {
-  if(text[0] == '"' && text[text.length - 1] == '"') return text.substring(1, text.length - 1);
-  if(text[0] == "'" && text[text.length - 1] == "'") return text.substring(1, text.length - 1);
-  return text;
-}
-
-function replaceStyleUrl(style, replace) {
-  return style.replace(/url\(([^)]+)\)/g, function(_, url) {
-    return 'url(' + replace(unQuote(url)) + ')';
-  });
-}
 
 
 module.exports = AbsUrlHandler;
-module.exports.replaceStyleUrl = replaceStyleUrl;
-module.exports.makeUrlReplacer = makeUrlReplacer;
