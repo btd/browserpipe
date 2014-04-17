@@ -19,12 +19,6 @@ var TopBarComponent = React.createClass({
   newFolderClicked: function() {
     _state.serverAddItemToItem(this.props.selectedFolder._id, { type: 2 });
   },
-  folderUpClicked: function() {
-    if(_state.selectedItem)
-      _state.selectedFolder = _state.getItemById(this.props.selectedFolder.parent);
-    else
-      page("/item/" + this.props.selectedFolder.parent);
-  },
   ifEnterNavigate: function(e) {
     if(e.keyCode === 13) this.navigateEnteredURL();
   },
@@ -49,20 +43,6 @@ var TopBarComponent = React.createClass({
     e.preventDefault();
     window.parent.postMessage("destroy", "*");
   },
-  expandBookmarklet: function(e) {
-    e.preventDefault();
-    window.parent.postMessage("expand", "*");
-    $('#expand-bookmarklet').addClass('hide');
-    $('#collapse-bookmarklet').removeClass('hide');
-    $('#topbar-section').addClass('expanded');
-  },
-  collapseBookmarklet: function(e) {
-    e.preventDefault();
-    window.parent.postMessage("collapse", "*");
-    $('#expand-bookmarklet').removeClass('hide');
-    $('#collapse-bookmarklet').addClass('hide');
-    $('#topbar-section').removeClass('expanded');
-  },
   moveTab: function() {
     _state.serverUpdateItem({
       _id: this.props.selectedItem._id,
@@ -86,7 +66,7 @@ var TopBarComponent = React.createClass({
     return  <div className="breadcrumb"><ol className="breadcrumb-inner">{ breadcrumbItems }</ol></div>
   },
   renderBreadcrumbItem: function(item, last) {
-    var title = item.isFolder()? (item.parent? (item.title? item.title : '[No name]') : 'Home') : (item.title? item.title : item.url);
+    var title = item.isFolder()? (item.parent? (item.title? item.title : 'New Folder') : 'Home') : (item.title? item.title : item.url);
     return <li className={ last? 'active' : ''} >
              { !item.isFolder() && item.favicon? <img src={ item.favicon } alt="Item Favicon" /> : '' }
              { last? title : <a data-bpipe-item-id={ item._id } href="#" onClick={ this.breadcrumbItemClicked }>{ title }</a> }
@@ -107,16 +87,11 @@ var TopBarComponent = React.createClass({
             <a id="close-bookmarklet" draggable="false" onClick={ this.closeBookmarklet } className={ this.props.isIframe? '' : 'hide' }>
               <i className="fa fa-times"></i>
             </a>
-            <a id="expand-bookmarklet" draggable="false" onClick={ this.expandBookmarklet } className='hide'>
-              <i className="fa fa-expand"></i>
-            </a>
-            <a id="collapse-bookmarklet" draggable="false" onClick={ this.collapseBookmarklet } className='hide'>
-              <i className="fa fa-compress"></i>
-            </a>
           </div>
-          <div className="search-options input-append">
+          <span id="logo" onClick={ this.logoClicked } ><img src={"<%= url('img/logo/logo-small.png') %>"} alt="Browserpipe logo small"/></span>
+          <div className="search-options">
             <input type="text" placeholder="Enter an URL or search a tab" className="url-input" ref="urlInput" onKeyPress={this.ifEnterNavigate} />
-            <input type="button" className="url-btn btn btn-warning" value="Go"  onClick={this.navigateEnteredURL} />
+            <input type="button" className="url-btn" value="Go"  onClick={this.navigateEnteredURL} />
           </div>
           <div className="user-options">
             <li className="dropdown nav-option">
@@ -153,12 +128,8 @@ var TopBarComponent = React.createClass({
               </ul>
             </li>
           </div>
-          <span id="logo" onClick={ this.logoClicked } ><img src={"<%= url('img/logo/logo-small.png') %>"} alt="Browserpipe logo small"/></span>
         </div>
         <div className="sub-bar">
-          <div className={"folder-up" + (this.props.selectedFolder.parent?'':' hide')} title="Go one folder up" onClick={ this.folderUpClicked }>
-            <i className="fa fa-level-up"></i>
-          </div>
           { this.renderBreadcrumb() }
           { this.renderMoveOption() }
           <div className="new-folder" title="Add new folder" onClick={ this.newFolderClicked }>
@@ -167,20 +138,6 @@ var TopBarComponent = React.createClass({
         </div>
       </div>
     );
-  },
-  componentDidUpdate: function() {
-    if(!this.props.isIframe || _state.selectedItem) {
-      $('#expand-bookmarklet').addClass('hide');
-      $('#collapse-bookmarklet').addClass('hide');
-    }
-    else if (!$('#topbar-section').hasClass('expanded')) {
-      $('#expand-bookmarklet').removeClass('hide');
-      $('#collapse-bookmarklet').addClass('hide');
-    }
-    else {
-      $('#expand-bookmarklet').addClass('hide');
-      $('#collapse-bookmarklet').removeClass('hide');
-    }
   }
 });
 

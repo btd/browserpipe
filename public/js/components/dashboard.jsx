@@ -14,12 +14,19 @@ var DashboardComponent = React.createClass({
       return {
           selectedFolder: this.props.selectedFolder,
           selectedItem: this.props.selectedItem,
+          viewScreenshot: false, //TODO: save option in user
           addedByBookmarklet: false
       };
   },
   addTabByBookmarklet: function() {
     window.parent.postMessage("save_" + this.state.selectedFolder._id, "*");
     this.setState({ addedByBookmarklet: true});
+  },
+  folderUpClicked: function() {
+    if(this.state.selectedItem)
+      _state.selectedFolder = _state.getItemById(this.state.selectedFolder.parent);
+    else
+      page("/item/" + this.state.selectedFolder.parent);
   },
   renderFolders: function() {
     return this.state.selectedFolder.items.filter(function(itemId){
@@ -37,7 +44,7 @@ var DashboardComponent = React.createClass({
       return item.type !== 2;
     }).map(function(itemId){
       var tab = _state.getItemById(itemId);
-      return  <Tab tab={ tab } selectedItem={ self.state.selectedItem } />
+      return  <Tab tab={ tab } selectedItem={ self.state.selectedItem } viewScreenshot={ self.state.viewScreenshot } />
     })
   },
   renderAddOption: function() {
@@ -47,15 +54,20 @@ var DashboardComponent = React.createClass({
   },
   render: function() {
     return (
-      <div className="dashboard" style={{width: (this.state.selectedItem?"240px":"100%"), position: "absolute", right: 0 }}>
+      <div className="dashboard" style={{width: (this.state.selectedItem?"269px":"100%"), position: "absolute", right: 0 }}>
         <TopBarComponent
           selectedFolder={ this.state.selectedFolder }
           selectedItem={ this.state.selectedItem }
           isIframe= { this.props.isIframe } />
         <div className="dashboard-content">
-          <div className="items clearfix">
-            { this.renderFolders() }
-            { this.renderItems() }
+          <div className="items">
+            <div className="clearfix">
+              <div className={"folder folder-up" + (this.state.selectedFolder.parent?'':' hide')} title="Go one folder up" onClick={ this.folderUpClicked }>...</div>
+              { this.renderFolders() }
+            </div>
+            <div className="clearfix">
+              { this.renderItems() }
+            </div>
           </div>
           { this.renderAddOption() }
         </div>
