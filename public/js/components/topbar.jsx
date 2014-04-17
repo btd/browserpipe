@@ -16,6 +16,9 @@ var TopBarComponent = React.createClass({
     else
       page("/item/" + _state.browser._id);
   },
+  viewScreenshotsClicked: function() {
+    this.props.showScreenshots(this.refs.chkScreenshots.getDOMNode().checked);
+  },
   newFolderClicked: function() {
     _state.serverAddItemToItem(this.props.selectedFolder._id, { type: 2 });
   },
@@ -109,6 +112,12 @@ var TopBarComponent = React.createClass({
                 { this.props.isIframe? null :
                   <li className="divider"></li>
                 }
+                <li>
+                  <label className="checkbox">
+                    <input type="checkbox" ref="chkScreenshots" onClick={this.viewScreenshotsClicked} />
+                    <span>View screenshots</span>
+                  </label>
+                </li>
                 <li>
                   <a draggable="false"  tabIndex="-1" href="/settings">
                     <i className="icon-none"><span>Settings</span></i>

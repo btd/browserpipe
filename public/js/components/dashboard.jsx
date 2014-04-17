@@ -18,6 +18,9 @@ var DashboardComponent = React.createClass({
           addedByBookmarklet: false
       };
   },
+  showScreenshots: function(value) {
+    this.setState({ viewScreenshot: value });
+  },
   addTabByBookmarklet: function() {
     window.parent.postMessage("save_" + this.state.selectedFolder._id, "*");
     this.setState({ addedByBookmarklet: true});
@@ -58,6 +61,7 @@ var DashboardComponent = React.createClass({
         <TopBarComponent
           selectedFolder={ this.state.selectedFolder }
           selectedItem={ this.state.selectedItem }
+          showScreenshots={ this.showScreenshots }
           isIframe= { this.props.isIframe } />
         <div className="dashboard-content">
           <div className="items">

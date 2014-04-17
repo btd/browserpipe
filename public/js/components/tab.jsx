@@ -48,6 +48,7 @@ var TabComponent = React.createClass({
             </div>
           </div>
         </div>
+        { this.renderScreenshot() }
         <div className="tab-footer">
           <img className="tab-favicon" src={this.props.tab.favicon} />
           <span className="tab-title" alt={ this.props.tab.title } >{ this.props.tab.title }</span>
