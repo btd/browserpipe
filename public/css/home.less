@@ -70,9 +70,14 @@ a {
   color: #ff6d16;
 }
 
-.fa:hover {
-  cursor: pointer;
-  color: darken(#666, 15%);
+
+.fa {
+  color: #666;
+
+  &:hover {
+    cursor: pointer;
+    color: darken(#666, 15%);
+  }
 }
 
 .modal-bookmarklet-content{
@@ -94,16 +99,15 @@ a {
 }
 
 #topbar-section {
-  background-color: #f2eee8;
-  background-image: url('<%= url("img/common/bg-pattern.png") %>');
+  background-color: #f5f5f5;
   height: 51px;
   z-index: 100;
   position: relative;
 
   #logo {
     width: 22px;
-    float: right;
-    margin: 2px 6px 0 0;
+    float: left;
+    margin: 2px 0 0;
 
     &:hover {
       cursor: pointer;
@@ -121,18 +125,23 @@ a {
       vertical-align: middle;
       font-size: 0;
       white-space: nowrap;
-      width: 33%;
+      width: 60%;
       margin: 1px 0 0 6px;
 
       .url-input {
         width: 90%;
         height: 24px;
+        margin: 0;
+        border-radius: 0px;
       }
       .url-btn {
         width:  36px;
         height: 24px;
         line-height: 10px;
         padding: 4px 6px;
+        border: 0;
+        color: #fff;
+        background: #ff6d16;
       }
     }
     .nav-option {
@@ -142,7 +151,6 @@ a {
         color: #666;
       }
       .dropdown-menu {
-
         li{
           a {
             &:hover {
@@ -154,6 +162,9 @@ a {
         .divider {
           border-bottom: 1px solid #ccc;
         }
+        input[type=checkbox] {
+          margin-left: -15px;
+        }
       }
     }
     .user-options {
@@ -161,7 +172,7 @@ a {
       margin: 3px 3px 0 0;
       position: absolute;
       top: 0;
-      right: 21px;
+      right: 0;
 
       .nav-option {
         float: left;
@@ -189,25 +200,26 @@ a {
   }
   .sub-bar {
     height: 24px;
-    background-color: #f5f5f5;
-    padding: 2px 0 0 6px;
+    background-color: #fff;
 
     .breadcrumb {
       overflow: hidden;
       text-align: left;
-      padding: 0; 
+      padding: 0;
       position: absolute;
       right: 58px;
-      left: 30px;
+      left: 3px;
       margin: 0;
       height: 24px;
+      background-color: #fff;
+      font-weight: bold;
 
       .breadcrumb-inner {
         position: absolute;
-        right: 0;
+        bottom: 0;
 
         li {
-          display: inline;
+          display: inline-block;
 
           img {
             margin: 0 3px 3px 0;
@@ -215,8 +227,9 @@ a {
         }
       }
     }
-    .move-to-folder, .new-folder, .folder-up {
+    .move-to-folder, .new-folder {
       font-size: 14px;
+      margin-top: 1px;
       padding: 0 3px;
       border: 1px dashed #999;
       cursor: default;
@@ -238,9 +251,6 @@ a {
     .new-folder {
       position: absolute;
       right: 6px;
-    }
-    .folder-up {
-      float: left;
     }
   }
 }
@@ -282,24 +292,16 @@ a {
         height: 100%;
 
         .tab, .folder {
-          -webkit-transform-origin: 0 0;
-          -moz-transform-origin: 0 0;
-          -ms-transform-origin: 0 0;
-          transform-origin: 0 0;
-          -webkit-transition: all 0.3s ease;
-          -moz-transition: all 0.3s ease;
-          -o-transition: all 0.3s ease;
-          transition: all 0.3s ease;
+          width: 248px;
 
           .mask {
-            display: none;
-            opacity: 0.8;
+            opacity: 0.0;
             position: absolute;
-            background-color: #000;
             z-index: 10;
-            width: 205px;
+            width: 66px;
             height: 21px;
-            color: #fff;
+            right: 0;
+            background-color: #fff;
 
             &.hide {
               display: none !important;
@@ -320,13 +322,6 @@ a {
                  input {
                    margin-top: 0;
                  }
-                 i {
-                   color: #fff;
-
-                   &:hover {
-                     color: #CCC;
-                   }
-                 }
                }
              }
           }
@@ -335,16 +330,19 @@ a {
             cursor: pointer;
 
             .mask {
-              display: block;
+              opacity: 0.8; 
+              -webkit-transition: all 0.5s ease-in-out;
+              -moz-transition: all 0.5s ease-in-out;
+              -o-transition: all 0.5s ease-in-out;
+              transition: all 0.5s ease-in-out;
             }
           }
 
         }
 
         .folder {
-          width: 205px;
-          height: 115px;
-          margin: 6px 9px 0;
+          height: 27px;
+          margin: 6px 6px 0;
           float: left;
           overflow: hidden;
           position: relative;
@@ -356,14 +354,19 @@ a {
           -o-border-radius: 2px;
           border-radius: 2px;
 
-          .folder-title {
-            line-height: 24px;
-            width: 205px;
-            height: 115px;
-            display: table-cell;
-            vertical-align: middle;
+          &.folder-up {
             text-align: center;
-            font-size: 21px;
+          }
+          .folder-title {
+            line-height: 14px;
+            width: 242px;
+            height: 27px;
+            font-size: 14px;
+            padding: 6px 3px 0;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            display: inline-block;
           }
 
           .title-editor {
@@ -390,13 +393,16 @@ a {
         }
 
         .tab {
-          margin: 6px 9px 0;
+          margin: 6px 4px 0;
           float: left;
           position: relative;
+          border: 2px solid #fff;
 
+          &.selected {
+            border: 2px solid #ff6d16 !important;
+          }
           .tab-content {
             border: 1px solid black;
-            width: 205px;
             height: 115px;
             overflow: hidden;
             position: relative;
@@ -404,9 +410,6 @@ a {
             .tab-screenshot {
               max-width: none;
               position: absolute;
-            }
-            &.selected {
-              border: 3px solid #ff6d16 !important;
             }
           }
 
@@ -421,7 +424,7 @@ a {
               font-size: 12px;
               margin-left: 3px;
               color: #333;
-              width: 186px;
+              width: 225px;
               text-overflow: ellipsis;
               overflow: hidden;
               white-space: nowrap;
@@ -437,7 +440,7 @@ a {
 
 #page-section {
   position: absolute;
-  right: 240px;
+  right: 269px;
   left: 0px;
   height: 100%;
 
