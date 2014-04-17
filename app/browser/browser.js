@@ -1,6 +1,5 @@
 var request = require('request'),
-  parser = require("./parser/parser"),
-  HtmlProcessor = parser.HtmlProcessor;
+  HtmlProcessor = require("./html/parser").HtmlProcessor;
 
 var textToHtml = require('./viewer/code');
 var imgToHtml = require('./viewer/img');
@@ -43,11 +42,9 @@ Browser.prototype.bodyToString = function(charset, body) {
     }
     return body.toString(bufferCharset);
   } else {
-    return body.toString();//TODO need to add in some way check on default encoding (which is latin-1)
+    return body.toString();
   }
 }
-//TODO try to parse buffer begining to find <meta> with charset
-
 
 
 Browser.prototype.processPage = function(url, isMainUrl) {
@@ -79,6 +76,8 @@ Browser.prototype.processPage = function(url, isMainUrl) {
        for css we need to check just for @charset (.*); <-- value can be quoted
 
        other content we can check with mmagic to do not rely on url
+
+       https://www.w3.org/International/questions/qa-html-encoding-declarations
        */
 
       var baseType = contentType.resolveType(ct.type);

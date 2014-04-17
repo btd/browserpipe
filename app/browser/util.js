@@ -102,11 +102,14 @@ exports.saveData = saveData;
 
 exports.saveDataByName = file.saveDataByName;
 
+exports.isURLProcessable = function(_url) {
+  return !/^(https?|file|ftps?|mailto|javascript|data:image\/[^;]{2,9};):/i.test(_url);
+}
 
 function makeUrlReplacer(baseUrl) {
     var parsedUrl = url.parse(baseUrl);
     return function(_url) {
-        if(/^(https?|file|ftps?|mailto|javascript|data:image\/[^;]{2,9};):/i.test(_url))
+        if(!exports.isURLProcessable(_url))
             return _url; //Url is already absolute
 
         if(_url.substring(0, 2) == "//")
@@ -132,11 +135,72 @@ function unQuote(text) {
 
 exports.unQuote = unQuote;
 
+var URL_RE = /url\(([^)]+)\)/g;
+var IMPORT_URL_RE = /@import\s+url\(([^)]+)\);/g;
+
 function replaceStyleUrl(style, replace) {
-    return style.replace(/url\(([^)]+)\)/g, function(_, url) {
+    return style.replace(URL_RE, function(_, url) {
         return 'url(' + replace(unQuote(url)) + ')';
     });
 }
 
 exports.replaceStyleUrl = replaceStyleUrl;
+
+function makeRegexSplitter(regex) {
+  return function (text, callback) {
+    var chunks = [];
+    var index = 0;
+    text.replace(regex, function () {
+      var args = arguments, match = args[0], offset = args[args.length - 1];
+
+      chunks.push(text.slice(index, offset));
+
+      callback(chunks, args);
+
+      index = offset + match.length;
+      return  match;
+    });
+
+    chunks.push(text.slice(index, text.length));
+
+    return chunks;
+  }
+}
+
+var styleUrlSplitter = makeRegexSplitter(URL_RE);
+
+exports.splitStyleByUrl = function(text, replace) {
+  return styleUrlSplitter(text, function(chunks, args) {
+    var url = args[1];
+
+    chunks.push('url(');
+    chunks.push(replace(unQuote(url)));
+    chunks.push(')');
+  })
+};
+
+var styleImportSplitter = makeRegexSplitter(IMPORT_URL_RE);
+
+exports.splitStyleByImport = function(text, replace) {
+  return styleImportSplitter(text, function(chunks, args) {
+    var url = args[1];
+
+    chunks.push(replace(unQuote(url)));
+  })
+};
+
+var CSS_CHARSET_RE = /^\s*@charset\s+([\w\'\"-]+);/;
+
+exports.extractStyleCharset = function(text) {
+  var encoding;
+  text.replace(CSS_CHARSET_RE, function(_, e) {
+    encoding = unQuote(e);
+    return '';
+  });
+  return encoding;
+};
+
+exports.removeStyleCharset = function(text) {
+  return text.replace(CSS_CHARSET_RE, '');
+};
 
