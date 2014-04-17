@@ -14,12 +14,6 @@ var FolderComponent = React.createClass({
     else
       page("/item/" + this.props.folder._id);
   },
-  maskClicked: function(e) {
-    e.stopPropagation();
-  },
-  selectOptionClicked: function(e) {
-    e.stopPropagation();
-  },
   closeOptionClicked: function(e) {
     e.stopPropagation();
     _state.serverDeleteItem(this.props.folder);
@@ -74,16 +68,13 @@ var FolderComponent = React.createClass({
   render: function() {
     return (
       <div ref="folder" className="folder" onClick={ this.folderClicked } >
-        <div className="mask" onClick={ this.maskClicked } >
+        <div className="mask" >
           <div className="mask-options">
-            <div className="mask-option left" onClick={ this.selectOptionClicked } >
-              <input type="checkbox" className="select-item" />
-            </div>
             <div className="mask-option right" onClick={ this.closeOptionClicked } >
-	      <i ref="folderCloseOption" className="fa fa-times"></i>
+              <i ref="folderCloseOption" className="fa fa-times"></i>
             </div>
             <div className="mask-option right" onClick={ this.editOptionClicked }  >
-	      <i ref="folderEditOption" className="fa fa-pencil"></i>
+              <i ref="folderEditOption" className="fa fa-pencil"></i>
             </div>
           </div>
         </div>

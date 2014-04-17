@@ -21,7 +21,7 @@ javascript:(function(e){
           var elem = doc.getElementById(bid);
           if(elem){ doc.body.removeChild( elem ); elem = null}
         }
-        function expand(exp) { if(exp) s.style.width= "90%"; else s.style.width= "240px";}
+        function expand(exp) { if(exp) s.style.width= "90%"; else s.style.width= "269px";}
         function process(e){
           if(e.origin !== domain) return;
           if(e.data.substring(0, 5)==="save_")
@@ -42,7 +42,7 @@ javascript:(function(e){
         d.style.top= s.style.top= "0";
         d.style.right= s.style.right= "0";
         d.style.height= s.style.height= "100%";
-        d.style.width= s.style.width= "240px";
+        d.style.width= s.style.width= "269px";
         d.style.zIndex= s.style.zIndex= "1999999999";
         d.style.borderLeft= s.style.borderLeft= "6px solid #ff6d16";
         d.style.borderRight= s.style.borderRight= d.style.borderTop= s.style.borderTop= d.style.borderBottom= s.style.borderBottom= "none";
