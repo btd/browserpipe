@@ -30,7 +30,8 @@
     "bluebird": "1.2.2",
     "http-buffer-charset": "0.0.2",
     "iconv": "^2.0.7",
-    "gm": "^1.14.2"
+    "gm": "^1.14.2",
+    "mimoza": "^0.3.0"
   },
   "devDependencies": {
     "mocha": "latest",

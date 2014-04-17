@@ -2,6 +2,8 @@ var Base = require('./base');
 
 var util = require('../../util');
 
+var cssProcess = require('./css').process;
+
 var tags = { 
   a: [ 'href' ],
   img: [ 'src', 'longdesc', 'usemap' ],
@@ -78,15 +80,19 @@ AbsUrlHandler.prototype.onCloseTag = function(name, next) {
 
 AbsUrlHandler.prototype.onText = function(textObj, next) {
   var that = this;
-  function replaceUrl(url) {
-    return that.replaceUrl(url);
-  }
+
 
   if(this.inStyle) {
-    textObj.text = util.replaceStyleUrl(textObj.text, replaceUrl);
-  }
+    var promisedStyleText = cssProcess({ content: textObj.text, href: that.options.url }, {}, that.browser);
+    promisedStyleText.then(function(content) {
+      textObj.text = content;
+      next();
+    })
+      .end();
 
-  next();
+  } else {
+    next();
+  }
 };
 
 

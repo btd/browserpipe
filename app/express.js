@@ -4,7 +4,7 @@ var express = require('express'),
 var logger = require('rufus').getLogger('express');
 var config = require('../config');
 
-var manifest = require('../manifest')('./dist/manifest.json', '/public');
+var manifest = require('../manifest');
 
 // App settings and middleware
 module.exports = function(app, config, passport) {
@@ -28,7 +28,7 @@ module.exports = function(app, config, passport) {
     res.locals.appName = 'Browserpipe';
     res.locals.title = 'Your browser everywhere';
 
-    res.locals.asset_url = manifest.url;
+    res.locals.asset_url = manifest('./dist/manifest.json', '/public').url;//TODO improve this thing
 
     next();
   });
@@ -97,8 +97,6 @@ module.exports = function(app, config, passport) {
       }
     });
 
-    //TODO: ths is for jshint to not bother, but we need the next up there if
-    //not express process request like (req, res, next) instead of (err, req, res)
     next();
   })
 

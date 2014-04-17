@@ -63,7 +63,7 @@ function navigate(res, opts) {
 
   return browser._loadUrl(opts.url, true)
     .then(function(data) {
-      logger.debug('Load data from url %s data type %s html5 %s', opts.url, data.type);
+      logger.debug('Load data from url %s data type %s', opts.url, data.type);
       switch(data.type) {
         case 'html':
         case 'css':
