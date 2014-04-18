@@ -63,17 +63,8 @@ function navigate(res, opts) {
 
   return browser._loadUrl(opts.url, true)
     .then(function(data) {
-      logger.debug('Load data from url %s data type %s', opts.url, data.type);
-      switch(data.type) {
-        case 'html':
-        case 'css':
-        case 'js':
-        case 'text':
-        case 'img':
-          return sendAndSaveContent(res, opts, data);
-        default:
-          return;
-      }
+      logger.debug('Load data from url %s', opts.url);
+      return sendAndSaveContent(res, opts, data);
     })
     .catch(StatusCode4XXError, function(e) {
       manageItemCodeError(res, opts, e.statusCode);

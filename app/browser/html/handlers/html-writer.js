@@ -47,7 +47,11 @@ function processCss(css, attributes, browser) {
 This function replaces all urls with download and save
  */
 function finalCssProcess(name, text, browser) {
-  return Promise.all(util.splitStyleByUrl(text, function (url) {//TODO skip datauri
+  return Promise.all(util.splitStyleByUrl(text, function (url) {
+    if(util.isDataURI(url)) {
+      return url;
+    }
+
     return browser._loadUrl(url)
       .then(function (data) {
         return util.saveData(data.content, data.contentType);
@@ -135,7 +139,7 @@ HtmlWriteHandler.prototype.onOpenTag = function (name, attributes) {
 
       //add <img> tag via promise
       this.imgChunks.push(this.browser._loadUrl(attributes.src)
-        .then(function (data) {//TODO check on datauri
+        .then(function (data) {//TODO check on datauri, is it even possible?
           return util.saveData(data.content, data.contentType);
         })
         .then(function (name) {

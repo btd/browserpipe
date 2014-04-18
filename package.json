@@ -31,7 +31,9 @@
     "http-buffer-charset": "0.0.2",
     "iconv": "^2.0.7",
     "gm": "^1.14.2",
-    "mimoza": "^0.3.0"
+    "mimoza": "^0.3.0",
+    "mmmagic": "^0.3.7",
+    "detect-encoding": "0.0.3"
   },
   "devDependencies": {
     "mocha": "latest",

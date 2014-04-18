@@ -1,3 +1,5 @@
+var logger = require('rufus').getLogger('app.browser');
+
 var request = require('request'),
   HtmlProcessor = require("./html/parser").HtmlProcessor;
 
@@ -13,6 +15,7 @@ var getCharset = require('http-buffer-charset');
 var Iconv = require('iconv').Iconv;
 
 var util = require('./util');
+var charsetDetector = require('./charset-detector');
 
 function Browser(langs) {
   this.htmlProcessor = new HtmlProcessor(this);
@@ -33,10 +36,11 @@ function processUrl(url) {
   ];
 }
 
-Browser.prototype.bodyToString = function(charset, body) {
-  if(charset) {
+// this method should convert body buffer to utf-8
+Browser.prototype.bodyToString = function (charset, body) {
+  if (charset) {
     var bufferCharset = getCharset(charset);
-    if(!bufferCharset) {
+    if (!bufferCharset) {
       var iconv = new Iconv(getCharset.resolveAliasCharset(charset), 'UTF-8');
       return iconv.convert(body);
     }
@@ -46,10 +50,10 @@ Browser.prototype.bodyToString = function(charset, body) {
   }
 }
 
-
-Browser.prototype.processPage = function(url, isMainUrl) {
+//TODO split this method
+Browser.prototype.processPage = function (url, isMainUrl) {
   var that = this;
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     request({
       url: url,
       headers: {
@@ -58,58 +62,88 @@ Browser.prototype.processPage = function(url, isMainUrl) {
         'Accept-Language': that.langs
       },
       encoding: null // set body to buffer
-    }, function(error, response, _body) {
-      if(error) return reject(error);
+    }, function (error, response, _body) {
+      if (error) return reject(error);
 
-      var ct = response.headers['content-type'] ?
-        contentType.process(response.headers['content-type']) :
-        contentType.guessByUrl(response.request.href);
+      if (response.statusCode === 200) {
+        logger.debug('Requested url %s status code %d', url, response.statusCode);
 
-      /*TODO
-       for html we need to parse content to find <meta> tags, because deault html encoding is latin 1 (to be clear some ISO-...)
-       for css encoding need to check @charset at the begining of css stylesheet or assume it is UTF-8;
+        // first try to get content-type and charset from Content-Type header
+        var ct = response.headers['content-type'] && contentType.process(response.headers['content-type']);
 
-       So we need some generic module that can check N first bytes in Buffer
-       for some subsequence (by W3C spec we can really assume it is string in latin1)
+        logger.debug('Url %s content type from header %s', url, ct);
 
-       for html it will be <meta charset="(.*)"> or <meta http-equiv="Content-Type: text/html; charset=(.*)> <--- something like this
-       for css we need to check just for @charset (.*); <-- value can be quoted
+        if (ct) {//we have content type
+          if (!ct.hasCharset() && !contentType.isBinary(ct.type)) {//but do not have charset
+            if (contentType.isHtml(ct.type)) {
+              //fill from <meta>
+              ct.charset = charsetDetector.htmlCharset(_body);
+            } else if (contentType.isCss(ct.type)) {
+              //fill from @charset
+              ct.charset = charsetDetector.cssCharset(_body);
+              //fallback to "UTF-8"
+              if (!ct.hasCharset()) {
+                ct.charset = 'utf-8';
+              }
+            }
 
-       other content we can check with mmagic to do not rely on url
+            logger.debug('Url %s content type from body %s', url, ct);
 
-       https://www.w3.org/International/questions/qa-html-encoding-declarations
-       */
-
-      var baseType = contentType.resolveType(ct.type);
-
-      if(response.statusCode === 200) {
-        var body = contentType.isBinary(ct.type) ? _body : that.bodyToString(ct.charset, _body);
-
-        // main url means that user request this url
-        if(isMainUrl) {
-          switch(baseType) {
-            case 'html':
-              return that.processHtml(url, body, ct).then(resolve);
-            case 'img':
-              return util.saveData(body, ct).then(function(path) {
-                ct.type = 'text/html';
-                response.headers['content-type'] = ct.toString();
-
-                imgToHtml(file.url(path), function(err, html) {
-                  resolve({ content: html, type: 'html', href: response.request.href, contentType: ct });
-                });
+            if (!ct.hasCharset() && !contentType.isBinary(ct.type)) {// if we could not get from source
+              //fill from libmagic
+              var promisedContentType = charsetDetector.guessCharset(_body).then(function(encoding) {
+                logger.debug('Url %s content type from magic %s', url, ct);
+                ct.charset = encoding;
+                return ct;
               });
-            default:
-              ct.type = 'text/html';
-              response.headers['content-type'] = ct.toString();
-              textToHtml(body, function(err, html) {
-                resolve({ content: html, type: 'html', href: response.request.href, contentType: ct});
-              });
+            }
           }
-        } else { // url relative to main url like css on html page
-          return resolve({ content: body, type: baseType, href: response.request.href, contentType: ct });
+        } else {
+          // try to get from libmagic content-type and encoding
+          var promisedContentType = contentType.guessContentTypeMagically(_body).then(function(contentType) {
+            if(contentType.isBinary(contentType)) {
+              return contentType.process(contentType);
+            } else {
+              return charsetDetector.guessCharset(_body).then(function(encoding) {
+                return new contentType.ContentType(contentType, encoding);
+              })
+            }
+          });
         }
 
+        return Promise.cast(promisedContentType).then(function(ct2) {
+          if(ct2) {
+            ct = ct2;
+            logger.debug('Url %s content type from magic and icu %s', url, ct);
+          }
+
+          logger.debug('Url %s content type finally %s', url, ct);
+          var body = contentType.isBinary(ct.type) ? _body : that.bodyToString(ct.charset, _body);
+
+          // main url means that user request this url
+          if (isMainUrl) {
+            if(contentType.isHtml(ct.type)) {
+              return that.processHtml(url, body, ct).then(resolve);
+            } else if(contentType.isImage(ct.type)) {
+              return util.saveData(body, ct).then(function (path) {
+                ct = contentType.HTML;
+
+                imgToHtml(file.url(path), function (err, html) {
+                  resolve({ content: html, href: response.request.href, contentType: ct });
+                });
+              });
+            } else if(!contentType.isBinary(ct.type)) {
+              ct = contentType.HTML;
+              textToHtml(body, function (err, html) {
+                resolve({ content: html, href: response.request.href, contentType: ct});
+              });
+            } else {
+              //TODO what to do with binary content that don't know what to do?
+            }
+          } else { // url relative to main url like css on html page
+            return resolve({ content: body, href: response.request.href, contentType: ct });
+          }
+        })
       } else {
         return reject({ msg: response.statusCode + ' response', statusCode: response.statusCode });
       }
@@ -117,17 +151,16 @@ Browser.prototype.processPage = function(url, isMainUrl) {
   });
 };
 
-Browser.prototype.processHtml = function(baseUrl, htmlText, ct) {
+Browser.prototype.processHtml = function (baseUrl, htmlText, ct) {
   var that = this;
-  return new Promise(function(resolve, reject) {
-    that.htmlProcessor.process(baseUrl, htmlText, function(err, data) {
-      if(err) return reject({ msg: err });
+  return new Promise(function (resolve, reject) {
+    that.htmlProcessor.process(baseUrl, htmlText, function (err, data) {
+      if (err) return reject({ msg: err });
 
-      data.type = 'html';
       data.href = baseUrl;
       data.contentType = ct;
 
-      return data.contentPromise.then(function(html) {
+      return data.contentPromise.then(function (html) {
         data.content = html;
         data.contentNext = data.contentPromiseWithImages;
         return resolve(data);
@@ -136,17 +169,17 @@ Browser.prototype.processHtml = function(baseUrl, htmlText, ct) {
   });
 };
 
-var InvalidUrlError = function(urls) {
-  return function(/*e*/) {
+var InvalidUrlError = function (urls) {
+  return function (/*e*/) {
     return urls.length > 0
   }
 };
 
-Browser.prototype.processNextUrl = function(urls, isMainUrl) {
+Browser.prototype.processNextUrl = function (urls, isMainUrl) {
   var url = urls.shift();
   var that = this;
   return this.processPage(url, isMainUrl)
-    .catch(InvalidUrlError(urls), function(/*e*/) {
+    .catch(InvalidUrlError(urls), function (/*e*/) {
       return that.processNextUrl(urls, isMainUrl);
     })
 };
@@ -155,7 +188,7 @@ Browser.prototype.processNextUrl = function(urls, isMainUrl) {
  Load required url and return promise with processed content
  if type on resolved data presented it will be either html ot css
  */
-Browser.prototype._loadUrl = function(url, isMainUrl) {
+Browser.prototype._loadUrl = function (url, isMainUrl) {
   var urls = processUrl(url);
   return this.processNextUrl(urls, isMainUrl);
 };

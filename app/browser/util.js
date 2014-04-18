@@ -102,14 +102,11 @@ exports.saveData = saveData;
 
 exports.saveDataByName = file.saveDataByName;
 
-exports.isURLProcessable = function(_url) {
-  return !/^(https?|file|ftps?|mailto|javascript|data:image\/[^;]{2,9};):/i.test(_url);
-}
 
 function makeUrlReplacer(baseUrl) {
     var parsedUrl = url.parse(baseUrl);
     return function(_url) {
-        if(!exports.isURLProcessable(_url))
+        if(/^(https?|file|ftps?|mailto|javascript|data:image\/[^;]{2,9};):/i.test(_url))
             return _url; //Url is already absolute
 
         if(_url.substring(0, 2) == "//")
@@ -203,4 +200,10 @@ exports.extractStyleCharset = function(text) {
 exports.removeStyleCharset = function(text) {
   return text.replace(CSS_CHARSET_RE, '');
 };
+
+var DATAURI_RE = /^data:/i;
+
+exports.isDataURI = function(url) {
+  return DATAURI_RE.test(url);
+}
 
