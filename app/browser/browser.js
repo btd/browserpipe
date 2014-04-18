@@ -20,6 +20,8 @@ var charsetDetector = require('./charset-detector');
 function Browser(langs) {
   this.htmlProcessor = new HtmlProcessor(this);
   this.langs = langs;
+
+  //TODO make browser caching for css sprites to do not redownload them
 }
 
 //If it cannot make a URL out of it, it searchs term in Google
@@ -35,6 +37,7 @@ function processUrl(url) {
       'http://www.google.com/search?q=' + encodeURIComponent(url)
   ];
 }
+
 
 // this method should convert body buffer to utf-8
 Browser.prototype.bodyToString = function (charset, body) {
@@ -91,7 +94,7 @@ Browser.prototype.processPage = function (url, isMainUrl) {
 
             if (!ct.hasCharset() && !contentType.isBinary(ct.type)) {// if we could not get from source
               //fill from libmagic
-              var promisedContentType = charsetDetector.guessCharset(_body).then(function(encoding) {
+              var promisedContentType = charsetDetector.guessCharset(_body).then(function (encoding) {
                 logger.debug('Url %s content type from magic %s', url, ct);
                 ct.charset = encoding;
                 return ct;
@@ -100,19 +103,19 @@ Browser.prototype.processPage = function (url, isMainUrl) {
           }
         } else {
           // try to get from libmagic content-type and encoding
-          var promisedContentType = contentType.guessContentTypeMagically(_body).then(function(contentType) {
-            if(contentType.isBinary(contentType)) {
+          var promisedContentType = contentType.guessContentTypeMagically(_body).then(function (contentType) {
+            if (contentType.isBinary(contentType)) {
               return contentType.process(contentType);
             } else {
-              return charsetDetector.guessCharset(_body).then(function(encoding) {
+              return charsetDetector.guessCharset(_body).then(function (encoding) {
                 return new contentType.ContentType(contentType, encoding);
               })
             }
           });
         }
 
-        return Promise.cast(promisedContentType).then(function(ct2) {
-          if(ct2) {
+        return Promise.cast(promisedContentType).then(function (ct2) {
+          if (ct2) {
             ct = ct2;
             logger.debug('Url %s content type from magic and icu %s', url, ct);
           }
@@ -122,9 +125,9 @@ Browser.prototype.processPage = function (url, isMainUrl) {
 
           // main url means that user request this url
           if (isMainUrl) {
-            if(contentType.isHtml(ct.type)) {
+            if (contentType.isHtml(ct.type)) {
               return that.processHtml(url, body, ct).then(resolve);
-            } else if(contentType.isImage(ct.type)) {
+            } else if (contentType.isImage(ct.type)) {
               var ext = contentType.chooseExtension(url, ct.type);
               return util.saveData(body, ext).then(function (path) {
                 ct = contentType.HTML;
@@ -133,7 +136,7 @@ Browser.prototype.processPage = function (url, isMainUrl) {
                   resolve({ content: html, href: response.request.href, contentType: ct });
                 });
               });
-            } else if(!contentType.isBinary(ct.type)) {
+            } else if (!contentType.isBinary(ct.type)) {
               ct = contentType.HTML;
               textToHtml(body, function (err, html) {
                 resolve({ content: html, href: response.request.href, contentType: ct});

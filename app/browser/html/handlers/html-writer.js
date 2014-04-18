@@ -55,11 +55,12 @@ function finalCssProcess(name, text, browser) {
     return browser._loadUrl(url)
       .then(function (data) {
         var ext = contentType.chooseExtension(data.href, data.contentType.type);
-        return util.saveData(data.content, ext);
+        return util.saveData(data.content, ext).then(function (name) {
+          var localUrl = file.url(name);
+          return localUrl;
+        });
       })
-      .then(function (name) {
-        return file.url(name);
-      })
+
   })).then(function (chunks) {
     //console.log(chunks);
     return util.saveDataByName(chunks.join(''), name);

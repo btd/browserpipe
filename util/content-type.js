@@ -59,6 +59,7 @@ exports.isImage = function (ct) {
 
 exports.CSS = new ContentType('text/css', 'utf-8');
 exports.HTML = new ContentType('text/html', 'utf-8');
+exports.Text = new ContentType('text/plain', 'utf-8');
 
 exports.OctetStream = new ContentType('application/octet-stream');
 exports.Default = exports.OctetStream;
@@ -79,10 +80,10 @@ exports.chooseExtension = function(_url, contentType) {
   var parsed = url.parse(_url);
   var p = parsed.pathname;
   var ext = path.extname(p);
-  if(contentType == exports.OctetStream.type) {
-    return ext;
-  } else {
+  if(contentType == exports.OctetStream.type || contentType == exports.Text.type) {
     return ext || mime.getExtension(contentType);
+  } else {
+    return mime.getExtension(contentType);
   }
 }
 
