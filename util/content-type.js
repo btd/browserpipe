@@ -1,11 +1,12 @@
 var csLength = 'charset='.length;
 
+var Promise = require('bluebird');
 
 var Mimoza = require('mimoza');
 var mime = new Mimoza({ preloaded: true, defaultType: 'application/octet-stream' });
 
 mime.register('application/font-woff', ['woff']);
-mime.register('application/vnd.ms-fontobject', ['eot'])
+mime.register('application/vnd.ms-fontobject', ['eot']);
 
 var mmm = require('mmmagic'),
   Magic = mmm.Magic;
