@@ -2,10 +2,16 @@ var csLength = 'charset='.length;
 
 
 var Mimoza = require('mimoza');
+var mime = new Mimoza({ preloaded: true, defaultType: 'application/octet-stream' });
+
+mime.register('application/font-woff', ['woff']);
+mime.register('application/vnd.ms-fontobject', ['eot'])
 
 var mmm = require('mmmagic'),
   Magic = mmm.Magic;
 
+var url = require('url');
+var path = require('path');
 
 exports.process = function (rawContentType) {
   var splitted = rawContentType.trim().toLowerCase().split(";");
@@ -62,8 +68,23 @@ exports.isBinary = function (contentType) {
 };
 
 exports.resolveExtension = function (contentType) {
-  return Mimoza.getExtension(contentType);
+  return mime.getExtension(contentType);
 };
+
+exports.byExtension = function(ext) {
+  return mime.getMimeType(ext);
+};
+
+exports.chooseExtension = function(_url, contentType) {
+  var parsed = url.parse(_url);
+  var p = parsed.pathname;
+  var ext = path.extname(p);
+  if(contentType == exports.OctetStream.type) {
+    return ext;
+  } else {
+    return ext || mime.getExtension(contentType);
+  }
+}
 
 exports.guessContentTypeMagically = function (buffer) {
   var magic = new Magic( mmm.MAGIC_MIME_TYPE);

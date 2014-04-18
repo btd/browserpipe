@@ -40,10 +40,11 @@ function sendAndSaveContent(res, opts, data) {
     });
 }
 
-function saveContent(item, url, content, contentType, width, height, title, favicon) {
+function saveContent(item, url, content, ct, width, height, title, favicon) {
+  var ext = contentType.chooseExtension(url, ct.type);
   return Promise.all([
     generateScreenshot(content, width, height),
-    item.path ? util.saveDataByName(content, item.path) : util.saveData(content, contentType)
+    item.path ? util.saveDataByName(content, item.path) : util.saveData(content, ext)
   ]).spread(function(screenshotUrl, path) {
       item.title = title;
       item.url = url;

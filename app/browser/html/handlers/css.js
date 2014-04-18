@@ -12,8 +12,10 @@ var util = require('../../util');
 function process(body, attr, browser) {
   var media = attr.media || 'all';
 
+  //remove charset
   var content = util.removeStyleCharset(body.content);
 
+  //make url(...) absolute
   content = util.replaceStyleUrl(content, util.makeUrlReplacer(body.href));
 
   if (media && media != 'all') {

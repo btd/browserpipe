@@ -39,7 +39,7 @@ function processCss(css, attributes, browser) {
       return allContentChunked.join('');
     })
     .then(function (allContent) {
-      return [util.saveData(allContent, contentType.CSS), allContent];
+      return [util.saveData(allContent, '.css'), allContent];
     });
 }
 // assume we already saved previous version on disk
@@ -54,12 +54,14 @@ function finalCssProcess(name, text, browser) {
 
     return browser._loadUrl(url)
       .then(function (data) {
-        return util.saveData(data.content, data.contentType);
+        var ext = contentType.chooseExtension(data.href, data.contentType.type);
+        return util.saveData(data.content, ext);
       })
       .then(function (name) {
         return file.url(name);
       })
   })).then(function (chunks) {
+    //console.log(chunks);
     return util.saveDataByName(chunks.join(''), name);
   })
 }
@@ -125,6 +127,7 @@ function isStylesheet(name, attributes) {
 
 HtmlWriteHandler.prototype.onOpenTag = function (name, attributes) {
   this.addDoctype();
+  var that = this;
 
   if (name == 'body' || name == 'script' || name == 'style') {
     this.removeExtraWhiteSpace = false;
@@ -140,7 +143,8 @@ HtmlWriteHandler.prototype.onOpenTag = function (name, attributes) {
       //add <img> tag via promise
       this.imgChunks.push(this.browser._loadUrl(attributes.src)
         .then(function (data) {//TODO check on datauri, is it even possible?
-          return util.saveData(data.content, data.contentType);
+          var ext = contentType.chooseExtension(that.url, data.contentType.type);
+          return util.saveData(data.content, ext);
         })
         .then(function (name) {
           attributes.src = file.url(name);

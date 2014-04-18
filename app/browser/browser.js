@@ -125,7 +125,8 @@ Browser.prototype.processPage = function (url, isMainUrl) {
             if(contentType.isHtml(ct.type)) {
               return that.processHtml(url, body, ct).then(resolve);
             } else if(contentType.isImage(ct.type)) {
-              return util.saveData(body, ct).then(function (path) {
+              var ext = contentType.chooseExtension(url, ct.type);
+              return util.saveData(body, ext).then(function (path) {
                 ct = contentType.HTML;
 
                 imgToHtml(file.url(path), function (err, html) {

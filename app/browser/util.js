@@ -94,8 +94,8 @@ exports.openTag = function(name, attributes, escapeAttributes) {
   return text;
 };
 
-function saveData(data, ct) {
-    return file.saveData(data, contentType.resolveExtension(ct.type));
+function saveData(data, ext) {
+    return file.saveData(data, ext);
 }
 
 exports.saveData = saveData;
@@ -148,7 +148,7 @@ function makeRegexSplitter(regex) {
     var chunks = [];
     var index = 0;
     text.replace(regex, function () {
-      var args = arguments, match = args[0], offset = args[args.length - 1];
+      var args = arguments, match = args[0], offset = args[args.length - 2];
 
       chunks.push(text.slice(index, offset));
 
