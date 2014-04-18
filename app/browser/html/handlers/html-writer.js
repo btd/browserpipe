@@ -123,7 +123,10 @@ HtmlWriteHandler.prototype.addStyle = function (text) {
 };
 
 function isStylesheet(name, attributes) {
-  return name == 'link' && attributes.rel == 'stylesheet' && ((attributes.type && attributes.type == 'text/css') || !attributes.type) && attributes.href;
+  return name == 'link' && 
+    attributes.href && 
+    ((attributes.rel && attributes.rel.toLowerCase() == 'stylesheet') || !attributes.rel) && 
+    ((attributes.type && attributes.type.toLowerCase().indexOf('text/css') >= 0) || !attributes.type);
 }
 
 HtmlWriteHandler.prototype.onOpenTag = function (name, attributes) {
