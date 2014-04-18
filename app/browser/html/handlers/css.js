@@ -9,6 +9,7 @@ var util = require('../../util');
  2. Resolve all imported css with its actual content
  3. Combine all chunks to one file
  */
+//TODO check if css on another domain urls replaced correctly
 function process(body, attr, browser) {
   var media = attr.media || 'all';
 

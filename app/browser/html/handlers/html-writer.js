@@ -125,8 +125,8 @@ HtmlWriteHandler.prototype.addStyle = function (text) {
 function isStylesheet(name, attributes) {
   return name == 'link' && 
     attributes.href && 
-    ((attributes.rel && attributes.rel.toLowerCase() == 'stylesheet') || !attributes.rel) && 
-    ((attributes.type && attributes.type.toLowerCase().indexOf('text/css') >= 0) || !attributes.type);
+    (attributes.rel && attributes.rel.toLowerCase() == 'stylesheet')  &&
+    (attributes.type && attributes.type.toLowerCase().indexOf('text/css') >= 0);
 }
 
 HtmlWriteHandler.prototype.onOpenTag = function (name, attributes) {
