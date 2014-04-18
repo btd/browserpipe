@@ -103,12 +103,12 @@ Browser.prototype.processPage = function (url, isMainUrl) {
           }
         } else {
           // try to get from libmagic content-type and encoding
-          var promisedContentType = contentType.guessContentTypeMagically(_body).then(function (contentType) {
-            if (contentType.isBinary(contentType)) {
-              return contentType.process(contentType);
+          var promisedContentType = contentType.guessContentTypeMagically(_body).then(function (type) {
+            if (contentType.isBinary(type)) {
+              return contentType.process(type);
             } else {
               return charsetDetector.guessCharset(_body).then(function (encoding) {
-                return new contentType.ContentType(contentType, encoding);
+                return new contentType.ContentType(type, encoding);
               })
             }
           });
