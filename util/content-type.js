@@ -15,7 +15,7 @@ var url = require('url');
 var path = require('path');
 
 exports.process = function (rawContentType) {
-  var splitted = rawContentType.trim().toLowerCase().split(";");
+  var splitted = String(rawContentType).trim().toLowerCase().split(";");
   return splitted.length == 2 ?
     new ContentType(splitted[0], splitted[1].trim().substr(csLength)) :
     new ContentType(splitted[0]);
