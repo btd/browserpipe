@@ -40,10 +40,11 @@ function sendAndSaveContent(res, opts, data) {
     });
 }
 
-function saveContent(item, url, content, contentType, width, height, title, favicon) {
+function saveContent(item, url, content, ct, width, height, title, favicon) {
+  var ext = contentType.chooseExtension(url, ct.type);
   return Promise.all([
     generateScreenshot(content, width, height),
-    item.path ? util.saveDataByName(content, item.path) : util.saveData(content, contentType)
+    item.path ? util.saveDataByName(content, item.path) : util.saveData(content, ext)
   ]).spread(function(screenshotUrl, path) {
       item.title = title;
       item.url = url;
@@ -63,17 +64,8 @@ function navigate(res, opts) {
 
   return browser._loadUrl(opts.url, true)
     .then(function(data) {
-      logger.debug('Load data from url %s data type %s', opts.url, data.type);
-      switch(data.type) {
-        case 'html':
-        case 'css':
-        case 'js':
-        case 'text':
-        case 'img':
-          return sendAndSaveContent(res, opts, data);
-        default:
-          return;
-      }
+      logger.debug('Load data from url %s', opts.url);
+      return sendAndSaveContent(res, opts, data);
     })
     .catch(StatusCode4XXError, function(e) {
       manageItemCodeError(res, opts, e.statusCode);

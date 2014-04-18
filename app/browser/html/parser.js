@@ -17,7 +17,7 @@ HtmlProcessor.prototype.process = function(url, html, callback) {
     callback: callback,
     browser: this.browser // as it first it can pass it to others
   })
-    .addNext((new AbsUrlHandler({ url: url, browser: this.browser })).addNext(new HtmlWriterHandler))
+    .addNext((new AbsUrlHandler({ url: url, browser: this.browser })).addNext(new HtmlWriterHandler({ url: url, browser: this.browser })))
     .addNext(new FaviconHandler({ url: url }))
     .addNext(new TitleHandler);
   

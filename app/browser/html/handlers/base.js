@@ -6,6 +6,9 @@ function BaseHandler(options) {
   if(options && options.browser)
     this.browser = options.browser;
 
+  if(options && options.url)
+    this.url = options.url;
+
   this.next = [];
 }
 
@@ -18,6 +21,7 @@ BaseHandler.prototype = {
 
   addNext: function(next) {
     next.browser = this.browser;
+    next.url = this.url;
     this.next.push(next);
     return this;
   },
