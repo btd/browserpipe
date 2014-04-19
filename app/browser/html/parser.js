@@ -13,13 +13,17 @@ function HtmlProcessor(browser) {
 }
 
 HtmlProcessor.prototype.process = function(url, html, callback) {
+  var absUrlHandler = new AbsUrlHandler;
   var handler = new SanitizeHandler({
+    url: url,
     callback: callback,
     browser: this.browser // as it first it can pass it to others
   })
-    .addNext((new AbsUrlHandler({ url: url, browser: this.browser })).addNext(new HtmlWriterHandler({ url: url, browser: this.browser })))
-    .addNext(new FaviconHandler({ url: url }))
+    .addNext(absUrlHandler)
+    .addNext(new FaviconHandler)
     .addNext(new TitleHandler);
+
+  absUrlHandler.addNext(new HtmlWriterHandler);
   
   var parser = new htmlparser.Parser(handler);
   parser.write(html);

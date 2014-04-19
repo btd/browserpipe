@@ -1,8 +1,6 @@
 var Base = require('./base');
 
 var FaviconHandler = function(options) {
-  this.url = options.url;
-
   Base.apply(this, arguments);
 };
 

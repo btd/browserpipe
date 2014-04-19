@@ -24,13 +24,15 @@ var tags = {
 };
 
 
-var AbsUrlHandler = function(options) {
-  this.urlReplaceFunc = util.makeUrlReplacer(options.url);
-
+var AbsUrlHandler = function() {
   Base.apply(this, arguments);
 };
 
 AbsUrlHandler.prototype = Object.create(Base.prototype);
+
+AbsUrlHandler.prototype.init = function() {
+  this.urlReplaceFunc = util.makeUrlReplacer(this.url);
+}
 
 AbsUrlHandler.prototype.processTag = function(replaceAttributes, attributes) {
   var that = this;
@@ -81,14 +83,12 @@ AbsUrlHandler.prototype.onCloseTag = function(name, next) {
 AbsUrlHandler.prototype.onText = function(textObj, next) {
   var that = this;
 
-
   if(this.inStyle) {
-    var promisedStyleText = cssProcess({ content: textObj.text, href: that.options.url }, {}, that.browser);
-    promisedStyleText.then(function(content) {
+    var promisedStyleText = cssProcess({ content: textObj.text, href: that.url }, {}, that.browser);
+    return promisedStyleText.then(function(content) {
       textObj.text = content;
       next();
-    })
-      .end();
+    });
 
   } else {
     next();

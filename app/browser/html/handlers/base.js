@@ -19,14 +19,21 @@ BaseHandler.prototype = {
     })
   },
 
-  addNext: function(next) {
-    next.browser = this.browser;
-    next.url = this.url;
-    this.next.push(next);
+  addNext: function(nextHandler) {
+
+    nextHandler.browser = this.browser;
+    nextHandler.url = this.url;
+    nextHandler.init();
+
+    this.next.push(nextHandler);
     return this;
   },
 
   gather: function(data) {
+
+  },
+
+  init: function() {
 
   },
 
