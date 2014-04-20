@@ -73,7 +73,7 @@ Browser.prototype.processPage = function (url, isMainUrl) {
 
         // first try to get content-type and charset from Content-Type header
         var ct = response.headers['content-type'] && contentType.process(response.headers['content-type']);
-
+        var promisedContentType;
         logger.debug('Url %s content type from header %s', url, ct);
 
         if (ct) {//we have content type
@@ -94,7 +94,7 @@ Browser.prototype.processPage = function (url, isMainUrl) {
 
             if (!ct.hasCharset() && !contentType.isBinary(ct.type)) {// if we could not get from source
               //fill from libmagic
-              var promisedContentType = charsetDetector.guessCharset(_body).then(function (encoding) {
+              promisedContentType = charsetDetector.guessCharset(_body).then(function (encoding) {
                 logger.debug('Url %s content type from magic %s', url, ct);
                 ct.charset = encoding;
                 return ct;
@@ -103,7 +103,7 @@ Browser.prototype.processPage = function (url, isMainUrl) {
           }
         } else {
           // try to get from libmagic content-type and encoding
-          var promisedContentType = contentType.guessContentTypeMagically(_body).then(function (type) {
+          promisedContentType = contentType.guessContentTypeMagically(_body).then(function (type) {
             if (contentType.isBinary(type)) {
               return contentType.process(type);
             } else {
