@@ -139,7 +139,7 @@ HtmlWriteHandler.prototype.onOpenTag = function (name, attributes) {
     this.stylesheetsDownloads.push(this.browser._loadUrlOnly(entities.decodeHTML(attributes.href)));
     this.stylesheetsAttributes.push(attributes);
   } else {
-    if (name == 'img') {
+    if (name == 'img' && attributes.src) {
       this.resetImgChunk();//flush everything before
 
       //add <img> tag via promise
