@@ -1,3 +1,5 @@
+var entities = require("entities");
+
 var Base = require('./base');
 
 var TitleHandler = function() {
@@ -9,7 +11,7 @@ var TitleHandler = function() {
 TitleHandler.prototype = Object.create(Base.prototype);
 
 TitleHandler.prototype.gather = function(obj) {
-  obj.title = this.content;
+  obj.title = entities.decodeHTML(this.content);
 };
 
 TitleHandler.prototype.onOpenTag = function(name, attributes) {

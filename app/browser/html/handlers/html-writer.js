@@ -1,3 +1,5 @@
+var entities = require("entities");
+
 var Base = require('./base');
 var util = require('../../util');
 
@@ -44,22 +46,18 @@ function processCss(css, attributes, browser) {
 }
 // assume we already saved previous version on disk
 /*
-This function replaces all urls with download and save
+ This function replaces all urls with download and save
  */
 function finalCssProcess(name, text, browser) {
   return Promise.all(util.splitStyleByUrl(text, function (url) {
-    if(util.isDataURI(url)) {
+    if (!util.isHttpURI(url)) {
       return url;
     }
 
-    return browser._loadUrl(url)
-      .then(function (data) {
-        var ext = contentType.chooseExtension(data.href, data.contentType.type);
-        return util.saveData(data.content, ext).then(function (name) {
-          var localUrl = file.url(name);
-          return localUrl;
-        });
-      })
+    return browser._loadUrlAndSave(url).then(function (name) {
+      var localUrl = file.url(name);
+      return localUrl;
+    })
 
   })).then(function (chunks) {
     //console.log(chunks);
@@ -123,9 +121,9 @@ HtmlWriteHandler.prototype.addStyle = function (text) {
 };
 
 function isStylesheet(name, attributes) {
-  return name == 'link' && 
-    attributes.href && 
-    (attributes.rel && attributes.rel.toLowerCase() == 'stylesheet')  &&
+  return name == 'link' &&
+    attributes.href &&
+    (attributes.rel && attributes.rel.toLowerCase() == 'stylesheet') &&
     (attributes.type && attributes.type.toLowerCase().indexOf('text/css') >= 0);
 }
 
@@ -138,18 +136,14 @@ HtmlWriteHandler.prototype.onOpenTag = function (name, attributes) {
   }
 
   if (isStylesheet(name, attributes)) {
-    this.stylesheetsDownloads.push(this.browser._loadUrl(attributes.href));
+    this.stylesheetsDownloads.push(this.browser._loadUrlOnly(entities.decodeHTML(attributes.href)));
     this.stylesheetsAttributes.push(attributes);
   } else {
     if (name == 'img') {
       this.resetImgChunk();//flush everything before
 
       //add <img> tag via promise
-      this.imgChunks.push(this.browser._loadUrl(attributes.src)
-        .then(function (data) {//TODO check on datauri, is it even possible?
-          var ext = contentType.chooseExtension(that.url, data.contentType.type);
-          return util.saveData(data.content, ext);
-        })
+      this.imgChunks.push(this.browser._loadUrlAndSave(entities.decodeHTML(attributes.src))
         .then(function (name) {
           attributes.src = file.url(name);
           return util.openTag('img', attributes);
