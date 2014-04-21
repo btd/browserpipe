@@ -162,7 +162,7 @@ exports.htmlBookmarklet = function(req, res) {
   //We save item on root
   var item = new Item({ url: url , type: 0, parent: parentId, user: user._id });
 
-  var ct = contentType.process('text/html');
+  var ct = contentType.HTML;
 
   var browser = new Browser(user.langs);
 
@@ -179,7 +179,7 @@ exports.htmlBookmarklet = function(req, res) {
         })
     })
     .then(function() {
-      return browser.processHtml(url, browser.bodyToString(charset, html), ct)
+      return browser.processHtml(url, html, ct)
         .then(function(data) {
           logger.debug('Load data from bookmarklet url %s', url);
           return saveContent(item, url, data.content, data.contentType, width, height, data.title, data.favicon)

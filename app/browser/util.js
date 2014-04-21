@@ -133,7 +133,6 @@ function unQuote(text) {
 exports.unQuote = unQuote;
 
 var URL_RE = /url\(([^)]+)\)/g;
-var IMPORT_URL_RE = /@import\s+url\(([^)]+)\);/g;
 
 function replaceStyleUrl(style, replace) {
     return style.replace(URL_RE, function(_, url) {
@@ -176,17 +175,20 @@ exports.splitStyleByUrl = function(text, replace) {
   })
 };
 
+//https://developer.mozilla.org/en-US/docs/Web/CSS/@import
+var IMPORT_URL_RE = /@import\s+(?:url\(([^)]+)\)|(?:'|")([^'"]+)(?:'|"))(?:\s+([^;]+))?;/g;
 var styleImportSplitter = makeRegexSplitter(IMPORT_URL_RE);
 
 exports.splitStyleByImport = function(text, replace) {
   return styleImportSplitter(text, function(chunks, args) {
-    var url = args[1];
+    var url = args[1] || args[2]; //either url or direct;
+    var media = args[3];
 
-    chunks.push(replace(unQuote(url)));
+    chunks.push(replace(unQuote(url), media));
   })
 };
 
-var CSS_CHARSET_RE = /^\s*@charset\s+([\w\'\"-]+);/;
+var CSS_CHARSET_RE = /^@charset "([\w-]+)";/;
 
 exports.extractStyleCharset = function(text) {
   var encoding;
@@ -206,4 +208,11 @@ var DATAURI_RE = /^data:/i;
 exports.isDataURI = function(url) {
   return DATAURI_RE.test(url);
 }
+
+var HTTP_RE = /^https?:\/\//i;
+
+exports.isHttpURI = function(url) {
+  return HTTP_RE.test(url);
+}
+
 

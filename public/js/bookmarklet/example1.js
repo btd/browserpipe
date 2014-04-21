@@ -18,7 +18,7 @@ javascript:(function(e){
         xhr.onreadystatechange=function() {
           if (xhr.readyState==4) success(JSON.parse(xhr.responseText)._id);
         }
-        xhr.send("url="+encode(e.location.href)+"&parent="+parentFolder+"&title="+encode(doc.title)+"&width="+encode(doc.documentElement.clientWidth)+"&height="+encode(doc.documentElement.clientHeight)+"&html="+encode(doc.documentElement.innerHTML)+"&charset="+encode(doc.characterSet)+"&v=1.1");
+        xhr.send("url="+encode(e.location.href)+"&parent="+parentFolder+"&title="+encode(doc.title)+"&width="+encode(doc.documentElement.clientWidth)+"&height="+encode(doc.documentElement.clientHeight)+"&html="+encode(doc.documentElement.outerHTML)+"&charset="+encode(doc.characterSet)+"&v=1.1");
       }
       function destroy() {
         var elem = doc.getElementById(bid);

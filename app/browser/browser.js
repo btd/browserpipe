@@ -21,7 +21,7 @@ function Browser(langs) {
   this.htmlProcessor = new HtmlProcessor(this);
   this.langs = langs;
 
-  //TODO make browser caching for css sprites to do not redownload them
+  this._cache = {};
 }
 
 //If it cannot make a URL out of it, it searchs term in Google
@@ -73,7 +73,7 @@ Browser.prototype.processPage = function (url, isMainUrl) {
 
         // first try to get content-type and charset from Content-Type header
         var ct = response.headers['content-type'] && contentType.process(response.headers['content-type']);
-
+        var promisedContentType;
         logger.debug('Url %s content type from header %s', url, ct);
 
         if (ct) {//we have content type
@@ -94,7 +94,7 @@ Browser.prototype.processPage = function (url, isMainUrl) {
 
             if (!ct.hasCharset() && !contentType.isBinary(ct.type)) {// if we could not get from source
               //fill from libmagic
-              var promisedContentType = charsetDetector.guessCharset(_body).then(function (encoding) {
+              promisedContentType = charsetDetector.guessCharset(_body).then(function (encoding) {
                 logger.debug('Url %s content type from magic %s', url, ct);
                 ct.charset = encoding;
                 return ct;
@@ -103,7 +103,7 @@ Browser.prototype.processPage = function (url, isMainUrl) {
           }
         } else {
           // try to get from libmagic content-type and encoding
-          var promisedContentType = contentType.guessContentTypeMagically(_body).then(function (type) {
+          promisedContentType = contentType.guessContentTypeMagically(_body).then(function (type) {
             if (contentType.isBinary(type)) {
               return contentType.process(type);
             } else {
@@ -196,6 +196,34 @@ Browser.prototype._loadUrl = function (url, isMainUrl) {
   var urls = processUrl(url);
   return this.processNextUrl(urls, isMainUrl);
 };
+
+// this used only for relative resources like images in html <img> or css url(...)
+Browser.prototype._loadUrlAndSave = function(url) {
+  var that = this;
+  if(that._cache[url]) return that._cache[url];
+
+  var promisedPath = this.processPage(url, false).then(function(data) {
+    var ext = contentType.chooseExtension(url, data.contentType.type);
+    return util.saveData(data.content, ext);
+  }).catch(function(e) {//TODO think about it
+    if(e.statusCode) {
+      return e.statusCode + '?url=' + encodeURIComponent(url);
+    }
+  });
+
+  that._cache[url] = promisedPath;
+
+  return promisedPath;
+};
+
+//used for css when we know 100% url
+Browser.prototype._loadUrlOnly = function(url) {
+  return this.processPage(url, false).catch(function(e) {
+    if(e.statusCode) {
+      return { content: '', href: url, contentType: contentType.OctetStream }; //is it right idea?
+    }
+  });
+}
 
 
 module.exports = Browser;
