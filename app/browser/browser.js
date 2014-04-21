@@ -41,7 +41,7 @@ function processUrl(url) {
 
 // this method should convert body buffer to utf-8
 Browser.prototype.bodyToString = function (charset, body) {
-  if (charset) {
+  if (charset && charset.toLowerCase() != 'utf-8') {
     var bufferCharset = getCharset(charset);
     if (!bufferCharset) {
       var iconv = new Iconv(getCharset.resolveAliasCharset(charset), 'UTF-8');

@@ -10,7 +10,7 @@ var contentType = require('../../../../util/content-type');
 var cssProcess = require('./css').process;
 
 
-var HtmlWriteHandler = function () {
+var HtmlWriteHandler = function() {
 
   this.styleChunks = [];
   this.imgChunks = [];
@@ -32,15 +32,15 @@ var HtmlWriteHandler = function () {
 HtmlWriteHandler.prototype = Object.create(Base.prototype);
 
 function processCss(css, attributes, browser) {
-  return Promise.all(css).then(function (datas) {
-    return Promise.all(datas.map(function (body, index) {
+  return Promise.all(css).then(function(datas) {
+    return Promise.all(datas.map(function(body, index) {
       return cssProcess(body, attributes[index], browser);
     }))
   })
-    .then(function (allContentChunked) {
+    .then(function(allContentChunked) {
       return allContentChunked.join('');
     })
-    .then(function (allContent) {
+    .then(function(allContent) {
       return [util.saveData(allContent, '.css'), allContent];
     });
 }
@@ -49,23 +49,23 @@ function processCss(css, attributes, browser) {
  This function replaces all urls with download and save
  */
 function finalCssProcess(name, text, browser) {
-  return Promise.all(util.splitStyleByUrl(text, function (url) {
-    if (!util.isHttpURI(url)) {
+  return Promise.all(util.splitStyleByUrl(text, function(url) {
+    if(!util.isHttpURI(url)) {
       return url;
     }
 
-    return browser._loadUrlAndSave(url).then(function (name) {
+    return browser._loadUrlAndSave(url).then(function(name) {
       var localUrl = file.url(name);
       return localUrl;
     })
 
-  })).then(function (chunks) {
+  })).then(function(chunks) {
     //console.log(chunks);
     return util.saveDataByName(chunks.join(''), name);
   })
 }
 
-HtmlWriteHandler.prototype.gather = function (obj) {
+HtmlWriteHandler.prototype.gather = function(obj) {
   var that = this;
   this.resetStyleChunk();
   this.resetImgChunk();
@@ -73,50 +73,50 @@ HtmlWriteHandler.prototype.gather = function (obj) {
   var sheet = processCss(this.stylesheetsDownloads, this.stylesheetsAttributes, this.browser);
 
   //save sheet as <link>
-  var stylesheets = sheet.spread(function (sheetName) {
+  var stylesheets = sheet.spread(function(sheetName) {
     var linkHtml = util.openTag('link', { type: contentType.CSS.toString(), rel: 'stylesheet', href: file.url(sheetName) });
 
     return linkHtml;
   });
 
-  var processedStylesheetPromise = sheet.spread(function (name, content) {
+  var processedStylesheetPromise = sheet.spread(function(name, content) {
     return finalCssProcess(name, content, that.browser);
   });
 
-  obj.contentPromise = stylesheets.then(function (link) {
+  obj.contentPromise = stylesheets.then(function(link) {
     return that.styleChunks[0] + link + that.styleChunks[1];
   });
 
-  obj.contentPromiseWithImages = stylesheets.then(function (link) {
+  obj.contentPromiseWithImages = stylesheets.then(function(link) {
     that.imgChunks[0] += link;
-    return processedStylesheetPromise.then(function () { //with second content it will be all uber content with download everything
-      return Promise.all(that.imgChunks).then(function (chunks) {
+    return processedStylesheetPromise.then(function() { //with second content it will be all uber content with download everything
+      return Promise.all(that.imgChunks).then(function(chunks) {
         return chunks.join('');
       });
     });
   });
 };
 
-HtmlWriteHandler.prototype.resetImgChunk = function () {
+HtmlWriteHandler.prototype.resetImgChunk = function() {
   this.imgChunks.push(this.currentImgChunk);
   this.currentImgChunk = '';
 };
 
-HtmlWriteHandler.prototype.resetStyleChunk = function () {
+HtmlWriteHandler.prototype.resetStyleChunk = function() {
   this.styleChunks.push(this.currentStyleChunk);
   this.currentStyleChunk = '';
 };
 
-HtmlWriteHandler.prototype.add = function (text) {
+HtmlWriteHandler.prototype.add = function(text) {
   this.addImg(text);
   this.addStyle(text);
 };
 
-HtmlWriteHandler.prototype.addImg = function (text) {
+HtmlWriteHandler.prototype.addImg = function(text) {
   this.currentImgChunk += text;
 };
 
-HtmlWriteHandler.prototype.addStyle = function (text) {
+HtmlWriteHandler.prototype.addStyle = function(text) {
   this.currentStyleChunk += text;
 };
 
@@ -127,24 +127,24 @@ function isStylesheet(name, attributes) {
     (attributes.type && attributes.type.toLowerCase().indexOf('text/css') >= 0);
 }
 
-HtmlWriteHandler.prototype.onOpenTag = function (name, attributes) {
+HtmlWriteHandler.prototype.onOpenTag = function(name, attributes) {
   this.addDoctype();
   var that = this;
 
-  if (name == 'body' || name == 'script' || name == 'style') {
+  if(name == 'body' || name == 'script' || name == 'style') {
     this.removeExtraWhiteSpace = false;
   }
 
-  if (isStylesheet(name, attributes)) {
+  if(isStylesheet(name, attributes) && util.isHttpURI(attributes.href)) {
     this.stylesheetsDownloads.push(this.browser._loadUrlOnly(entities.decodeHTML(attributes.href)));
     this.stylesheetsAttributes.push(attributes);
   } else {
-    if (name == 'img' && attributes.src) {
+    if(name == 'img' && attributes.src && util.isHttpURI(attributes.src)) {
       this.resetImgChunk();//flush everything before
 
       //add <img> tag via promise
       this.imgChunks.push(this.browser._loadUrlAndSave(entities.decodeHTML(attributes.src))
-        .then(function (name) {
+        .then(function(name) {
           attributes.src = file.url(name);
           return util.openTag('img', attributes);
         }));
@@ -157,16 +157,16 @@ HtmlWriteHandler.prototype.onOpenTag = function (name, attributes) {
 };
 
 
-HtmlWriteHandler.prototype.onText = function (textObj) {
-  if (this.removeExtraWhiteSpace)
+HtmlWriteHandler.prototype.onText = function(textObj) {
+  if(this.removeExtraWhiteSpace)
     this.add(textObj.text.replace(/\s+/g, ' '));
   else
     this.add(textObj.text);
 };
 
 
-HtmlWriteHandler.prototype.onCloseTag = function (name) {
-  if (name == 'head') {
+HtmlWriteHandler.prototype.onCloseTag = function(name) {
+  if(name == 'head') {
     /*
      i want that
      <html>
@@ -180,27 +180,27 @@ HtmlWriteHandler.prototype.onCloseTag = function (name) {
     this.resetImgChunk();
   }
 
-  if (util.voidElements[name]) {
+  if(util.voidElements[name]) {
     //do nothing as it is html5
   } else {
     this.add('</' + name + '>');
   }
 
-  if (name == 'script' || name == 'style' || name == 'body') {
+  if(name == 'script' || name == 'style' || name == 'body') {
     this.removeExtraWhiteSpace = true;
   }
 };
 
-HtmlWriteHandler.prototype.onProcessingInstruction = function (name, value) {
-  if (name == '!doctype') {
+HtmlWriteHandler.prototype.onProcessingInstruction = function(name, value) {
+  if(name == '!doctype') {
     //we will rewrite previous html with new doctype and assume it is html5 always
     //TODO test this for xml+xhtml for XML <?xml ...>
     this.addDoctype();
   }
 };
 
-HtmlWriteHandler.prototype.addDoctype = function () {
-  if (!this.hasDoctype) {
+HtmlWriteHandler.prototype.addDoctype = function() {
+  if(!this.hasDoctype) {
     this.add('<!doctype html>');
     this.hasDoctype = true;
   }
