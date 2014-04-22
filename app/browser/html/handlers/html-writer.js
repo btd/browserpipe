@@ -83,16 +83,14 @@ HtmlWriteHandler.prototype.gather = function(obj) {
     return finalCssProcess(name, content, that.browser);
   });
 
-  obj.contentPromise = stylesheets.then(function(link) {
-    return that.styleChunks[0] + link + that.styleChunks[1];
-  });
+  this.imgChunks[this.cssMarkerImgIndex] = stylesheets;
+  this.styleChunks[this.cssMarkerStyleIndex] = stylesheets;
 
-  obj.contentPromiseWithImages = stylesheets.then(function(link) {
-    that.imgChunks[0] += link;
-    return processedStylesheetPromise.then(function() { //with second content it will be all uber content with download everything
-      return Promise.all(that.imgChunks).then(function(chunks) {
-        return chunks.join('');
-      });
+  obj.contentPromise = Promise.all(this.styleChunks).then(function(chunks) { return chunks.join(''); });
+
+  obj.contentPromiseWithImages =  processedStylesheetPromise.then(function() { //with second content it will be all uber content with download everything
+    return Promise.all(that.imgChunks).then(function(chunks) {
+      return chunks.join('');
     });
   });
 };
@@ -120,12 +118,36 @@ HtmlWriteHandler.prototype.addStyle = function(text) {
   this.currentStyleChunk += text;
 };
 
+// check if this is stylesheet that we can download
 function isStylesheet(name, attributes) {
   return name == 'link' &&
     attributes.href &&
+    util.isHttpURI(attributes.href) &&
     (attributes.rel && attributes.rel.toLowerCase() == 'stylesheet') &&
     (attributes.type && attributes.type.toLowerCase().indexOf('text/css') >= 0);
 }
+
+// check if this is image that we can download
+function isImage(name, attributes) {
+  return name == 'img' &&
+    attributes.src &&
+    util.isHttpURI(attributes.src);
+}
+
+function isHtml5MetaCharset(name, attributes) {
+  return name == 'meta' &&
+    attributes.charset;
+}
+
+function isHtml4MetaCharset(name, attributes) {
+  return name == 'meta' &&
+    (attributes['http-equiv'] && attributes['http-equiv'].toLowerCase() == 'content-type');
+}
+
+function isStyle(name, attributes) {
+  return name == 'style';
+}
+
 
 HtmlWriteHandler.prototype.onOpenTag = function(name, attributes) {
   this.addDoctype();
@@ -135,33 +157,51 @@ HtmlWriteHandler.prototype.onOpenTag = function(name, attributes) {
     this.removeExtraWhiteSpace = false;
   }
 
-  if(isStylesheet(name, attributes) && util.isHttpURI(attributes.href)) {
+  if(isStylesheet(name, attributes)) {
     this.stylesheetsDownloads.push(this.browser._loadUrlOnly(entities.decodeHTML(attributes.href)));
     this.stylesheetsAttributes.push(attributes);
-  } else {
-    if(name == 'img' && attributes.src && util.isHttpURI(attributes.src)) {
-      this.resetImgChunk();//flush everything before
+  } else if(isImage(name, attributes)) {
+    this.resetImgChunk();//flush everything before
 
-      //add <img> tag via promise
-      this.imgChunks.push(this.browser._loadUrlAndSave(entities.decodeHTML(attributes.src))
-        .then(function(name) {
-          attributes.src = file.url(name);
-          return util.openTag('img', attributes);
-        }));
-      //for first version we load it as is
-      this.addStyle(util.openTag(name, attributes, false));
-    } else {
-      this.add(util.openTag(name, attributes, false));//TODO check what if inside attribute will be quote? Probably will be need to unescape and escape eveything
+    //add <img> tag via promise
+    this.imgChunks.push(this.browser._loadUrlAndSave(entities.decodeHTML(attributes.src))
+      .then(function(name) {
+        attributes.src = file.url(name);
+        return util.openTag('img', attributes);
+      }));
+    //for first version we load it as is
+    this.addStyle(util.openTag(name, attributes, false));
+  } else if(isHtml5MetaCharset(name, attributes) || isHtml4MetaCharset(name, attributes)) {
+    //we just skip page included <meta> for setting charset
+  } else if(isStyle(name)) {
+    this.inStyle = true;
+  } else {
+    this.add(util.openTag(name, attributes, false));//TODO check what if inside attribute will be quote? Probably will be need to unescape and escape eveything
+
+    // immediatly after open <head> we add meta charset
+    if(name == 'head') {
+      this.addMetaCharset();
     }
   }
 };
 
 
 HtmlWriteHandler.prototype.onText = function(textObj) {
-  if(this.removeExtraWhiteSpace)
+  if(this.removeExtraWhiteSpace) {
     this.add(textObj.text.replace(/\s+/g, ' '));
-  else
+  } else if(this.inStyle) {
+    this.resetStyleChunk();
+    this.resetImgChunk();
+
+    var styleTag = cssProcess({ content: textObj.text, href: this.url }, {}, this.browser).then(function(content) {
+      return '<style>' + content + '</style>';
+    });
+
+    this.imgChunks.push(styleTag);
+    this.styleChunks.push(styleTag);
+  } else {
     this.add(textObj.text);
+  }
 };
 
 
@@ -178,6 +218,14 @@ HtmlWriteHandler.prototype.onCloseTag = function(name) {
      */
     this.resetStyleChunk();
     this.resetImgChunk();
+
+    var cssMarker = Promise.cast('');
+
+    this.cssMarkerImgIndex = this.imgChunks.length;
+    this.cssMarkerStyleIndex = this.styleChunks.length;
+
+    this.imgChunks.push(cssMarker);
+    this.styleChunks.push(cssMarker);
   }
 
   if(util.voidElements[name]) {
@@ -188,6 +236,10 @@ HtmlWriteHandler.prototype.onCloseTag = function(name) {
 
   if(name == 'script' || name == 'style' || name == 'body') {
     this.removeExtraWhiteSpace = true;
+  }
+
+  if(isStyle(name)) {
+    this.inStyle = false;
   }
 };
 
@@ -204,6 +256,10 @@ HtmlWriteHandler.prototype.addDoctype = function() {
     this.add('<!doctype html>');
     this.hasDoctype = true;
   }
+};
+
+HtmlWriteHandler.prototype.addMetaCharset = function() {
+  this.add('<meta charset="utf-8">');
 };
 
 module.exports = HtmlWriteHandler;

@@ -60,10 +60,6 @@ AbsUrlHandler.prototype.onOpenTag = function(name, attributes, next) {
     return that.replaceUrl(url);
   }
 
-  if(name == 'style') {
-    this.inStyle = true;
-  }
-
   if(replaceAttributes) {
     this.processTag(replaceAttributes, attributes);
   }
@@ -73,27 +69,7 @@ AbsUrlHandler.prototype.onOpenTag = function(name, attributes, next) {
   next();
 };
 
-AbsUrlHandler.prototype.onCloseTag = function(name, next) {
-  if(name == 'style') {
-    this.inStyle = false;
-  }
-  next();
-};
 
-AbsUrlHandler.prototype.onText = function(textObj, next) {
-  var that = this;
-
-  if(this.inStyle) {
-    var promisedStyleText = cssProcess({ content: textObj.text, href: that.url }, {}, that.browser);
-    return promisedStyleText.then(function(content) {
-      textObj.text = content;
-      next();
-    });
-
-  } else {
-    next();
-  }
-};
 
 
 
