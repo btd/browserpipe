@@ -2,8 +2,9 @@
 
 var _state = require('./state'),
   page = require('page'),
-  DashboardComponent = require('./components/dashboard'),
-  PageHeaderComponent = require('./components/pageheader'),
+  SidebarComponent = require('./components/sidebar'),
+  TabHeaderComponent = require('./components/tabheader'),
+  NewTabComponent = require('./components/newtab'),
   $ = require('jquery'),
   websocket = require('./websocket/websocket'),
   browser = require('./browser/main');
@@ -15,66 +16,82 @@ require('bootstrap-modal');
 //Notification system
 require('messenger');
 
-var dashboardComponent, pageHeaderComponent; //react component instances
+var sidebarComponent, tabHeaderComponent, newTabComponent; //react component instances
 var isIframe = (window != window.parent);
 
-var loadDashboardComponent = function() {
-  if(!dashboardComponent) {
-    dashboardComponent = DashboardComponent.render(
-      isIframe,
+var loadSidebarComponent = function() {
+  if(!sidebarComponent) {
+    sidebarComponent = SidebarComponent.render(
+      _state.selectedItem,
       _state.selectedFolder,
-      _state.selectedItem
+      _state.sidebarTab
     );
   } else {
-    dashboardComponent.setState({
-      isIframe: isIframe,
+    sidebarComponent.setState({
+      selectedItem: _state.selectedItem,
       selectedFolder: _state.selectedFolder,
-      selectedItem: _state.selectedItem
+      sidebarTab: _state.sidebarTab
     });
   }
 }
 
-var loadPageHeaderComponent = function() {
+var loadTabHeaderComponent = function() {
   if(_state.selectedItem)
-    if(!pageHeaderComponent) {
-      pageHeaderComponent = PageHeaderComponent.render(
-        isIframe,
-        _state.selectedFolder,
+    if(!tabHeaderComponent) {
+      tabHeaderComponent = TabHeaderComponent.render(
         _state.selectedItem
       );
     } else {
-      pageHeaderComponent.setState({
-        isIframe: isIframe,
-        selectedFolder: _state.selectedFolder,
+      tabHeaderComponent.setState({
         selectedItem: _state.selectedItem
       });
     }
 }
 
-var loadPage = function(item) {
-  if(isIframe)
-    window.parent.postMessage("expand", "*");
+var loadNewTabComponent = function() {
+  if(!newTabComponent) {
+    newTabComponent = NewTabComponent.render(
+    );
+  }
+}
+
+var loadTab = function(item) {
   if(item.url) browser.open(item._id, item.url);
 }
 
 
-var prepareDashboardElements = function() {
-  $('#page-section').hide();
-  $('html, body').removeClass('overflow-hidden');
+var showNewTabSection = function() {
+  $('#tab-section').hide();
+  $('#new-tab-section').show();
 }
 
-var prepareTabElements = function() {
-  $('#page-section').show();
-  $('html, body').addClass('overflow-hidden');
+var hideNewTabSection = function() {
+  $('#new-tab-section').hide();
+  $('#tab-section').show();
+}
+
+var navigateToFirstChild = function(parent) {
+  if(parent.items.length === 0)
+    page('/new');
+  else
+    page('/item/' + parent.items[0]._id);
 }
 
 page('/', function() {
   setTimeout(function() {
+    navigateToFirstChild(_state.browser);
+  }, 0);
+});
+
+page('/new', function() {
+  setTimeout(function() {
     _state.selectedItem = null;
-    _state.selectedFolder = _state.browser;
-    loadDashboardComponent();
-    loadPageHeaderComponent();
-    prepareDashboardElements();
+    _state.sidebarTab = "browser";
+    if(!_state.selectedFolder)
+     _state.selectedFolder = _state.archive;
+    showNewTabSection();
+    loadSidebarComponent();
+    loadNewTabComponent();
   }, 0);
 });
 
@@ -82,25 +99,31 @@ page('/item/:id', function(ctx) {
   setTimeout(function() {
     var id = ctx.params.id;
     var item = _state.getItemById(id);
-    if(item) {
-      if(item.type === 2) {
-        _state.selectedItem = null;
-        _state.selectedFolder = item;
-        loadDashboardComponent();
-        loadPageHeaderComponent();
-        prepareDashboardElements();
+    if(item && item.type !== 2) { //We only navigate to tabs or notes
+      _state.selectedItem = item;
+      if(!_state.sidebarTab) {
+        if(item.browserParent) {
+          _state.sidebarTab = "browser";
+          if(item.archiveParent)
+            _state.selectedFolder = _state.getItemById(item.archiveParent);
+          else
+            _state.selectedFolder = _state.archive;
+        }
+        else if(item.archiveParent) {
+          _state.sidebarTab = "archive";
+          _state.selectedFolder = _state.getItemById(item.archiveParent);
+        }
+        else {
+          _state.sidebarTab = "trash";
+          _state.selectedFolder = _state.archive;
+        }
       }
-      else {
-        _state.selectedItem = item;
-        if(!_state.selectedFolder)
-          _state.selectedFolder = _state.getItemById(item.parent);
-        loadDashboardComponent();
-        loadPageHeaderComponent();
-        loadPage(item);
-        prepareTabElements();
-      }
+      loadSidebarComponent();
+      loadTabHeaderComponent();
+      loadTab(item);
+      hideNewTabSection();
     } else {
-      page('/');
+      page('/new'); //we can send it better to a page of not found
     }
   }, 0);
 });
@@ -127,16 +150,20 @@ var stateChanges = function() {
 
   var changeInSelected = function() {
     if(_state.selectedFolder) { //This means load finished
-      loadDashboardComponent();
-      loadPageHeaderComponent();
+      loadSidebarComponent();
+      loadTabHeaderComponent();
     }
   };
 
+  //TODO: improve events to set only what changed
   _state.items.on('add', changeInSelected);
   _state.items.on('remove', changeInSelected);
   _state.items.on('change', changeInSelected);
-  _state.on('change:selectedFolder', changeInSelected);
+  _state.on('change:browser', changeInSelected);
+  _state.on('change:archive', changeInSelected);
   _state.on('change:selectedItem', changeInSelected);
+  _state.on('change:selectedFolder', changeInSelected);
+  _state.on('change:sidebarTab', changeInSelected);
 }
 
 module.exports = initialize;

@@ -12,9 +12,6 @@ html,body {
   height:100%;
   margin:0;
   padding:0;
-}
-
-.overflow-hidden {
   overflow:hidden;
 }
 
@@ -80,6 +77,30 @@ a {
   }
 }
 
+.nav-option {
+  list-style: none;
+
+  a {
+    color: #666;
+  }
+  .dropdown-menu {
+    li{
+      a {
+        &:hover {
+          color: #fff;
+          background: #f89406;
+        }
+      }
+    }
+    .divider {
+      border-bottom: 1px solid #ccc;
+    }
+    input[type=checkbox] {
+      margin-left: -15px;
+    }
+  }
+}
+
 .modal-bookmarklet-content{
   .bookmarklet {
     margin-top: 27px;
@@ -98,193 +119,199 @@ a {
   }
 }
 
-#topbar-section {
-  background-color: #f5f5f5;
-  height: 51px;
-  z-index: 100;
-  position: relative;
 
-  #logo {
-    width: 22px;
-    float: left;
-    margin: 2px 0 0;
+#sidebar-section {
 
-    &:hover {
-      cursor: pointer;
-    }
-  }
-  .topbar-commands {
-    z-index: 20;
-    height: 27px;
-    position: relative;
-    width: 100%;
-
-    .search-options {
-      display: inline-block;
-      margin-bottom: 10px;
-      vertical-align: middle;
-      font-size: 0;
-      white-space: nowrap;
-      width: 60%;
-      margin: 1px 0 0 6px;
-
-      .url-input {
-        width: 90%;
-        height: 24px;
-        margin: 0;
-        border-radius: 0px;
-      }
-      .url-btn {
-        width:  36px;
-        height: 24px;
-        line-height: 10px;
-        padding: 4px 6px;
-        border: 0;
-        color: #fff;
-        background: #ff6d16;
-      }
-    }
-    .nav-option {
-      list-style: none;
-
-      a {
-        color: #666;
-      }
-      .dropdown-menu {
-        li{
-          a {
-            &:hover {
-              color: #fff;
-              background: #f89406;
-            }
-          }
-        }
-        .divider {
-          border-bottom: 1px solid #ccc;
-        }
-        input[type=checkbox] {
-          margin-left: -15px;
-        }
-      }
-    }
-    .user-options {
-      text-align: left;
-      margin: 3px 3px 0 0;
-      position: absolute;
-      top: 0;
-      right: 0;
-
-      .nav-option {
-        float: left;
-        margin: 0 12px;
-      }
-      .dropdown-menu {
-        left: inherit;
-        right: 0px;
-      }
-      .dropdown-toggle {
-        margin-left: 6px;
-        font-size: 14px;
-      }
-    }
-    .bookmarklet-options {
-      margin: 3px 3px 0 0;
-      float: left;
-      margin-left: 6px;
-
-      a {
-        margin-right: 6px;
-        font-size: 14px;
-      }
-    }
-  }
-  .sub-bar {
-    height: 24px;
-    background-color: #fff;
-
-    .breadcrumb {
-      overflow: hidden;
-      text-align: left;
-      padding: 0;
-      position: absolute;
-      right: 58px;
-      left: 3px;
-      margin: 0;
-      height: 24px;
-      background-color: #fff;
-      font-weight: bold;
-
-      .breadcrumb-inner {
-        position: absolute;
-        bottom: 0;
-
-        li {
-          display: inline-block;
-
-          img {
-            margin: 0 3px 3px 0;
-          }
-        }
-      }
-    }
-    .move-to-folder, .new-folder {
-      font-size: 14px;
-      margin-top: 1px;
-      padding: 0 3px;
-      border: 1px dashed #999;
-      cursor: default;
-      -webkit-transition: all 0.3s ease;
-      -moz-transition: all 0.3s ease;
-      -o-transition: all 0.3s ease;
-      transition: all 0.3s ease;
-
-      &:hover {
-        cursor: pointer;
-        color: #333;
-        border-color: #333;
-      }
-    }
-    .move-to-folder {
-      position: absolute;
-      right: 32px;
-    }
-    .new-folder {
-      position: absolute;
-      right: 6px;
-    }
-  }
-}
-
-#dashboard-section {
-
-  .dashboard {
+  .sidebar {
+    border-right: 1px solid #ddd;
+    width: 270px;
+    position: absolute;
+    left: 0;
     height: 100%;
 
-    .dashboard-content {
-      height: 100%;
-      margin: -51px 0 0;
-      padding: 51px 0 0;
+    .top-sidebar {
+      background-color: #f5f5f5;
+      padding-top: 3px;
+      height: 61px;
+      z-index: 100;
+      position: relative;
 
-      .add-option {
-        position: absolute;
-        bottom: 0;
-        z-index: 100;
-        padding: 6px 0 0 6px;
-        height: 32px;
-        width: 90px;
-        color: #fff;
-        display: inline-block;
-        background-color: #ff6d16;
-        font-size: 13px;
-        font-weight: bold;
+      .commands {
 
-        .fa {
-          font-size: 21px;
-          margin-left: 6px;
+        .logo {
+          width: 22px;
+          float: left;
+          margin: 2px 0 0;
+
+          &:hover {
+            cursor: pointer;
+          }
         }
-        &:hover {
-          cursor: pointer;
-          background-color: darken(#ff6d16, 15%);
+        .search-options {
+          display: inline-block;
+          margin-bottom: 10px;
+          vertical-align: middle;
+          font-size: 0;
+          white-space: nowrap;
+          margin: 1px 0 0 6px;
+
+          .search-input {
+            width: 168px;
+            height: 24px;
+            margin: 0;
+            border-radius: 0px;
+          }
+          .search-btn {
+            height: 24px;
+            line-height: 10px;
+            padding: 4px 6px;
+            border: 0;
+            color: #fff;
+            background: #ff6d16;
+          }
+        }
+      }
+      .nav-tabs {
+        margin: 3px 0  6px 0;
+
+        li {
+          a {
+            padding: 4px 12px;
+          }
+          &.trash {
+            float: right;
+          }
+        }
+      }
+    }
+    .bottom-sidebar {
+      background-color: #f5f5f5;
+      border-top: 1px solid #ddd;
+      z-index: 20;
+      height: 27px;
+      position: relative;
+      width: 100%;
+
+      .user-options {
+        text-align: left;
+        margin: 3px 3px 0 0;
+        position: absolute;
+        top: 0;
+        left: 0;
+
+        .nav-option {
+          float: left;
+          margin: 0 12px;
+        }
+        .dropdown-toggle {
+          margin-left: 6px;
+          font-size: 14px;
+        }
+      }
+      .bookmarklet-options {
+        margin: 3px 3px 0 0;
+        float: left;
+        margin-left: 6px;
+
+        a {
+          margin-right: 6px;
+          font-size: 14px;
+        }
+      }
+      .space-text {
+        font-size: 10px;
+        margin: 6px 12px 0 42px;
+        text-align: right;
+      }
+    }
+    .sidebar-content {
+      height: 100%;
+      margin: -61px 0 -27px;
+      padding: 61px 0 27px;
+
+      .browser, .folders, .trash {
+        height: 100%;
+        margin-bottom: -27px;
+        padding-bottom: 27px;
+      }
+
+      .browser {
+
+        .new-tab {
+          font-size: 14px;
+          text-align: center;
+          margin: 12px;
+          padding: 0 3px;
+          border: 1px dashed #999;
+          cursor: default;
+          -webkit-transition: all 0.3s ease;
+          -moz-transition: all 0.3s ease;
+          -o-transition: all 0.3s ease;
+          transition: all 0.3s ease;
+
+          &:hover {
+            cursor: pointer;
+            color: #333;
+            border-color: #333;
+          }
+        }
+      }
+      .folders {
+
+        .options {
+          border-bottom: 1px solid #ddd;
+          height: 27px;
+
+          .breadcrumb {
+            overflow: hidden;
+            text-align: left;
+            padding: 0;
+            position: absolute;
+            right: 58px;
+            left: 3px;
+            margin: 0;
+            height: 24px;
+            background-color: #fff;
+            font-weight: bold;
+
+            .breadcrumb-inner {
+              position: absolute;
+              bottom: 0;
+
+              li {
+                display: inline-block;
+
+                img {
+                  margin: 0 3px 3px 0;
+                }
+              }
+            }
+          }
+          .move-to-folder, .new-folder {
+            font-size: 14px;
+            margin-top: 1px;
+            padding: 0 3px;
+            border: 1px dashed #999;
+            cursor: default;
+            -webkit-transition: all 0.3s ease;
+            -moz-transition: all 0.3s ease;
+            -o-transition: all 0.3s ease;
+            transition: all 0.3s ease;
+
+            &:hover {
+              cursor: pointer;
+              color: #333;
+              border-color: #333;
+            }
+          }
+          .move-to-folder {
+            position: absolute;
+            right: 32px;
+          }
+          .new-folder {
+            position: absolute;
+            right: 6px;
+          }
         }
       }
       .items {
@@ -396,7 +423,7 @@ a {
           margin: 6px 4px 0;
           float: left;
           position: relative;
-          border: 2px solid #fff;
+          border: 2px solid #ddd;
 
           &.selected {
             border: 2px solid #ff6d16 !important;
@@ -412,7 +439,10 @@ a {
               position: absolute;
             }
           }
-
+          .tab-loader {
+            width: 20px;
+            margin-left: 120px;
+          }
           .tab-footer {
             height: 25px;
 
@@ -438,20 +468,23 @@ a {
   }
 }
 
-#page-section {
+#tab-section, #new-tab-section {
   position: absolute;
-  right: 269px;
-  left: 0px;
+  left: 270px;
+  right: 0px;
   height: 100%;
+}
 
-  #page-header {
+#tab-section {
+
+  #tab-header {
     position: relative;
-    height: 24px;
+    height: 27px;
     background-color: #ddd;
 
     .back-option, .forward-option, .refresh-option {
       display: inline-block;
-      font-size: 14px;
+      font-size: 16px;
       -webkit-touch-callout: none;
       -webkit-user-select: none;
       -khtml-user-select: none;
@@ -464,7 +497,7 @@ a {
       }
     }
     .back-option, .forward-option {
-      margin: 0 6px;
+      margin: 3px 6px;
     }
     .refresh-option {
       margin-left: 12px;
@@ -473,19 +506,70 @@ a {
       font-size: 13px;
       margin-left: 18px;
     }
-    .close-option {
-      color: #666;
+    .labels {
       float: right;
-      margin-right: 12px;
+      margin: 3px 42px 0 0;
+    }
+    .tab-options {
+      text-align: left;
+      margin: 3px 3px 0 0;
+      position: absolute;
+      top: 0;
+      right: 0;
+
+      .nav-option {
+        margin: 0 12px;
+
+        .dropdown-menu {                                                                                                                        
+          left: inherit;                                                                                                                        
+          right: 0px;                                                                                                                           
+        } 
+      }
     }
   }
-  .page-content {
+  .tab-content {
       margin: -24px 0 0;
       padding: 24px 0 0;
       background-color: #fff;
       height: 100%;
       width: 100%;
       border: 0;
-    }
+  }
 }
 
+#new-tab-section {
+  .new-tab {
+    .new-tab-content {
+      position: absolute;
+      margin: auto;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      height: 180px;
+      text-align: center;
+
+      .new-tab-input {
+        margin-top: 24px;
+
+        .url-input {
+          width: 570px;
+          height: 33px;
+          margin: 0;
+          border-radius: 0px;
+        }
+        .url-btn {
+          height: 33px;
+          line-height: 10px;
+          padding: 4px 6px;
+          border: 0;
+          color: #fff;
+          background: #ff6d16;
+        }
+      }
+      .bookmarklet-note {
+        margin-top: 24px;
+      }
+    }
+  }
+}

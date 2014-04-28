@@ -1,6 +1,6 @@
 /* jshint node: true */
-
-var _ = require('lodash'),    
+/*
+var _ = require('lodash'),
     responses = require('.././responses.js'),
     errors = require('.././errors.js');
 
@@ -18,7 +18,7 @@ exports.listboard = function (req, res, next, id) {
 
 //Create Later listboard
 exports.create = function (req, res) {
-    req.check('type').isInt().equals(1);    
+    req.check('type').isInt().equals(1);
 
     var errs = req.validationErrors();
     if (errs) return errors.sendBadRequest(res);
@@ -54,9 +54,9 @@ exports.destroy = function (req, res) {
 
     var listboard = req.listboard;
     req.user.removeListboard(listboard);
-    
+
     req.user.saveWithPromise()
         .then(responses.sendModelId(res, listboard._id), errors.ifErrorSendBadRequest(res))
         .then(userUpdate.deleteListboard.bind(null, req.user.id, listboard))
         .done();
-};
+};*/

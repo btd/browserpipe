@@ -2,17 +2,14 @@
  * @jsx React.DOM
  */
 
-var _state = require('../state'),
+var _state = require('../../../state'),
     $ = require('jquery'),
-    React = require('react'),
-    page = require('page');
+    React = require('react');
 
 var FolderComponent = React.createClass({
   folderClicked: function() {
-    if(_state.selectedItem)
-      _state.selectedFolder = _state.getItemById(this.props.folder._id);
-    else
-      page("/item/" + this.props.folder._id);
+    if(this.props.navigateToFolder)
+      this.props.navigateToFolder(this.props.folder);
   },
   closeOptionClicked: function(e) {
     e.stopPropagation();

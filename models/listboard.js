@@ -1,5 +1,5 @@
 // Listboard schema
-
+/*
 var Schema = require('mongoose').Schema,
     _ = require('lodash'),
     Item = require('./item');
@@ -46,4 +46,4 @@ ListboardSchema.methods.getContainerByExternalId = function (externalId) {
         throw new Error("Cannot be two containers with same external id on a listboard")
 }
 
-module.exports = ListboardSchema;
+module.exports = ListboardSchema;*/

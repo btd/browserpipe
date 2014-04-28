@@ -13,9 +13,11 @@ var model = require('moco').model;
 
 var State1 = model()
     .attr('browser')
+    .attr('archive')
     .attr('items', { collection: Items })
-    .attr('selectedFolder')
     .attr('selectedItem')
+    .attr('selectedFolder')
+    .attr('sidebarTab')
     .use(model.nestedObjects);
 
 var proto = {
@@ -26,6 +28,7 @@ var proto = {
         this.loadItems(initialOptions.items || []);
 
         this.browser = this.getItemById(initialOptions.user.browser);
+        this.archive = this.getItemById(initialOptions.user.archive);
     },
 
     //////////////////////////////////////////ITEMS//////////////////////////////////////
@@ -59,12 +62,51 @@ var proto = {
     removeItem: function (itemId) {
         this.items.removeById(itemId);
     },
-    serverAddItemToItem: function (parentId, item, success) {
-	      item.parent = parentId;
+    serverAddItemToBrowser: function (parentId, item, success) {
+	      item.browserParent = parentId;
         $.ajax({
-            url: '/items/' + parentId + '/items',
+            url: '/browser/items/' + parentId,
             type: "POST",
             data: JSON.stringify(item),
+            success: success
+        });
+    },
+    serverAddItemToArchive: function (parentId, item, success) {
+	      item.archiveParent = parentId;
+        $.ajax({
+            url: '/archive/items/' + parentId,
+            type: "POST",
+            data: JSON.stringify(item),
+            success: success
+        });
+    },
+    moveItemToBrowser: function(item, parentId, success) {
+        return $.ajax({
+            url: '/browser/items/' + item._id,
+            type: "PUT",
+            data: JSON.stringify({ parent: parentId }),
+            success: success
+        });
+    },
+    moveItemToArchive: function(item, parentId, success) {
+        return $.ajax({
+            url: '/archive/items/' + item._id,
+            type: "PUT",
+            data: JSON.stringify({ parent: parentId }),
+            success: success
+        });
+    },
+    removeItemFromBrowser: function(item, success) {
+        return $.ajax({
+            url: '/browser/items/' + item._id,
+            type: "DELETE",
+            success: success
+        });
+    },
+    removeItemFromArchive: function(item, success) {
+        return $.ajax({
+            url: '/archive/items/' + item._id,
+            type: "DELETE",
             success: success
         });
     },
@@ -76,6 +118,7 @@ var proto = {
             success: success
         });
     },
+    //Fully deletes item
     serverDeleteItem: function(item, success) {
         return $.ajax({
             url: '/items/' + item._id,

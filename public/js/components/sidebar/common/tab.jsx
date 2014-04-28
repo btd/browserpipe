@@ -2,8 +2,7 @@
  * @jsx React.DOM
  */
 
-var _state = require('../state'),
-    $ = require('jquery'),
+var _state = require('../../../state'),
     React = require('react'),
     page = require('page');
 
@@ -11,12 +10,12 @@ var TabComponent = React.createClass({
   tabClicked: function() {
     page("/item/" + this.props.tab._id);
   },
-  removeOptionClicked: function(e) {
-    e.stopPropagation();
-    _state.serverDeleteItem(this.props.tab);
-  },
   openURLClicked: function(e) {
     e.stopPropagation();
+  },
+  removeOptionClicked: function(e) {
+    e.stopPropagation();
+    this.props.removeTab(this.props.tab);
   },
   renderScreenshot: function() {
     if(this.props.viewScreenshot)
@@ -49,10 +48,13 @@ var TabComponent = React.createClass({
           </div>
         </div>
         { this.renderScreenshot() }
-        <div className="tab-footer">
-          <img className="tab-favicon" src={this.props.tab.favicon} />
-          <span className="tab-title" alt={ this.props.tab.title } >{ this.props.tab.title }</span>
-        </div>
+        { this.props.tab.favicon || this.props.tab.title?
+            (<div className="tab-footer">
+              <img className="tab-favicon" src={this.props.tab.favicon} />
+              <span className="tab-title" alt={ this.props.tab.title } >{ this.props.tab.title }</span>
+            </div>) :
+            (<img className="tab-loader" src="/img/loader.gif" alt="loading" />)
+        }
       </div>
     );
   }

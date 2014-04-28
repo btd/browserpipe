@@ -9,12 +9,36 @@ var _ = require('lodash'),
 
 var userUpdate = require('./user_update');
 
+//Add item
+exports.addItemToBrowser = function(req, res) {
+  req.check('type').isInt();
+  req.check('browserParent').notEmpty();
 
-exports.addItemToItem = function(parent, req, res) {
+  var errs = req.validationErrors();
+  if(errs) return errors.sendBadRequest(res);
+
+  var parent = req.currentItem;
   var item = new Item(_.pick(req.body, 'type', 'title', 'url', 'previous'));
-  item.parent = parent._id;
+  item.browserParent = parent._id;
   item.user = req.user._id;
+  return addItem(parent, item, req, res);
+}
 
+exports.addItemToArchive = function(req, res) {
+  req.check('type').isInt();
+  req.check('archiveParent').notEmpty();
+
+  var errs = req.validationErrors();
+  if(errs) return errors.sendBadRequest(res);
+
+  var parent = req.currentItem;
+  var item = new Item(_.pick(req.body, 'type', 'title', 'url', 'previous'));
+  item.archiveParent = parent._id;
+  item.user = req.user._id;
+  return addItem(parent, item, req, res);
+}
+
+var addItem = function(parent, item, req, res) {
   return Promise.cast(item.save())
     .then(function() {
       if(item.previous) {
@@ -40,19 +64,90 @@ exports.addItemToItem = function(parent, req, res) {
     .then(userUpdate.updateItem.bind(null, req.user._id, parent));
 };
 
-// this method used to add item to another item (because item could not exists without any parent container)
-exports.addToItem = function(req, res) {
-  req.check('type').isInt();
+//Move item
+exports.moveItemToBrowser = function(req, res) {
   req.check('parent').notEmpty();
 
   var errs = req.validationErrors();
   if(errs) return errors.sendBadRequest(res);
 
-  return exports.addItemToItem(req.currentItem, req, res);
-};
+  var item = req.currentItem;
+  var oldParentId = item.browserParent; //In case parent is changed
+  var newParentId = req.body.parent;
+  item.browserparent = newParentId;
+  return moveItem(item, newParentId, oldParentId, req, res);
+}
+
+exports.moveItemToArchive = function(req, res) {
+  req.check('parent').notEmpty();
+
+  var errs = req.validationErrors();
+  if(errs) return errors.sendBadRequest(res);
+
+  var item = req.currentItem;
+  var oldParentId = item.archiveParent; //In case parent is changed
+  var newParentId = req.body.parent;
+  item.arhiveparent = newParentId;
+  return moveItem(item, newParentId, oldParentId, req, res);
+}
+
+var moveItem = function(item, newParentId, oldParentId, req, res) {
+  if(newParentId !== oldParentId) {
+    return Item.byId({ _id: newParentId })
+      .then(function(parent) { //Update new parent
+        parent.items.push(item._id);
+        parent.markModified('items');
+        return Promise.cast(parent.save()).then(userUpdate.updateItem.bind(null, req.user._id, parent));
+      })
+      .then(function() { //Update old parent
+        return Item.byId({ _id: oldParentId })
+          .then(function(oldParent) {
+            oldParent.items.remove(item._id);
+            oldParent.markModified('items');
+            return Promise.cast(oldParent.save()).then(userUpdate.updateItem.bind(null, req.user._id, oldParent));
+          })
+      })
+      .then(function() { //Update item
+          return Promise.cast(item.save())
+      })
+      .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
+      .then(userUpdate.updateItem.bind(null, req.user._id, item))
+  }
+  else return responses.sendModelId(res, item._id);
+}
+
+
+//Remove item
+exports.removeItemFromBrowser = function(req, res) {
+  var item = req.currentItem;
+  var browserParentId = item.browserParent;
+  item.browserParent = undefined;
+  return removeItem(item, browserParentId, req, res);
+}
+
+exports.removeItemFromArchive = function(req, res) {
+  var item = req.currentItem;
+  var archiveParentId = item.archiveParent;
+  item.archiveParent = undefined;
+  return removeItem(item, archiveParentId, req, res);
+}
+
+var removeItem = function(item, parentId, req, res) {
+  return Item.byId({ _id: parentId })
+    .then(function(parent) { //Updates parent
+      parent.items.remove(item._id);
+      parent.markModified('items');
+      return Promise.cast(parent.save()).then(userUpdate.updateItem.bind(null, req.user._id, parent));
+    })
+    .then(function() { //Update item
+      Promise.cast(item.save())
+    })
+    .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
+    .then(userUpdate.updateItem.bind(null, req.user._id, item))
+}
 
 exports.addItemBookmarklet = function(req, res) {
-  req.check('url').notEmpty();
+/*  req.check('url').notEmpty();
 
   var errs = req.validationErrors();
   if(errs) return errors.sendBadRequest(res);
@@ -80,13 +175,12 @@ exports.addItemBookmarklet = function(req, res) {
     } else {
       res.redirect(redirect);
     }
-  })
+  })*/
 }
 
 //Update item
 exports.update = function(req, res) {
   var item = req.currentItem;
-  var oldParentId = item.parent; //In case parent is changed
 
   _.merge(item, _.pick(req.body, 'parent', 'title', 'items', 'scrollX', 'scrollY'));
   if(req.body.items)
@@ -95,24 +189,6 @@ exports.update = function(req, res) {
   return Promise.cast(item.save())
     .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
     .then(userUpdate.updateItem.bind(null, req.user._id, item))
-    .then(function() {
-      if(req.body.parent && req.body.parent !== oldParentId) //Update new parent
-        return Item.byId({ _id: item.parent })
-          .then(function(parent) {
-            parent.items.push(item._id);
-            parent.markModified('items');
-            return Promise.cast(parent.save()).then(userUpdate.updateItem.bind(null, req.user._id, parent));
-          })
-    })
-    .then(function() {
-      if(req.body.parent && req.body.parent !== oldParentId) //Update old parent
-        return Item.byId({ _id: oldParentId })
-          .then(function(oldParent) {
-            oldParent.items.remove(item._id);
-            oldParent.markModified('items');
-            return Promise.cast(oldParent.save()).then(userUpdate.updateItem.bind(null, req.user._id, oldParent));
-          })
-    })
 }
 
 //Find item by id
@@ -126,32 +202,9 @@ exports.item = function(req, res, next, id) {
     }, next);
 }
 
-//TODO need to send updates to client
-function removeItem(item) {
-  return Item.all({ _id: { $in: item.items } }).then(function(items) {
-    return Promise.all(items.map(removeItem));
-  }).then(function() {
-      item.deleted = true;
-      return item.save();
-    });
-}
-
 //Remove item
 exports.delete = function(req, res) {
-  var item = req.currentItem;
-
-  //1 delete parent reference
-  if(item.parent) { //simple item
-    return Item.byId({ _id: item.parent })
-      .then(function(parent) {
-        parent.items.remove(item._id);
-        return Promise.cast(parent.save()).then(userUpdate.updateItem.bind(null, req.user._id, parent));
-      })
-      .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
-      .then(removeItem.bind(null, item))//2 delete item
-  } else {//root item - should be listboard
-    errors.sendForbidden(res);
-  }
+  //TODO: fully delete item
 }
 
 exports.query = function(req, res, next, query) {

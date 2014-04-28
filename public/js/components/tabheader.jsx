@@ -7,10 +7,9 @@ var _state = require('../state'),
     page = require('page'),
     browser = require('../browser/main');
 
-var PageHeaderComponent = React.createClass({
+var TabHeaderComponent = React.createClass({
   getInitialState: function() {
       return {
-          selectedFolder: this.props.selectedFolder,
           selectedItem: this.props.selectedItem
       };
   },
@@ -53,11 +52,6 @@ var PageHeaderComponent = React.createClass({
       this.state.selectedItem._id
     );
   },
-  closeOptionClicked: function() {
-    page("/item/" + this.state.selectedFolder._id);
-    if(!$('#topbar-section').hasClass('expanded')) //if expand option is visible, it was collapsed before
-      window.parent.postMessage("collapse", "*");
-  },
   render: function() {
     return (
       <div>
@@ -71,9 +65,41 @@ var PageHeaderComponent = React.createClass({
           <i className="fa fa-refresh"></i>
         </div>
         <span className="message">{ "This is a snapshot of the page as it appeared on " + this.state.selectedItem.createdAt + ". To open the page "}<a target="_blank" href={this.state.selectedItem.url}>click here</a></span>
-        <a draggable="false" onClick={ this.closeOptionClicked } className="close-option">
-          <i className="fa fa-angle-double-right"></i>
-        </a>
+        <span className="labels">
+          <span className={"label label-info" + (this.state.selectedItem.browserParent?'':' hide')}>browser</span>
+          <span className={"label label-success" + (this.state.selectedItem.archiveParent?'':' hide')}>archive</span>
+          <span className={"label label-important" + (this.state.selectedItem.browserParent || this.state.selectedItem.archiveParent?' hide':'')}>trash</span>
+        </span>
+        <ul className="tab-options">
+          <li className="dropdown nav-option">
+            <a draggable="false"  href="#" data-toggle="dropdown" className="dropdown-toggle">
+              <i className="fa fa-gear"></i>
+            </a>
+            <ul className="dropdown-menu">
+              <li>
+                <a draggable="false"  tabIndex="-1" href="#">
+                  <i className="icon-none"><span>Edit</span></i>
+                </a>
+              </li>
+              <li>
+                <a draggable="false"  tabIndex="-1" href="#">
+                  <i className="icon-none"><span>Comment</span></i>
+                </a>
+              </li>
+              <li>
+                <a draggable="false"  tabIndex="-1" href="#">
+                  <i className="icon-none"><span>Share</span></i>
+                </a>
+              </li>
+              <li className="divider"></li>
+              <li>
+                <a draggable="false"  tabIndex="-1" href="#">
+                  <i className="icon-none"><span>Un-archive</span></i>
+                </a>
+              </li>
+            </ul>
+          </li>
+        </ul>
       </div>
     );
   }
@@ -81,15 +107,11 @@ var PageHeaderComponent = React.createClass({
 
 
 module.exports.render = function (
-    isIframe,
-    selectedFolder,
     selectedItem
   ) {
   return React.renderComponent(
-    <PageHeaderComponent
-      isIframe={isIframe}
-      selectedFolder={selectedFolder}
+    <TabHeaderComponent
       selectedItem={selectedItem} />,
-    document.getElementById('page-header')
+    document.getElementById('tab-header')
   );
 };
