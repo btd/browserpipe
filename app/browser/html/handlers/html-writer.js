@@ -123,8 +123,7 @@ function isStylesheet(name, attributes) {
   return name == 'link' &&
     attributes.href &&
     util.isHttpURI(attributes.href) &&
-    (attributes.rel && attributes.rel.toLowerCase() == 'stylesheet') &&
-    (attributes.type && attributes.type.toLowerCase().indexOf('text/css') >= 0);
+    (attributes.rel && attributes.rel.toLowerCase() == 'stylesheet');//TODO we in some way should understand content type from type or headers
 }
 
 // check if this is image that we can download
