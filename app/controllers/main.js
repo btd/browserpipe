@@ -17,11 +17,5 @@ exports.home = function (req, res, next) {
         res.render('main/index')
 }
 
-//Chrome Extension
-exports.chromeExtension = function (req, res) {
-    res.contentType('application/x-chrome-extension');
-    res.sendfile('app/extensions/chrome/build/1.0/extension.crx');
-}
-
 
 

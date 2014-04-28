@@ -26,7 +26,7 @@ require('./passport')(passport, config);
 var app = express();
 
 // Bootstrap express settings
-var server = require('./express')(app, config, passport);
+var server = require('./express')(app, passport);
 
 // Bootstrap routes
 require('./routes')(app, passport);

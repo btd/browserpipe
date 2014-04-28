@@ -7,7 +7,7 @@ var config = require('../config');
 var manifest = require('../manifest');
 
 // App settings and middleware
-module.exports = function(app, config, passport) {
+module.exports = function(app, passport) {
 
   //We update the limits of the size we accept
   app.use(express.json({limit: '30mb'}));
@@ -17,6 +17,7 @@ module.exports = function(app, config, passport) {
   app.set('views', __dirname + '/views')
   app.set('view engine', 'jade')
   app.set('view options', {'layout': false});
+
 
   //var cm = new (require('./connect-mincer'))(config.mincer);
   //require('./middlewares/less-mincer')(cm.environment);

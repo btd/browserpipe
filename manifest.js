@@ -4,6 +4,8 @@ var fs = require('fs');
 var http = require('http');
 var url = require('url');
 
+var config = require('./config');
+
 function loadManifest(manifestPath, prependUrl) {
   var manifest = manifests[manifestPath];
   if (!manifest) {
@@ -13,7 +15,7 @@ function loadManifest(manifestPath, prependUrl) {
       manifest = {};
     }
 
-    if (process.env.NODE_ENV != 'development') {
+    if (config.env != 'development') {
       manifests[manifestPath] = manifest;
     }
   }
