@@ -14,9 +14,11 @@ var TopSideBarComponent = React.createClass({
       <div className="top-sidebar">
         <div className="commands">
           <span className="logo"><img src={"<%= url('img/logo/logo-small.png') %>"} alt="Browserpipe logo small"/></span>
-          <div className="search-options">
+          <div className="search-options input-append">
             <input type="text" placeholder="Search a tab" className="search-input" ref="searchInput" />
-            <input type="button" className="search-btn" value="Search" />
+            <button className="btn search-btn">
+              <i className="fa fa-search"></i>
+            </button>
           </div>
         </div>
         <ul className="nav nav-tabs">
@@ -26,8 +28,8 @@ var TopSideBarComponent = React.createClass({
           <li className={this.props.selectedTab === "archive"? "active" : ""} onClick={ this.changeSelectedTab('archive') }>
             <a href="#">Archive</a>
          </li>
-          <li className={ "trash" + (this.props.selectedTab === "trash"? " active" : "")} onClick={ this.changeSelectedTab('trash') }>
-            <a href="#"><i className="fa fa-trash-o"></i></a>
+          <li className={ "recent" + (this.props.selectedTab === "recent"? " active" : "")} onClick={ this.changeSelectedTab('recent') }>
+            <a href="#"><i className="fa fa-clock-o"></i></a>
           </li>
         </ul>
       </div>

@@ -4,10 +4,11 @@
 
 var _state = require('../../state'),
     React = require('react'),
+    $ = require('jquery'),
     Folder = require('./common/folder'),
     Tab= require('./common/tab');
 
-var FoldersComponent = React.createClass({
+var ArchiveComponent = React.createClass({
   folderUpClicked: function() {
     _state.selectedFolder = _state.getItemById(this.props.selectedFolder.archiveParent);
   },
@@ -26,10 +27,10 @@ var FoldersComponent = React.createClass({
     _state.removeItemFromArchive(tab);
   },
   moveTab: function() {
-    _state.serverUpdateItem({
-      _id: this.props.selectedItem._id,
-      parent: this.props.selectedFolder._id
-    }, function() {
+    _state.moveItemToArchive(
+      this.props.selectedItem._id,
+      this.props.selectedFolder._id,
+      function() {
       var msg = Messenger().post({
         message: "Tab moved",
         hideAfter: 6
@@ -64,7 +65,7 @@ var FoldersComponent = React.createClass({
     var self = this;
     return this.props.selectedFolder.items.filter(function(itemId){
       var item = _state.getItemById(itemId);
-      return item.type === 2;
+      return item.isFolder();
     }).map(function(folderId){
       var folder = _state.getItemById(folderId);
       return  <Folder folder={ folder } navigateToFolder={ self.navigateToFolder } />
@@ -74,11 +75,12 @@ var FoldersComponent = React.createClass({
     var self = this;
     return this.props.selectedFolder.items.filter(function(itemId){
       var item = _state.getItemById(itemId);
-      return item.type !== 2;
+      return !item.isFolder();
     }).map(function(itemId){
       var tab = _state.getItemById(itemId);
       return  <Tab
         tab={ tab }
+        index={ 0 }
         selectedItem={ self.props.selectedItem }
         removeTab= { self.removeTab }
         viewScreenshot={ self.props.viewScreenshot } />
@@ -86,7 +88,7 @@ var FoldersComponent = React.createClass({
   },
   render: function() {
     return (
-      <div className="folders">
+      <div className="archive">
         <div className="options">
           { this.renderBreadcrumb() }
           { this.renderMoveOption() }
@@ -105,8 +107,21 @@ var FoldersComponent = React.createClass({
         </div>
       </div>
     );
+  },
+  updateScrollbar: function() {
+    $('#sidebar-section .archive .items').perfectScrollbar();
+  },
+  componentDidMount: function() {
+    var self = this;
+    $(window).resize(function () {
+      self.updateScrollbar();
+    });
+    this.updateScrollbar();
+  },
+  componentDidUpdate: function() {
+    this.updateScrollbar();
   }
 });
 
 
-module.exports = FoldersComponent
+module.exports = ArchiveComponent

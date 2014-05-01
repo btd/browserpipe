@@ -17,39 +17,34 @@ exports.addItemToBrowser = function(req, res) {
   var errs = req.validationErrors();
   if(errs) return errors.sendBadRequest(res);
 
+  var updateBrowser = false;
   var parent = req.currentItem;
   var item = new Item(_.pick(req.body, 'type', 'title', 'url', 'previous'));
+  //We set the parent in the browser;
   item.browserParent = parent._id;
   item.user = req.user._id;
-  return addItem(parent, item, req, res);
-}
+  //If parent is not in browser is not the browser root, we move it to browser;
+  //This is to show from where there item comes from
+  if(!parent.browserParent && parent._id !== req.user.browser) {
+    parent.browserParent = req.user.browser;
+    updateBrowser = true;
+  }
 
-exports.addItemToArchive = function(req, res) {
-  req.check('type').isInt();
-  req.check('archiveParent').notEmpty();
+  //Add item to parent, if it has a previous we put it in the same position
+  if(item.previous) {
+    var index = parent.items.indexOf(item.previous);
+    if(index >= 0) parent.items[index] = item._id;
+    else parent.items.push(item._id);
+  } 
+  else
+    parent.items.push(item._id);
+  parent.markModified('items');
 
-  var errs = req.validationErrors();
-  if(errs) return errors.sendBadRequest(res);
 
-  var parent = req.currentItem;
-  var item = new Item(_.pick(req.body, 'type', 'title', 'url', 'previous'));
-  item.archiveParent = parent._id;
-  item.user = req.user._id;
-  return addItem(parent, item, req, res);
-}
-
-var addItem = function(parent, item, req, res) {
-  return Promise.cast(item.save())
+  Promise.cast(parent.save())
     .then(function() {
-      if(item.previous) {
-        var index = parent.items.indexOf(item.previous);
-        if(index >= 0) parent.items[index] = item._id;
-        else parent.items.push(item._id);
-      } else {
-        parent.items.push(item._id);
-      }
-      parent.markModified('items');
-      return Promise.cast(parent.save());
+        if(updateBrowser)
+          return appendItemToParent(parent, req.user.browser, req, res);
     })
     .then(function() {
       if(item.previous)
@@ -59,23 +54,76 @@ var addItem = function(parent, item, req, res) {
             return Promise.cast(previous.save()).then(userUpdate.updateItem.bind(null, req.user._id, previous));
           })
     })
-    .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
-    .then(userUpdate.createItem.bind(null, req.user._id, item))
-    .then(userUpdate.updateItem.bind(null, req.user._id, parent));
-};
+    .then(function() {
+      Promise.cast(item.save())
+        .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
+        .then(userUpdate.createItem.bind(null, req.user._id, item))
+        .then(userUpdate.updateItem.bind(null, req.user._id, parent));
+    });
+}
+
+exports.addItemToArchive = function(req, res) {
+  //TODO: we are not adding items directly to archive
+}
+
+var switchBrowserParentItems = function(oldItemId, newItem, req, res) {
+  return Item.byId({ _id: oldItemId })
+    .then(function(oldItem) {
+      newItem.browserParent = oldItem.browserParent ? oldItem.browserParent : req.user.browser;
+      oldItem.browserParent = null; //We hide old item from browser
+      return Promise.cast(oldItem.save()) 
+        .then(userUpdate.updateItem.bind(null, req.user._id, oldItem))
+    })
+    .then(function() {
+      Item.byId({ _id: newItem.browserParent })
+        .then(function(browserParent) {
+          var index = browserParent.items.indexOf(oldItemId);
+          if(index >= 0) {
+            browserParent.items.remove(oldItemId);
+            browserParent.items[index] = newItem._id;
+          }
+          else browserParent.items.push(newItem._id);
+          browserParent.markModified('items');
+          return Promise.cast(browserParent.save())
+            .then(userUpdate.updateItem.bind(null, req.user._id, browserParent));
+        })
+    })
+    .then(function() {
+      Promise.cast(newItem.save())
+        .then(userUpdate.updateItem.bind(null, req.user._id, newItem));
+    })
+}
+
+var appendItemToParent = function(item, parentId, req, res) {
+    return Promise.cast(item.save())
+      .then(function() {
+        return Item.byId({ _id: parentId })
+          .then(function(parent) {
+            if(parent.items.indexOf(item._id) === -1) {
+              parent.items.push(item._id);
+              parent.markModified('items');
+              return Promise.cast(parent.save())
+                .then(userUpdate.updateItem.bind(null, req.user._id, parent));
+            }
+          })
+      })
+}
 
 //Move item
 exports.moveItemToBrowser = function(req, res) {
-  req.check('parent').notEmpty();
-
-  var errs = req.validationErrors();
-  if(errs) return errors.sendBadRequest(res);
-
   var item = req.currentItem;
-  var oldParentId = item.browserParent; //In case parent is changed
-  var newParentId = req.body.parent;
-  item.browserparent = newParentId;
-  return moveItem(item, newParentId, oldParentId, req, res);
+  if(req.body.isPrevious && item.next) //If navigating back, we update also next
+    return switchBrowserParentItems(item.next, item, req, res)
+             .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res));
+  else if(req.body.isNext && item.previous) //If navigating forward, we update also previous
+    return switchBrowserParentItems(item.previous, item, req, res)
+             .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res));
+  else {
+    item.browserParent = req.user.browser;
+    return appendItemToParent(item, item.browserParent, req, res)
+            .then(userUpdate.updateItem.bind(null, req.user._id, item))
+            .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res));
+  }
 }
 
 exports.moveItemToArchive = function(req, res) {
@@ -85,37 +133,11 @@ exports.moveItemToArchive = function(req, res) {
   if(errs) return errors.sendBadRequest(res);
 
   var item = req.currentItem;
-  var oldParentId = item.archiveParent; //In case parent is changed
-  var newParentId = req.body.parent;
-  item.arhiveparent = newParentId;
-  return moveItem(item, newParentId, oldParentId, req, res);
+  item.archiveParent = req.body.parent;
+  return appendItemToParent(item, item.archiveParent, req, res)
+          .then(userUpdate.updateItem.bind(null, req.user._id, item))
+          .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res));
 }
-
-var moveItem = function(item, newParentId, oldParentId, req, res) {
-  if(newParentId !== oldParentId) {
-    return Item.byId({ _id: newParentId })
-      .then(function(parent) { //Update new parent
-        parent.items.push(item._id);
-        parent.markModified('items');
-        return Promise.cast(parent.save()).then(userUpdate.updateItem.bind(null, req.user._id, parent));
-      })
-      .then(function() { //Update old parent
-        return Item.byId({ _id: oldParentId })
-          .then(function(oldParent) {
-            oldParent.items.remove(item._id);
-            oldParent.markModified('items');
-            return Promise.cast(oldParent.save()).then(userUpdate.updateItem.bind(null, req.user._id, oldParent));
-          })
-      })
-      .then(function() { //Update item
-          return Promise.cast(item.save())
-      })
-      .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
-      .then(userUpdate.updateItem.bind(null, req.user._id, item))
-  }
-  else return responses.sendModelId(res, item._id);
-}
-
 
 //Remove item
 exports.removeItemFromBrowser = function(req, res) {
@@ -141,9 +163,9 @@ var removeItem = function(item, parentId, req, res) {
     })
     .then(function() { //Update item
       Promise.cast(item.save())
+        .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
+        .then(userUpdate.updateItem.bind(null, req.user._id, item))
     })
-    .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
-    .then(userUpdate.updateItem.bind(null, req.user._id, item))
 }
 
 exports.addItemBookmarklet = function(req, res) {

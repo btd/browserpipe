@@ -80,17 +80,20 @@ var proto = {
             success: success
         });
     },
-    moveItemToBrowser: function(item, parentId, success) {
+    moveItemToBrowser: function(itemId, isPrevious, isNext, success) {
+        var data = {};
+        if(isPrevious) data.isPrevious = true;
+        else if(isNext) data.isNext = true;
         return $.ajax({
-            url: '/browser/items/' + item._id,
+            url: '/browser/items/' + itemId,
             type: "PUT",
-            data: JSON.stringify({ parent: parentId }),
+            data: JSON.stringify(data),
             success: success
         });
     },
-    moveItemToArchive: function(item, parentId, success) {
+    moveItemToArchive: function(itemId, parentId, success) {
         return $.ajax({
-            url: '/archive/items/' + item._id,
+            url: '/archive/items/' + itemId,
             type: "PUT",
             data: JSON.stringify({ parent: parentId }),
             success: success

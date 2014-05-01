@@ -13,7 +13,7 @@ var FolderComponent = React.createClass({
   },
   closeOptionClicked: function(e) {
     e.stopPropagation();
-    _state.serverDeleteItem(this.props.folder);
+    _state.removeItemFromArchive(this.props.folder);
   },
   editOptionClicked: function(e) {
     e.stopPropagation();
@@ -65,21 +65,17 @@ var FolderComponent = React.createClass({
   render: function() {
     return (
       <div ref="folder" className="folder" onClick={ this.folderClicked } >
-        <div className="mask" >
-          <div className="mask-options">
-            <div className="mask-option right" onClick={ this.closeOptionClicked } >
-              <i ref="folderCloseOption" className="fa fa-times"></i>
-            </div>
-            <div className="mask-option right" onClick={ this.editOptionClicked }  >
-              <i ref="folderEditOption" className="fa fa-pencil"></i>
-            </div>
-          </div>
-        </div>
         <div ref="folderInner" >
         { this.renderItemTitle() }
         </div>
         <div ref="folderTitleEditor" className="hide" >
         { this.renderTitleEditor() }
+        </div>
+        <div className="remove-option" onClick={ this.closeOptionClicked } >
+          <i ref="folderCloseOption" className="fa fa-times"></i>
+        </div>
+        <div className="edit-option" onClick={ this.editOptionClicked }  >
+          <i ref="folderEditOption" className="fa fa-pencil"></i>
         </div>
       </div>
     );

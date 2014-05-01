@@ -6,13 +6,14 @@ var _state = require('../state'),
     React = require('react'),
     TopBarComponent = require('./sidebar/topsidebar'),
     BrowserComponent = require('./sidebar/browser'),
-    FoldersComponent = require('./sidebar/folders'),
-    TrashComponent = require('./sidebar/trash'),
+    ArchiveComponent = require('./sidebar/archive'),
+    RecentComponent = require('./sidebar/recent'),
     BottomBarComponent = require('./sidebar/bottomsidebar');
 
 var SidebarComponent = React.createClass({
   getInitialState: function() {
       return {
+          items: this.props.items,
           selectedItem: this.props.selectedItem,
           selectedFolder: this.props.selectedFolder,
           sidebarTab: this.props.sidebarTab,
@@ -25,13 +26,14 @@ var SidebarComponent = React.createClass({
   renderSelectedTab: function() {
     switch(this.state.sidebarTab) {
       case "archive":
-          return (<FoldersComponent
+          return (<ArchiveComponent
             viewcreenshot={ this.state.viewScreenshot }
             selectedFolder={ this.state.selectedFolder }
             selectedItem={ this.state.selectedItem } />)
-      case "trash":
-          return (<TrashComponent
+      case "recent":
+          return (<RecentComponent
             viewcreenshot={ this.state.viewScreenshot }
+            items={ this.state.items }
             selectedItem={ this.state.selectedItem } />)
       default:
           return (<BrowserComponent
@@ -56,12 +58,14 @@ var SidebarComponent = React.createClass({
 
 
 module.exports.render = function (
+    items,
     selectedItem,
     selectedFolder,
     sidebarTab
   ) {
   return React.renderComponent(
     <SidebarComponent
+      items={items}
       selectedItem={selectedItem}
       selectedFolder={selectedFolder}
       sidebarTab={sidebarTab} />,

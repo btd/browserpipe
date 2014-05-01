@@ -67,6 +67,12 @@ exports.open = function(url) {
 exports.createInBrowser = function(parentId, url, callback) {
   _state.serverAddItemToBrowser(parentId, { type: 0, url: url }, function(item) {
     if(callback) callback(item);
+    setTimeout(function() {
+      $.ajax({
+        url: ('/html-item/' + item._id + '?url=' + encodeURIComponent(url) + '&width=' + $(window).width() + '&height=' + $(window).height()),
+        cache: true
+      });
+    }, 1000);
   });
 }
 
@@ -75,6 +81,7 @@ exports.createAndOpenInBrowser = function(parentId, url, previousId) {
     //TODO: navigation to the just added container is not working because websockets is taking more time to add it than ajax reponse.
     //We should fix this by sending crud request to server via websockets instead of ajax.
     setTimeout(function() {
+      _state.sidebarTab = "browser";
       page('/item/' + item._id);
     }, 1000);
   });
