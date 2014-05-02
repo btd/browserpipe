@@ -71,11 +71,11 @@ var FolderComponent = React.createClass({
         <div ref="folderTitleEditor" className="hide" >
         { this.renderTitleEditor() }
         </div>
-        <div className="remove-option" onClick={ this.closeOptionClicked } >
-          <i ref="folderCloseOption" className="fa fa-times"></i>
-        </div>
         <div className="edit-option" onClick={ this.editOptionClicked }  >
           <i ref="folderEditOption" className="fa fa-pencil"></i>
+        </div>
+        <div className="remove-option" onClick={ this.closeOptionClicked } >
+          <i ref="folderCloseOption" className="fa fa-times"></i>
         </div>
       </div>
     );

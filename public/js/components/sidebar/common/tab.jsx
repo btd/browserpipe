@@ -10,6 +10,17 @@ var TabComponent = React.createClass({
   tabClicked: function() {
     page("/item/" + this.props.tab._id);
   },
+  moveTab: function() {
+    _state.moveItemToArchive(
+      this.props.tab._id,
+      this.props.selectedFolder._id,
+      function() {
+      var msg = Messenger().post({
+        message: "Tab moved",
+        hideAfter: 6
+      });
+    });
+  },
   removeOptionClicked: function(e) {
     e.stopPropagation();
     this.props.removeTab(this.props.tab);
@@ -29,29 +40,24 @@ var TabComponent = React.createClass({
     }
     else return { top: 0, left: 0 }
   },
-  getTabStyle: function() {
-    var width = 248 - (10 * this.props.index);
-    var left = 9 + (10 * this.props.index);
-    return {
-      width: width,
-      marginLeft: left
-    }
+  getTabStyle: function() {     
+    var style = {};
+    style.width = (100 - (2 * this.props.index)) + "%";
+    if(this.props.tab.archiveParent && this.props.showArchiveLabel)
+      style.borderLeft= "4px solid #ff6d16;";
+    return style;
   },
-  renderLabel: function() {
-    if(this.props.tab.browserParent && _state.sidebarTab === "archive")
-      return <span className="label label-info tab-label">b</span>
-    else if(this.props.tab.archiveParent && _state.sidebarTab === "browser")
-      return <span className="label label-success tab-label">a</span>
+  isSelected: function() {
+    return _state.selectedItem && this.props.selectedItem._id === this.props.tab._id;
   },
   render: function() {
     return (
-      <div ref="tab" className={"tab" + (this.props.selectedItem && this.props.selectedItem._id === this.props.tab._id? " selected": "") } onClick={ this.tabClicked } style={ this.getTabStyle() }>
+      <div ref="tab" className={"tab" + (this.isSelected()? " selected": "") } onClick={ this.tabClicked } style={ this.getTabStyle() }>
         { this.renderScreenshot() }
         { this.props.tab.favicon || this.props.tab.title?
             (<div className="tab-footer">
               <img className="tab-favicon" src={this.props.tab.favicon} />
               <span className="tab-title" alt={ this.props.tab.title } >{ this.props.tab.title }</span>
-              { this.renderLabel() }
               { this.props.removeTab?
                 <div className="remove-option right" onClick={ this.removeOptionClicked } >
                   <i className="fa fa-times"></i>

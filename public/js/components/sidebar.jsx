@@ -6,7 +6,6 @@ var _state = require('../state'),
     React = require('react'),
     TopBarComponent = require('./sidebar/topsidebar'),
     BrowserComponent = require('./sidebar/browser'),
-    ArchiveComponent = require('./sidebar/archive'),
     RecentComponent = require('./sidebar/recent'),
     BottomBarComponent = require('./sidebar/bottomsidebar');
 
@@ -25,20 +24,18 @@ var SidebarComponent = React.createClass({
   },
   renderSelectedTab: function() {
     switch(this.state.sidebarTab) {
-      case "archive":
-          return (<ArchiveComponent
-            viewcreenshot={ this.state.viewScreenshot }
-            selectedFolder={ this.state.selectedFolder }
-            selectedItem={ this.state.selectedItem } />)
       case "recent":
           return (<RecentComponent
             viewcreenshot={ this.state.viewScreenshot }
             items={ this.state.items }
             selectedItem={ this.state.selectedItem } />)
       default:
-          return (<BrowserComponent
-            viewcreenshot={ this.state.viewScreenshot }
-            selectedItem={ this.state.selectedItem } />)
+          return (<span>
+            <BrowserComponent
+              viewcreenshot={ this.state.viewScreenshot }
+              selectedItem={ this.state.selectedItem }
+              selectedFolder={ this.state.selectedFolder} />
+          </span>)
     }
   },
   render: function() {

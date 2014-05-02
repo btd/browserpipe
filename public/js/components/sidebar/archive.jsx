@@ -26,17 +26,6 @@ var ArchiveComponent = React.createClass({
   removeTab: function(tab) {
     _state.removeItemFromArchive(tab);
   },
-  moveTab: function() {
-    _state.moveItemToArchive(
-      this.props.selectedItem._id,
-      this.props.selectedFolder._id,
-      function() {
-      var msg = Messenger().post({
-        message: "Tab moved",
-        hideAfter: 6
-      });
-    });
-  },
   renderBreadcrumb: function() {
     var breadcrumbItems = [];
     var last = true;
@@ -46,20 +35,14 @@ var ArchiveComponent = React.createClass({
       folder = folder.archiveParent? _state.getItemById(folder.archiveParent) : null;
       last = false;
     }
-    return  <div className="breadcrumb"><ol className="breadcrumb-inner">{ breadcrumbItems }</ol></div>
+    return  <ol className="breadcrumb">{ breadcrumbItems }</ol>
   },
   renderBreadcrumbItem: function(item, last) {
-    var title = item._id !== _state.archive._id? (item.title? item.title : 'New Folder') : 'Home';
+    var title = item._id !== _state.archive._id? (item.title? item.title : 'New Folder') : 'Archive';
     return <li className={ last? 'active' : ''} >
              { last? title : <a data-bpipe-item-id={ item._id } href="#" onClick={ this.breadcrumbItemClicked }>{ title }</a> }
              { last? '' : <span className="divider">/</span> }
            </li>
-  },
-  renderMoveOption: function() {
-    if(this.props.selectedItem && this.props.selectedItem.archiveParent !== this.props.selectedFolder._id)
-      return <div className="move-to-folder" title="Move tab to this folder" onClick={ this.moveTab }>
-        <i className="fa fa-caret-square-o-down"></i>
-      </div>
   },
   renderFolders: function() {
     var self = this;
@@ -83,23 +66,19 @@ var ArchiveComponent = React.createClass({
         index={ 0 }
         selectedItem={ self.props.selectedItem }
         removeTab= { self.removeTab }
+        showArchiveLabel={ false }
         viewScreenshot={ self.props.viewScreenshot } />
     })
   },
   render: function() {
     return (
       <div className="archive">
-        <div className="options">
-          { this.renderBreadcrumb() }
-          { this.renderMoveOption() }
-          <div className="new-folder" title="Add new folder" onClick={ this.newFolderClicked }>
-            <i className="fa fa-folder"></i>
-          </div>
-        </div>
         <div className="items">
+          { this.renderBreadcrumb() }
           <div className="clearfix">
             <div className={"folder folder-up" + (this.props.selectedFolder._id === _state.archive._id?' hide':'')} title="Go one folder up" onClick={ this.folderUpClicked }>...</div>
             { this.renderFolders() }
+            <div className="new-folder" title="Add new folder" onClick={ this.newFolderClicked }>Add folder</div>
           </div>
           <div className="clearfix">
             { this.renderItems() }
@@ -107,19 +86,6 @@ var ArchiveComponent = React.createClass({
         </div>
       </div>
     );
-  },
-  updateScrollbar: function() {
-    $('#sidebar-section .archive .items').perfectScrollbar();
-  },
-  componentDidMount: function() {
-    var self = this;
-    $(window).resize(function () {
-      self.updateScrollbar();
-    });
-    this.updateScrollbar();
-  },
-  componentDidUpdate: function() {
-    this.updateScrollbar();
   }
 });
 

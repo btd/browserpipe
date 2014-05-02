@@ -23,11 +23,8 @@ var TopSideBarComponent = React.createClass({
         </div>
         <ul className="nav nav-tabs">
           <li className={this.props.selectedTab === "browser"? "active" : ""} onClick={ this.changeSelectedTab('browser') } >
-            <a href="#">Browser</a>
+            <a href="#">Open tabs</a>
           </li>
-          <li className={this.props.selectedTab === "archive"? "active" : ""} onClick={ this.changeSelectedTab('archive') }>
-            <a href="#">Archive</a>
-         </li>
           <li className={ "recent" + (this.props.selectedTab === "recent"? " active" : "")} onClick={ this.changeSelectedTab('recent') }>
             <a href="#"><i className="fa fa-clock-o"></i></a>
           </li>

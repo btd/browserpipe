@@ -35,7 +35,7 @@ exports.addItemToBrowser = function(req, res) {
     var index = parent.items.indexOf(item.previous);
     if(index >= 0) parent.items[index] = item._id;
     else parent.items.push(item._id);
-  } 
+  }
   else
     parent.items.push(item._id);
   parent.markModified('items');
@@ -63,7 +63,25 @@ exports.addItemToBrowser = function(req, res) {
 }
 
 exports.addItemToArchive = function(req, res) {
-  //TODO: we are not adding items directly to archive
+  req.check('type').isInt();
+
+  var errs = req.validationErrors();
+  if(errs) return errors.sendBadRequest(res);
+
+  var parent = req.currentItem;
+  var item = new Item(_.pick(req.body, 'type', 'title', 'url', 'previous'));
+  item.archiveParent = parent._id;
+  item.user = req.user._id;
+  parent.items.push(item._id);
+  parent.markModified('items');
+
+  Promise.cast(parent.save())
+    .then(function() {
+      Promise.cast(item.save())
+        .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
+        .then(userUpdate.createItem.bind(null, req.user._id, item))
+        .then(userUpdate.updateItem.bind(null, req.user._id, parent));
+    });
 }
 
 var switchBrowserParentItems = function(oldItemId, newItem, req, res) {
@@ -71,7 +89,7 @@ var switchBrowserParentItems = function(oldItemId, newItem, req, res) {
     .then(function(oldItem) {
       newItem.browserParent = oldItem.browserParent ? oldItem.browserParent : req.user.browser;
       oldItem.browserParent = null; //We hide old item from browser
-      return Promise.cast(oldItem.save()) 
+      return Promise.cast(oldItem.save())
         .then(userUpdate.updateItem.bind(null, req.user._id, oldItem))
     })
     .then(function() {

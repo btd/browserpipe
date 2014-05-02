@@ -6,6 +6,7 @@ var _state = require('../../state'),
     React = require('react'),
     $ = require('jquery'),
     page = require('page'),
+    ArchiveComponent = require('./archive'),
     Tab= require('./common/tab');
 
 var BrowserComponent = React.createClass({
@@ -29,6 +30,7 @@ var BrowserComponent = React.createClass({
             index={ index }
             selectedItem={ self.props.selectedItem }
             removeTab= { self.removeTab }
+            showArchiveLabel={ true }
             viewScreenshot={ self.props.viewScreenshot } />
             { self.renderItems(tab, index + 1) }
         </span>
@@ -45,22 +47,13 @@ var BrowserComponent = React.createClass({
           <div className="new-tab" title="Add new tab" onClick={ this.newTabClicked }>
             <i className="fa fa-plus"></i>
           </div>
+          <ArchiveComponent
+            viewcreenshot={ this.props.viewScreenshot }
+            selectedFolder={ this.props.selectedFolder }
+            selectedItem={ this.props.selectedItem } />
         </div>
       </div>
     );
-  },
-  updateScrollbar: function() {
-    $('#sidebar-section .browser .items').perfectScrollbar();
-  },
-  componentDidMount: function() {
-    var self = this;
-    $(window).resize(function () {
-      self.updateScrollbar();
-    });
-    this.updateScrollbar();
-  },
-  componentDidUpdate: function() {
-    this.updateScrollbar();
   }
 });
 

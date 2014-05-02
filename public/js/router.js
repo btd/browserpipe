@@ -15,8 +15,6 @@ require('bootstrap-dropdown');
 require('bootstrap-modal');
 //Notification system
 require('messenger');
-//Scrollbar
-require('perfect-scrollbar');
 
 var sidebarComponent, tabHeaderComponent, newTabComponent; //react component instances
 var isIframe = (window != window.parent);
@@ -43,10 +41,12 @@ var loadTabHeaderComponent = function() {
   if(_state.selectedItem)
     if(!tabHeaderComponent) {
       tabHeaderComponent = TabHeaderComponent.render(
+        _state.selectedFolder,
         _state.selectedItem
       );
     } else {
       tabHeaderComponent.setState({
+        selectedFolder: _state.selectedFolder,
         selectedItem: _state.selectedItem
       });
     }
@@ -114,7 +114,7 @@ page('/item/:id', function(ctx) {
             _state.selectedFolder = _state.archive;
         }
         else if(item.archiveParent) {
-          _state.sidebarTab = "archive";
+          _state.sidebarTab = "browser";
           _state.selectedFolder = _state.getItemById(item.archiveParent);
         }
         else {

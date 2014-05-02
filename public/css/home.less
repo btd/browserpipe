@@ -3,7 +3,6 @@
 @import "common/colors.less";
 @import "common/util.less";
 @import "messenger/messenger.less";
-@import "perfect-scrollbar/perfect-scrollbar.less";
 
 * {
   font-family: "Lucida Grande", "Lucida Unicode MS", sans-serif;
@@ -35,6 +34,10 @@ body {
       }
     }
   }
+}
+
+.label-warning {
+  background-color: #ff6d16;
 }
 
 .loader {
@@ -125,7 +128,7 @@ a {
 
   .sidebar {
     border-right: 6px solid #ddd;
-    width: 270px;
+    width: 277px;
     position: absolute;
     left: 0;
     height: 100%;
@@ -133,7 +136,7 @@ a {
     .top-sidebar {
       background-color: #ddd;
       padding-top: 3px;
-      height: 61px;
+      height: 55px;
       z-index: 100;
       position: relative;
 
@@ -176,13 +179,14 @@ a {
         }
       }
       .nav-tabs {
-        margin: 3px 0  6px 0;
+        margin: 3px 0  0 0;
 
         li {
           a {
             color: #666;
             font-weight: bold;
-            padding: 4px 12px;
+            font-size: 13px;
+            padding: 1px 12px;
           }
           &.recent {
             float: right;
@@ -237,13 +241,11 @@ a {
     }
     .sidebar-content {
       height: 100%;
-      margin: -61px 0 -27px;
-      padding: 61px 0 27px;
+      margin: -55px 0 -27px;
+      padding: 55px 0 27px;
 
-      .browser, .archive, .recent {
+      .browser, .recent {
         height: 100%;
-        margin-bottom: -27px;
-        padding-bottom: 27px;
       }
 
       .browser {
@@ -251,7 +253,7 @@ a {
         .new-tab {
           font-size: 14px;
           text-align: center;
-          margin: 12px;
+          margin: 12px 12px 24px;
           padding: 0 3px;
           border: 1px dashed #999;
           cursor: default;
@@ -266,71 +268,72 @@ a {
             border-color: #333;
           }
         }
-      }
-      .archive {
-
-        .options {
-          border-bottom: 1px solid #ddd;
-          height: 27px;
+        .archive {
+          border-top: 1px solid #ddd;
 
           .breadcrumb {
-            overflow: hidden;
             text-align: left;
-            padding: 0;
-            position: absolute;
-            right: 58px;
-            left: 3px;
+            padding: 3px;
             margin: 0;
-            height: 24px;
-            background-color: #fff;
+            background-color: #ccc;
             font-weight: bold;
             font-size: 13px;
+            .border-radius(0);
 
-            .breadcrumb-inner {
-              position: absolute;
-              bottom: 0;
+            li {
+              display: inline-block;
 
-              li {
-                display: inline-block;
-
-                img {
-                  margin: 0 3px 3px 0;
-                }
+              &.active {
+                color: #777;
+              }
+              a {
+                text-shadow: none;
+                color: #666;
+                text-decoration: underline;
+              }
+              .divider {
+                color: #999;
+              }
+              span {
+                text-shadow: none;
+              }
+              img {
+                margin: 0 3px 3px 0;
               }
             }
-          }
-          .move-to-folder, .new-folder {
-            font-size: 14px;
-            margin-top: 2px;
-            padding: 0 3px;
-            border: 1px dashed #999;
-            cursor: default;
-
-            &:hover {
-              cursor: pointer;
-              color: #333;
-              border-color: #333;
-            }
-          }
-          .move-to-folder {
-            position: absolute;
-            right: 32px;
-          }
-          .new-folder {
-            position: absolute;
-            right: 6px;
           }
         }
       }
       .items {
         position: relative;
-        overflow: hidden;
+        overflow: auto;
         height: 100%;
+        padding: 3px;
 
+        .new-folder {
+          float: left;
+          width: 100%;
+          margin-top: 6px;
+          padding: 0 3px;
+          border: 1px dashed #ff6d16;
+          cursor: default;
+          text-align: center;
+          color: #ff6d16;
+          font-size: 13px;
+          font-weight: bold;
+
+          &:hover {
+            cursor: pointer;
+            color: #333;
+            border-color: #333;
+          }
+        }
+        .folder, .tab {
+          width: 100%;
+          margin-top: 6px;
+        }
         .folder {
-          width: 248px;
           height: 27px;
-          margin: 6px 0 0 9px;
           float: left;
           overflow: hidden;
           position: relative;
@@ -361,7 +364,7 @@ a {
           }
           .remove-option, .edit-option {
             display: none;
-            float: right;
+            float: left;
             margin: 2px 4px 0 0;
 
             i {
@@ -370,7 +373,7 @@ a {
           }
           .folder-title {
             line-height: 14px;
-            width: 242px;
+            width: 230px;
             height: 27px;
             font-size: 14px;
             padding: 6px 3px 0;
@@ -385,20 +388,18 @@ a {
           .title-editor {
 
             input {
-              width: 180px;
+              margin: 4px 0 0 3px;
+              float: left;
+              width: 150px;
               display: block;
-              height: 36px;
-              margin: 48px 12px 0 12px;
             }
             .btn {
               float: left;
 
-              &.edit-title-save {
-                margin: 3px 0 0 12px;
-              }
-
-              &.edit-title-cancel {
-                margin: 3px 0 0 3px;
+              &.edit-title-save, &.edit-title-cancel {
+                margin: 3px 0 0 6px;
+                height: 20px;
+                line-height: 10px;
               }
             }
           }
@@ -406,9 +407,8 @@ a {
         }
 
         .tab {
-          margin-top: 6px;
-          float: left;
           position: relative;
+          float: right;
           border: 2px solid #ddd;
           background-color: #eee;
 
@@ -418,15 +418,12 @@ a {
             .remove-option {
               display: block;
             }
-            .tab-label {
-              display: none;
-            }
           }
           &.selected {
-            border: 2px solid #ff6d16 !important;
+            border: 2px solid #666;
           }
           .tab-label {
-            display: block;
+            margin: 2px 3px 0 0;
           }
           .remove-option {
             display: none;
@@ -448,6 +445,7 @@ a {
           }
           .tab-footer {
             height: 25px;
+            color: #333;
 
             .tab-favicon {
               float: left;
@@ -455,7 +453,6 @@ a {
             }
             .tab-title {
               font-size: 12px;
-              color: #333;
               width: 100%;
               text-overflow: ellipsis;
               overflow: hidden;
@@ -464,9 +461,19 @@ a {
               margin: 0 -15px 0 -30px;
               padding: 0 15px 0 30px;
             }
-            .remove-option, .tab-label {
+            .remove-option {
               float: right;
               margin: 2px 3px 0 0;
+
+              i {
+                color: #ccc;
+              }
+
+              &:hover {
+                i {
+                  color: #666;
+                }
+              }
             }
           }
 
@@ -537,10 +544,10 @@ a {
       .nav-option {
         margin: 0 12px;
 
-        .dropdown-menu {                                                                                                                        
-          left: inherit;                                                                                                                        
-          right: 0px;                                                                                                                           
-        } 
+        .dropdown-menu {
+          left: inherit;
+          right: 0px;
+        }
       }
     }
   }

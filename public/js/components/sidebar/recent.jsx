@@ -25,6 +25,7 @@ var RecentComponent = React.createClass({
         tab={ item }
         index={ 0 }
         selectedItem={ self.props.selectedItem }
+        showArchiveLabel={ false }
         viewScreenshot={ self.props.viewScreenshot } />
     })
   },
@@ -38,19 +39,6 @@ var RecentComponent = React.createClass({
         </div>
       </div>
     );
-  },
-  updateScrollbar: function() {
-    $('#sidebar-section .recent .items').perfectScrollbar();
-  },
-  componentDidMount: function() {
-    var self = this;
-    $(window).resize(function () {
-      self.updateScrollbar();
-    });
-    this.updateScrollbar();
-  },
-  componentDidUpdate: function() {
-    this.updateScrollbar();
   }
 });
 

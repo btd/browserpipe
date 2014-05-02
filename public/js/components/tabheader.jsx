@@ -10,6 +10,7 @@ var _state = require('../state'),
 var TabHeaderComponent = React.createClass({
   getInitialState: function() {
       return {
+          selectedFolder: this.props.selectedFolder,
           selectedItem: this.props.selectedItem
       };
   },
@@ -52,6 +53,17 @@ var TabHeaderComponent = React.createClass({
       this.state.selectedItem._id
     );
   },
+  archiveOptionClicked: function() {
+    _state.moveItemToArchive(
+      this.state.selectedItem._id,
+      this.state.selectedFolder._id,
+      function() {
+      var msg = Messenger().post({
+        message: "Tab archived",
+        hideAfter: 6
+      });
+    });
+  },
   renderDate: function(date) {
     var d = new Date(date);
     return d.toLocaleDateString() + ' ' + d.toLocaleTimeString();
@@ -60,9 +72,8 @@ var TabHeaderComponent = React.createClass({
     return (
       <div>
         <span className="labels">
-          <span className={"label label-info" + (this.state.selectedItem.browserParent?'':' hide')} onClick={ this.showItemInBrowserTab }>browser</span>
-          <span className={"label label-success" + (this.state.selectedItem.archiveParent?'':' hide')} onClick={ this.showItemInArchiveTab }>archive</span>
-          <span className={"label" + (this.state.selectedItem.browserParent || this.state.selectedItem.archiveParent?' hide':'')} onClick={ this.showItemInRecentTab }>history</span>
+          <span className={"label label-warning" + (this.state.selectedItem.archiveParent?'':' hide')} onClick={ this.showItemInArchiveTab } title="Open folder">archived</span>
+          <span className={"label" + (this.state.selectedItem.archiveParent?' hide':'')} onClick={ this.archiveOptionClicked } title={"archive to folder \"" + (this.state.selectedFolder.title? this.state.selectedFolder.title : 'New Folder') + "\""}>archive to current folder</span>
         <span className="message">Snapshot of <a target="_blank" href={this.state.selectedItem.url} title={this.state.selectedItem.url}>{ this.state.selectedItem.url.substr(0,40)+(this.state.selectedItem.url.length > 40?'...':'')}</a>{" as it appeared on " + this.renderDate(this.state.selectedItem.createdAt) + "  "}</span>
         </span>
         <div className="refresh-option" onClick={ this.refreshOptionClicked } >
@@ -117,10 +128,12 @@ var TabHeaderComponent = React.createClass({
 
 
 module.exports.render = function (
+    selectedFolder,
     selectedItem
   ) {
   return React.renderComponent(
     <TabHeaderComponent
+      selectedFolder={selectedFolder}
       selectedItem={selectedItem} />,
     document.getElementById('tab-header')
   );
