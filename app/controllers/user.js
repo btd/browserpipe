@@ -43,12 +43,12 @@ exports.create = function (req, res, next) {
     if (errors) {
         req.flash('errors', errors);
         res.redirect('/signup');
-        
+
         return;
     }
 
     var email = req.body.email.trim().toLowerCase();
-   
+
     return User.byEmail(email)
         .then(function(_user) {
             if(_user) {
@@ -62,8 +62,10 @@ exports.create = function (req, res, next) {
                   user.langs = req.headers['accept-language'];
                 }
 
-                var browser = Item.newContainer({ title: 'Browser', user: user });
+                var browser = Item.newContainer({ title: 'Archive', user: user });
+                var archive = Item.newContainer({ title: 'Browser', user: user });
                 user.browser = browser;
+                user.archive = archive;
 
                 return Promise.cast(user.save())
                     .then(function() {

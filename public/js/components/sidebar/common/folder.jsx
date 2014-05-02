@@ -2,21 +2,18 @@
  * @jsx React.DOM
  */
 
-var _state = require('../state'),
+var _state = require('../../../state'),
     $ = require('jquery'),
-    React = require('react'),
-    page = require('page');
+    React = require('react');
 
 var FolderComponent = React.createClass({
   folderClicked: function() {
-    if(_state.selectedItem)
-      _state.selectedFolder = _state.getItemById(this.props.folder._id);
-    else
-      page("/item/" + this.props.folder._id);
+    if(this.props.navigateToFolder)
+      this.props.navigateToFolder(this.props.folder);
   },
   closeOptionClicked: function(e) {
     e.stopPropagation();
-    _state.serverDeleteItem(this.props.folder);
+    _state.removeItemFromArchive(this.props.folder);
   },
   editOptionClicked: function(e) {
     e.stopPropagation();
@@ -68,21 +65,17 @@ var FolderComponent = React.createClass({
   render: function() {
     return (
       <div ref="folder" className="folder" onClick={ this.folderClicked } >
-        <div className="mask" >
-          <div className="mask-options">
-            <div className="mask-option right" onClick={ this.closeOptionClicked } >
-              <i ref="folderCloseOption" className="fa fa-times"></i>
-            </div>
-            <div className="mask-option right" onClick={ this.editOptionClicked }  >
-              <i ref="folderEditOption" className="fa fa-pencil"></i>
-            </div>
-          </div>
-        </div>
         <div ref="folderInner" >
         { this.renderItemTitle() }
         </div>
         <div ref="folderTitleEditor" className="hide" >
         { this.renderTitleEditor() }
+        </div>
+        <div className="edit-option" onClick={ this.editOptionClicked }  >
+          <i ref="folderEditOption" className="fa fa-pencil"></i>
+        </div>
+        <div className="remove-option" onClick={ this.closeOptionClicked } >
+          <i ref="folderCloseOption" className="fa fa-times"></i>
         </div>
       </div>
     );

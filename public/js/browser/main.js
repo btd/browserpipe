@@ -1,22 +1,10 @@
 var _state = require('../state'),
   page = require('page');
 
-var $iframe = $('#page-section .page-content');
+var $iframe = $('#tab-section .tab-content');
 
-var showNewItemMessage = function(newItem) {
-  var msg = Messenger().post({
-    message: "Opened link in new tab",
-    hideAfter: 6,
-    actions: {
-      view: {
-        label: "View",
-        action: function() {
-          page('/item/' + newItem._id);
-          msg.hide()
-        }
-      }
-    }
-  });
+var showBrowserTab = function(item) {
+  _state.sidebarTab = "browser";
 };
 
 var scrollTimeout, loading = false;
@@ -55,16 +43,16 @@ exports.open = function(url) {
         if(url) {
           var target = $anchor.attr('target');
           if(e.ctrlKey) {
-            self.create(
-              _state.selectedItem.parent,
+            self.createInBrowser(
+              _state.selectedItem._id,
               url.trim(),
-              showNewItemMessage
+              showBrowserTab
             );
           }
           else if(target && target.trim() === '_blank')
-            self.createAndOpen(_state.selectedItem.parent, url.trim());
+            self.createAndOpenInBrowser(_state.selectedItem._id, url.trim());
           else
-            self.createAndOpen(_state.selectedItem.parent, url.trim(), _state.selectedItem._id);
+            self.createAndOpenInBrowser((_state.selectedItem.browserParent? _state.selectedItem.browserParent : _state.browser._id), url.trim(), _state.selectedItem._id);
         }
       });
       if(_state.selectedItem.scrollX)
@@ -76,12 +64,10 @@ exports.open = function(url) {
   }
 };
 
-exports.create = function(parentId, url, callback) {
-  _state.serverAddItemToItem(parentId, { type: 0, url: url }, function(item) {
-    //TODO: navigation to the just added container is not working because websockets is taking more time to add it than ajax reponse.
-    //We should fix this by sending crud request to server via websockets instead of ajax.
+exports.createInBrowser = function(parentId, url, callback) {
+  _state.serverAddItemToBrowser(parentId, { type: 0, url: url }, function(item) {
+    if(callback) callback(item);
     setTimeout(function() {
-      if(callback) callback(item);
       $.ajax({
         url: ('/html-item/' + item._id + '?url=' + encodeURIComponent(url) + '&width=' + $(window).width() + '&height=' + $(window).height()),
         cache: true
@@ -90,11 +76,12 @@ exports.create = function(parentId, url, callback) {
   });
 }
 
-exports.createAndOpen = function(parentId, url, previousId) {
-  _state.serverAddItemToItem(parentId, { type: 0, url: url, previous: previousId}, function(item) {
+exports.createAndOpenInBrowser = function(parentId, url, previousId) {
+  _state.serverAddItemToBrowser(parentId, { type: 0, url: url, previous: previousId}, function(item) {
     //TODO: navigation to the just added container is not working because websockets is taking more time to add it than ajax reponse.
     //We should fix this by sending crud request to server via websockets instead of ajax.
     setTimeout(function() {
+      _state.sidebarTab = "browser";
       page('/item/' + item._id);
     }, 1000);
   });

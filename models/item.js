@@ -12,7 +12,16 @@ var ItemSchema = new Schema({
     { type: Schema.ObjectId, ref: 'Item '}
   ],
 
-  parent: { type: Schema.ObjectId, ref: 'Item' }, // not sure if it is need, but it seems it is easy to maintain it
+  // archive
+  archiveParent: { type: Schema.ObjectId, ref: 'Item' }, //parent folder, if sets it means it is archived
+
+  // browser
+  browserParent: { type: Schema.ObjectId, ref: 'Item' }, // parent in browser, if sets it means that is in browser
+
+  // pin
+  pinned: { type: Boolean, default: false }, //This means that is pinned in the browser
+
+  // history
   previous: { type: Schema.ObjectId, ref: 'Item' }, //previous item navigated
   next: { type: Schema.ObjectId, ref: 'Item' }, //next item navigated
 
@@ -42,6 +51,7 @@ var ItemSchema = new Schema({
   scrollX: { type: Number },
   scrollY: { type: Number },
 
+  // trash
   deleted: { type: Boolean, default: false },
 
   statusCode: { type: Number }, //http response code
@@ -66,14 +76,14 @@ ItemSchema.plugin(require('../util/mongoose-timestamp'));
     return new Item(obj);
   };
 
-  ItemSchema.methods['add' + elem] = function(obj) {
+  /*ItemSchema.methods['add' + elem] = function(obj) {
     var item = new Item(obj);
     item.type = index;
     item.parent = this._id;
     item.user = this.user;
     this.items.push(item._id);//TODO maybe add after save?
     return item;
-  };
+  };*/
 });
 
 var file = require('../util/file');
