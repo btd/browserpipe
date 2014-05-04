@@ -18,6 +18,7 @@ var State1 = model()
     .attr('selectedItem')
     .attr('selectedFolder')
     .attr('sidebarTab')
+    .attr('sidebarCollapsed')
     .use(model.nestedObjects);
 
 var proto = {
@@ -29,6 +30,8 @@ var proto = {
 
         this.browser = this.getItemById(initialOptions.user.browser);
         this.archive = this.getItemById(initialOptions.user.archive);
+
+        this.sidebarCollapsed = false;
     },
 
     //////////////////////////////////////////ITEMS//////////////////////////////////////

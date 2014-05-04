@@ -16,6 +16,7 @@ var SidebarComponent = React.createClass({
           selectedItem: this.props.selectedItem,
           selectedFolder: this.props.selectedFolder,
           sidebarTab: this.props.sidebarTab,
+          sidebarCollapsed: this.props.sidebarCollapsed,
           viewScreenshot: false //TODO: save option in user
       };
   },
@@ -26,13 +27,13 @@ var SidebarComponent = React.createClass({
     switch(this.state.sidebarTab) {
       case "recent":
           return (<RecentComponent
-            viewcreenshot={ this.state.viewScreenshot }
+            viewScreenshot={ this.state.viewScreenshot }
             items={ this.state.items }
             selectedItem={ this.state.selectedItem } />)
       default:
           return (<span>
             <BrowserComponent
-              viewcreenshot={ this.state.viewScreenshot }
+              viewScreenshot={ this.state.viewScreenshot }
               selectedItem={ this.state.selectedItem }
               selectedFolder={ this.state.selectedFolder} />
           </span>)
@@ -40,7 +41,7 @@ var SidebarComponent = React.createClass({
   },
   render: function() {
     return (
-      <div className="sidebar">
+      <div className={"sidebar" + (this.state.sidebarCollapsed? ' hide' : '')}>
         <TopBarComponent
           selectedTab={ this.state.sidebarTab } />
         <div className="sidebar-content">

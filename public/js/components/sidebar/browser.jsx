@@ -3,6 +3,7 @@
  */
 
 var _state = require('../../state'),
+    util = require('../../util'),
     React = require('react'),
     $ = require('jquery'),
     page = require('page'),
@@ -31,6 +32,7 @@ var BrowserComponent = React.createClass({
             selectedItem={ self.props.selectedItem }
             removeTab= { self.removeTab }
             showArchiveLabel={ true }
+            showDropdown={ false }
             viewScreenshot={ self.props.viewScreenshot } />
             { self.renderItems(tab, index + 1) }
         </span>
@@ -48,12 +50,17 @@ var BrowserComponent = React.createClass({
             <i className="fa fa-plus"></i>
           </div>
           <ArchiveComponent
-            viewcreenshot={ this.props.viewScreenshot }
+            viewScreenshot={ this.props.viewScreenshot }
             selectedFolder={ this.props.selectedFolder }
             selectedItem={ this.props.selectedItem } />
         </div>
       </div>
     );
+  },
+  componentDidMount: function(){
+    //On first load, we scroll to the item if there is one
+    if(this.props.selectedItem)
+      util.scrollToItem(this.props.selectedItem);
   }
 });
 

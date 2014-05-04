@@ -19,7 +19,7 @@ var BottomSideBarComponent = React.createClass({
             <ul className="dropdown-menu">
               <li >
                 <a data-toggle="modal" href="/modal/bookmarklet" data-target="#modal">
-                  <i className="icon-none"><span>Bookmarklets</span></i>
+                  <span>Bookmarklets</span>
                 </a>
               </li>
               <li className="divider"></li>
@@ -30,19 +30,19 @@ var BottomSideBarComponent = React.createClass({
                 </label>
               </li>
               <li>
-                <a draggable="false"  tabIndex="-1" href="/settings">
-                  <i className="icon-none"><span>Settings</span></i>
+                <a draggable="false"  tabIndex="-1" href="#">
+                  <span>Settings</span>
                 </a>
               </li>
               <li>
-                <a draggable="false"  tabIndex="-1" href="/help">
-                  <i className="icon-none"> <span>Help</span></i>
+                <a draggable="false"  tabIndex="-1" href="#">
+                  <span>Help</span>
                 </a>
               </li>
               <li className="divider"></li>
               <li>
                 <a draggable="false"  tabIndex="-1" href="/logout">
-                  <i className="icon-none"><span>Logout </span></i>
+                  <span>Logout </span>
                 </a>
               </li>
             </ul>

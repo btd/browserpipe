@@ -3,6 +3,7 @@
  */
 
 var _state = require('../state'),
+    util = require('../util'),
     React = require('react'),
     page = require('page'),
     browser = require('../browser/main');
@@ -21,7 +22,11 @@ var NewTabComponent = React.createClass({
     browser.createAndOpenInBrowser(
       parentId,
       url,
-      null
+      null,
+      function(item) {
+        $('#url-input').val('');
+        util.scrollToItem(item);
+      }
     );
   },
   render: function() {
@@ -30,8 +35,8 @@ var NewTabComponent = React.createClass({
         <div className="new-tab-content">
           <span className="logo"><img src={"<%= url('img/logo/logo.png') %>"} alt="Browserpipe logo small"/></span>
           <div className="new-tab-input">
-            <input type="text" placeholder="Enter an URL" className="url-input" ref="urlInput" onKeyPress={this.ifEnterNavigate} />
-            <input type="button" className="url-btn" value="Go"  onClick={this.navigateEnteredURL} />
+            <input type="text" placeholder="Enter an URL" id="url-input" ref="urlInput" onKeyPress={this.ifEnterNavigate} />
+            <input type="button" id="url-btn" value="Go"  onClick={this.navigateEnteredURL} />
           </div>
           <div className="bookmarklet-note">
             <span>or install our </span>

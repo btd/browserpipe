@@ -19,6 +19,7 @@ module.exports = function (app, passport) {
   //Home routes
   app.get('/new', main.home);
   app.get('/item/:id1', auth.ensureLoggedIn('/login'), main.home);
+  app.get('/select/folder', main.home);
 
   //Modal routes
   var modal = require('./controllers/modal');

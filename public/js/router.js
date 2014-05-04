@@ -5,6 +5,7 @@ var _state = require('./state'),
   SidebarComponent = require('./components/sidebar'),
   TabHeaderComponent = require('./components/tabheader'),
   NewTabComponent = require('./components/newtab'),
+  SelectFolderModalComponent = require('./components/modal/selectfolder'),
   $ = require('jquery'),
   websocket = require('./websocket/websocket'),
   browser = require('./browser/main');
@@ -16,7 +17,7 @@ require('bootstrap-modal');
 //Notification system
 require('messenger');
 
-var sidebarComponent, tabHeaderComponent, newTabComponent; //react component instances
+var sidebarComponent, tabHeaderComponent, newTabComponent, selectFolderModalComponent; //react component instances
 var isIframe = (window != window.parent);
 
 var loadSidebarComponent = function() {
@@ -25,14 +26,17 @@ var loadSidebarComponent = function() {
       _state.items,
       _state.selectedItem,
       _state.selectedFolder,
-      _state.sidebarTab
+      _state.sidebarTab,
+      _state.sidebarCollapsed
+
     );
   } else {
     sidebarComponent.setState({
       items: _state.items,
       selectedItem: _state.selectedItem,
       selectedFolder: _state.selectedFolder,
-      sidebarTab: _state.sidebarTab
+      sidebarTab: _state.sidebarTab,
+      sidebarCollapsed: _state.sidebarCollapsed
     });
   }
 }
@@ -41,13 +45,13 @@ var loadTabHeaderComponent = function() {
   if(_state.selectedItem)
     if(!tabHeaderComponent) {
       tabHeaderComponent = TabHeaderComponent.render(
-        _state.selectedFolder,
-        _state.selectedItem
+        _state.selectedItem,
+        _state.sidebarCollapsed
       );
     } else {
       tabHeaderComponent.setState({
-        selectedFolder: _state.selectedFolder,
-        selectedItem: _state.selectedItem
+        selectedItem: _state.selectedItem,
+        sidebarCollapsed: _state.sidebarCollapsed
       });
     }
 }
@@ -56,6 +60,18 @@ var loadNewTabComponent = function() {
   if(!newTabComponent) {
     newTabComponent = NewTabComponent.render(
     );
+  }
+}
+
+var loadSelectFolderModalComponent = function() {
+  if(!selectFolderModalComponent) {
+    selectFolderModalComponent = SelectFolderModalComponent.render(
+      _state.selectedItem
+    );
+  } else {
+    selectFolderModalComponent.setState({
+      selectedItem: _state.selectedItem
+    });
   }
 }
 
@@ -95,6 +111,7 @@ page('/new', function() {
      _state.selectedFolder = _state.archive;
     showNewTabSection();
     loadSidebarComponent();
+    loadSelectFolderModalComponent();
     loadNewTabComponent();
   }, 0);
 });
@@ -123,6 +140,7 @@ page('/item/:id', function(ctx) {
         }
       }
       loadSidebarComponent();
+      loadSelectFolderModalComponent();
       loadTabHeaderComponent();
       loadTab(item);
       hideNewTabSection();
@@ -131,6 +149,15 @@ page('/item/:id', function(ctx) {
     }
   }, 0);
 });
+
+/*page('/select/folder', function() {
+  setTimeout(function() {
+    $('#sidebar-section').hide();
+    $('#tab-section').hide();
+    $('#new-tab-section').hide();
+    _state.selectedFolder = _state.archive;
+  }, 0);
+});*/
 
 var initialize = function() {
   //Load initial data variable initialOptions global
@@ -154,8 +181,12 @@ var stateChanges = function() {
 
   var changeInSelected = function() {
     if(_state.selectedFolder) { //This means load finished
-      loadSidebarComponent();
-      loadTabHeaderComponent();
+      if(sidebarComponent)
+        loadSidebarComponent();
+      if(tabHeaderComponent)
+        loadTabHeaderComponent();
+      if(selectFolderModalComponent)
+        loadSelectFolderModalComponent();
     }
   };
 
@@ -168,6 +199,7 @@ var stateChanges = function() {
   _state.on('change:selectedItem', changeInSelected);
   _state.on('change:selectedFolder', changeInSelected);
   _state.on('change:sidebarTab', changeInSelected);
+  _state.on('change:sidebarCollapsed', changeInSelected);
 
 }
 
