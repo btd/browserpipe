@@ -9,19 +9,27 @@ var _state = require('../../state'),
     Tab= require('./common/tab');
 
 var ArchiveComponent = React.createClass({
+  selectFolder: function(folder) {
+    if(this.props.selectFolderToArchive)
+      this.props.selectFolderToArchive(folder)
+    else
+      _state.selectedFolder = folder;
+  },
   folderUpClicked: function() {
-    _state.selectedFolder = _state.getItemById(this.props.selectedFolder.archiveParent);
+    var folder =_state.getItemById(this.props.selectedFolder.archiveParent);
+    this.selectFolder(folder);
   },
   newFolderClicked: function() {
     _state.serverAddItemToArchive(this.props.selectedFolder._id, { type: 2 });
   },
   navigateToFolder: function(folder) {
-    _state.selectedFolder = folder;
+    this.selectFolder(folder);
   },
   breadcrumbItemClicked: function(e) {
     e.preventDefault();
     var id = $(e.target).data('bpipe-item-id');
-    _state.selectedFolder = _state.getItemById(id);
+    var folder = _state.getItemById(id);
+    this.selectFolder(folder);
   },
   removeTab: function(tab) {
     _state.removeItemFromArchive(tab);
@@ -67,6 +75,7 @@ var ArchiveComponent = React.createClass({
         selectedItem={ self.props.selectedItem }
         removeTab= { self.removeTab }
         showArchiveLabel={ false }
+        showDropdown={ true }
         viewScreenshot={ self.props.viewScreenshot } />
     })
   },
@@ -80,9 +89,11 @@ var ArchiveComponent = React.createClass({
             { this.renderFolders() }
             <div className="new-folder" title="Add new folder" onClick={ this.newFolderClicked }>Add folder</div>
           </div>
-          <div className="clearfix">
-            { this.renderItems() }
-          </div>
+          { this.props.selectFolderToArchive? null: //If used to archive, we do not show items
+              <div className="clearfix">
+                { this.renderItems() }
+             </div>
+          }
         </div>
       </div>
     );

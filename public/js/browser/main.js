@@ -55,6 +55,30 @@ exports.open = function(url) {
             self.createAndOpenInBrowser((_state.selectedItem.browserParent? _state.selectedItem.browserParent : _state.browser._id), url.trim(), _state.selectedItem._id);
         }
       });
+      $body.append('<style type="text/css">#bwp_context_menu {background-color:#ccc;border: 1px solid #666;width: 150px;padding: 3px 0;list-style-type: none;position: absolute;} #bwp_context_menu li{padding: 6px;} #bwp_context_menu li:hover{cursor:pointer;background-color: #ff6d16;color: #fff;}</style>');
+      $body.on('contextmenu', function(e) {
+          var $target = $(e.target);
+          if($target.is('a')) {
+            $("#bwp_context_menu", this).remove();
+            e.preventDefault();
+            var $contextMenu = $("<ul id='bwp_context_menu'><li>Open in new tab</li></div>")
+              .appendTo(this)
+              .css({
+                display: "block",
+                left: e.pageX,
+                top: e.pageY
+              });
+            $contextMenu.on("click", "li", function() {
+              var url = $target.attr("href");
+              if(url)
+                self.createInBrowser(_state.selectedItem._id, url);
+              $contextMenu.remove();
+            });
+            return false;
+          }
+      }).on('click', function(e) {
+        $("#bwp_context_menu", this).remove();
+      });
       if(_state.selectedItem.scrollX)
         $contents.scrollLeft(_state.selectedItem.scrollX);
       if(_state.selectedItem.scrollY)
@@ -76,13 +100,14 @@ exports.createInBrowser = function(parentId, url, callback) {
   });
 }
 
-exports.createAndOpenInBrowser = function(parentId, url, previousId) {
+exports.createAndOpenInBrowser = function(parentId, url, previousId, callback) {
   _state.serverAddItemToBrowser(parentId, { type: 0, url: url, previous: previousId}, function(item) {
     //TODO: navigation to the just added container is not working because websockets is taking more time to add it than ajax reponse.
     //We should fix this by sending crud request to server via websockets instead of ajax.
     setTimeout(function() {
       _state.sidebarTab = "browser";
       page('/item/' + item._id);
+      if(callback) callback(item);
     }, 1000);
   });
 }

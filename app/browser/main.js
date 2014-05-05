@@ -153,14 +153,22 @@ exports.htmlBookmarklet = function(req, res) {
 
   var user = req.user;
   var url = req.body.url;
-  var parentId = req.body.parent;
+  var parentId = '';
   var html = req.body.html;
   var charset = req.body.charset;
   var width = req.body.width;
   var height = req.body.height;
 
   //We save item on root
-  var item = new Item({ url: url , type: 0, parent: parentId, user: user._id });
+  var item = new Item({ url: url , type: 0, user: user._id });
+  if(req.body.archiveParent) {
+    item.archiveParent = req.body.archiveParent;
+    parentId = item.archiveParent;
+  }
+  else {
+    item.browserParent = user.browser;
+    parentId = item.browserParent;
+  }
 
   var ct = contentType.HTML;
 
@@ -168,9 +176,8 @@ exports.htmlBookmarklet = function(req, res) {
 
   Promise.cast(item.save())
     .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
-    .then(userUpdate.createItem.bind(null, req.user._id, item))
     .then(function() {
-      return Item.byId({ _id: item.parent })
+      return Item.byId({ _id: parentId })
         .then(function(parent) {
           parent.items.push(item._id);
           parent.markModified('items');
@@ -190,4 +197,5 @@ exports.htmlBookmarklet = function(req, res) {
           errors.sendBadRequest(res);
         })
     })
+    .then(userUpdate.createItem.bind(null, req.user._id, item))
 }

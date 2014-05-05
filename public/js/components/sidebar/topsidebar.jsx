@@ -3,9 +3,13 @@
  */
 
 var React = require('react'),
-    _state = require('../../state');
+    _state = require('../../state'),
+    page = require('page');
 
 var TopSideBarComponent = React.createClass({
+  newTabClicked: function() {
+    page('/new');
+  },
   changeSelectedTab: function(value) {
     return function() { _state.sidebarTab = value; };
   },
@@ -20,6 +24,9 @@ var TopSideBarComponent = React.createClass({
               <i className="fa fa-search"></i>
             </button>
           </div>
+        </div>
+        <div className="new-tab" title="Add new tab" onClick={ this.newTabClicked }>
+          <i className="fa fa-plus"></i>
         </div>
         <ul className="nav nav-tabs">
           <li className={this.props.selectedTab === "browser"? "active" : ""} onClick={ this.changeSelectedTab('browser') } >

@@ -11,15 +11,14 @@ var FolderComponent = React.createClass({
     if(this.props.navigateToFolder)
       this.props.navigateToFolder(this.props.folder);
   },
-  closeOptionClicked: function(e) {
+  removeOptionClicked: function(e) {
     e.stopPropagation();
     _state.removeItemFromArchive(this.props.folder);
   },
   editOptionClicked: function(e) {
     e.stopPropagation();
     this.refs.folderInner.getDOMNode().className = "hide";
-    this.refs.folderCloseOption.getDOMNode().className = "hide";
-    this.refs.folderEditOption.getDOMNode().className = "hide";
+    this.refs.folderOptions.getDOMNode().className = "hide";
     this.refs.folderTitleEditor.getDOMNode().className = "";
     this.refs.titleInput.getDOMNode().value = (this.props.folder.title? this.props.folder.title : '') ;
     this.refs.titleInput.getDOMNode().focus();
@@ -43,8 +42,7 @@ var FolderComponent = React.createClass({
   },
   hideInput: function() {
     this.refs.folderInner.getDOMNode().className = "";
-    this.refs.folderCloseOption.getDOMNode().className = "close-option fa fa-times";
-    this.refs.folderEditOption.getDOMNode().className = "edit-option fa fa-pencil";
+    this.refs.folderOptions.getDOMNode().className = "folder-options";
     this.refs.folderTitleEditor.getDOMNode().className = "hide";
   },
   inputClicked: function(e) {
@@ -71,12 +69,26 @@ var FolderComponent = React.createClass({
         <div ref="folderTitleEditor" className="hide" >
         { this.renderTitleEditor() }
         </div>
-        <div className="edit-option" onClick={ this.editOptionClicked }  >
-          <i ref="folderEditOption" className="fa fa-pencil"></i>
-        </div>
-        <div className="remove-option" onClick={ this.closeOptionClicked } >
-          <i ref="folderCloseOption" className="fa fa-times"></i>
-        </div>
+        <ul ref="folderOptions" className="folder-options" onClick={ function(e){ e.stopPropagation(); } }>
+          <li className="dropdown nav-option">
+            <a draggable="false"  href="#" data-toggle="dropdown" className="dropdown-toggle">
+              <i className="fa fa-chevron-circle-down"></i>
+            </a>
+            <ul className="dropdown-menu">
+              <li >
+                <a draggable="false" tabIndex="-1" href="#" onClick={ this.editOptionClicked }>
+                  <span>Edit</span>
+                </a>
+              </li>
+              <li className="divider"></li>
+              <li>
+                <a draggable="false" tabIndex="-1" href="#" onClick={ this.removeOptionClicked }>
+                  <span>Remove</span>
+                </a>
+              </li>
+            </ul>
+          </li>
+        </ul>
       </div>
     );
   }

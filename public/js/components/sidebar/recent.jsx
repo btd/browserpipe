@@ -3,6 +3,7 @@
  */
 
 var _state = require('../../state'),
+    util = require('../../util'),
     React = require('react'),
     $ = require('jquery'),
     Folder = require('./common/folder'),
@@ -12,20 +13,19 @@ var RecentComponent = React.createClass({
   renderItems: function() {
     var self = this;
     return this.props.items.filter(function(item){
-      return !item.archiveParent
+      return !item.isFolder()
+        && !item.archiveParent
         && !item.browserParent;
     }).sort(function(item){
       //TODO: check why they are not sorted ok
       return (new Date(item.updatedAt)).getTime();
     }).map(function(item){
-      if(item.isFolder())
-        return  <Folder folder={ item } />
-      else
-        return  <Tab
+      return  <Tab
         tab={ item }
         index={ 0 }
         selectedItem={ self.props.selectedItem }
         showArchiveLabel={ false }
+        showDropdown={ false }
         viewScreenshot={ self.props.viewScreenshot } />
     })
   },
@@ -39,6 +39,11 @@ var RecentComponent = React.createClass({
         </div>
       </div>
     );
+  },
+  componentDidMount: function(){
+    //On first load, we scroll to the item if there is one
+    if(this.props.selectedItem)
+      util.scrollToItem(this.props.selectedItem);
   }
 });
 

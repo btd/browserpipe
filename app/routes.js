@@ -61,6 +61,8 @@ module.exports = function (app, passport) {
 
   //Bookmarlet routes
   app.post('/bookmarklet/add', cors.allowAllAccess, auth.send401IfNotAuthenticated, browser.htmlBookmarklet);
+  app.get('/bookmarklet/archive', auth.ensureLoggedIn('/login'), main.bookmarkletArchive);
+  app.get('/bookmarklet/open', auth.ensureLoggedIn('/login'), main.bookmarkletOpen);
 
 };
 

@@ -113,18 +113,27 @@ var switchBrowserParentItems = function(oldItemId, newItem, req, res) {
 }
 
 var appendItemToParent = function(item, parentId, req, res) {
-    return Promise.cast(item.save())
-      .then(function() {
-        return Item.byId({ _id: parentId })
-          .then(function(parent) {
-            if(parent.items.indexOf(item._id) === -1) {
-              parent.items.push(item._id);
-              parent.markModified('items');
-              return Promise.cast(parent.save())
-                .then(userUpdate.updateItem.bind(null, req.user._id, parent));
-            }
-          })
-      })
+  return Item.byId({ _id: parentId })
+    .then(function(parent) {
+      if(parent.items.indexOf(item._id) === -1) {
+        parent.items.push(item._id);
+        parent.markModified('items');
+        return Promise.cast(parent.save())
+          .then(userUpdate.updateItem.bind(null, req.user._id, parent));
+      }
+    })
+}
+
+var removeItemToParent = function(item, parentId, req, res) {
+  return Item.byId({ _id: parentId })
+    .then(function(parent) {
+      if(parent.items.indexOf(item._id) > -1) {
+        parent.items.remove(item._id);
+        parent.markModified('items');
+        return Promise.cast(parent.save())
+          .then(userUpdate.updateItem.bind(null, req.user._id, parent));
+      }
+    })
 }
 
 //Move item
@@ -137,10 +146,13 @@ exports.moveItemToBrowser = function(req, res) {
     return switchBrowserParentItems(item.previous, item, req, res)
              .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res));
   else {
+    var oldParent = item.browserParent;
     item.browserParent = req.user.browser;
-    return appendItemToParent(item, item.browserParent, req, res)
-            .then(userUpdate.updateItem.bind(null, req.user._id, item))
-            .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res));
+    return Promise.cast(item.save())
+      .then(function() { if(oldParent) removeItemToParent(item, oldParent, req, res) })
+      .then(function() { appendItemToParent(item, item.browserParent, req, res) })
+      .then(userUpdate.updateItem.bind(null, req.user._id, item))
+      .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res));
   }
 }
 
@@ -151,10 +163,13 @@ exports.moveItemToArchive = function(req, res) {
   if(errs) return errors.sendBadRequest(res);
 
   var item = req.currentItem;
+  var oldParent = item.archiveParent;
   item.archiveParent = req.body.parent;
-  return appendItemToParent(item, item.archiveParent, req, res)
-          .then(userUpdate.updateItem.bind(null, req.user._id, item))
-          .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res));
+  return Promise.cast(item.save())
+    .then(function() { if(oldParent) removeItemToParent(item, oldParent, req, res) })
+    .then(function() { appendItemToParent(item, item.archiveParent, req, res) })
+    .then(userUpdate.updateItem.bind(null, req.user._id, item))
+    .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res));
 }
 
 //Remove item
