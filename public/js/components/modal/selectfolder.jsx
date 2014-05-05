@@ -37,7 +37,7 @@ var SelectFolderModalComponent = React.createClass({
             <div className="modal-header">
               <button type="button" className="close" data-dismiss="modal" aria-hidden="true">&times;</button>
               <h4 className="modal-title" id="myModalLabel">
-                { util.isItemInArchive(this.state.selectedItem, _state)? "Select folder to move": "Select folder to archive" }
+                { this.state.selectedItem && util.isItemInArchive(this.state.selectedItem, _state)? "Select folder to move": "Select folder to archive" }
               </h4>
             </div>
             <div className="modal-body">
@@ -49,7 +49,7 @@ var SelectFolderModalComponent = React.createClass({
             <div className="modal-footer">
               <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
               <button type="button" className="btn btn-warning" onClick={ this.archiveItem }>
-                { util.isItemInArchive(this.state.selectedItem, _state)? "Move here": "Archive here" }
+                { this.state.selectedItem && util.isItemInArchive(this.state.selectedItem, _state)? "Move here": "Archive here" }
               </button>
             </div>
           </div>

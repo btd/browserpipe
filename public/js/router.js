@@ -6,6 +6,7 @@ var _state = require('./state'),
   TabHeaderComponent = require('./components/tabheader'),
   NewTabComponent = require('./components/newtab'),
   SelectFolderModalComponent = require('./components/modal/selectfolder'),
+  BookmarkletArchiveComponent = require('./components/bookmarklet/archive'),
   $ = require('jquery'),
   websocket = require('./websocket/websocket'),
   browser = require('./browser/main');
@@ -17,7 +18,7 @@ require('bootstrap-modal');
 //Notification system
 require('messenger');
 
-var sidebarComponent, tabHeaderComponent, newTabComponent, selectFolderModalComponent; //react component instances
+var sidebarComponent, tabHeaderComponent, newTabComponent, selectFolderModalComponent, bookmarkletArchiveComponent; //react component instances
 var isIframe = (window != window.parent);
 
 var loadSidebarComponent = function() {
@@ -71,6 +72,18 @@ var loadSelectFolderModalComponent = function() {
   } else {
     selectFolderModalComponent.setState({
       selectedItem: _state.selectedItem
+    });
+  }
+}
+
+var loadBookmarkletArchiveComponent = function() {
+  if(!bookmarkletArchiveComponent) {
+     bookmarkletArchiveComponent= BookmarkletArchiveComponent.render(
+      _state.selectedFolder
+    );
+  } else {
+    bookmarkletArchiveComponent.setState({
+      selectedFolder: _state.selectedFolder
     });
   }
 }
@@ -150,14 +163,15 @@ page('/item/:id', function(ctx) {
   }, 0);
 });
 
-/*page('/select/folder', function() {
+page('/bookmarklet/archive', function() {
   setTimeout(function() {
     $('#sidebar-section').hide();
     $('#tab-section').hide();
     $('#new-tab-section').hide();
     _state.selectedFolder = _state.archive;
+    loadBookmarkletArchiveComponent();
   }, 0);
-});*/
+});
 
 var initialize = function() {
   //Load initial data variable initialOptions global
@@ -187,6 +201,8 @@ var stateChanges = function() {
         loadTabHeaderComponent();
       if(selectFolderModalComponent)
         loadSelectFolderModalComponent();
+      if(bookmarkletArchiveComponent)
+        loadBookmarkletArchiveComponent();
     }
   };
 
