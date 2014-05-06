@@ -59,14 +59,16 @@ module.exports.render = function (
     items,
     selectedItem,
     selectedFolder,
-    sidebarTab
+    sidebarTab,
+    sidebarCollapsed
   ) {
   return React.renderComponent(
     <SidebarComponent
       items={items}
       selectedItem={selectedItem}
       selectedFolder={selectedFolder}
-      sidebarTab={sidebarTab} />,
+      sidebarTab={sidebarTab}
+      sidebarCollapsed={sidebarCollapsed} />,
     document.getElementById('sidebar-section')
   );
 };

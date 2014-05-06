@@ -11,7 +11,14 @@ var _state = require('../state'),
 var NewTabComponent = React.createClass({
   getInitialState: function() {
       return {
+        sidebarCollapsed: this.props.sidebarCollapsed
       };
+  },
+  extendSidebarOptionClicked: function(e) {
+    _state.sidebarCollapsed = false;
+  },
+  collapseSidebarOptionClicked: function(e) {
+    _state.sidebarCollapsed = true;
   },
   ifEnterNavigate: function(e) {
     if(e.keyCode === 13) this.navigateEnteredURL();
@@ -31,7 +38,15 @@ var NewTabComponent = React.createClass({
   },
   render: function() {
     return (
-      <div className="new-tab">
+      <div className="new-tab-inner" >
+        { this.state.sidebarCollapsed ?
+          (<span className="extend-sidebar-option" onClick={ this.extendSidebarOptionClicked } >
+            <i className="fa fa-angle-double-right"></i>
+          </span>):
+          (<span className="collapse-sidebar-option" onClick={ this.collapseSidebarOptionClicked } >
+            <i className="fa fa-angle-double-left"></i>
+          </span>)
+        }
         <div className="new-tab-content">
           <span className="logo"><img src={"<%= url('img/logo/logo.png') %>"} alt="Browserpipe logo small"/></span>
           <div className="new-tab-input">
@@ -46,14 +61,22 @@ var NewTabComponent = React.createClass({
         </div>
       </div>
     );
-  }
+  },
+  updateMargins: function() {
+    if(this.state.sidebarCollapsed) $('#new-tab-section').removeClass('with-sidebar');
+    else $('#new-tab-section').addClass('with-sidebar');
+  },
+  componentDidMount: function() { this.updateMargins(); },
+  componentDidUpdate: function() { this.updateMargins(); }
 });
 
 
 module.exports.render = function (
+    sidebarCollapsed
   ) {
   return React.renderComponent(
-    <NewTabComponent />,
+    <NewTabComponent
+      sidebarCollapsed={sidebarCollapsed} />,
     document.getElementById('new-tab-section')
   );
 };

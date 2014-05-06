@@ -29,7 +29,6 @@ var loadSidebarComponent = function() {
       _state.selectedFolder,
       _state.sidebarTab,
       _state.sidebarCollapsed
-
     );
   } else {
     sidebarComponent.setState({
@@ -60,7 +59,12 @@ var loadTabHeaderComponent = function() {
 var loadNewTabComponent = function() {
   if(!newTabComponent) {
     newTabComponent = NewTabComponent.render(
+      _state.sidebarCollapsed
     );
+  } else {
+    newTabComponent.setState({
+      sidebarCollapsed: _state.sidebarCollapsed
+    });
   }
 }
 
@@ -199,6 +203,8 @@ var stateChanges = function() {
         loadSidebarComponent();
       if(tabHeaderComponent)
         loadTabHeaderComponent();
+      if(newTabComponent)
+        loadNewTabComponent();
       if(selectFolderModalComponent)
         loadSelectFolderModalComponent();
       if(bookmarkletArchiveComponent)

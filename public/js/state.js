@@ -31,7 +31,7 @@ var proto = {
         this.browser = this.getItemById(initialOptions.user.browser);
         this.archive = this.getItemById(initialOptions.user.archive);
 
-        this.sidebarCollapsed = false;
+        this.sidebarCollapsed = true;
     },
 
     //////////////////////////////////////////ITEMS//////////////////////////////////////

@@ -11,17 +11,15 @@ var _state = require('../state'),
 var TabHeaderComponent = React.createClass({
   getInitialState: function() {
       return {
-          selectedItem: this.props.selectedItem,
-          sidebarCollapsed: this.props.sidebarCollapsed
+        selectedItem: this.props.selectedItem,
+        sidebarCollapsed: this.props.sidebarCollapsed
       };
   },
   extendSidebarOptionClicked: function(e) {
     _state.sidebarCollapsed = false;
-    $('#tab-section').addClass('with-sidebar');
   },
   collapseSidebarOptionClicked: function(e) {
     _state.sidebarCollapsed = true;
-    $('#tab-section').removeClass('with-sidebar');
   },
   backOptionClicked: function(e) {
     e.preventDefault();
@@ -135,7 +133,13 @@ var TabHeaderComponent = React.createClass({
         </ul>
       </div>
     );
-  }
+  },
+  updateMargins: function() {
+    if(this.state.sidebarCollapsed) $('#tab-section').removeClass('with-sidebar');
+    else $('#tab-section').addClass('with-sidebar');
+  },
+  componentDidMount: function() { this.updateMargins(); },
+  componentDidUpdate: function() { this.updateMargins(); }
 });
 
 

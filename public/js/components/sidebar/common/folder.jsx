@@ -70,7 +70,7 @@ var FolderComponent = React.createClass({
         { this.renderTitleEditor() }
         </div>
         <ul ref="folderOptions" className="folder-options" onClick={ function(e){ e.stopPropagation(); } }>
-          <li className="dropdown nav-option">
+          <li className="dropdown dropup nav-option">
             <a draggable="false"  href="#" data-toggle="dropdown" className="dropdown-toggle">
               <i className="fa fa-chevron-circle-down"></i>
             </a>
