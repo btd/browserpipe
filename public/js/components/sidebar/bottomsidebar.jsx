@@ -18,7 +18,7 @@ var BottomSideBarComponent = React.createClass({
               <i className="fa fa-user"></i>
             </a>
             <ul className="dropdown-menu">
-              <li>
+              <li className="username">
                 <b>{ _state.username }</b>
               </li>
               <li className="divider"></li>

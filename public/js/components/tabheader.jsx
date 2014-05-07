@@ -30,7 +30,7 @@ var TabHeaderComponent = React.createClass({
     browser.createAndOpenInBrowser(
       parentId,
       url,
-      null,
+      this.state.selectedItem._id,
       function(item) {
         util.scrollToItem(item);
       }
