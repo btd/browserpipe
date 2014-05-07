@@ -402,7 +402,7 @@ a {
     }
     .folder-options {
       float: right;
-      margin: 2px 4px 0 0;
+      margin: 3px 6px 0 0;
 
       .dropdown-toggle {
         i {
@@ -466,16 +466,22 @@ a {
       margin: 2px 3px 0 0;
     }
     .remove-option, .tab-options {
-      float: right;
-      padding: 2px 3px;
+      position: absolute;
+      right: 0;
+      top: 3px;
+      z-index: 100;
 
       i {
+        padding: 3px 5px;
         color: #ccc;
       }
-
-      &:hover {
-        i {
-          color: #666;
+    }
+    .remove-option {
+      i {
+        &:hover {
+          background-color: #ff6d16;
+          color: #fff;
+          .border-radius(12px);
         }
       }
     }
@@ -484,6 +490,11 @@ a {
         .dropdown-menu {
           right: 0;
           left: auto;
+        }
+      }
+      &:hover {
+        i {
+          color: #666;
         }
       }
     }
@@ -520,8 +531,8 @@ a {
         overflow: hidden;
         white-space: nowrap;
         display: inline-block;
-        margin: 0 -15px 0 -30px;
-        padding: 0 15px 0 30px;
+        margin: 0 -17px 0 -30px;
+        padding: 0 17px 0 30px;
       }
     }
 
@@ -551,7 +562,37 @@ a {
     border-bottom: 1px solid #ddd;
 
     .extend-sidebar-option, .collapse-sidebar-option {
-      margin-left: 6px;
+
+      &:hover {
+        cursor: pointer;
+      }
+      span {
+        font-size: 13px;
+        font-weight: bold;
+        margin-left: 6px;
+      }
+      i {
+        margin-left: 6px;
+      }
+    }
+    .new-tab-input {
+      display: inline;
+
+      #small-url-input {
+        width: 280px;
+        height: 21px;
+        margin: 1px 0 0 12px;
+        border-radius: 0px;
+      }
+      #small-url-btn {
+        height: 21px;
+        line-height: 10px;
+        padding: 4px 6px;
+        border: 0;
+        color: #fff;
+        background: #ff6d16;
+        margin-top: 1px;
+      }
     }
     .back-option, .forward-option, .refresh-option {
       float: right;
@@ -624,7 +665,18 @@ a {
     height: 100%;
 
     .extend-sidebar-option, .collapse-sidebar-option {
-      margin-left: 6px;
+
+      &:hover {
+        cursor: pointer;
+      }
+      span {
+        font-size: 13px;
+        font-weight: bold;
+        margin-left: 6px;
+      }
+      i {
+        margin-left: 6px;
+      }
     }
     .new-tab-content {
       position: absolute;

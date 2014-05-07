@@ -41,10 +41,10 @@ var NewTabComponent = React.createClass({
       <div className="new-tab-inner" >
         { this.state.sidebarCollapsed ?
           (<span className="extend-sidebar-option" onClick={ this.extendSidebarOptionClicked } >
-            <i className="fa fa-angle-double-right"></i>
+            <span>menu</span><i className="fa fa-angle-double-right"></i>
           </span>):
           (<span className="collapse-sidebar-option" onClick={ this.collapseSidebarOptionClicked } >
-            <i className="fa fa-angle-double-left"></i>
+            <i className="fa fa-angle-double-left"></i><span>menu</span>
           </span>)
         }
         <div className="new-tab-content">

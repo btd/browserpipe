@@ -21,6 +21,21 @@ var TabHeaderComponent = React.createClass({
   collapseSidebarOptionClicked: function(e) {
     _state.sidebarCollapsed = true;
   },
+  ifEnterNavigate: function(e) {
+    if(e.keyCode === 13) this.navigateEnteredURL();
+  },
+  navigateEnteredURL: function() {
+    var url = this.refs.urlInput.getDOMNode().value.trim();
+    var parentId = _state.browser._id;
+    browser.createAndOpenInBrowser(
+      parentId,
+      url,
+      null,
+      function(item) {
+        util.scrollToItem(item);
+      }
+    );
+  },
   backOptionClicked: function(e) {
     e.preventDefault();
     var previous = this.state.selectedItem.previous;
@@ -74,17 +89,21 @@ var TabHeaderComponent = React.createClass({
       <div>
         { this.state.sidebarCollapsed ?
           (<span className="extend-sidebar-option" onClick={ this.extendSidebarOptionClicked } >
-            <i className="fa fa-angle-double-right"></i>
+            <span>menu</span><i className="fa fa-angle-double-right"></i>
           </span>):
           (<span className="collapse-sidebar-option" onClick={ this.collapseSidebarOptionClicked } >
-            <i className="fa fa-angle-double-left"></i>
+            <i className="fa fa-angle-double-left"></i><span>menu</span>
           </span>)
         }
+        <div className="new-tab-input">
+          <input type="text" placeholder="Enter an URL" id="small-url-input" ref="urlInput" defaultValue={ this.state.selectedItem.url } onKeyPress={this.ifEnterNavigate} />
+          <input type="button" id="small-url-btn" value="Go"  onClick={this.navigateEnteredURL} />
+        </div>
         <span className="labels">
+          <span className="message">Snapshot of <a target="_blank" href={this.state.selectedItem.url} title={this.state.selectedItem.url}>page</a>{" from " + this.renderDate(this.state.selectedItem.createdAt) + "  "}</span>
           <span className={"label" + (this.isInBrowser()?' hide':'')} onClick={ this.openOptionClicked } title="click to open in browser">click to open</span>
           <span className={"label" + (this.isInArchive()?' hide':'')} title="click to select folder to archive"><a data-toggle="modal" href="#" data-target="#select-folder-modal">click to archive</a></span>
           <span className={"label label-warning" + (this.isInArchive()?'':' hide')} onClick={ this.showItemInArchiveTab } title={"click to open archived folder"}>archived</span>
-        <span className="message">Snapshot of <a target="_blank" href={this.state.selectedItem.url} title={this.state.selectedItem.url}>{ this.state.selectedItem.url.substr(0,40)+(this.state.selectedItem.url.length > 40?'...':'')}</a>{" as it appeared on " + this.renderDate(this.state.selectedItem.createdAt) + "  "}</span>
         </span>
         <div className="refresh-option" onClick={ this.refreshOptionClicked } >
           <i className="fa fa-refresh"></i>

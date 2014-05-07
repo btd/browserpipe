@@ -2,7 +2,8 @@
  * @jsx React.DOM
  */
 
-var React = require('react');
+var _state = require('../../state'),
+    React = require('react');
 
 var BottomSideBarComponent = React.createClass({
   viewScreenshotsClicked: function() {
@@ -17,6 +18,10 @@ var BottomSideBarComponent = React.createClass({
               <i className="fa fa-user"></i>
             </a>
             <ul className="dropdown-menu">
+              <li>
+                <b>{ _state.username }</b>
+              </li>
+              <li className="divider"></li>
               <li >
                 <a data-toggle="modal" href="/modal/bookmarklet" data-target="#modal">
                   <span>Bookmarklets</span>

@@ -12,6 +12,7 @@ $.ajaxSetup({
 var model = require('moco').model;
 
 var State1 = model()
+    .attr('username')
     .attr('browser')
     .attr('archive')
     .attr('items', { collection: Items })
@@ -27,6 +28,8 @@ var proto = {
 
         //Load items
         this.loadItems(initialOptions.items || []);
+
+        this.username = initialOptions.user.name;
 
         this.browser = this.getItemById(initialOptions.user.browser);
         this.archive = this.getItemById(initialOptions.user.archive);
