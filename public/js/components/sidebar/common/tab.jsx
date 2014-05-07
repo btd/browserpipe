@@ -73,7 +73,7 @@ var TabComponent = React.createClass({
                   (<ul className="tab-options" onClick={ function(e){ e.stopPropagation(); } }>
                     <li className="dropdown dropup nav-option">
                       <a draggable="false"  href="#" data-toggle="dropdown" className="dropdown-toggle">
-                        <i className="fa fa-chevron-circle-down"></i>
+                        <i className="fa fa-chevron-down"></i>
                       </a>
                       <ul className="dropdown-menu">
                         <li >
