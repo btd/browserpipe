@@ -41,7 +41,7 @@ function processCss(css, attributes, browser) {
       return allContentChunked.join('');
     })
     .then(function(allContent) {
-      return [util.saveData(allContent, '.css'), allContent];
+      return [util.saveData(allContent, '.css', browser.item), allContent];
     });
 }
 // assume we already saved previous version on disk

@@ -14,7 +14,7 @@ var FileSchema = new Schema({
 var ItemSchema = new Schema({
   // sub items - for folder like behaviour
   items: [
-    { type: Schema.ObjectId, ref: 'Item '}
+    { type: Schema.ObjectId, ref: 'Item' }
   ],
 
   // archive
@@ -63,7 +63,8 @@ var ItemSchema = new Schema({
   statusCode: { type: Number }, //http response code
 
   // this is a path inside storage - it does not contain whole path with storage prefix
-  path: { type: String }
+  path: { type: String },
+  files: [ FileSchema ]
 }, {
   toObject: { virtuals: true },
   toJSON: { virtuals: true }
@@ -82,8 +83,6 @@ ItemSchema.plugin(require('../util/mongoose-query'));
     obj.type = index;
     return new Item(obj);
   };
-
-
 });
 
 var file = require('../util/file');
@@ -92,7 +91,15 @@ ItemSchema.virtual('storageUrl').get(function() {
   return this.path && file.url(this.path);
 });
 
-//TODO: for security reasons we should not use byId in the server but byIdAndUserId
+/**
+f it is object with name and size properties
+*/
+ItemSchema.methods.addFile = function(f) {
+  this.files.push(f);
+  return this;
+}
 
+//TODO: for security reasons we should not use byId in the server but byIdAndUserId
+// grep by Item.byId
 
 module.exports = Item = mongoose.model('Item', ItemSchema);

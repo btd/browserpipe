@@ -94,8 +94,12 @@ exports.openTag = function(name, attributes, escapeAttributes) {
   return text;
 };
 
-function saveData(data, ext) {
-    return file.saveData(data, ext);
+function saveData(data, ext, item) {
+  return file.saveData(data, ext).then(function(name) {
+    var size = Buffer.isBuffer(data) ? data.length : Buffer.byteLength(data);
+    item.addFile({ name: name, size: size })
+    return name;
+  });
 }
 
 exports.saveData = saveData;
