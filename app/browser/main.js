@@ -28,20 +28,14 @@ function sendAndSaveContent(res, opts, data) {
   res.send(data.content);
   var item = opts.item;
   return saveContent(item, opts.url, data.content, data.contentType, opts.width, opts.height, data.title, data.favicon)
-    .then(function() { userUpdate.updateItem(item.user, item); })
-    .then(function() {
-      if(data.contentNext) {
-        return data.contentNext.then(function(nextHtml) {
-          return saveContent(item, opts.url, nextHtml, data.contentType, opts.width, opts.height, data.title, data.favicon)
-        });
-      }
-    });
+    .then(function() { userUpdate.updateItem(item.user, item); });
 }
 
 function saveContent(item, url, content, ct, width, height, title, favicon) {
   var ext = contentType.chooseExtension(url, ct.type);
   return Promise.all([
-    generateScreenshot(content, width, height),
+    //generateScreenshot(content, width, height)
+    Promise.cast(screenshot.noScreenshotUrl),
     item.path ? util.saveDataByName(content, item.path) : util.saveData(content, ext, item)
   ]).spread(function(screenshotUrl, path) {
       item.title = title;
@@ -90,10 +84,9 @@ var manageItemCodeError = function(res, opts, code) {
   item.statusCode = code;
 
   return Promise.cast(item.save())
-      .then(function() {
-        userUpdate.updateItem(item.user, item);
-      })
-  });
+    .then(function() {
+      userUpdate.updateItem(item.user, item);
+    });
 }
 
 var sendItemCodeErrorResponse = function(res, code) {

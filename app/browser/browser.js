@@ -167,7 +167,6 @@ Browser.prototype.processHtml = function (baseUrl, htmlText, ct) {
 
       return data.contentPromise.then(function (html) {
         data.content = html;
-        data.contentNext = data.contentPromiseWithImages;
         return resolve(data);
       });
     });

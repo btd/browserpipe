@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "bcrypt": "latest",
-    "bluebird": "1.2.4",
+    "bluebird": "latest",
     "connect-flash": "0.1.1",
     "connect-mongo": "0.4.1",
     "detect-encoding": "0.0.3",
