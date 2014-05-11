@@ -11,16 +11,13 @@ var cssProcess = require('./css').process;
 
 
 var HtmlWriteHandler = function() {
+  this.chunks = [];
 
-  this.styleChunks = [];
-  this.imgChunks = [];
-
-  this.currentStyleChunk = '';
-  this.currentImgChunk = '';
+  this.currentChunk = '';
 
   this.hasDoctype = false;
 
-  this.stylesheetsDownloads = [];
+  this.stylesheetsContent = [];
   this.stylesheetsAttributes = [];
 
   //before doctype we can remove whitespace
@@ -38,84 +35,56 @@ function processCss(css, attributes, browser) {
     }))
   })
     .then(function(allContentChunked) {
+      //  console.log(allContentChunked);
       return allContentChunked.join('');
     })
-    .then(function(allContent) {
-      return [util.saveData(allContent, '.css'), allContent];
+    .then(function(text) {
+      return Promise.all(util.splitStyleByUrl(text, function(url) {
+        if(!util.isHttpURI(url)) {
+          return url;
+        }
+
+        return browser._loadUrlAndSave(url).then(function(name) {
+          var localUrl = file.url(name);
+          return localUrl;
+        })
+
+      }))
+    })
+    .then(function(chunks) {
+      return util.saveData(chunks.join(''), '.css', browser.item);
     });
 }
-// assume we already saved previous version on disk
-/*
- This function replaces all urls with download and save
- */
-function finalCssProcess(name, text, browser) {
-  return Promise.all(util.splitStyleByUrl(text, function(url) {
-    if(!util.isHttpURI(url)) {
-      return url;
-    }
 
-    return browser._loadUrlAndSave(url).then(function(name) {
-      var localUrl = file.url(name);
-      return localUrl;
-    })
-
-  })).then(function(chunks) {
-    //console.log(chunks);
-    return util.saveDataByName(chunks.join(''), name);
-  })
-}
 
 HtmlWriteHandler.prototype.gather = function(obj) {
   var that = this;
-  this.resetStyleChunk();
-  this.resetImgChunk();
+  this.resetChunk();
 
-  var sheet = processCss(this.stylesheetsDownloads, this.stylesheetsAttributes, this.browser);
+  var sheet = processCss(this.stylesheetsContent, this.stylesheetsAttributes, this.browser);
 
   //save sheet as <link>
-  var stylesheets = sheet.spread(function(sheetName) {
+  var stylesheets = sheet.then(function(sheetName) {
     var linkHtml = util.openTag('link', { type: contentType.CSS.toString(), rel: 'stylesheet', href: file.url(sheetName) });
 
     return linkHtml;
   });
 
-  var processedStylesheetPromise = sheet.spread(function(name, content) {
-    return finalCssProcess(name, content, that.browser);
-  });
+  this.chunks[this.cssMarkerIndex] = stylesheets;
 
-  this.imgChunks[this.cssMarkerImgIndex] = stylesheets;
-  this.styleChunks[this.cssMarkerStyleIndex] = stylesheets;
-
-  obj.contentPromise = Promise.all(this.styleChunks).then(function(chunks) { return chunks.join(''); });
-
-  obj.contentPromiseWithImages =  processedStylesheetPromise.then(function() { //with second content it will be all uber content with download everything
-    return Promise.all(that.imgChunks).then(function(chunks) {
-      return chunks.join('');
-    });
+  obj.contentPromise = Promise.all(that.chunks).then(function(chunks) {
+    return chunks.join('');
   });
 };
 
-HtmlWriteHandler.prototype.resetImgChunk = function() {
-  this.imgChunks.push(this.currentImgChunk);
-  this.currentImgChunk = '';
+HtmlWriteHandler.prototype.resetChunk = function() {
+  this.chunks.push(this.currentChunk);
+  this.currentChunk = '';
 };
 
-HtmlWriteHandler.prototype.resetStyleChunk = function() {
-  this.styleChunks.push(this.currentStyleChunk);
-  this.currentStyleChunk = '';
-};
 
 HtmlWriteHandler.prototype.add = function(text) {
-  this.addImg(text);
-  this.addStyle(text);
-};
-
-HtmlWriteHandler.prototype.addImg = function(text) {
-  this.currentImgChunk += text;
-};
-
-HtmlWriteHandler.prototype.addStyle = function(text) {
-  this.currentStyleChunk += text;
+  this.currentChunk += text;
 };
 
 // check if this is stylesheet that we can download
@@ -123,8 +92,9 @@ function isStylesheet(name, attributes) {
   return name == 'link' &&
     attributes.href &&
     util.isHttpURI(attributes.href) &&
-    (attributes.rel && attributes.rel.toLowerCase() == 'stylesheet') &&
-    (attributes.type && attributes.type.toLowerCase().indexOf('text/css') >= 0);
+    (attributes.rel && attributes.rel.toLowerCase() == 'stylesheet')/* &&
+    (attributes.type && attributes.type.toLowerCase().indexOf('text/css') >= 0)*/; 
+    //TODO when download css we need to check content-type by idea
 }
 
 // check if this is image that we can download
@@ -158,25 +128,27 @@ HtmlWriteHandler.prototype.onOpenTag = function(name, attributes) {
   }
 
   if(isStylesheet(name, attributes)) {
-    this.stylesheetsDownloads.push(this.browser._loadUrlOnly(entities.decodeHTML(attributes.href)));
+    this.stylesheetsContent.push(this.browser._loadUrlOnly(entities.decodeHTML(attributes.href)));
     this.stylesheetsAttributes.push(attributes);
   } else if(isImage(name, attributes)) {
-    this.resetImgChunk();//flush everything before
+    this.resetChunk();//flush everything before
 
     //add <img> tag via promise
-    this.imgChunks.push(this.browser._loadUrlAndSave(entities.decodeHTML(attributes.src))
+    this.chunks.push(this.browser._loadUrlAndSave(entities.decodeHTML(attributes.src))
       .then(function(name) {
         attributes.src = file.url(name);
         return util.openTag('img', attributes);
       }));
-    //for first version we load it as is
-    this.addStyle(util.openTag(name, attributes, false));
   } else if(isHtml5MetaCharset(name, attributes) || isHtml4MetaCharset(name, attributes)) {
     //we just skip page included <meta> for setting charset
   } else if(isStyle(name)) {
     this.inStyle = true;
+    
+    attributes.href = this.url;
+    this.stylesheetsAttributes.push(attributes);
   } else {
-    this.add(util.openTag(name, attributes, false));//TODO check what if inside attribute will be quote? Probably will be need to unescape and escape eveything
+    this.add(util.openTag(name, attributes, false));
+    //TODO check what if inside attribute will be quote? Probably will be need to unescape and escape eveything
 
     // immediatly after open <head> we add meta charset
     if(name == 'head') {
@@ -190,15 +162,11 @@ HtmlWriteHandler.prototype.onText = function(textObj) {
   if(this.removeExtraWhiteSpace) {
     this.add(textObj.text.replace(/\s+/g, ' '));
   } else if(this.inStyle) {
-    this.resetStyleChunk();
-    this.resetImgChunk();
-
-    var styleTag = cssProcess({ content: textObj.text, href: this.url }, {}, this.browser).then(function(content) {
-      return '<style>' + content + '</style>';
-    });
-
-    this.imgChunks.push(styleTag);
-    this.styleChunks.push(styleTag);
+    this.stylesheetsContent.push(Promise.cast({
+      content: textObj.text,
+      contentType: contentType.CSS,
+      href: this.url
+    }));
   } else {
     this.add(textObj.text);
   }
@@ -216,16 +184,13 @@ HtmlWriteHandler.prototype.onCloseTag = function(name) {
      </head>
      <body>
      */
-    this.resetStyleChunk();
-    this.resetImgChunk();
+    this.resetChunk();
 
     var cssMarker = Promise.cast('');
 
-    this.cssMarkerImgIndex = this.imgChunks.length;
-    this.cssMarkerStyleIndex = this.styleChunks.length;
+    this.cssMarkerIndex = this.chunks.length;
 
-    this.imgChunks.push(cssMarker);
-    this.styleChunks.push(cssMarker);
+    this.chunks.push(cssMarker);
   }
 
   if(util.voidElements[name]) {

@@ -17,9 +17,10 @@ var Iconv = require('iconv').Iconv;
 var util = require('./util');
 var charsetDetector = require('./charset-detector');
 
-function Browser(langs) {
+function Browser(langs, item) {
   this.htmlProcessor = new HtmlProcessor(this);
   this.langs = langs;
+  this.item = item;
 
   this._cache = {};
 }
@@ -129,7 +130,7 @@ Browser.prototype.processPage = function (url, isMainUrl) {
               return that.processHtml(url, body, ct).then(resolve);
             } else if (contentType.isImage(ct.type)) {
               var ext = contentType.chooseExtension(url, ct.type);
-              return util.saveData(body, ext).then(function (path) {
+              return util.saveData(body, ext, that.item).then(function (path) {
                 ct = contentType.HTML;
 
                 imgToHtml(file.url(path), function (err, html) {
@@ -142,7 +143,7 @@ Browser.prototype.processPage = function (url, isMainUrl) {
                 resolve({ content: html, href: response.request.href, contentType: ct});
               });
             } else {
-              //TODO what to do with binary content that don't know what to do?
+              //TODO what to do with binary content that we don't know what to do?
             }
           } else { // url relative to main url like css on html page
             return resolve({ content: body, href: response.request.href, contentType: ct });
@@ -166,7 +167,6 @@ Browser.prototype.processHtml = function (baseUrl, htmlText, ct) {
 
       return data.contentPromise.then(function (html) {
         data.content = html;
-        data.contentNext = data.contentPromiseWithImages;
         return resolve(data);
       });
     });
@@ -204,7 +204,7 @@ Browser.prototype._loadUrlAndSave = function(url) {
 
   var promisedPath = this.processPage(url, false).then(function(data) {
     var ext = contentType.chooseExtension(url, data.contentType.type);
-    return util.saveData(data.content, ext);
+    return util.saveData(data.content, ext, that.item);
   }).catch(function(e) {//TODO think about it
     if(e.statusCode) {
       return e.statusCode + '?url=' + encodeURIComponent(url);

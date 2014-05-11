@@ -26,25 +26,17 @@ function generateScreenshot(html, width, height) {
 
 function sendAndSaveContent(res, opts, data) {
   res.send(data.content);
-  return Item.byId(opts.itemId)
-    .then(function(item) {
-        return saveContent(item, opts.url, data.content, data.contentType, opts.width, opts.height, data.title, data.favicon)
-          .then(function() { userUpdate.updateItem(item.user, item); })
-          .then(function() {
-            if(data.contentNext) {
-              return data.contentNext.then(function(nextHtml) {
-                return saveContent(item, opts.url, nextHtml, data.contentType, opts.width, opts.height, data.title, data.favicon)
-              });
-            }
-          });
-    });
+  var item = opts.item;
+  return saveContent(item, opts.url, data.content, data.contentType, opts.width, opts.height, data.title, data.favicon)
+    .then(function() { userUpdate.updateItem(item.user, item); });
 }
 
 function saveContent(item, url, content, ct, width, height, title, favicon) {
   var ext = contentType.chooseExtension(url, ct.type);
   return Promise.all([
-    generateScreenshot(content, width, height),
-    item.path ? util.saveDataByName(content, item.path) : util.saveData(content, ext)
+    //generateScreenshot(content, width, height)
+    Promise.cast(screenshot.noScreenshotUrl),
+    item.path ? util.saveDataByName(content, item.path) : util.saveData(content, ext, item)
   ]).spread(function(screenshotUrl, path) {
       item.title = title;
       item.url = url;
@@ -60,7 +52,7 @@ function saveContent(item, url, content, ct, width, height, title, favicon) {
 }
 
 function navigate(res, opts) {
-  var browser = new Browser(opts.languages);
+  var browser = new Browser(opts.languages, opts.item);
 
   return browser._loadUrl(opts.url, true)
     .then(function(data) {
@@ -82,18 +74,18 @@ var StatusCode4XXError = function(e) {
 
 var manageItemCodeError = function(res, opts, code) {
   sendItemCodeErrorResponse(res, code);
-  Item.byId(opts.itemId)
-    .then(function(item) {
-      item.title = opts.url;
-      //TODO: we can have better images in the future regarding the error code
-      item.screenshot = screenshot.noScreenshotUrl;
-      item.windowWidth = opts.width;
-      item.windowHeight = opts.height;
-      item.statusCode = code;
-      Promise.cast(item.save())
-        .then(function() {
-          userUpdate.updateItem(item.user, item);
-        })
+  var item = opts.item;
+
+  item.title = opts.url;
+  //TODO: we can have better images in the future regarding the error code
+  item.screenshot = screenshot.noScreenshotUrl;
+  item.windowWidth = opts.width;
+  item.windowHeight = opts.height;
+  item.statusCode = code;
+
+  return Promise.cast(item.save())
+    .then(function() {
+      userUpdate.updateItem(item.user, item);
     });
 }
 
@@ -131,10 +123,22 @@ exports.htmlItem = function(req, res) {
     } else if(item.path) {
       return res.redirect(file.url(item.path));
     } else {
-      return navigate(res, { url: item.url, itemId: item._id, languages: user.langs, width: width, height: height });
+      return navigate(res, {
+        url: item.url,
+        item: item,
+        languages: user.langs,
+        width: width,
+        height: height
+      });
     }
   }
-  else if(req.query.url) return navigate(res, { url: req.query.url, itemId: item._id, languages: user.langs, width: width, height: height });
+  else if(req.query.url) return navigate(res, {
+    url: req.query.url,
+    item: item,
+    languages: user.langs,
+    width: width,
+    height: height
+  });
   else return errors.sendBadRequest(res);
 }
 
@@ -164,17 +168,16 @@ exports.htmlBookmarklet = function(req, res) {
   if(req.body.archiveParent) {
     item.archiveParent = req.body.archiveParent;
     parentId = item.archiveParent;
-  }
-  else {
+  } else {
     item.browserParent = user.browser;
     parentId = item.browserParent;
   }
 
   var ct = contentType.HTML;
 
-  var browser = new Browser(user.langs);
+  var browser = new Browser(user.langs, item);
 
-  Promise.cast(item.save())
+  return Promise.cast(item.save())
     .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
     .then(function() {
       return Item.byId({ _id: parentId })
