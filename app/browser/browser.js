@@ -20,7 +20,7 @@ var charsetDetector = require('./charset-detector');
 function Browser(langs) {
   this.htmlProcessor = new HtmlProcessor(this);
   this.langs = langs;
-  this.files = {};
+  this.files = [];
 
   this._cache = {};
 }
@@ -33,11 +33,7 @@ Browser.prototype.saveData = function(data, ext) {
   return util.saveData(data, ext)
   .then(function(name) {
     var size = Buffer.isBuffer(data) ? data.length : Buffer.byteLength(data);
-    if(that.files[name]) {
-      that.files[name].size = size;
-    } else {
-      that.files[name] = { name: name, size: size };
-    }
+    that.files.push({ name: name, size: size });
     return name;
   });
 };
