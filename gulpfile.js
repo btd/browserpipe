@@ -79,6 +79,7 @@ gulp.task('script-main', function () {
         .require('./public/bower_components/moco/index.js', { expose: 'moco' })
         .require('./public/bower_components/emitter/index.js', { expose: 'emitter' })
         .require('./public/bower_components/socket.io-client/dist/socket.io.js', { expose: 'socket.io-client'})
+        .require('./public/bower_components/bytes/index.js', { expose: 'bytes'})
         .ignore('emitter-component')
         .bundle({
             insertGlobals: false,

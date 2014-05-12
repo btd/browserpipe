@@ -25,10 +25,12 @@ var Item = model()
   .attr('storageUrl')
   .attr('updatedAt')
   .attr('createdAt')
+  .attr('size', { default: 0 }) //integer for urls
   .use(function(Model) {
     Model.prototype.isFolder = function() {
       return this.type === 2;
-    }
+    };
+
   });
 
 

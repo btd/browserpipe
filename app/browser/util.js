@@ -215,6 +215,8 @@ exports.isHttpURI = function(url) {
 function StatusCodeError(statusCode) {
   this.statusCode = statusCode;
   Error.call(this, '' + statusCode + ' status code');
+
+  Error.captureStackTrace(this, this.constructor);
 }
 
 StatusCodeError.prototype = Object.create(Error.prototype);
@@ -224,6 +226,8 @@ exports.StatusCodeError = StatusCodeError;
 function UnsupportedContentTypeError(contentType) {
   this.contentType = contentType;
   Error.call(this, '' + contentType + ' not supported');
+
+  Error.captureStackTrace(this, this.constructor);
 }
 
 UnsupportedContentTypeError.prototype = Object.create(Error.prototype);

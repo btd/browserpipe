@@ -5,10 +5,22 @@
 var _state = require('../../state'),
     React = require('react');
 
+var bytes = require('bytes');
+
 var BottomSideBarComponent = React.createClass({
   viewScreenshotsClicked: function() {
     this.props.showScreenshots(this.refs.chkScreenshots.getDOMNode().checked);
   },
+
+  usageString: function() {
+    return bytes(_state.size()) +
+            ' of ' +
+            bytes(_state.config.userLimit) +
+            ' (' +
+            (_state.config.userLimit / 100 / _state.size()).toFixed(2) +
+            '% used)';
+  },
+
   render: function() {
     return (
       <div className="bottom-sidebar">
@@ -53,7 +65,7 @@ var BottomSideBarComponent = React.createClass({
             </ul>
           </li>
         </ul>
-        <div className="space-text">4.5 GB (90%) of 5 GB used</div>
+        <div className="space-text">{this.usageString()}</div>
       </div>
     );
   }

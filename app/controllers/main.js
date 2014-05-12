@@ -9,7 +9,8 @@ exports.home = function (req, res, next) {
                 user: req.user,
                 items: items,
                 config: {
-                    appUrl: config.appUrl
+                    appUrl: config.appUrl,
+                    userLimit: config.userLimit
                 }
             })
         }, next)
@@ -25,7 +26,8 @@ exports.bookmarkletArchive = function (req, res, next) {
           user: req.user,
           items: items,
           config: {
-              appUrl: config.appUrl
+              appUrl: config.appUrl,
+              userLimit: config.userLimit //we can set it per use there
           }
       })
   }, next)

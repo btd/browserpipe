@@ -20,6 +20,7 @@ var State1 = model()
     .attr('selectedFolder')
     .attr('sidebarTab')
     .attr('sidebarCollapsed')
+    .attr('config')
     .use(model.nestedObjects);
 
 var proto = {
@@ -34,6 +35,8 @@ var proto = {
         this.browser = this.getItemById(initialOptions.user.browser);
         this.archive = this.getItemById(initialOptions.user.archive);
 
+        this.config = initialOptions.config;
+
         this.sidebarCollapsed = true;
     },
 
@@ -42,6 +45,12 @@ var proto = {
     loadItems: function (from) {
         from.forEach(this.addItem, this);
     },
+
+  size: function() {
+    return this.items.reduce(function(acc, item) {
+      return acc + item.size;
+    }, 0);
+  },
 
 
     //Gets
@@ -54,16 +63,23 @@ var proto = {
 
     //CRUD
     addItem: function (item) {
+        item.size = item.files.reduce(function(acc, file) {
+          return acc + (file.size || 0);
+        }, 0);
         item = new Item(item);// to have common reference
         this.items.push(item);
     },
     updateItem: function (itemUpdate) {
-        var item = this.getItemById(itemUpdate._id);
-        if (item) {
-            for(var p in itemUpdate) {
-                item[p] = itemUpdate[p];
-            }
+      var item = this.getItemById(itemUpdate._id);
+      if (item) {
+        var size = itemUpdate.files.reduce(function(acc, file) {
+          return acc + (file.size || 0);
+        }, 0);
+        item.size = size;
+        for(var p in itemUpdate) {
+            item[p] = itemUpdate[p];
         }
+      }
     },
     removeItem: function (itemId) {
         this.items.removeById(itemId);

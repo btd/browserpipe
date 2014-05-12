@@ -73,7 +73,7 @@ Browser.prototype.determineContentType = function(response, _body) {
 
       logger.debug('Url %s content type from body %s', url, ct);
 
-      if (!ct.hasCharset() && !contentType.isBinary(ct.type)) {// if we could not get from source
+      if (!ct.hasCharset() && !contentType.isBinary(ct.type) && _body.length > 0) {// if we could not get from source
         //fill from libmagic
         return charsetDetector.guessCharset(_body).then(function (encoding) {
           logger.debug('Url %s content type from magic %s', url, ct);

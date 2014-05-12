@@ -25,7 +25,9 @@ var common = {
     host: '127.0.0.1',
     port: 6379,
     options: {}
-  }
+  },
+
+  userLimit: 2147483648 // 2gb in bytes
 };
 
 var config = {
