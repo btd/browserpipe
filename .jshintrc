@@ -8,7 +8,9 @@
         "process": true,
         "window": true,
         "document": true,
-        "setTimeout": true
+        "setTimeout": true,
+        "Buffer": true,
+        "location": true
     },
     "asi": true,
     "smarttabs": true,

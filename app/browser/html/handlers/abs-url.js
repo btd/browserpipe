@@ -2,8 +2,6 @@ var Base = require('./base');
 
 var util = require('../../util');
 
-var cssProcess = require('./css').process;
-
 var tags = { 
   a: [ 'href' ],
   img: [ 'src', 'longdesc', 'usemap' ],

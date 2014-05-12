@@ -35,7 +35,6 @@ function processCss(css, attributes, browser) {
     }))
   })
     .then(function(allContentChunked) {
-      //  console.log(allContentChunked);
       return allContentChunked.join('');
     })
     .then(function(text) {
@@ -52,7 +51,7 @@ function processCss(css, attributes, browser) {
       }))
     })
     .then(function(chunks) {
-      return util.saveData(chunks.join(''), '.css', browser.item);
+      return browser.saveData(chunks.join(''), '.css');
     });
 }
 

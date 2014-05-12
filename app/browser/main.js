@@ -8,56 +8,32 @@ var logger = require('rufus').getLogger('browser');
 
 var Promise = require('bluebird');
 
-var screenshot = require('./screenshot/screenshot');
-
-var util = require('./util');
-
 var file = require('../../util/file');
 
 var contentType = require('../../util/content-type');
 
-function generateScreenshot(html, width, height) {
-  return new Promise(function(resolve/*, reject*/) {
-    screenshot.generateScreenshot(html, width, height, function(screenshotData) {
-      resolve(screenshotData.screenshotSmall || screenshot.noScreenshotUrl);
-    })
-  })
-}
-
-function sendAndSaveContent(res, opts, data) {
-  res.send(data.content);
-  var item = opts.item;
-  return saveContent(item, opts.url, data.content, data.contentType, opts.width, opts.height, data.title, data.favicon)
-    .then(function() { userUpdate.updateItem(item.user, item); });
-}
-
-function saveContent(item, url, content, ct, width, height, title, favicon) {
-  var ext = contentType.chooseExtension(url, ct.type);
-  return Promise.all([
-    //generateScreenshot(content, width, height)
-    Promise.cast(screenshot.noScreenshotUrl),
-    item.path ? util.saveDataByName(content, item.path) : util.saveData(content, ext, item)
-  ]).spread(function(screenshotUrl, path) {
-      item.title = title;
-      item.url = url;
-      item.windowWidth = width;
-      item.windowHeight = height;
-      item.favicon = favicon;
-      item.screenshot = screenshotUrl;
-      item.path = path;
-      item.statusCode = 200;
-
-      return Promise.cast(item.save())
-    });
-}
 
 function navigate(res, opts) {
-  var browser = new Browser(opts.languages, opts.item);
-
+  var browser = new Browser(opts.languages);
+  var item = opts.item;
   return browser._loadUrl(opts.url, true)
     .then(function(data) {
       logger.debug('Load data from url %s', opts.url);
-      return sendAndSaveContent(res, opts, data);
+      res.send(data.content);
+
+      var ext = contentType.chooseExtension(opts.url, data.contentType.type);
+      return browser.saveData(data.content, ext)
+        .then(function(path) {
+          item.title = data.title;
+          item.url = data.href;
+          item.favicon = data.favicon;
+          item.screenshot = screenshot.noScreenshotUrl;
+          item.path = path;
+          item.statusCode = 200;
+          item.files = browser.files;
+
+          return Promise.cast(item.save())
+        })
     })
     .catch(StatusCode4XXError, function(e) {
       manageItemCodeError(res, opts, e.statusCode);
@@ -79,8 +55,6 @@ var manageItemCodeError = function(res, opts, code) {
   item.title = opts.url;
   //TODO: we can have better images in the future regarding the error code
   item.screenshot = screenshot.noScreenshotUrl;
-  item.windowWidth = opts.width;
-  item.windowHeight = opts.height;
   item.statusCode = code;
 
   return Promise.cast(item.save())
@@ -114,8 +88,10 @@ var sendItemCodeErrorResponse = function(res, code) {
 exports.htmlItem = function(req, res) {
   var item = req.currentItem;
   var user = req.user;
-  var width = req.query.width;
-  var height = req.query.height;
+
+  item.windowWidth = req.query.width;
+  item.windowHeight = req.query.height;
+
   if(item.url) {
     logger.debug('Browser open %s for %s', item._id, item.url);
     if(item.statusCode && item.statusCode !== 200) {
@@ -126,19 +102,17 @@ exports.htmlItem = function(req, res) {
       return navigate(res, {
         url: item.url,
         item: item,
-        languages: user.langs,
-        width: width,
-        height: height
-      });
+        languages: user.langs
+      })
+        .then(userUpdate.updateItem.bind(null, req.user._id, item));
     }
   }
-  else if(req.query.url) return navigate(res, {
-    url: req.query.url,
-    item: item,
-    languages: user.langs,
-    width: width,
-    height: height
-  });
+  else if(req.query.url)
+    return navigate(res, {
+      url: req.query.url,
+      item: item,
+      languages: user.langs
+    }).then(userUpdate.updateItem.bind(null, req.user._id, item));
   else return errors.sendBadRequest(res);
 }
 
@@ -159,12 +133,13 @@ exports.htmlBookmarklet = function(req, res) {
   var url = req.body.url;
   var parentId = '';
   var html = req.body.html;
-  var charset = req.body.charset;
+  //var charset = req.body.charset;
   var width = req.body.width;
   var height = req.body.height;
 
   //We save item on root
-  var item = new Item({ url: url , type: 0, user: user._id });
+  var item = new Item({ url: url , type: 0, user: user._id, windowWidth: width, windowHeight: height });
+
   if(req.body.archiveParent) {
     item.archiveParent = req.body.archiveParent;
     parentId = item.archiveParent;
@@ -175,7 +150,7 @@ exports.htmlBookmarklet = function(req, res) {
 
   var ct = contentType.HTML;
 
-  var browser = new Browser(user.langs, item);
+  var browser = new Browser(user.langs);
 
   return Promise.cast(item.save())
     .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
@@ -192,7 +167,20 @@ exports.htmlBookmarklet = function(req, res) {
       return browser.processHtml(url, html, ct)
         .then(function(data) {
           logger.debug('Load data from bookmarklet url %s', url);
-          return saveContent(item, url, data.content, data.contentType, width, height, data.title, data.favicon)
+
+          var ext = contentType.chooseExtension(url, ct.type);
+          return browser.saveData(data.content, ext)
+            .then(function(path) {
+              item.title = data.title;
+              item.url = url;
+              item.favicon = data.favicon;
+              item.screenshot = screenshot.noScreenshotUrl;
+              item.path = path;
+              item.statusCode = 200;
+              item.files = browser.files;
+
+              return Promise.cast(item.save())
+            })
             .then(userUpdate.updateItem.bind(null, req.user._id, item))
         })
         .error(function(e) {

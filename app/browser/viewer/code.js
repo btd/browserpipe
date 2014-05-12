@@ -15,6 +15,6 @@ function tpl(code) {
     '</html>'
 }
 
-module.exports = function(text, callback) {
-  return callback(null, tpl(text));
+module.exports = function(text) {
+  return tpl(text);
 }

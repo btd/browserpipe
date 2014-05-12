@@ -1,4 +1,3 @@
-var contentType = require('../../util/content-type');
 var file = require('../../util/file');
 
 var url = require('url');
@@ -94,15 +93,8 @@ exports.openTag = function(name, attributes, escapeAttributes) {
   return text;
 };
 
-function saveData(data, ext, item) {
-  return file.saveData(data, ext).then(function(name) {
-    var size = Buffer.isBuffer(data) ? data.length : Buffer.byteLength(data);
-    item.addFile({ name: name, size: size })
-    return name;
-  });
-}
 
-exports.saveData = saveData;
+exports.saveData = file.saveData;
 
 exports.saveDataByName = file.saveDataByName;
 
@@ -220,3 +212,18 @@ exports.isHttpURI = function(url) {
 }
 
 
+function StatusCodeError(statusCode) {
+  this.statusCode = statusCode;
+  Error.call(this, '' + statusCode + ' status code');
+}
+
+StatusCodeError.prototype = Object.create(Error.prototype);
+
+exports.StatusCodeError = StatusCodeError;
+
+function UnsupportedContentTypeError(contentType) {
+  this.contentType = contentType;
+  Error.call(this, '' + contentType + ' not supported');
+}
+
+UnsupportedContentTypeError.prototype = Object.create(Error.prototype);

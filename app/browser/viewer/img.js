@@ -16,8 +16,8 @@ function tpl(url) {
     '</html>'
 }
 
-module.exports = function(url, callback) {
-  return callback(null, tpl(fixedEncodeURI(url)));
+module.exports = function(url) {
+  return tpl(fixedEncodeURI(url));
 }
 
 function fixedEncodeURI (str) {
