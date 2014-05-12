@@ -12,6 +12,8 @@ var file = require('../../util/file');
 
 var contentType = require('../../util/content-type');
 
+var screenshot = require('./screenshot/screenshot');
+
 
 function navigate(res, opts) {
   var browser = new Browser(opts.languages);
