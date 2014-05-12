@@ -5,14 +5,28 @@ var mongoose = require('mongoose'),
 
 var Item;
 
+var FileSchema = new Schema({
+  name: String,
+  size: Number
+})
+
 //There are to types of items: folder-item and note-item
 var ItemSchema = new Schema({
   // sub items - for folder like behaviour
   items: [
-    { type: Schema.ObjectId, ref: 'Item '}
+    { type: Schema.ObjectId, ref: 'Item' }
   ],
 
-  parent: { type: Schema.ObjectId, ref: 'Item' }, // not sure if it is need, but it seems it is easy to maintain it
+  // archive
+  archiveParent: { type: Schema.ObjectId, ref: 'Item' }, //parent folder, if sets it means it is archived
+
+  // browser
+  browserParent: { type: Schema.ObjectId, ref: 'Item' }, // parent in browser, if sets it means that is in browser
+
+  // pin
+  pinned: { type: Boolean, default: false }, //This means that is pinned in the browser
+
+  // history
   previous: { type: Schema.ObjectId, ref: 'Item' }, //previous item navigated
   next: { type: Schema.ObjectId, ref: 'Item' }, //next item navigated
 
@@ -27,10 +41,11 @@ var ItemSchema = new Schema({
   screenshot: { type: String, trim: true },
   url: { type: String, trim: true },
 
+  // not used now
   windowWidth: { type: Number }, //Width of client window
   windowHeight: { type: Number }, //Height of client window
 
-  // only for browsers
+  // only for browsers not used
   externalId: { type: String, trim: true },
   browserKey: { type: String, trim: true },
   lastSync: { type: Date },
@@ -42,18 +57,21 @@ var ItemSchema = new Schema({
   scrollX: { type: Number },
   scrollY: { type: Number },
 
+  // trash
   deleted: { type: Boolean, default: false },
 
   statusCode: { type: Number }, //http response code
 
   // this is a path inside storage - it does not contain whole path with storage prefix
-  path: { type: String }
+  path: { type: String },
+  files: [ FileSchema ]
 }, {
   toObject: { virtuals: true },
   toJSON: { virtuals: true }
 });
 
 ItemSchema.plugin(require('../util/mongoose-timestamp'));
+ItemSchema.plugin(require('../util/mongoose-query'));
 
 
 ['Bookmark', 'Note', 'Container'].forEach(function(elem, index) {
@@ -65,15 +83,6 @@ ItemSchema.plugin(require('../util/mongoose-timestamp'));
     obj.type = index;
     return new Item(obj);
   };
-
-  ItemSchema.methods['add' + elem] = function(obj) {
-    var item = new Item(obj);
-    item.type = index;
-    item.parent = this._id;
-    item.user = this.user;
-    this.items.push(item._id);//TODO maybe add after save?
-    return item;
-  };
 });
 
 var file = require('../util/file');
@@ -82,22 +91,15 @@ ItemSchema.virtual('storageUrl').get(function() {
   return this.path && file.url(this.path);
 });
 
-//TODO: for security reasons we should not use byId in the server but byIdAndUserId
-ItemSchema.statics.byId = function(id) {
-  return Item.by({ _id: id});
-};
-
-ItemSchema.statics.by = function(query) {
-  return Item
-    .findOne(query)
-    .exec();
-};
-
-
-ItemSchema.statics.all = function(query) {
-  return Item
-    .find(query)
-    .exec();
+/**
+f it is object with name and size properties
+*/
+ItemSchema.methods.addFile = function(f) {
+  this.files.push(f);
+  return this;
 }
+
+//TODO: for security reasons we should not use byId in the server but byIdAndUserId
+// grep by Item.byId
 
 module.exports = Item = mongoose.model('Item', ItemSchema);

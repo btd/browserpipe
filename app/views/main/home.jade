@@ -1,14 +1,17 @@
 extends ../layouts/home
 
 block body
-  span#dashboard-section
-  #page-section
-    #page-header
-    iframe(src='about:blank', class="page-content")
+  span#sidebar-section
+  #new-tab-section
+  #tab-section
+    #tab-header
+    iframe(src='about:blank', class="tab-content")
     .loader
-      img(src="/img/loader.gif")
+      .loader-inner
+        img(src="/img/loader.gif", alt="loading")
   #hiddenEventDiv
-  #modal(class="modal fade")
+  #select-folder-modal-section
+  #modal(class="modal fade",style="display: none;")
     .modal-dialog
       .modal-content
   include ../includes/footer

@@ -42,39 +42,38 @@ exports.create = function (req, res, next) {
     var errors = req.validationErrors();
     if (errors) {
         req.flash('errors', errors);
-        res.redirect('/signup');
-        
+        res.redirect('back');
+
         return;
     }
 
     var email = req.body.email.trim().toLowerCase();
-   
+
     return User.byEmail(email)
         .then(function(_user) {
             if(_user) {
                 req.flash('errors', [{ msg: 'Email already used' }]);
-                res.redirect('/signup');
+                res.redirect('back');
             } else {
                 var user = new User(_.pick(req.body, 'email', 'name', 'password'));
-                user.provider = 'local' //for passport
+                //user.provider = 'local'; //for passport
                 user.email = email;
                 if(req.headers['accept-language']) {
                   user.langs = req.headers['accept-language'];
                 }
 
-                var browser = Item.newContainer({ title: 'Browser', user: user });
+                var browser = Item.newContainer({ title: 'Archive', user: user });
+                var archive = Item.newContainer({ title: 'Browser', user: user });
                 user.browser = browser;
+                user.archive = archive;
 
-                return Promise.cast(user.save())
-                    .then(function() {
-                        return browser.save();
+                return Promise.all([user.save(), browser.save(), archive.save()])
+                  .then(function () {
+                    req.login(user, function (err) {
+                        if (err) return next(err);
+                        res.redirect('/');
                     })
-                    .then(function () {
-                        req.login(user, function (err) {
-                            if (err) return next(err);
-                            res.redirect('/');
-                        })
-                    }, next)
+                  }, next);
             }
         }, next);
 }

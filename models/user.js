@@ -1,23 +1,18 @@
 // User schema
 
 var mongoose = require('mongoose'),
-  Schema = mongoose.Schema,
-  validation = require('./validation');
+  Schema = mongoose.Schema;
 
 var User;
 
 var bcrypt = require('bcrypt'),
   SALT_WORK_FACTOR = 10;
 
-var errorMsgs = {
-  invalid: 'is not valid',
-  should_be_unique: 'already used'
-}
 
 var UserSchema = new Schema({
-  name: { type: String, match: /(\w| )+/, trim: true, validate: validation.nonEmpty("Name ")},
-  email: { type: String, required: true, validate: [ /\S+@\S+\.\S/, errorMsgs.invalid], trim: true, lowercase: true},
-  password: { type: String, required: true},
+  name: { type: String, trim: true },
+  email: { type: String, trim: true, lowercase: true },
+  password: { type: String },
 
   /*
   For now it is just Accept-Language value header
@@ -32,10 +27,12 @@ var UserSchema = new Schema({
    */
   langs: { type: String, default: 'en-US,en;q=0.5' },
 
-  browser: { type: Schema.ObjectId, ref: 'Item' }
+  browser: { type: Schema.ObjectId, ref: 'Item' },
+  archive: { type: Schema.ObjectId, ref: 'Item' }
 });
 
 UserSchema.plugin(require('../util/mongoose-timestamp'));
+UserSchema.plugin(require('../util/mongoose-query'));
 
 UserSchema.set('toJSON', {
   transform: function(doc, ret) {
@@ -65,15 +62,6 @@ UserSchema.methods.authenticate = function(password, callback) {
   return bcrypt.compare(password, this.password, callback);
 };
 
-UserSchema.statics.by = function(obj) {
-  return User.findOne(obj).exec();
-};
-
-// 2 convinient wrappers to do not repeat in code also it populate internal doc
-UserSchema.statics.byId = function(id) {
-  return User.by({ _id: id});
-};
-
 UserSchema.statics.byEmail = function(email) {
   return User.by({ email: email.toLowerCase() });
 };
@@ -83,8 +71,8 @@ UserSchema.pre('save', function(done) {
   return User.byEmail(this.email)
     .then(function(otherUser) {
       if(otherUser && !otherUser._id.equals(that._id)) {
-        that.invalidate('email', errorMsgs.should_be_unique);
-        done(new Error(errorMsgs.should_be_unique));
+        that.invalidate('email', 'not unique');
+        done(new Error('email not unique'));
       } else {
         done();
       }
