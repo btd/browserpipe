@@ -56,7 +56,6 @@
     "gulp-uglify": "^0.3.0",
     "gulp-ejs": "^0.2.2",
     "gulp-less": "^1.2.3",
-    "gulp-watch": "^0.6.4",
     "gulp": "^3.6.0",
     "gulp-util": "^2.2.14",
     "gulp-jshint": "^1.5.3",
