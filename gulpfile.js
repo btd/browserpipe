@@ -34,11 +34,11 @@ gulp.task('styles', function () {
 
 gulp.task('images', function () {
     return gulp.src('public/img/**/*.{gif,png,jpg}')
-        .pipe($.cache($.imagemin({
+        /*.pipe($.cache($.imagemin({
             optimizationLevel: 3,
             progressive: true,
             interlaced: true
-        })))
+        })))*/
         .pipe(rev())
         .pipe(gulp.dest('dist/img'))
         .pipe(rev.manifest(manifestSettings))

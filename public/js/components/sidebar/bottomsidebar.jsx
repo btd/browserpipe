@@ -13,11 +13,12 @@ var BottomSideBarComponent = React.createClass({
   },
 
   usageString: function() {
-    return bytes(_state.size()) +
+    var size = _state.size();
+    return  bytes(size) +
             ' of ' +
             bytes(_state.config.userLimit) +
             ' (' +
-            (_state.config.userLimit / 100 / _state.size()).toFixed(2) +
+            (size > 0 ? (_state.config.userLimit / 100 / size).toFixed(2) : 0) +
             '% used)';
   },
 
