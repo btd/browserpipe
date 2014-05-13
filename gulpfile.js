@@ -134,11 +134,12 @@ gulp.task('default', function(callback) {
 });
 
 gulp.task('watch', function() {
-    gulp.watch('public/css/**/*', ['styles']);
+  gulp.watch('public/img/**/*', ['images']);
 
-    gulp.watch('public/js/**/*', ['script-main', 'script-index']);
+  gulp.watch('public/font/**/*', ['fonts']);
 
-    gulp.watch('public/img/**/*', ['images']);
+  gulp.watch('public/css/**/*', ['styles']);
 
-    gulp.watch('public/font/**/*', ['fonts']);
+  gulp.watch('public/js/**/*', ['script-main', 'script-index']);
+
 });
