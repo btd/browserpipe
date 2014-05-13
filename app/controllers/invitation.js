@@ -27,7 +27,7 @@ exports.accepted = function(req, res, next) {
 //Create invitation
 exports.create = function (req, res) {
     var invitation = new Invitation(req.body); //TODO pick fields
-    return Promise.cast(invitation.save())
+    return invitation.saveWithPromise()
         .then(responses.sendModelId(res, invitation._id))
         .error(errors.ifErrorSendBadRequest(res))
 }

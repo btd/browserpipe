@@ -72,7 +72,7 @@ var ItemSchema = new Schema({
 
 ItemSchema.plugin(require('../util/mongoose-timestamp'));
 ItemSchema.plugin(require('../util/mongoose-query'));
-
+ItemSchema.plugin(require('../util/mongoose-patch'));
 
 ['Bookmark', 'Note', 'Container'].forEach(function(elem, index) {
   ItemSchema.methods['is' + elem] = function() {

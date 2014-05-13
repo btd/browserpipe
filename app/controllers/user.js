@@ -67,7 +67,7 @@ exports.create = function (req, res, next) {
                 user.browser = browser;
                 user.archive = archive;
 
-                return Promise.all([user.save(), browser.save(), archive.save()])
+                return Promise.all([user.saveWithPromise(), browser.saveWithPromise(), archive.saveWithPromise()])
                   .then(function () {
                     req.login(user, function (err) {
                         if (err) return next(err);

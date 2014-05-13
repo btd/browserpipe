@@ -33,6 +33,7 @@ var UserSchema = new Schema({
 
 UserSchema.plugin(require('../util/mongoose-timestamp'));
 UserSchema.plugin(require('../util/mongoose-query'));
+UserSchema.plugin(require('../util/mongoose-patch'));
 
 UserSchema.set('toJSON', {
   transform: function(doc, ret) {

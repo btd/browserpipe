@@ -41,7 +41,7 @@ exports.addItemToBrowser = function(req, res) {
   parent.markModified('items');
 
 
-  Promise.cast(parent.save())
+  parent.saveWithPromise()
     .then(function() {
         if(updateBrowser)
           return appendItemToParent(parent, req.user.browser, req, res);
@@ -51,11 +51,11 @@ exports.addItemToBrowser = function(req, res) {
         return Item.byId({ _id: item.previous })
           .then(function(previous) {
             previous.next = item._id;
-            return Promise.cast(previous.save()).then(userUpdate.updateItem.bind(null, req.user._id, previous));
+            return previous.saveWithPromise().then(userUpdate.updateItem.bind(null, req.user._id, previous));
           })
     })
     .then(function() {
-      Promise.cast(item.save())
+      item.saveWithPromise()
         .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
         .then(userUpdate.createItem.bind(null, req.user._id, item))
         .then(userUpdate.updateItem.bind(null, req.user._id, parent));
@@ -75,9 +75,9 @@ exports.addItemToArchive = function(req, res) {
   parent.items.push(item._id);
   parent.markModified('items');
 
-  Promise.cast(parent.save())
+  parent.saveWithPromise()
     .then(function() {
-      Promise.cast(item.save())
+      item.saveWithPromise()
         .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
         .then(userUpdate.createItem.bind(null, req.user._id, item))
         .then(userUpdate.updateItem.bind(null, req.user._id, parent));
@@ -89,7 +89,7 @@ var switchBrowserParentItems = function(oldItemId, newItem, req, res) {
     .then(function(oldItem) {
       newItem.browserParent = oldItem.browserParent ? oldItem.browserParent : req.user.browser;
       oldItem.browserParent = null; //We hide old item from browser
-      return Promise.cast(oldItem.save())
+      return oldItem.saveWithPromise()
         .then(userUpdate.updateItem.bind(null, req.user._id, oldItem))
     })
     .then(function() {
@@ -102,12 +102,12 @@ var switchBrowserParentItems = function(oldItemId, newItem, req, res) {
           }
           else browserParent.items.push(newItem._id);
           browserParent.markModified('items');
-          return Promise.cast(browserParent.save())
+          return browserParent.saveWithPromise()
             .then(userUpdate.updateItem.bind(null, req.user._id, browserParent));
         })
     })
     .then(function() {
-      Promise.cast(newItem.save())
+      newItem.saveWithPromise()
         .then(userUpdate.updateItem.bind(null, req.user._id, newItem));
     })
 }
@@ -118,7 +118,7 @@ var appendItemToParent = function(item, parentId, req, res) {
       if(parent.items.indexOf(item._id) === -1) {
         parent.items.push(item._id);
         parent.markModified('items');
-        return Promise.cast(parent.save())
+        return parent.saveWithPromise()
           .then(userUpdate.updateItem.bind(null, req.user._id, parent));
       }
     })
@@ -130,7 +130,7 @@ var removeItemToParent = function(item, parentId, req, res) {
       if(parent.items.indexOf(item._id) > -1) {
         parent.items.remove(item._id);
         parent.markModified('items');
-        return Promise.cast(parent.save())
+        return parent.saveWithPromise()
           .then(userUpdate.updateItem.bind(null, req.user._id, parent));
       }
     })
@@ -148,7 +148,7 @@ exports.moveItemToBrowser = function(req, res) {
   else {
     var oldParent = item.browserParent;
     item.browserParent = req.user.browser;
-    return Promise.cast(item.save())
+    return item.saveWithPromise()
       .then(function() { if(oldParent) removeItemToParent(item, oldParent, req, res) })
       .then(function() { appendItemToParent(item, item.browserParent, req, res) })
       .then(userUpdate.updateItem.bind(null, req.user._id, item))
@@ -165,7 +165,7 @@ exports.moveItemToArchive = function(req, res) {
   var item = req.currentItem;
   var oldParent = item.archiveParent;
   item.archiveParent = req.body.parent;
-  return Promise.cast(item.save())
+  return item.saveWithPromise()
     .then(function() { if(oldParent) removeItemToParent(item, oldParent, req, res) })
     .then(function() { appendItemToParent(item, item.archiveParent, req, res) })
     .then(userUpdate.updateItem.bind(null, req.user._id, item))
@@ -192,10 +192,10 @@ var removeItem = function(item, parentId, req, res) {
     .then(function(parent) { //Updates parent
       parent.items.remove(item._id);
       parent.markModified('items');
-      return Promise.cast(parent.save()).then(userUpdate.updateItem.bind(null, req.user._id, parent));
+      return parent.saveWithPromise().then(userUpdate.updateItem.bind(null, req.user._id, parent));
     })
     .then(function() { //Update item
-      Promise.cast(item.save())
+      item.saveWithPromise()
         .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
         .then(userUpdate.updateItem.bind(null, req.user._id, item))
     })
@@ -241,7 +241,7 @@ exports.update = function(req, res) {
   if(req.body.items)
     item.markModified('items');
 
-  return Promise.cast(item.save())
+  return item.saveWithPromise()
     .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
     .then(userUpdate.updateItem.bind(null, req.user._id, item))
 }

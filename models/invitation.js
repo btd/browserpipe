@@ -13,6 +13,6 @@ var InvitationSchema = new Schema({
 
 InvitationSchema.plugin(require('../util/mongoose-timestamp'));
 InvitationSchema.plugin(require('../util/mongoose-query'));
-
+InvitationSchema.plugin(require('../util/mongoose-patch'));
 
 module.exports = Invitation = mongoose.model('Invitation', InvitationSchema);

@@ -34,7 +34,7 @@ function navigate(res, opts) {
           item.statusCode = 200;
           item.files = browser.files;
 
-          return Promise.cast(item.save())
+          return item.saveWithPromise()
         })
     })
     .catch(StatusCode4XXError, function(e) {
@@ -59,7 +59,7 @@ var manageItemCodeError = function(res, opts, code) {
   item.screenshot = screenshot.noScreenshotUrl;
   item.statusCode = code;
 
-  return Promise.cast(item.save())
+  return item.saveWithPromise()
     .then(function() {
       userUpdate.updateItem(item.user, item);
     });
@@ -154,14 +154,14 @@ exports.htmlBookmarklet = function(req, res) {
 
   var browser = new Browser(user.langs);
 
-  return Promise.cast(item.save())
+  return item.saveWithPromise()
     .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
     .then(function() {
       return Item.byId({ _id: parentId })
         .then(function(parent) {
           parent.items.push(item._id);
           parent.markModified('items');
-          return Promise.cast(parent.save())
+          return parent.saveWithPromise()
             .then(userUpdate.updateItem.bind(null, req.user._id, parent));
         })
     })
@@ -181,7 +181,7 @@ exports.htmlBookmarklet = function(req, res) {
               item.statusCode = 200;
               item.files = browser.files;
 
-              return Promise.cast(item.save())
+              return item.saveWithPromise()
             })
             .then(userUpdate.updateItem.bind(null, req.user._id, item))
         })

@@ -8,12 +8,13 @@ module.exports = function (passport) {
 
     // serialize sessions
     passport.serializeUser(function (user, done) {
-        done(null, user.id);
+      done(null, user.id);
     });
 
     passport.deserializeUser(function (id, done) {
-        return User.byId(id)
-            .then(done.bind(undefined, null), done)
+      User.findById(id, function(err, user) {
+        done(err, user);
+      });
     });
 
     // use local strategy
