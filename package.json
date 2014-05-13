@@ -59,7 +59,6 @@
     "gulp": "^3.6.0",
     "gulp-util": "^2.2.14",
     "gulp-jshint": "^1.5.3",
-    "gulp-imagemin": "^0.5.0",
     "gulp-autoprefixer": "0.0.7",
     "gulp-cache": "^0.1.9",
     "react": "^0.10.0",
