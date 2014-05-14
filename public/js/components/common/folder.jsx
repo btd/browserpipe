@@ -2,7 +2,7 @@
  * @jsx React.DOM
  */
 
-var _state = require('../../../state'),
+var _state = require('../../state'),
     $ = require('jquery'),
     React = require('react');
 

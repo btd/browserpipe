@@ -2,13 +2,16 @@ extends ../layouts/home
 
 block body
   span#sidebar-section
-  #new-tab-section
+  #home-section
+    .home-inner
+      .home-content
+        img(src=asset_url("img/loader.gif"), alt="Loading")
   #tab-section
     #tab-header
     iframe(src='about:blank', class="tab-content")
     .loader
       .loader-inner
-        img(src="/img/loader.gif", alt="loading")
+        img(src=asset_url("img/loader.gif"), alt="Loading")
   #hiddenEventDiv
   #select-folder-modal-section
   #modal(class="modal fade",style="display: none;")

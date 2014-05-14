@@ -4,8 +4,7 @@ var _state = require('./state'),
   page = require('page'),
   SidebarComponent = require('./components/sidebar'),
   TabHeaderComponent = require('./components/tabheader'),
-  NewTabComponent = require('./components/newtab'),
-  SelectFolderModalComponent = require('./components/modal/selectfolder'),
+  HomeComponent = require('./components/home'),
   BookmarkletArchiveComponent = require('./components/bookmarklet/archive'),
   $ = require('jquery'),
   websocket = require('./websocket/websocket'),
@@ -18,8 +17,7 @@ require('bootstrap-modal');
 //Notification system
 require('messenger');
 
-var sidebarComponent, tabHeaderComponent, newTabComponent, selectFolderModalComponent, bookmarkletArchiveComponent; //react component instances
-var isIframe = (window != window.parent);
+var sidebarComponent, tabHeaderComponent, homeComponent, bookmarkletArchiveComponent; //react component instances
 
 var loadSidebarComponent = function() {
   if(!sidebarComponent) {
@@ -28,7 +26,8 @@ var loadSidebarComponent = function() {
       _state.selectedItem,
       _state.selectedFolder,
       _state.sidebarTab,
-      _state.sidebarCollapsed
+      _state.sidebarCollapsed,
+      _state.viewScreenshot
     );
   } else {
     sidebarComponent.setState({
@@ -36,7 +35,8 @@ var loadSidebarComponent = function() {
       selectedItem: _state.selectedItem,
       selectedFolder: _state.selectedFolder,
       sidebarTab: _state.sidebarTab,
-      sidebarCollapsed: _state.sidebarCollapsed
+      sidebarCollapsed: _state.sidebarCollapsed,
+      viewScreenshot: _state.viewScreenshot
     });
   }
 }
@@ -46,36 +46,30 @@ var loadTabHeaderComponent = function() {
     if(!tabHeaderComponent) {
       tabHeaderComponent = TabHeaderComponent.render(
         _state.selectedItem,
-        _state.sidebarCollapsed
+        _state.sidebarCollapsed,
+        _state.viewScreenshot,
+        _state.selectedItem.url
       );
     } else {
       tabHeaderComponent.setState({
         selectedItem: _state.selectedItem,
-        sidebarCollapsed: _state.sidebarCollapsed
+        sidebarCollapsed: _state.sidebarCollapsed,
+        viewScreenshot: _state.viewScreenshot,
+        url: _state.selectedItem.url
       });
     }
 }
 
-var loadNewTabComponent = function() {
-  if(!newTabComponent) {
-    newTabComponent = NewTabComponent.render(
-      _state.sidebarCollapsed
+var loadHomeComponent = function() {
+  if(!homeComponent) {
+    homeComponent = HomeComponent.render(
+      _state.sidebarCollapsed,
+      _state.viewScreenshot
     );
   } else {
-    newTabComponent.setState({
-      sidebarCollapsed: _state.sidebarCollapsed
-    });
-  }
-}
-
-var loadSelectFolderModalComponent = function() {
-  if(!selectFolderModalComponent) {
-    selectFolderModalComponent = SelectFolderModalComponent.render(
-      _state.selectedItem
-    );
-  } else {
-    selectFolderModalComponent.setState({
-      selectedItem: _state.selectedItem
+    homeComponent.setState({
+      sidebarCollapsed: _state.sidebarCollapsed,
+      viewScreenshot: _state.viewScreenshot
     });
   }
 }
@@ -97,39 +91,27 @@ var loadTab = function(item) {
 }
 
 
-var showNewTabSection = function() {
+var showHomeSection = function() {
   $('#tab-section').hide();
-  $('#new-tab-section').show();
+  $('#home-section').show();
+  $('.uv-icon').show();
 }
 
-var hideNewTabSection = function() {
-  $('#new-tab-section').hide();
+var hideHomeSection = function() {
+  $('#home-section').hide();
   $('#tab-section').show();
-}
-
-var navigateToFirstChild = function(parent) {
-  if(parent.items.length === 0)
-    page('/new');
-  else
-    page('/item/' + parent.items[0]._id);
+  $('.uv-icon').hide();
 }
 
 page('/', function() {
   setTimeout(function() {
-    navigateToFirstChild(_state.browser);
-  }, 0);
-});
-
-page('/new', function() {
-  setTimeout(function() {
     _state.selectedItem = null;
-    _state.sidebarTab = "browser";
+    _state.sidebarTab = "archive";
     if(!_state.selectedFolder)
      _state.selectedFolder = _state.archive;
-    showNewTabSection();
+    showHomeSection();
     loadSidebarComponent();
-    loadSelectFolderModalComponent();
-    loadNewTabComponent();
+    loadHomeComponent();
   }, 0);
 });
 
@@ -140,29 +122,24 @@ page('/item/:id', function(ctx) {
     if(item && item.type !== 2) { //We only navigate to tabs or notes
       _state.selectedItem = item;
       if(!_state.sidebarTab) {
-        if(item.browserParent) {
-          _state.sidebarTab = "browser";
-          if(item.archiveParent)
-            _state.selectedFolder = _state.getItemById(item.archiveParent);
-          else
-            _state.selectedFolder = _state.archive;
-        }
-        else if(item.archiveParent) {
-          _state.sidebarTab = "browser";
-          _state.selectedFolder = _state.getItemById(item.archiveParent);
+        if(item.deleted) {
+          _state.sidebarTab = "trash";
+          _state.selectedFolder = _state.archive;
         }
         else {
-          _state.sidebarTab = "recent";
-          _state.selectedFolder = _state.archive;
+          _state.sidebarTab = "archive";
+          if(item.parent === _state.pending._id)
+            _state.selectedFolder = _state.archive;
+          else
+            _state.selectedFolder = _state.getItemById(item.parent);
         }
       }
       loadSidebarComponent();
-      loadSelectFolderModalComponent();
       loadTabHeaderComponent();
       loadTab(item);
-      hideNewTabSection();
+      hideHomeSection();
     } else {
-      page('/new'); //we can send it better to a page of not found
+      page('/');
     }
   }, 0);
 });
@@ -171,7 +148,8 @@ page('/bookmarklet/archive', function() {
   setTimeout(function() {
     $('#sidebar-section').hide();
     $('#tab-section').hide();
-    $('#new-tab-section').hide();
+    $('#home-tab-section').hide();
+    $('.uv-icon').hide();
     _state.selectedFolder = _state.archive;
     loadBookmarkletArchiveComponent();
   }, 0);
@@ -203,10 +181,8 @@ var stateChanges = function() {
         loadSidebarComponent();
       if(tabHeaderComponent)
         loadTabHeaderComponent();
-      if(newTabComponent)
-        loadNewTabComponent();
-      if(selectFolderModalComponent)
-        loadSelectFolderModalComponent();
+      if(homeComponent)
+        loadHomeComponent();
       if(bookmarkletArchiveComponent)
         loadBookmarkletArchiveComponent();
     }
@@ -216,12 +192,13 @@ var stateChanges = function() {
   _state.items.on('add', changeInSelected);
   _state.items.on('remove', changeInSelected);
   _state.items.on('change', changeInSelected);
-  _state.on('change:browser', changeInSelected);
+  _state.on('change:pending', changeInSelected);
   _state.on('change:archive', changeInSelected);
   _state.on('change:selectedItem', changeInSelected);
   _state.on('change:selectedFolder', changeInSelected);
   _state.on('change:sidebarTab', changeInSelected);
   _state.on('change:sidebarCollapsed', changeInSelected);
+  _state.on('change:viewScreenshot', changeInSelected);
 
 }
 

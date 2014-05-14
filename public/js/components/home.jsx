@@ -6,12 +6,15 @@ var _state = require('../state'),
     util = require('../util'),
     React = require('react'),
     page = require('page'),
-    browser = require('../browser/main');
+    browser = require('../browser/main'),
+    UserOptionsComponent = require('./common/useroptions'),
+    PendingComponent = require('./home/pending');
 
-var NewTabComponent = React.createClass({
+var HomeComponent = React.createClass({
   getInitialState: function() {
       return {
-        sidebarCollapsed: this.props.sidebarCollapsed
+        sidebarCollapsed: this.props.sidebarCollapsed,
+        viewScreenshot: this.props.viewScreenshot
       };
   },
   extendSidebarOptionClicked: function(e) {
@@ -25,20 +28,18 @@ var NewTabComponent = React.createClass({
   },
   navigateEnteredURL: function() {
     var url = this.refs.urlInput.getDOMNode().value.trim();
-    var parentId = _state.browser._id;
-    browser.createAndOpenInBrowser(
+    var parentId = _state.pending._id;
+    browser.createAndOpen(
       parentId,
       url,
-      null,
       function(item) {
         $('#url-input').val('');
-        util.scrollToItem(item);
       }
     );
   },
   render: function() {
     return (
-      <div className="new-tab-inner" >
+      <div className="home-inner" >
         { this.state.sidebarCollapsed ?
           (<span className="extend-sidebar-option" onClick={ this.extendSidebarOptionClicked } >
             <span>menu</span><i className="fa fa-angle-double-right"></i>
@@ -47,10 +48,11 @@ var NewTabComponent = React.createClass({
             <i className="fa fa-angle-double-left"></i><span>menu</span>
           </span>)
         }
-        <div className="new-tab-content">
+        <UserOptionsComponent viewScreenshot={ this.state.viewScreenshot } />
+        <div className="home-content">
           <span className="logo"><img src={"<%= url('img/logo/logo.png') %>"} alt="Browserpipe logo small"/></span>
-          <div className="new-tab-input">
-            <input type="text" placeholder="Enter an URL" id="url-input" ref="urlInput" onKeyPress={this.ifEnterNavigate} />
+          <div className="home-input">
+            <input type="text" placeholder="Search or add an URL" id="url-input" ref="urlInput" onKeyPress={this.ifEnterNavigate} />
             <input type="button" id="url-btn" value="Go"  onClick={this.navigateEnteredURL} />
           </div>
           <div className="bookmarklet-note">
@@ -58,13 +60,15 @@ var NewTabComponent = React.createClass({
             <a data-toggle="modal" href="/modal/bookmarklet" data-target="#modal">bookmarklet</a>
             <span> to add tabs directly from your browser</span>
           </div>
+          <PendingComponent
+            viewScreenshot={ this.state.viewScreenshot } />
         </div>
       </div>
     );
   },
   updateMargins: function() {
-    if(this.state.sidebarCollapsed) $('#new-tab-section').removeClass('with-sidebar');
-    else $('#new-tab-section').addClass('with-sidebar');
+    if(this.state.sidebarCollapsed) $('#home-section').removeClass('with-sidebar');
+    else $('#home-section').addClass('with-sidebar');
   },
   componentDidMount: function() { this.updateMargins(); },
   componentDidUpdate: function() { this.updateMargins(); }
@@ -72,11 +76,13 @@ var NewTabComponent = React.createClass({
 
 
 module.exports.render = function (
-    sidebarCollapsed
+    sidebarCollapsed,
+    viewScreenshot
   ) {
   return React.renderComponent(
-    <NewTabComponent
-      sidebarCollapsed={sidebarCollapsed} />,
-    document.getElementById('new-tab-section')
+    <HomeComponent
+      sidebarCollapsed={sidebarCollapsed}
+      viewScreenshot={viewScreenshot} />,
+    document.getElementById('home-section')
   );
 };
