@@ -14,6 +14,14 @@ var contentType = require('../../util/content-type');
 
 var screenshot = require('./screenshot/screenshot');
 
+function generateScreenshot(html) {
+  return new Promise(function(resolve/*, reject*/) {
+    screenshot.generateScreenshot(html, function(screenshotData) {
+      resolve(screenshotData.screenshotSmall || screenshot.noScreenshotUrl);
+    })
+  })
+}
+
 
 function navigate(res, opts) {
   var browser = new Browser(opts.languages);
@@ -24,12 +32,12 @@ function navigate(res, opts) {
       res.send(data.content);
 
       var ext = contentType.chooseExtension(opts.url, data.contentType.type);
-      return browser.saveData(data.content, ext)
-        .then(function(path) {
+      return Promise.all([browser.saveData(data.content, ext), generateScreenshot(data.content)])
+        .spread(function(path, screenshotUrl) {
           item.title = data.title;
           item.url = data.href;
           item.favicon = data.favicon;
-          item.screenshot = screenshot.noScreenshotUrl;
+          item.screenshot = screenshotUrl;
           item.path = path;
           item.statusCode = 200;
           item.files = browser.files;
@@ -171,12 +179,12 @@ exports.htmlBookmarklet = function(req, res) {
           logger.debug('Load data from bookmarklet url %s', url);
 
           var ext = contentType.chooseExtension(url, ct.type);
-          return browser.saveData(data.content, ext)
-            .then(function(path) {
+          return Promise.all([browser.saveData(data.content, ext), generateScreenshot(data.content)])
+            .spread(function(path, screenshotUrl) {
               item.title = data.title;
               item.url = url;
               item.favicon = data.favicon;
-              item.screenshot = screenshot.noScreenshotUrl;
+              item.screenshot = screenshotUrl;
               item.path = path;
               item.statusCode = 200;
               item.files = browser.files;
