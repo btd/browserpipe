@@ -398,8 +398,8 @@ a {
       }
     }
     .tab-content {
-      border: 1px solid black;
       height: 115px;
+      width: 260px;
       overflow: hidden;
       position: relative;
 
@@ -569,6 +569,8 @@ a {
 }
 
 #home-section {
+  overflow: auto;
+
   .home-inner {
     position: relative;
     display: table;
@@ -594,6 +596,7 @@ a {
       display: table-cell;
       vertical-align: middle;
       text-align: center;
+      padding: 12px;
 
       .home-input {
         margin-top: 24px;
@@ -619,24 +622,28 @@ a {
       .pending {
         margin-top: 42px;
 
-        .tab {
-          width: auto;
-          display: inline-block;
-          margin: 3px;
+        .items {
+          overflow: visible;
 
-          .tab-footer {
-            .tab-title {
-              width: auto;
-              margin: 0;
-              padding: 0;
-              float: left;
-              max-width: 246px;
-            }
-            .remove-option {
-              float: left;
-              position: relative;
-              top: auto;
-              right: auto;
+          .tab {
+            width: auto;
+            display: inline-block;
+            margin: 3px;
+
+            .tab-footer {
+              .tab-title {
+                width: auto;
+                margin: 0;
+                padding: 0;
+                float: left;
+                max-width: 217px;
+              }
+              .remove-option {
+                float: left;
+                position: relative;
+                top: auto;
+                right: auto;
+              }
             }
           }
         }
