@@ -24,7 +24,9 @@ var TabComponent = React.createClass({
   renderScreenshot: function() {
     if(this.props.viewScreenshot)
       return <div className="tab-content">
-               <img className="tab-screenshot" alt="Screenshot" src={this.props.tab.screenshot? this.props.tab.screenshot: "<%= url('img/loader-small.gif') %>" } style={ this.props.tab.screenshot? this.getScreenshotTopAndLeft() : {top: '30px', left: '72px'} } />
+               { this.props.tab.screenshot?
+                 <img className="tab-screenshot" alt="Screenshot" src={ this.props.tab.screenshot } style={ this.props.tab.screenshot? this.getScreenshotTopAndLeft() : {top: '30px', left: '72px'} } /> : null
+               }
              </div>;
   },
   getScreenshotTopAndLeft: function() {
