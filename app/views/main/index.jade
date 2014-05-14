@@ -1,90 +1,104 @@
 extends ../layouts/index
 
 block content
-            
+
   .reasons
-    h3 REDUCE THE NUMBER OF BROWSER TABS
-    h3 ACCESS THEM FROM ANY DEVICE
-    h3 BOOKMARK THEIR URL AND CONTEXT
-    h3 NO EXTENSIONS NEEDED!
+    h3
+      b ARCHIVE
+      |  YOUR TABS WITH 1 CLICK
+    h3
+      | GET
+      b  REMAINDERS
+      |  TO LOOK THEM LATER
+    h3
+      | ACCESS THEM FROM
+      b  ANY DEVICE
+    h3
+      | ADD
+      b  NOTES
+      | ,
+      b  HIGHTLIGHT
+      |  AND
+      b   TAG
+      |  THEM
   .box.register-box.border
     #thanks_box.hide
       h2 Thank you!
-      h4 
-        | We will send you an invitation soon. 
       h4
-        | If you want to let us know why you would like an account or just share some feedback, please email us to 
+        | We will send you an invitation soon.
+      h4
+        | If you want to let us know why you would like an account or just share some feedback, please email us to
         a(href="mailto:info@browserpipe.com", target="_blank") info@browserpipe.com
       h4
-        | For more updates, 
-        a(href="http://twitter.com/listboardit", target="_blank") follow us 
+        | For more updates,
+        a(href="http://twitter.com/listboardit", target="_blank") follow us
         | on Twitter.
     form#form_invitation(action="/invites", method="post")
       h2 Want to try it out?
-      h4 
-        | We are progressively admitting new users. Feel free to leave us your email and we will contact you. 
+      h4
+        | We are progressively admitting new users. Feel free to leave us your email and we will contact you.
       .control-group
         input(type="text", name="invite_email", placeholder="Enter your email address", class="input-block-level")
         span.help-inline.hide Please enter a valid email
         .note-block No spam, we will only send you an invitation
       .control-group
-        input(type="submit", class="btn btn-warning btn-block btn-big", value="Count me in!")
+        input(type="submit", class="btn-big", value="Count me in!")
 
 block center
   .row-fluid.center.row-inner
-    .span12 
-      .row-fluid 
+    .span12
+      .row-fluid
         .inner
           #demoappcont
             img(src=asset_url("img/index/capture.jpg"))
-          
+
           .box.features-box.clearfix
-            h2 
+            h2
               i.fa.fa-heart
               | &nbsp;&nbsp; You will love it!
             #container-capture
               img(src=asset_url("img/index/container-capture.jpg"))
-            .features          
-              h4 
+            .features
+              h4
                 i.fa.fa-check
-                | &nbsp;&nbsp; Open as many tabs as you want 
-              h4 
+                | &nbsp;&nbsp; Open as many tabs as you want
+              h4
                 i.fa.fa-check
                 | &nbsp;&nbsp; Resume navigation from any device
-              h4 
+              h4
                 i.fa.fa-check
-                | &nbsp;&nbsp; Reduce browser CPU and RAM consumption    
-              h4 
+                | &nbsp;&nbsp; Reduce browser CPU and RAM consumption
+              h4
                 i.fa.fa-check
                 | &nbsp;&nbsp; Bookmark not only URLs but also tabs context
-              h4 
+              h4
                 i.fa.fa-check
-                | &nbsp;&nbsp; Share page navigation in real time 
-              h4 
+                | &nbsp;&nbsp; Share page navigation in real time
+              h4
                 i.fa.fa-check
                 | &nbsp;&nbsp; Add notes directly into the page
-              h4 
+              h4
                 i.fa.fa-check
                 | &nbsp;&nbsp; View pages in text mode for better readability
-              h4 
+              h4
                 i.fa.fa-check
                 | &nbsp;&nbsp; Have always a copy of the page you visit
-              h4 
+              h4
                 i.fa.fa-check
                 | &nbsp;&nbsp; Search across all your tabs and history
-              h4 
+              h4
                 i.fa.fa-check
                 | &nbsp;&nbsp; Organize tabs in folder or tag them
-              h4 
+              h4
                 i.fa.fa-check
                 | &nbsp;&nbsp; Import URLs from external sources
-              h4 
+              h4
                 i.fa.fa-check
                 | &nbsp;&nbsp; Export data to different formats
-              h4 
+              h4
                 i.fa.fa-check
                 | &nbsp;&nbsp; And all without installing any extension!
-          .box.register-box    
+          .box.register-box
             form#form_invitation2(action="/invites", method="post")
               h2 Interested?
               .control-group
@@ -92,25 +106,25 @@ block center
                   span.help-inline.hide Please enter a valid email
                   .note-block No spam, we will only send you an invitation
                 .control-group
-                  input(type="submit", class="btn btn-warning btn-block btn-big", value="Sign me in!")    
+                  input(type="submit", class="btn btn-warning btn-block btn-big", value="Sign me in!")
             #thanks_box2.hide
               h2 Thank you!
-              h4 
-                | We will send you an invitation soon. 
               h4
-                | If you want to let us know why you would like an account or just share some feedback, please email us to 
+                | We will send you an invitation soon.
+              h4
+                | If you want to let us know why you would like an account or just share some feedback, please email us to
                 a(href="mailto:info@browserpipe.com", target="_blank") info@browseripipe.com
               h4
-                | For more updates, 
-                a(href="http://twitter.com/browserpipe", target="_blank") follow us 
+                | For more updates,
+                a(href="http://twitter.com/browserpipe", target="_blank") follow us
                 | on Twitter.
 
           .box.last
             h2 Comments?
-            p 
-              | We would love to 
-              a(href="mailto:info@listboard.it", target="_blank") hear from you
-        
+            p
+              | We would love to
+              a(href="mailto:info@listboard.it", target="_blank")  hear from you
+
 block footer
   script.
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

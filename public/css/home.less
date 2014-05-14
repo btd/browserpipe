@@ -94,6 +94,18 @@ a {
   }
   .dropdown-menu {
     li{
+      &.disabled {
+        a {
+          &:hover {
+            color: #999;
+            background: #fff;
+            mouse: cursor;
+          }
+        }
+        span {
+          color: #999;
+        }
+      }
       a {
         &:hover {
           color: #fff;
@@ -111,10 +123,6 @@ a {
       margin-left: -15px;
     }
   }
-}
-
-#select-folder-modal {
-  display: none;
 }
 
 .modal-bookmarklet-content{
@@ -149,70 +157,10 @@ a {
     .top-sidebar {
       background-color: #ddd;
       padding-top: 3px;
-      height: 55px;
+      height: 29px;
       z-index: 100;
       position: relative;
 
-      .commands {
-
-        .logo {
-          width: 22px;
-          float: left;
-          margin: 2px 0 0 6px;
-
-          &:hover {
-            cursor: pointer;
-          }
-        }
-        .search-options {
-          display: inline-block;
-          margin-bottom: 10px;
-          vertical-align: middle;
-          font-size: 0;
-          white-space: nowrap;
-          margin: 1px 0 0 24px;
-
-          .search-input {
-            width: 168px;
-            height: 24px;
-            margin: 0;
-            border-radius: 0px;
-          }
-          .search-btn {
-            height: 24px;
-            line-height: 10px;
-            padding: 4px 6px;
-            border: 0;
-            background: #ff6d16;
-
-            i {
-              color: #fff;
-            }
-          }
-        }
-      }
-      .new-tab {
-        position: absolute;
-        left: 96px;
-        line-height: 17px;
-        width: 20px;
-        font-size: 14px;
-        text-align: center;
-        top: 33px;
-        padding: 0 3px;
-        border: 1px dashed #999;
-        cursor: default;
-        -webkit-transition: all 0.3s ease;
-        -moz-transition: all 0.3s ease;
-        -o-transition: all 0.3s ease;
-        transition: all 0.3s ease;
-
-        &:hover {
-          cursor: pointer;
-          color: #333;
-          border-color: #333;
-        }
-      }
       .nav-tabs {
         margin: 3px 0  0 0;
 
@@ -242,37 +190,7 @@ a {
       position: relative;
       width: 100%;
 
-      .user-options {
-        text-align: left;
-        margin: 3px 3px 0 0;
-        position: absolute;
-        top: 0;
-        left: 0;
-
-        .nav-option {
-          float: left;
-          margin: 0 12px;
-
-          li.username {
-            padding: 3px 12px;
-          }
-        }
-        .dropdown-toggle {
-          margin-left: 6px;
-          font-size: 14px;
-        }
-      }
-      .bookmarklet-options {
-        margin: 3px 3px 0 0;
-        float: left;
-        margin-left: 6px;
-
-        a {
-          margin-right: 6px;
-          font-size: 14px;
-        }
-      }
-      .space-text {
+      .bottom-text {
         font-size: 10px;
         margin: 6px 12px 0 42px;
         text-align: right;
@@ -280,33 +198,11 @@ a {
     }
     .sidebar-content {
       height: 100%;
-      margin: -55px 0 -27px;
-      padding: 55px 0 27px;
+      margin: -29px 0 -27px;
+      padding: 29px 0 27px;
 
-      .browser, .recent {
+      .archive, .trash {
         height: 100%;
-      }
-
-      .browser {
-
-        .new-tab {
-          font-size: 14px;
-          text-align: center;
-          margin: 12px 12px 24px;
-          padding: 0 3px;
-          border: 1px dashed #999;
-          cursor: default;
-          -webkit-transition: all 0.3s ease;
-          -moz-transition: all 0.3s ease;
-          -o-transition: all 0.3s ease;
-          transition: all 0.3s ease;
-
-          &:hover {
-            cursor: pointer;
-            color: #333;
-            border-color: #333;
-          }
-        }
       }
     }
   }
@@ -542,12 +438,36 @@ a {
   }
 }
 
-#tab-section, #new-tab-section {
+#tab-section, #home-section {
   height: 100%;
   width: 100%;
 
   &.with-sidebar {
     padding-left: 276px;
+  }
+  .user-options {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+
+    .nav-option {
+      float: left;
+      margin: 0 12px;
+
+      li.username {
+        padding: 3px 12px;
+      }
+      .dropdown-menu {
+        left: auto;
+        right: 0;
+
+        li.space-text {
+          font-size: 10px;
+          margin: 3px 0;
+          text-align: center;
+        }
+      }
+    }
   }
 }
 
@@ -559,11 +479,22 @@ a {
     display:none;
   }
   #tab-header {
+    padding-top: 2px;
     position: relative;
     height: 27px;
     background-color: #eee;
     border-bottom: 1px solid #ddd;
 
+    .logo {
+      margin: 3px 6px;
+
+      &:hover {
+        cursor: pointer;
+      }
+      img {
+        width: 21px;
+      }
+    }
     .extend-sidebar-option, .collapse-sidebar-option {
 
       &:hover {
@@ -572,10 +503,10 @@ a {
       span {
         font-size: 13px;
         font-weight: bold;
-        margin-left: 6px;
+        margin-right: 6px;
       }
       i {
-        margin-left: 6px;
+        margin-right: 6px;
       }
     }
     .new-tab-input {
@@ -584,7 +515,7 @@ a {
       #small-url-input {
         width: 280px;
         height: 21px;
-        margin: 1px 0 0 12px;
+        margin: 1px 0 0;
         border-radius: 0px;
       }
       #small-url-btn {
@@ -596,26 +527,6 @@ a {
         background: #ff6d16;
         margin-top: 1px;
       }
-    }
-    .back-option, .forward-option, .refresh-option {
-      float: right;
-      font-size: 16px;
-      -webkit-touch-callout: none;
-      -webkit-user-select: none;
-      -khtml-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-
-      i.disabled {
-        color: #bbb;
-      }
-    }
-    .back-option, .forward-option {
-      margin: 3px 12px 0 0;
-    }
-    .refresh-option {
-      margin: 3px 48px 0 0;
     }
     .message {
       font-size: 13px;
@@ -634,20 +545,15 @@ a {
           color: #fff;
         }
       }
-    }
-    .tab-options {
-      text-align: left;
-      margin: 3px 3px 0 0;
-      position: absolute;
-      top: 0;
-      right: 0;
+      .tab-options {
+        display: inline-block;
 
-      .nav-option {
-        margin: 0 12px;
+        .nav-option {
 
-        .dropdown-menu {
-          left: inherit;
-          right: 0px;
+          .dropdown-menu {
+            left: inherit;
+            right: 0px;
+          }
         }
       }
     }
@@ -662,12 +568,15 @@ a {
   }
 }
 
-#new-tab-section {
-  .new-tab-inner {
+#home-section {
+  .home-inner {
     position: relative;
+    display: table;
     height: 100%;
+    width: 100%;
 
     .extend-sidebar-option, .collapse-sidebar-option {
+      position: absolute;
 
       &:hover {
         cursor: pointer;
@@ -681,17 +590,12 @@ a {
         margin-left: 6px;
       }
     }
-    .new-tab-content {
-      position: absolute;
-      margin: auto;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      height: 180px;
+    .home-content {
+      display: table-cell;
+      vertical-align: middle;
       text-align: center;
 
-      .new-tab-input {
+      .home-input {
         margin-top: 24px;
 
         #url-input {
@@ -711,6 +615,31 @@ a {
       }
       .bookmarklet-note {
         margin-top: 24px;
+      }
+      .pending {
+        margin-top: 42px;
+
+        .tab {
+          width: auto;
+          display: inline-block;
+          margin: 3px;
+
+          .tab-footer {
+            .tab-title {
+              width: auto;
+              margin: 0;
+              padding: 0;
+              float: left;
+              max-width: 246px;
+            }
+            .remove-option {
+              float: left;
+              position: relative;
+              top: auto;
+              right: auto;
+            }
+          }
+        }
       }
     }
   }

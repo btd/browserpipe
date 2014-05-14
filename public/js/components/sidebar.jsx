@@ -5,8 +5,8 @@
 var _state = require('../state'),
     React = require('react'),
     TopBarComponent = require('./sidebar/topsidebar'),
-    BrowserComponent = require('./sidebar/browser'),
-    RecentComponent = require('./sidebar/recent'),
+    TrashComponent = require('./sidebar/trash'),
+    ArchiveComponent = require('./sidebar/archive'),
     BottomBarComponent = require('./sidebar/bottomsidebar');
 
 var SidebarComponent = React.createClass({
@@ -17,22 +17,19 @@ var SidebarComponent = React.createClass({
           selectedFolder: this.props.selectedFolder,
           sidebarTab: this.props.sidebarTab,
           sidebarCollapsed: this.props.sidebarCollapsed,
-          viewScreenshot: false //TODO: save option in user
+          viewScreenshot: this.props.viewScreenshot
       };
-  },
-  showScreenshots: function(value) {
-    this.setState({ viewScreenshot: value });
   },
   renderSelectedTab: function() {
     switch(this.state.sidebarTab) {
-      case "recent":
-          return (<RecentComponent
+      case "trash":
+          return (<TrashComponent
             viewScreenshot={ this.state.viewScreenshot }
             items={ this.state.items }
             selectedItem={ this.state.selectedItem } />)
       default:
           return (<span>
-            <BrowserComponent
+            <ArchiveComponent
               viewScreenshot={ this.state.viewScreenshot }
               selectedItem={ this.state.selectedItem }
               selectedFolder={ this.state.selectedFolder} />
@@ -48,7 +45,7 @@ var SidebarComponent = React.createClass({
           { this.renderSelectedTab() }
         </div>
         <BottomBarComponent
-          showScreenshots={ this.showScreenshots } />
+          selectedFolder={ this.state.selectedFolder } />
       </div>
     );
   }
@@ -60,7 +57,8 @@ module.exports.render = function (
     selectedItem,
     selectedFolder,
     sidebarTab,
-    sidebarCollapsed
+    sidebarCollapsed,
+    viewScreenshot
   ) {
   return React.renderComponent(
     <SidebarComponent
@@ -68,7 +66,8 @@ module.exports.render = function (
       selectedItem={selectedItem}
       selectedFolder={selectedFolder}
       sidebarTab={sidebarTab}
-      sidebarCollapsed={sidebarCollapsed} />,
+      sidebarCollapsed={sidebarCollapsed}
+      viewScreenshot={viewScreenshot} />,
     document.getElementById('sidebar-section')
   );
 };
