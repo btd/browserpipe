@@ -17,6 +17,8 @@ var Iconv = require('iconv').Iconv;
 var util = require('./util');
 var charsetDetector = require('./charset-detector');
 
+var gunzip = Promise.promisify(require('zlib').gunzip);
+
 
 var screenshot = require('./screenshot/screenshot');
 
@@ -101,6 +103,15 @@ Browser.prototype.determineContentType = function(response, _body) {
   return Promise.cast(ct);
 }
 
+Browser.prototype.ungzipBody = function(response, body) {
+  if(response.headers['content-encoding'] == 'gzip') {
+    logger.debug('%s url gzipped', response.request.href);
+    return gunzip(body);
+  } else {
+    return Promise.cast(body);
+  }
+}
+
 Browser.prototype.processUrl = function (url, isMainUrl) {
   logger.debug('Process url %s', url);
   var that = this;
@@ -108,8 +119,10 @@ Browser.prototype.processUrl = function (url, isMainUrl) {
       url: url,
       headers: {
         // we are a fresh firefox
-        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:25.0) Gecko/20100101 Firefox/25.0',
-        'Accept-Language': that.langs
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:29.0) Gecko/20100101 Firefox/29.0',
+        'Accept-Language': that.langs,
+        'Cache-Control': 'max-age=0',
+        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
       },
       encoding: null // set body to buffer
     }).spread(function (response, _body) {
@@ -119,7 +132,9 @@ Browser.prototype.processUrl = function (url, isMainUrl) {
         logger.debug('Requested url %s status code %d', url, response.statusCode);
 
         // first try to get content-type and charset from Content-Type header
-        return [that.determineContentType(response, _body), response.request.href, _body];
+        return that.ungzipBody(response, _body).then(function(_body) {
+          return [that.determineContentType(response, _body), response.request.href, _body];
+        })
       } else {
         throw new util.StatusCodeError(response.statusCode);
       }
