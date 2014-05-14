@@ -6,14 +6,21 @@ var _state = require('../state'),
     util = require('../util'),
     React = require('react'),
     page = require('page'),
+    UserOptionsComponent = require('./common/useroptions'),
+    SelectFolderModalComponent = require('./modal/selectfolder'),
     browser = require('../browser/main');
 
 var TabHeaderComponent = React.createClass({
   getInitialState: function() {
       return {
         selectedItem: this.props.selectedItem,
-        sidebarCollapsed: this.props.sidebarCollapsed
+        sidebarCollapsed: this.props.sidebarCollapsed,
+        viewScreenshot: this.props.viewScreenshot,
+        url: this.props.url
       };
+  },
+  logoClicked: function() {
+    page('/');
   },
   extendSidebarOptionClicked: function(e) {
     _state.sidebarCollapsed = false;
@@ -21,60 +28,36 @@ var TabHeaderComponent = React.createClass({
   collapseSidebarOptionClicked: function(e) {
     _state.sidebarCollapsed = true;
   },
+  updateInputUrl: function(e) {
+    this.setState({ url: e.target.value });
+  },
   ifEnterNavigate: function(e) {
-    if(e.keyCode === 13) this.navigateEnteredURL();
+    if(e.keyCode === 13) this.navigateEnteredURL(e);
   },
-  navigateEnteredURL: function() {
-    var url = this.refs.urlInput.getDOMNode().value.trim();
-    var parentId = _state.browser._id;
-    browser.createAndOpenInBrowser(
+  navigateEnteredURL: function(e) {
+    var url = e.target.value.trim();
+    var parentId = _state.pending._id;
+    browser.createAndOpen(
       parentId,
-      url,
-      this.state.selectedItem._id,
-      function(item) {
-        util.scrollToItem(item);
-      }
+      url
     );
   },
-  backOptionClicked: function(e) {
-    e.preventDefault();
-    var previous = this.state.selectedItem.previous;
-    if(previous)
-      _state.moveItemToBrowser(previous, true, false, function() {
-          page('/item/' + previous);
-      });
+  archiveTab: function() {
+    SelectFolderModalComponent.render(this.state.selectedItem);
   },
-  forwardOptionClicked: function(e) {
-    e.preventDefault();
-    var next = this.state.selectedItem.next;
-    if(next)
-      _state.moveItemToBrowser(next, false, true, function() {
-          page('/item/' + next);
+  deleteOrRemoveTab: function() {
+    if(this.state.selectedItem.deleted)
+      _state.serverDeleteItem(this.state.selectedItem); //We fully delete the item
+    else
+      _state.serverUpdateItem({
+        _id: this.state.selectedItem._id,
+        deleted: true
       });
-  },
-  refreshOptionClicked: function() {
-    browser.createAndOpenInBrowser(
-      (this.state.selectedItem.browserParent? this.state.selectedItem.browserParent : _state.browser._id),
-      this.state.selectedItem.url,
-      this.state.selectedItem._id
-    );
   },
   showItemInArchiveTab: function() {
-    _state.selectedFolder = _state.getItemById(this.state.selectedItem.archiveParent);
+    _state.selectedFolder = _state.getItemById(this.state.selectedItem.parent);
     _state.sidebarTab = "archive";
-  },
-  openOptionClicked: function() {
-    _state.moveItemToBrowser(this.state.selectedItem._id, false, false, function() {
-      _state.sidebarTab = "browser";
-      var msg = Messenger().post({
-        message: "Tab opened",
-        hideAfter: 6
-      });
-    });
-  },
-  isInBrowser: function() {
-    var item = this.state.selectedItem;
-    return util.isItemInBrowser(item, _state);
+    _state.sidebarCollapsed = false;
   },
   isInArchive: function() {
     var item = this.state.selectedItem;
@@ -84,72 +67,69 @@ var TabHeaderComponent = React.createClass({
     var d = new Date(date);
     return d.toLocaleDateString() + ' ' + d.toLocaleTimeString();
   },
+  renderToggleSidebar: function() {
+    if(this.state.sidebarCollapsed)
+      return <span className="extend-sidebar-option" onClick={ this.extendSidebarOptionClicked } >
+               <span>menu</span><i className="fa fa-angle-double-right"></i>
+             </span>
+      else
+        return <span className="collapse-sidebar-option" onClick={ this.collapseSidebarOptionClicked } >
+                 <i className="fa fa-angle-double-left"></i><span>menu</span>
+               </span>
+  },
+  renderTabInput: function() {
+    return <div className="new-tab-input">
+      <input type="text" placeholder="Enter an URL" id="small-url-input" value={this.state.url} onChange={this.updateInputUrl} onKeyPress={this.ifEnterNavigate} />
+      <input type="button" id="small-url-btn" value="Go"  onClick={this.navigateEnteredURL} />
+    </div>
+  },
+  renderLabels: function() {
+    return <span className="labels">
+      <span className="message">Snapshot of <a target="_blank" href={this.state.selectedItem.url} title={this.state.selectedItem.url}>page</a>{" from " + this.renderDate(this.state.selectedItem.createdAt) + "  "}</span>
+      <span className={"label" + (this.isInArchive()?' hide':'')} title="click to select folder">
+        <a href="#" onClick={ this.archiveTab }>
+        { this.state.selectedItem.deleted? "click to restore" : "click to archive" }
+        </a>
+      </span>
+      <span className={"label label-warning" + (this.isInArchive()?'':' hide')} onClick={ this.showItemInArchiveTab } title={"click to open archived folder"}>view folder</span>
+     { this.renderTabOptions() }
+    </span>
+  },
+  renderTabOptions: function() {
+    return <ul className="tab-options">
+      <li className="dropdown nav-option">
+        <a draggable="false"  href="#" data-toggle="dropdown" className="dropdown-toggle">
+          <span className="label">more...</span>
+        </a>
+        <ul className="dropdown-menu">
+          <li onClick={ this.archiveTab }>
+            <a draggable="false"  tabIndex="-1" href="#">
+              <span>{ this.state.selectedItem.deleted? "Restore" : (this.isInArchive()? "Move" : "Archive") }</span>
+            </a>
+          </li>
+          <li className="disabled">
+            <a draggable="false"  tabIndex="-1" href="#">
+              <span>Edit</span>
+            </a>
+          </li>
+          <li className="divider"></li>
+          <li onClick={ this.deleteOrRemoveTab }>
+            <a draggable="false"  tabIndex="-1" href="#">
+              <span>{ this.state.selectedItem.deleted? "Delete forever" : "Remove" }</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  },
   render: function() {
     return (
       <div>
-        { this.state.sidebarCollapsed ?
-          (<span className="extend-sidebar-option" onClick={ this.extendSidebarOptionClicked } >
-            <span>menu</span><i className="fa fa-angle-double-right"></i>
-          </span>):
-          (<span className="collapse-sidebar-option" onClick={ this.collapseSidebarOptionClicked } >
-            <i className="fa fa-angle-double-left"></i><span>menu</span>
-          </span>)
-        }
-        <div className="new-tab-input">
-          <input type="text" placeholder="Enter an URL" id="small-url-input" ref="urlInput" defaultValue={ this.state.selectedItem.url } onKeyPress={this.ifEnterNavigate} />
-          <input type="button" id="small-url-btn" value="Go"  onClick={this.navigateEnteredURL} />
-        </div>
-        <span className="labels">
-          <span className="message">Snapshot of <a target="_blank" href={this.state.selectedItem.url} title={this.state.selectedItem.url}>page</a>{" from " + this.renderDate(this.state.selectedItem.createdAt) + "  "}</span>
-          <span className={"label" + (this.isInBrowser()?' hide':'')} onClick={ this.openOptionClicked } title="click to open in browser">click to open</span>
-          <span className={"label" + (this.isInArchive()?' hide':'')} title="click to select folder to archive"><a data-toggle="modal" href="#" data-target="#select-folder-modal">click to archive</a></span>
-          <span className={"label label-warning" + (this.isInArchive()?'':' hide')} onClick={ this.showItemInArchiveTab } title={"click to open archived folder"}>archived</span>
-        </span>
-        <div className="refresh-option" onClick={ this.refreshOptionClicked } >
-          <i className="fa fa-refresh"></i>
-        </div>
-        <div className="forward-option" onClick={ this.forwardOptionClicked } >
-          <i className={"fa fa-arrow-circle-right" + (this.state.selectedItem.next? "" : " disabled")}></i>
-        </div>
-        <div className="back-option" onClick={ this.backOptionClicked } >
-          <i className={"fa fa-arrow-circle-left" + (this.state.selectedItem.previous? "" : " disabled")}></i>
-        </div>
-        <ul className="tab-options">
-          <li className="dropdown nav-option">
-            <a draggable="false"  href="#" data-toggle="dropdown" className="dropdown-toggle">
-              <i className="fa fa-gear"></i>
-            </a>
-            <ul className="dropdown-menu">
-              <li>
-                <a draggable="false"  tabIndex="-1" href="#">
-                  <span>Edit</span>
-                </a>
-              </li>
-              <li>
-                <a draggable="false"  tabIndex="-1" href="#">
-                  <span>Comment</span>
-                </a>
-              </li>
-              <li>
-                <a draggable="false"  tabIndex="-1" href="#">
-                  <span>Share</span>
-                </a>
-              </li>
-              <li className="divider"></li>
-              <li>
-                <a draggable="false"  tabIndex="-1" href="#">
-                  <span>Information</span>
-                </a>
-              </li>
-              <li className="divider"></li>
-              <li>
-                <a draggable="false"  tabIndex="-1" href="#">
-                  <span>Delete</span>
-                </a>
-              </li>
-            </ul>
-          </li>
-        </ul>
+        <span className="logo" onClick={ this.logoClicked }><img src={"<%= url('img/logo/logo-small.png') %>"} alt="Browserpipe logo small"/></span>
+        { this.renderToggleSidebar() }
+        { this.renderTabInput() }
+        { this.renderLabels() }
+        <UserOptionsComponent viewScreenshot={ this.state.viewScreenshot } />
       </div>
     );
   },
@@ -164,12 +144,16 @@ var TabHeaderComponent = React.createClass({
 
 module.exports.render = function (
     selectedItem,
-    sidebarCollapsed
+    sidebarCollapsed,
+    viewScreenshot,
+    url
   ) {
   return React.renderComponent(
     <TabHeaderComponent
       selectedItem={selectedItem}
-      sidebarCollapsed={sidebarCollapsed} />,
+      sidebarCollapsed={sidebarCollapsed}
+      viewScreenshot={viewScreenshot} 
+      url={url} />,
     document.getElementById('tab-header')
   );
 };

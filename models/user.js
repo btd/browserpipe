@@ -27,7 +27,7 @@ var UserSchema = new Schema({
    */
   langs: { type: String, default: 'en-US,en;q=0.5' },
 
-  browser: { type: Schema.ObjectId, ref: 'Item' },
+  pending: { type: Schema.ObjectId, ref: 'Item' },
   archive: { type: Schema.ObjectId, ref: 'Item' }
 });
 

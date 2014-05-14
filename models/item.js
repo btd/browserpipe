@@ -17,18 +17,11 @@ var ItemSchema = new Schema({
     { type: Schema.ObjectId, ref: 'Item' }
   ],
 
-  // archive
-  archiveParent: { type: Schema.ObjectId, ref: 'Item' }, //parent folder, if sets it means it is archived
-
-  // browser
-  browserParent: { type: Schema.ObjectId, ref: 'Item' }, // parent in browser, if sets it means that is in browser
+  //parent
+  parent: { type: Schema.ObjectId, ref: 'Item' }, //parent item
 
   // pin
   pinned: { type: Boolean, default: false }, //This means that is pinned in the browser
-
-  // history
-  previous: { type: Schema.ObjectId, ref: 'Item' }, //previous item navigated
-  next: { type: Schema.ObjectId, ref: 'Item' }, //next item navigated
 
   // owner
   user: { type: Schema.ObjectId, ref: 'User' },
@@ -44,11 +37,6 @@ var ItemSchema = new Schema({
   // not used now
   windowWidth: { type: Number }, //Width of client window
   windowHeight: { type: Number }, //Height of client window
-
-  // only for browsers not used
-  externalId: { type: String, trim: true },
-  browserKey: { type: String, trim: true },
-  lastSync: { type: Date },
 
   // common for all types
   title: { type: String, trim: true },

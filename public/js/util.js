@@ -1,15 +1,11 @@
 //Determines if item is archived
-module.exports.isItemInBrowser = function(item, _state) {
-  while(item.browserParent && item._id !== _state.browser._id)
-    item = _state.getItemById(item.browserParent);
-  return item._id === _state.browser._id;
+module.exports.isItemPending = function(item, _state) {
+  return item.parent === _state.pending._id;
 }
 
 //Determines if item is archived
 module.exports.isItemInArchive = function(item, _state) {
-  while(item.archiveParent && item._id !== _state.archive._id)
-    item = _state.getItemById(item.archiveParent)
-  return item._id === _state.archive._id;
+  return !item.deleted && item.parent !== _state.pending._id;
 }
 
 //Scrolls to a selected item

@@ -8,8 +8,7 @@
 body {
   position: relative;
   color: @grey1;
-  background-color: #f2eee8;
-  background-image: url('<%= url("img/common/bg-pattern.png") %>');
+  background-color: #fff;
 }
 
 .container-fluid {
@@ -23,14 +22,14 @@ body {
   max-width: @baseWidth;
 }
 
-header{	
+header{
   .outer {
-    border-bottom: 1px solid rgba(255,255,255,.2);	
-    
+    border-bottom: 1px solid rgba(255,255,255,.2);
+
     .inner {
       position: relative;
-      padding-bottom: 10px;			
-      height: 50px;		
+      padding-bottom: 10px;
+      height: 50px;
       border-bottom: 1px solid rgba(3,3,3,.2);
 
       #logo {
@@ -52,22 +51,22 @@ header{
           float: left;
 
          a {
-           color: @grey1;
+           color: #777;
            display: block;
            padding: 10px 20px;
-           text-decoration: none;						
+           text-decoration: none;
 
            .fa-twitter {
-             color: @orange1;
-             text-decoration: none;							
+             color: #ff6d16;
+             text-decoration: none;
            }
-         }				
+         }
 
-         a:hover:hover {				
+         a:hover:hover {
            color: darken(@grey1, 5%);
            cursor: pointer;
-           
-           .fa-twitter {				
+
+           .fa-twitter {
              color: darken(@orange1, 5%);
            }
          }
@@ -77,7 +76,7 @@ header{
   }
 }
 
-#index-center {	
+#index-center {
   margin-left: 0;
 }
 
@@ -86,7 +85,7 @@ header{
   text-shadow:0px 1px 1px rgba(0, 0, 0, 0.6);
 
   h3 {
-    text-transform: uppercase;		
+    text-transform: uppercase;
     line-height:1.5;
     font-weight:600;
     margin-bottom: 40px;
@@ -105,7 +104,7 @@ header{
   margin: auto;
   padding:20px 40px;
   color:#3c4446;
-  text-align: center;	
+  text-align: center;
   color: #3c4446;
 
   a {
@@ -118,7 +117,7 @@ header{
   &.last {
     margin-bottom: 100px;
   }
-  h2 {		
+  h2 {
   opacity: 0.95;
   }
   h3 {
@@ -151,10 +150,8 @@ header{
   }
 
   &.border {
-    background:rgba(255, 255, 255, 0.8);
-    .box-shadow(0px 2px 2px rgba(0, 0, 0, 0.5));
-    .border-radius(3px);
-  }		
+    background-color: #ccc;
+  }
   input[type='text'], input[type='password'] {
     margin:10px 0px 0px;
     font-size:18px;
@@ -175,22 +172,21 @@ header{
   .btn-big {
     margin-top: 20px;
     padding:15px 40px;
-    text-shadow:0px -1px 1px rgba(0, 0, 0, 0.2);
     font-weight:600;
     font-size:22px;
-
-    span {
-      border-bottom:1px solid #fff;
-    }
+    border: 0;
+    color: #fff;
+    font-weight: bold;
+    background: #ff6d16;
   }
-} 
+}
 
 #demo {
   top: 460px;
   left: 160px;
 }
 
-#demoappcont {	
+#demoappcont {
   margin: 30px 0 60px;
   position: relative;
 
@@ -226,7 +222,7 @@ header{
 
     .footer-small {
       font-size:0.8em;
-    }  
+    }
 
     .footer-big {
       font-size:0.9em;

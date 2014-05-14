@@ -13,13 +13,14 @@ var model = require('moco').model;
 
 var State1 = model()
     .attr('username')
-    .attr('browser')
+    .attr('pending')
     .attr('archive')
     .attr('items', { collection: Items })
     .attr('selectedItem')
     .attr('selectedFolder')
     .attr('sidebarTab')
     .attr('sidebarCollapsed')
+    .attr('viewScreenshot')
     .attr('config')
     .use(model.nestedObjects);
 
@@ -32,12 +33,14 @@ var proto = {
 
         this.username = initialOptions.user.name;
 
-        this.browser = this.getItemById(initialOptions.user.browser);
+        this.pending = this.getItemById(initialOptions.user.pending);
         this.archive = this.getItemById(initialOptions.user.archive);
 
         this.config = initialOptions.config;
 
+        //Todo: save this options in user
         this.sidebarCollapsed = true;
+        this.viewScreenshot = false;
     },
 
     //////////////////////////////////////////ITEMS//////////////////////////////////////
@@ -46,12 +49,11 @@ var proto = {
         from.forEach(this.addItem, this);
     },
 
-  size: function() {
-    return this.items.reduce(function(acc, item) {
-      return acc + item.size;
-    }, 0);
-  },
-
+    size: function() {
+      return this.items.reduce(function(acc, item) {
+        return acc + item.size;
+      }, 0);
+    },
 
     //Gets
     getItemById: function (itemId) {
@@ -84,54 +86,20 @@ var proto = {
     removeItem: function (itemId) {
         this.items.removeById(itemId);
     },
-    serverAddItemToBrowser: function (parentId, item, success) {
-	      item.browserParent = parentId;
+    serverAddItem: function (parentId, item, success) {
+	      item.parent = parentId;
         $.ajax({
-            url: '/browser/items/' + parentId,
+            url: '/items/' + parentId,
             type: "POST",
             data: JSON.stringify(item),
             success: success
         });
     },
-    serverAddItemToArchive: function (parentId, item, success) {
-	      item.archiveParent = parentId;
-        $.ajax({
-            url: '/archive/items/' + parentId,
-            type: "POST",
-            data: JSON.stringify(item),
-            success: success
-        });
-    },
-    moveItemToBrowser: function(itemId, isPrevious, isNext, success) {
-        var data = {};
-        if(isPrevious) data.isPrevious = true;
-        else if(isNext) data.isNext = true;
+    moveItem: function(itemId, parentId, success) {
         return $.ajax({
-            url: '/browser/items/' + itemId,
-            type: "PUT",
-            data: JSON.stringify(data),
-            success: success
-        });
-    },
-    moveItemToArchive: function(itemId, parentId, success) {
-        return $.ajax({
-            url: '/archive/items/' + itemId,
+            url: '/items/' + itemId + '/move/',
             type: "PUT",
             data: JSON.stringify({ parent: parentId }),
-            success: success
-        });
-    },
-    removeItemFromBrowser: function(item, success) {
-        return $.ajax({
-            url: '/browser/items/' + item._id,
-            type: "DELETE",
-            success: success
-        });
-    },
-    removeItemFromArchive: function(item, success) {
-        return $.ajax({
-            url: '/archive/items/' + item._id,
-            type: "DELETE",
             success: success
         });
     },
@@ -143,7 +111,6 @@ var proto = {
             success: success
         });
     },
-    //Fully deletes item
     serverDeleteItem: function(item, success) {
         return $.ajax({
             url: '/items/' + item._id,

@@ -7,10 +7,7 @@ var moco = require('moco'),
 var Item = model()
   .attr('_id', { primary: true }) // ObjectId text representation
   .attr('items', { default: [] }) // for type=2 container
-  .attr('browserParent') //browser parent reference
-  .attr('archiveParent') //archive parent reference
-  .attr('previous') //previous reference
-  .attr('next') //next reference
+  .attr('parent') //parent reference
   .attr('title') // String
   .attr('screenshot') // String
   .attr('favicon') // String url for favicon
@@ -20,7 +17,7 @@ var Item = model()
   .attr('windowWidth') // integer;
   .attr('windowHeight') // integer;
   .attr('type') // integer;
-  .attr('externalId') // id of the tab if it has
+  .attr('deleted')
   .attr('path')
   .attr('storageUrl')
   .attr('updatedAt')

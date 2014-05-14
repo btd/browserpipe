@@ -17,7 +17,6 @@ module.exports = function (app, passport) {
   app.param('userId', users.user);
 
   //Home routes
-  app.get('/new', main.home);
   app.get('/item/:id1', auth.ensureLoggedIn('/login'), main.home);
 
   //Modal routes
@@ -35,14 +34,9 @@ module.exports = function (app, passport) {
   var item = require('./controllers/item');
 
   //add
-  app.post(  '/browser/items/:itemId', auth.send401IfNotAuthenticated, item.addItemToBrowser);
-  app.post(  '/archive/items/:itemId', auth.send401IfNotAuthenticated, item.addItemToArchive);
+  app.post(  '/items/:itemId', auth.send401IfNotAuthenticated, item.addItem);
   //move
-  app.put(   '/browser/items/:itemId', auth.send401IfNotAuthenticated, item.moveItemToBrowser);
-  app.put(   '/archive/items/:itemId', auth.send401IfNotAuthenticated, item.moveItemToArchive);
-  //remove
-  app.delete('/browser/items/:itemId', auth.send401IfNotAuthenticated, item.removeItemFromBrowser);
-  app.delete('/archive/items/:itemId', auth.send401IfNotAuthenticated, item.removeItemFromArchive);
+  app.put(   '/items/:itemId/move', auth.send401IfNotAuthenticated, item.moveItem);
   //update
   app.put(   '/items/:itemId', auth.send401IfNotAuthenticated, item.update);
   //delete
