@@ -15,7 +15,8 @@ var TabHeaderComponent = React.createClass({
       return {
         selectedItem: this.props.selectedItem,
         sidebarCollapsed: this.props.sidebarCollapsed,
-        viewScreenshot: this.props.viewScreenshot
+        viewScreenshot: this.props.viewScreenshot,
+        url: this.props.url
       };
   },
   logoClicked: function() {
@@ -27,11 +28,14 @@ var TabHeaderComponent = React.createClass({
   collapseSidebarOptionClicked: function(e) {
     _state.sidebarCollapsed = true;
   },
-  ifEnterNavigate: function(e) {
-    if(e.keyCode === 13) this.navigateEnteredURL();
+  updateInputUrl: function(e) {
+    this.setState({ url: e.target.value });
   },
-  navigateEnteredURL: function() {
-    var url = this.refs.urlInput.getDOMNode().value.trim();
+  ifEnterNavigate: function(e) {
+    if(e.keyCode === 13) this.navigateEnteredURL(e);
+  },
+  navigateEnteredURL: function(e) {
+    var url = e.target.value.trim();
     var parentId = _state.pending._id;
     browser.createAndOpen(
       parentId,
@@ -75,7 +79,7 @@ var TabHeaderComponent = React.createClass({
   },
   renderTabInput: function() {
     return <div className="new-tab-input">
-      <input type="text" placeholder="Enter an URL" id="small-url-input" ref="urlInput" onKeyPress={this.ifEnterNavigate} />
+      <input type="text" placeholder="Enter an URL" id="small-url-input" value={this.state.url} onChange={this.updateInputUrl} onKeyPress={this.ifEnterNavigate} />
       <input type="button" id="small-url-btn" value="Go"  onClick={this.navigateEnteredURL} />
     </div>
   },
@@ -133,21 +137,23 @@ var TabHeaderComponent = React.createClass({
     if(this.state.sidebarCollapsed) $('#tab-section').removeClass('with-sidebar');
     else $('#tab-section').addClass('with-sidebar');
   },
-  componentDidMount: function() { this.updateMargins(); $('#small-url-input').val(this.state.selectedItem.url); },
-  componentDidUpdate: function() { this.updateMargins(); $('#small-url-input').val(this.state.selectedItem.url); }
+  componentDidMount: function() { this.updateMargins(); },
+  componentDidUpdate: function() { this.updateMargins(); }
 });
 
 
 module.exports.render = function (
     selectedItem,
     sidebarCollapsed,
-    viewScreenshot
+    viewScreenshot,
+    url
   ) {
   return React.renderComponent(
     <TabHeaderComponent
       selectedItem={selectedItem}
       sidebarCollapsed={sidebarCollapsed}
-      viewScreenshot={viewScreenshot} />,
+      viewScreenshot={viewScreenshot} 
+      url={url} />,
     document.getElementById('tab-header')
   );
 };

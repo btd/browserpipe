@@ -47,13 +47,15 @@ var loadTabHeaderComponent = function() {
       tabHeaderComponent = TabHeaderComponent.render(
         _state.selectedItem,
         _state.sidebarCollapsed,
-        _state.viewScreenshot
+        _state.viewScreenshot,
+        _state.selectedItem.url
       );
     } else {
       tabHeaderComponent.setState({
         selectedItem: _state.selectedItem,
         sidebarCollapsed: _state.sidebarCollapsed,
-        viewScreenshot: _state.viewScreenshot
+        viewScreenshot: _state.viewScreenshot,
+        url: _state.selectedItem.url
       });
     }
 }
@@ -137,7 +139,7 @@ page('/item/:id', function(ctx) {
       loadTab(item);
       hideHomeSection();
     } else {
-      page('/'); 
+      page('/');
     }
   }, 0);
 });
