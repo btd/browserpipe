@@ -17,6 +17,9 @@ var Iconv = require('iconv').Iconv;
 var util = require('./util');
 var charsetDetector = require('./charset-detector');
 
+
+var screenshot = require('./screenshot/screenshot');
+
 function Browser(langs) {
   this.htmlProcessor = new HtmlProcessor(this);
   this.langs = langs;
@@ -229,6 +232,15 @@ Browser.prototype._loadUrlOnly = function(url) {
       return { content: '', href: url, contentType: contentType.OctetStream }; //is it right idea?
     }
   });
+}
+
+Browser.prototype.generateScreenshot = function(html) {
+  var that = this;
+  return new Promise(function(resolve/*, reject*/) {
+    screenshot.generateScreenshot(html, that, function(screenshotData) {
+      resolve(screenshotData.screenshotSmall || screenshot.noScreenshotUrl);
+    })
+  })
 }
 
 

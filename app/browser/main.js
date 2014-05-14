@@ -14,13 +14,7 @@ var contentType = require('../../util/content-type');
 
 var screenshot = require('./screenshot/screenshot');
 
-function generateScreenshot(html) {
-  return new Promise(function(resolve/*, reject*/) {
-    screenshot.generateScreenshot(html, function(screenshotData) {
-      resolve(screenshotData.screenshotSmall || screenshot.noScreenshotUrl);
-    })
-  })
-}
+
 
 
 function navigate(res, opts) {
@@ -32,7 +26,7 @@ function navigate(res, opts) {
       res.send(data.content);
 
       var ext = contentType.chooseExtension(opts.url, data.contentType.type);
-      return Promise.all([browser.saveData(data.content, ext), generateScreenshot(data.content)])
+      return Promise.all([browser.saveData(data.content, ext), browser.generateScreenshot(data.content)])
         .spread(function(path, screenshotUrl) {
           item.title = data.title;
           item.url = data.href;
@@ -179,7 +173,7 @@ exports.htmlBookmarklet = function(req, res) {
           logger.debug('Load data from bookmarklet url %s', url);
 
           var ext = contentType.chooseExtension(url, ct.type);
-          return Promise.all([browser.saveData(data.content, ext), generateScreenshot(data.content)])
+          return Promise.all([browser.saveData(data.content, ext), browser.generateScreenshot(data.content)])
             .spread(function(path, screenshotUrl) {
               item.title = data.title;
               item.url = url;

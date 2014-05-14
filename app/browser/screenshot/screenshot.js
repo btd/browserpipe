@@ -1,6 +1,8 @@
 var config = require('../../../config'),
   phantom = require('node-phantom');
 
+var Promise = require('bluebird');
+
 var gm = require('gm');
 
 var file = require('../../../util/file');
@@ -21,7 +23,7 @@ phantom.create(function(err, ph) {
 var noScreenshotUrl = '/public/screenshots/no_screenshot.png';
 var badResult = { success: false, screenshotFull: false, screenshotSmall: noScreenshotUrl };
 
-var generateScreenshot = function(html, callback) {
+var generateScreenshot = function(html, browser, callback) {
   _ph.createPage(function(err, page) {
     page.set('viewportSize', config.screenshot.viewportSize, function(error) {
       if(error) {
@@ -49,6 +51,7 @@ var generateScreenshot = function(html, callback) {
                       console.log('Error rendering page: %s', error);
                       callback(badResult);
                     } else {
+
                       var screenshotSmall = file.randomName(config.screenshot.extension);
                       var screenshotSmallPath = file.fullRandomPath(screenshotSmall);
                       return file.mkdirp(screenshotSmallPath).then(function() {
@@ -57,12 +60,24 @@ var generateScreenshot = function(html, callback) {
                           .write(screenshotSmallPath, function(err) {
                             if(err) {
                               console.log('Error resizing page: %s', err);
-                              return callback({ success: true, screenshotFull: file.url(name) });
+                              return file.size(fullPath).then(function(size) {
+                                browser.files.push({ name: name, size: size });
+                                callback({ success: true, screenshotFull: file.url(name) });//XXX
+                              });
                             }//XXX
-                            callback({ success: true, screenshotFull: file.url(name), screenshotSmall: file.url(screenshotSmall) });
+
+                            return Promise.all([file.size(fullPath), file.size(screenshotSmallPath)])
+                              .spread(function(fullSize, smallSize) {
+                                browser.files.push({ name: name, size: fullSize });
+                                browser.files.push({ name: screenshotSmall, size: smallSize });
+                                callback({ success: true, screenshotFull: file.url(name), screenshotSmall: file.url(screenshotSmall) });
+                              });
                           })
                       }, function() {
-                        callback({ success: true, screenshotFull: file.url(name) });//XXX
+                        return file.size(fullPath).then(function(size) {
+                          browser.files.push({ name: name, size: size });
+                          callback({ success: true, screenshotFull: file.url(name) });//XXX
+                        });
                       })
                     }
                   })

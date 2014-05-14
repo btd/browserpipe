@@ -7,6 +7,8 @@ var writeFile = Promise.promisify(require('fs').writeFile);
 var mkdirp = Promise.promisify(require('mkdirp'));
 var rm = Promise.promisify(require('rimraf'));
 
+var stat = Promise.promisify(require('fs').stat);
+
 var config = require('../config');
 
 
@@ -50,3 +52,9 @@ exports.remove = function(name) {
   var fullPath = path.join(config.storage.path, name);
   return rm(fullPath);
 };
+
+exports.size = function(file) {
+  return stat(file).then(function(stat) {
+    return stat.size;
+  });
+}
