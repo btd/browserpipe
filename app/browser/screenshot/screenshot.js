@@ -21,7 +21,7 @@ phantom.create(function(err, ph) {
 var noScreenshotUrl = '/public/screenshots/no_screenshot.png';
 var badResult = { success: false, screenshotFull: false, screenshotSmall: noScreenshotUrl };
 
-var generateScreenshot = function(html, width, height, callback) {
+var generateScreenshot = function(html, callback) {
   _ph.createPage(function(err, page) {
     page.set('viewportSize', config.screenshot.viewportSize, function(error) {
       if(error) {

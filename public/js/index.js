@@ -12,12 +12,12 @@ $(function() {
     };
 
     var showThanksBox = function() {
-		$('#form_invitation').hide();
-        $('#form_invitation2').hide();
-        $('#thanks_box').show();
-        $('#thanks_box2').show();
+      $('#form_invitation').hide();
+      $('#form_invitation2').hide();
+      $('#thanks_box').show();
+      $('#thanks_box2').show();
 
-        ga && ga('send', 'event', 'invitation');
+      ga && ga('send', 'event', 'invitation');
 	};
 
     var postInvitation = function(email, $input){
@@ -35,11 +35,11 @@ $(function() {
         }
     }
 
-	$('#form_invitation').on("submit", function(e){
-		e.preventDefault();
-        var email = $input1.val().trim();
-        postInvitation(email, $input1);
-	});
+  $('#form_invitation').on("submit", function(e){
+    e.preventDefault();
+    var email = $input1.val().trim();
+    postInvitation(email, $input1);
+  });
 
     $('#form_invitation2').on("submit", function(e){
         e.preventDefault();
