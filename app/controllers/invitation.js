@@ -2,8 +2,7 @@
 
 var Invitation = require('../../models/invitation'),
     responses = require('../responses'),
-    errors = require('../errors'),
-    Promise = require('bluebird');
+    errors = require('../errors');
 
 //Find listboard by id
 exports.invitation = function(req, res, next, id) {

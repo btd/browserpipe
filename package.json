@@ -13,7 +13,7 @@
     "connect-flash": "0.1.1",
     "detect-encoding": "0.0.3",
     "entities": "^1.1.1",
-    "express": "~3.4.0",
+    "express": "~4.2.0",
     "express-validator": "2.1.2",
     "gm": "^1.16.0",
     "hiredis": "~0.1.15",
@@ -34,17 +34,17 @@
     "rimraf": "^2.2.8",
     "rufus": "~0.5.0",
     "socket.io": "~0.9.16",
-    "connect-redis": "^1.4.7"
+    "connect-redis": "^2.0.0",
+    "express-session": "^1.1.0",
+    "body-parser": "^1.2.0",
+    "cookie-parser": "^1.1.0",
+    "morgan": "^1.0.1"
   },
   "devDependencies": {
     "mocha": "latest",
-    "nodemon": "latest",
     "should": "latest",
-    "supertest": "latest",
     "istanbul": "latest",
     "jshint": "latest",
-    "Faker": "~0.5.11",
-    "cookiejar": "~1.3.0",
     "reactify": "0.13.1",
     "browserify": "latest",
     "jshint-nice-reporter": "0.0.1",
@@ -58,12 +58,13 @@
     "gulp-less": "^1.2.3",
     "gulp": "^3.6.0",
     "gulp-util": "^2.2.14",
-    "gulp-jshint": "^1.5.3",
+    "gulp-jshint": "^1.6.0",
     "gulp-autoprefixer": "0.0.7",
     "react": "^0.10.0",
     "vinyl-source-stream2": "^0.1.1",
     "through2": "^0.4.1",
     "run-sequence": "^0.3.6",
-    "gulp-csso": "^0.2.7"
+    "gulp-csso": "^0.2.7",
+    "serve-static": "^1.1.0"
   }
 }

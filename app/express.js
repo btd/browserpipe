@@ -1,25 +1,32 @@
-var express = require('express'),
-  RedisStore = require('connect-redis')(express);
+var session = require('express-session');
+
+var RedisStore = require('connect-redis')(session);
 
 var logger = require('rufus').getLogger('express');
 var config = require('../config');
+
+var serveStatic = require('serve-static');
+var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
+var morgan  = require('morgan');
+
+var expressValidator = require('express-validator');
 
 var manifest = require('../manifest');
 
 // App settings and middleware
 module.exports = function(app, passport) {
 
-  //app.use(express.static(__dirname + '/../public'));
-  app.use('/public/storage', express.static(__dirname + '/../public/storage'));
-  app.use('/public', express.static(__dirname + '/../dist'));
+  app.use('/public/storage', serveStatic(__dirname + '/../public/storage'));
+  app.use('/public', serveStatic(__dirname + '/../dist'));
 
   //We update the limits of the size we accept
-  app.use(express.json({limit: '30mb'}));
-  app.use(express.urlencoded({limit: '30mb'}));
+  app.use(bodyParser.json({ limit: '30mb' }));
+  app.use(bodyParser.urlencoded({ limit: '30mb' }));
 
   // set views path, template engine and default layout
-  app.set('views', __dirname + '/views')
-  app.set('view engine', 'jade')
+  app.set('views', __dirname + '/views');
+  app.set('view engine', 'jade');
   app.set('view options', {'layout': false});
 
   // dynamic helpers
@@ -33,14 +40,14 @@ module.exports = function(app, passport) {
   });
 
   // parameters validator
-  var expressValidator = require('express-validator');
+
   app.use(expressValidator());
 
   // cookieParser should be above session
-  app.use(express.cookieParser());
+  app.use(cookieParser());
 
   // save session in mongodb collection sessions
-  app.use(express.session({
+  app.use(session({
     secret: config.cookieSecret,
     store: new RedisStore(config.redis)
   }));
@@ -52,11 +59,7 @@ module.exports = function(app, passport) {
   // flash messages
   app.use(require('connect-flash')());
 
-  //app.use(express.favicon());
-
-
-
-  app.use(express.logger({ format: 'short', stream: {
+  app.use(morgan({ format: 'short', stream: {
     write: function(msg) {
       logger.info(msg.substr(0, msg.length - 1));
     }
@@ -73,11 +76,8 @@ module.exports = function(app, passport) {
   //Initialize socket io
   sio.init(server);
 
-  //Add socket.io middleware
-  //app.use(sio.socketMiddleware());
-
-  // routes should be at the last
-  app.use(app.router)
+  // Bootstrap routes
+  require('./routes')(app, passport);
 
   // common error handler
   app.use(function(err, req, res, next) {

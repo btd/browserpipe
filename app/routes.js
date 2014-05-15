@@ -1,10 +1,11 @@
 var auth = require('./middlewares/authorization'),
     cors = require('./middlewares/cors');
 
+var main = require('./controllers/main');
+
 module.exports = function (app, passport) {
 
   //General routes
-  var main = require('./controllers/main');
   app.get('/', main.home);
 
   //User routes
@@ -12,7 +13,12 @@ module.exports = function (app, passport) {
   app.get('/login', users.login);
   app.get('/logout', users.logout);
   app.post('/users', users.create);
-  app.post('/users/session', passport.authenticate('local', { successReturnToOrRedirect: '/', failureRedirect: '/login', badRequestMessage: "Please enter valid email and password", failureFlash: true }));
+  app.post('/users/session', passport.authenticate('local', {
+    successReturnToOrRedirect: '/',
+    failureRedirect: '/login',
+    badRequestMessage: "Please enter valid email and password",
+    failureFlash: true
+  }));
 
   app.param('userId', users.user);
 
@@ -33,21 +39,21 @@ module.exports = function (app, passport) {
   //Items routes
   var item = require('./controllers/item');
 
-  //add
-  app.post(  '/items/:itemId', auth.send401IfNotAuthenticated, item.addItem);
+  app.param('itemId', item.item);
+
+  app.route('/items/:itemId')
+    .all(auth.send401IfNotAuthenticated)
+    .post(item.addItem)
+    .put(item.update)
+    .delete(item.delete);
+
   //move
   app.put(   '/items/:itemId/move', auth.send401IfNotAuthenticated, item.moveItem);
-  //update
-  app.put(   '/items/:itemId', auth.send401IfNotAuthenticated, item.update);
-  //delete
-  app.delete('/items/:itemId', auth.send401IfNotAuthenticated, item.delete);
-
-  app.param('itemId', auth.send401IfNotAuthenticated, item.item);
 
   //Search routes
   app.get(    '/search/:query',  auth.send401IfNotAuthenticated, item.search);
 
-  app.param('query', auth.send401IfNotAuthenticated, item.query);
+  app.param('query', item.query);
 
   //HTML for item
   var browser = require('./browser/main');

@@ -10,7 +10,9 @@
         "document": true,
         "setTimeout": true,
         "Buffer": true,
-        "location": true
+        "location": true,
+        "XMLHttpRequest": true,
+        "clearTimeout": true
     },
     "asi": true,
     "smarttabs": true,

@@ -21,7 +21,6 @@ exports.addItem = function(req, res) {
   item.parent = parent._id;
   item.user = req.user._id;
   parent.items.push(item._id);
-  parent.markModified('items');
 
   parent.saveWithPromise()
     .then(function() {
@@ -56,8 +55,6 @@ exports.update = function(req, res) {
   var item = req.currentItem;
 
   _.merge(item, _.pick(req.body, 'parent', 'title', 'items', 'scrollX', 'scrollY', 'deleted'));
-  if(req.body.items)
-    item.markModified('items');
 
   return item.saveWithPromise()
     .then(function() { if(req.body.deleted) removeItemFromParent(item, item.parent, req, res); })
@@ -91,13 +88,17 @@ exports.delete = function(req, res) {
 
 //Find item by id
 exports.item = function(req, res, next, id) {
-  return Item.by({ _id: id, user: req.user })
-    .then(function(item) {
-      if(!item) return errors.sendNotFound(res);
+  if(req.isAuthenticated()) {
+    return Item.by({ _id: id, user: req.user })
+      .then(function (item) {
+        if (!item) return errors.sendNotFound(res);
 
-      req.currentItem = item;
-      next();
-    }, next);
+        req.currentItem = item;
+        next();
+      }, next);
+  } else {
+    res.send(401);
+  }
 }
 
 exports.query = function(req, res, next, query) {
@@ -110,7 +111,6 @@ var appendItemToParent = function(item, parentId, req, res) {
     .then(function(parent) {
       if(parent.items.indexOf(item._id) === -1) {
         parent.items.push(item._id);
-        parent.markModified('items');
         return parent.saveWithPromise()
           .then(userUpdate.updateItem.bind(null, req.user._id, parent));
       }
@@ -122,7 +122,6 @@ var removeItemFromParent = function(item, parentId, req, res) {
     .then(function(parent) {
       if(parent.items.indexOf(item._id) > -1) {
         parent.items.remove(item._id);
-        parent.markModified('items');
         return parent.saveWithPromise()
           .then(userUpdate.updateItem.bind(null, req.user._id, parent));
       }

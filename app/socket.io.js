@@ -1,13 +1,19 @@
-var _ = require('lodash'),
-  express = require('express'),
-  RedisStore = require('connect-redis')(express),
-  config = require('../config'),
-  userUpdate = require('./controllers/user_update'),
-  io = require('socket.io');
+var _ = require('lodash');
 
-module.exports = function() {
+var session = require('express-session');
 
-  var parseCookie = function(auth, cookieHeader) {
+var RedisStore = require('connect-redis')(session);
+var cookieParser = require('cookie-parser');
+
+var config = require('../config');
+
+var userUpdate = require('./controllers/user_update');
+
+var io = require('socket.io');
+
+module.exports = function () {
+
+  var parseCookie = function (auth, cookieHeader) {
     var cookieParser = auth.cookieParser(auth.secret);
     var req = {
       headers: {
@@ -15,14 +21,14 @@ module.exports = function() {
       }
     };
     var result;
-    cookieParser(req, {}, function(err) {
-      if(err) throw err;
+    cookieParser(req, {}, function (err) {
+      if (err) throw err;
       result = req.signedCookies;
     });
     return result;
   }
 
-  var authorize = function(options) {
+  var authorize = function (options) {
     var defaults = {
       passport: require('passport'),
       key: 'connect.sid',
@@ -36,12 +42,12 @@ module.exports = function() {
 
     auth.userProperty = auth.passport._userProperty || 'user';
 
-    if(typeof auth.cookieParser === 'undefined' || !auth.cookieParser) {
-      throw new Error('cookieParser is required use connect.cookieParser or express.cookieParser');
+    if (typeof auth.cookieParser === 'undefined' || !auth.cookieParser) {
+      throw new Error('cookieParser is required use cookieParser');
     }
 
-    return function(data, accept) {
-      if(!data.headers.cookie) {
+    return function (data, accept) {
+      if (!data.headers.cookie) {
         return accept(null, false);
       }
 
@@ -49,29 +55,29 @@ module.exports = function() {
 
       data.sessionID = data.cookie[auth.key];
 
-      auth.store.get(data.sessionID, function(err, session) {
-        if(err) {
+      auth.store.get(data.sessionID, function (err, session) {
+        if (err) {
           return accept('Error in session store.', false);
-        } else if(!session) {
+        } else if (!session) {
           return accept(null, false);
         }
 
-        if(!session[auth.passport._key]) {
+        if (!session[auth.passport._key]) {
           return accept('passport was not initialized', false);
         }
 
         var userKey = session[auth.passport._key][auth.userProperty];
 
-        if(userKey === undefined) {
-          if(auth.fail)
+        if (userKey === undefined) {
+          if (auth.fail)
             return auth.fail(data, accept);
           else
             return accept(null, false);
         }
 
-        auth.passport.deserializeUser(userKey, function(err, user) {
+        auth.passport.deserializeUser(userKey, function (err, user) {
           data[auth.userProperty] = user;
-          if(auth.success) {
+          if (auth.success) {
             return auth.success(data, accept);
           }
           accept(null, true);
@@ -94,29 +100,29 @@ module.exports = function() {
 
   return {
 
-    init: function(server) {
+    init: function (server) {
       this.sio = io.listen(server, config['socket-io']);
 
       this.sio.set("authorization", authorize({
-        cookieParser: express.cookieParser, //or connect.cookieParser
+        cookieParser: cookieParser, //or connect.cookieParser
         secret: config.cookieSecret, //the session secret to parse the cookie
-        store: new RedisStore(config.redis), //the session store that express uses
-        fail: function(data, accept) { // *optional* callbacks on success or fail
+        store: new RedisStore(config.redis), //the session store t
+        fail: function (data, accept) { // *optional* callbacks on success or fail
           accept(null, false); // second param takes boolean on whether or not to allow handshake
         },
-        success: function(data, accept) {
+        success: function (data, accept) {
           accept(null, true);
         }
       }));
 
 
-      this.sio.sockets.on("connection", function(socket) {
+      this.sio.sockets.on("connection", function (socket) {
         //console.log("user connected: ", socket.handshake.user.name);
-        var client = userUpdate.waitUserUpdates(socket.handshake.user._id, function(event, data) {
+        var client = userUpdate.waitUserUpdates(socket.handshake.user._id, function (event, data) {
           socket.emit(event, data);
         });
 
-        socket.on('disconnect', function() {
+        socket.on('disconnect', function () {
           client.end();
         });
       });

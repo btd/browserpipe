@@ -62,12 +62,12 @@ exports.create = function (req, res, next) {
                   user.langs = req.headers['accept-language'];
                 }
 
-                var browser = Item.newContainer({ title: 'Archive', user: user });
-                var archive = Item.newContainer({ title: 'Browser', user: user });
-                user.browser = browser;
+                var archive = Item.newContainer({ title: 'Archive', user: user });
+                var pending = Item.newContainer({ title: 'Pending', user: user });
+                user.pending = pending;
                 user.archive = archive;
 
-                return Promise.all([user.saveWithPromise(), browser.saveWithPromise(), archive.saveWithPromise()])
+                return Promise.all([user.saveWithPromise(), pending.saveWithPromise(), archive.saveWithPromise()])
                   .then(function () {
                     req.login(user, function (err) {
                         if (err) return next(err);

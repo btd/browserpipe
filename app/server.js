@@ -28,9 +28,6 @@ var app = express();
 // Bootstrap express settings
 var server = require('./express')(app, passport);
 
-// Bootstrap routes
-require('./routes')(app, passport);
-
 var logger = require('rufus').getLogger('app.unhandled');
 
 Promise.onPossiblyUnhandledRejection(function(e, promise){
