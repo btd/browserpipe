@@ -1,6 +1,6 @@
 var _ = require('lodash'),
   express = require('express'),
-  mongoStore = require('connect-mongo')(express),
+  RedisStore = require('connect-redis')(express),
   config = require('../config'),
   userUpdate = require('./controllers/user_update'),
   io = require('socket.io');
@@ -100,7 +100,7 @@ module.exports = function() {
       this.sio.set("authorization", authorize({
         cookieParser: express.cookieParser, //or connect.cookieParser
         secret: config.cookieSecret, //the session secret to parse the cookie
-        store: new mongoStore(config["connect-mongo"]), //the session store that express uses
+        store: new RedisStore(config.redis), //the session store that express uses
         fail: function(data, accept) { // *optional* callbacks on success or fail
           accept(null, false); // second param takes boolean on whether or not to allow handshake
         },

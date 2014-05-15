@@ -1,5 +1,5 @@
 var express = require('express'),
-  mongoStore = require('connect-mongo')(express);
+  RedisStore = require('connect-redis')(express);
 
 var logger = require('rufus').getLogger('express');
 var config = require('../config');
@@ -42,7 +42,7 @@ module.exports = function(app, passport) {
   // save session in mongodb collection sessions
   app.use(express.session({
     secret: config.cookieSecret,
-    store: new mongoStore(config["connect-mongo"])
+    store: new RedisStore(config.redis)
   }));
 
   // use passport session

@@ -23,8 +23,7 @@ var common = {
   },
   redis: {
     host: '127.0.0.1',
-    port: 6379,
-    options: {}
+    port: 6379
   },
 
   userLimit: 2147483648 // 2gb in bytes
@@ -58,12 +57,6 @@ var config = {
 
 Object.keys(config).forEach(function(key) {
   config[key] = _.merge({}, common, config[key]);
-
-  config[key]["connect-mongo"] = {
-    auto_reconnect: true,
-    collection: 'sessions',
-    url: config[key].db.uri
-  };
 
   config[key].env = key;
 });
