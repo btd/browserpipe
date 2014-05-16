@@ -7,10 +7,13 @@ var _state = require('../../state'),
 
 var BottomSideBarComponent = React.createClass({
 
+  closeSidebarClicked: function(e) {
+    _state.sidebarCollapsed = true;
+  },
   render: function() {
     return (
       <div className="bottom-sidebar">
-        <div className="bottom-text">{"Total in folder: " + this.props.selectedFolder.items.length }</div>
+        <div className="bottom-text" onClick={ this.closeSidebarClicked } >close</div>
       </div>
     );
   }

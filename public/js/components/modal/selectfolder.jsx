@@ -35,6 +35,13 @@ var SelectFolderModalComponent = React.createClass({
         });
     });
   },
+  getLabelByItemStatus: function(deletedText, pendingText, archivedText) {
+    if(this.state.selectedItem)
+      if(this.state.selectedItem.deleted) return deletedText;
+      else if(util.isItemInArchive(this.state.selectedItem, _state)) return archiveText;
+      else return pendingText;
+    else return '';
+  },
   render: function() {
     return (
       <div className="modal fade" id="select-folder-modal" tabindex="-1" role="dialog" aria-labelledby="selectFolder" aria-hidden="true">
@@ -48,7 +55,7 @@ var SelectFolderModalComponent = React.createClass({
                 showDropdown={ false }
                 viewScreenshot={ false } />
               <h4 className="modal-title" id="myModalLabel">
-                { this.state.selectedItem && util.isItemInArchive(this.state.selectedItem, _state)? "Select folder to move": "Select folder to archive" }
+                { this.getLabelByItemStatus("Select folder to restore", "Select folder to archive", "Select folder to move") }
               </h4>
             </div>
             <div className="modal-body">
@@ -60,15 +67,13 @@ var SelectFolderModalComponent = React.createClass({
             <div className="modal-footer">
               <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
               <button type="button" className="btn btn-warning" onClick={ this.archiveItem }>
-                { this.state.selectedItem && this.state.selectedItem.deleted? "Restore here" : (util.isItemInArchive(this.state.selectedItem, _state)? "Move here": "Archive here") }
+                { this.getLabelByItemStatus("Restore here", "Archive here", "Move here") }
               </button>
             </div>
           </div>
         </div>
       </div>
     );
-  },
-  componentDidMount: function() {
   }
 });
 
@@ -83,7 +88,7 @@ module.exports.render = function (
         selectedItem={selectedItem} />,
       document.getElementById('select-folder-modal-section')
     );
-  else 
+  else
     selectedFolderModalComponent.setState({
       selectedItem: selectedItem
     });

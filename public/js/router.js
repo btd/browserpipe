@@ -47,6 +47,7 @@ var loadTabHeaderComponent = function() {
       tabHeaderComponent = TabHeaderComponent.render(
         _state.selectedItem,
         _state.sidebarCollapsed,
+        _state.sidebarTab,
         _state.viewScreenshot,
         _state.selectedItem.url
       );
@@ -54,6 +55,7 @@ var loadTabHeaderComponent = function() {
       tabHeaderComponent.setState({
         selectedItem: _state.selectedItem,
         sidebarCollapsed: _state.sidebarCollapsed,
+        sidebarTab: _state.sidebarTab,
         viewScreenshot: _state.viewScreenshot,
         url: _state.selectedItem.url
       });
@@ -64,11 +66,13 @@ var loadHomeComponent = function() {
   if(!homeComponent) {
     homeComponent = HomeComponent.render(
       _state.sidebarCollapsed,
+      _state.sidebarTab,
       _state.viewScreenshot
     );
   } else {
     homeComponent.setState({
       sidebarCollapsed: _state.sidebarCollapsed,
+      sidebarTab: _state.sidebarTab,
       viewScreenshot: _state.viewScreenshot
     });
   }
@@ -106,7 +110,8 @@ var hideHomeSection = function() {
 page('/', function() {
   setTimeout(function() {
     _state.selectedItem = null;
-    _state.sidebarTab = "archive";
+    if(!_state.sidebarTab)
+      _state.sidebarTab = "archive";
     if(!_state.selectedFolder)
      _state.selectedFolder = _state.archive;
     showHomeSection();

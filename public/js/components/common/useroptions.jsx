@@ -12,6 +12,17 @@ var UserOptionsComponent = React.createClass({
   homeClicked: function() {
     page('/');
   },
+  openArchive: function(e) {
+    _state.sidebarTab = "archive";
+    _state.sidebarCollapsed = false;
+  },
+  openTrash: function(e) {
+    _state.sidebarTab = "trash";
+    _state.sidebarCollapsed = false;
+  },
+  closeSidebar: function(e) {
+    _state.sidebarCollapsed = true;
+  },
   viewScreenshotsClicked: function() {
     var value = this.refs.chkScreenshots.getDOMNode().checked;
     _state.viewScreenshot = value;
@@ -25,7 +36,30 @@ var UserOptionsComponent = React.createClass({
             (size > 0 ? (_state.config.userLimit / 100 / size).toFixed(2) : 0) +
             '% used)';
   },
-
+  renderArchiveOption: function() {
+    if(this.props.sidebarCollapsed || this.props.sidebarTab !== "archive")
+      return <li >
+              <a href="#" onClick={ this.openArchive }>
+                <span>Archive</span>
+              </a>
+            </li>;
+  },
+  renderTrashOption: function() {
+    if(this.props.sidebarCollapsed || this.props.sidebarTab !== "trash")
+      return <li >
+              <a href="#" onClick={ this.openTrash }>
+                <span>Trash</span>
+              </a>
+            </li>;
+  },
+  renderCloseSidebarOption: function() {
+    if(!this.props.sidebarCollapsed)
+     return <li>
+              <a href="#" onClick={ this.closeSidebar }>
+                <span>{"Close " + (this.props.sidebarTab === "trash"? "Trash" : "Archive")}</span>
+              </a>
+            </li>;
+  },
   render: function() {
     return (
       <ul className="user-options">
@@ -43,6 +77,10 @@ var UserOptionsComponent = React.createClass({
                 <span>Home</span>
               </a>
             </li>
+            { this.renderArchiveOption() }
+            { this.renderTrashOption() }
+            { this.renderCloseSidebarOption() }
+            <li className="divider"></li>
             <li >
               <a data-toggle="modal" href="/modal/bookmarklet" data-target="#modal">
                 <span>Bookmarklets</span>

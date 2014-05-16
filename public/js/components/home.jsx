@@ -14,14 +14,9 @@ var HomeComponent = React.createClass({
   getInitialState: function() {
       return {
         sidebarCollapsed: this.props.sidebarCollapsed,
+        sidebarTab: this.props.sidebarTab,
         viewScreenshot: this.props.viewScreenshot
       };
-  },
-  extendSidebarOptionClicked: function(e) {
-    _state.sidebarCollapsed = false;
-  },
-  collapseSidebarOptionClicked: function(e) {
-    _state.sidebarCollapsed = true;
   },
   ifEnterNavigate: function(e) {
     if(e.keyCode === 13) this.navigateEnteredURL();
@@ -40,15 +35,10 @@ var HomeComponent = React.createClass({
   render: function() {
     return (
       <div className="home-inner" >
-        { this.state.sidebarCollapsed ?
-          (<span className="extend-sidebar-option" onClick={ this.extendSidebarOptionClicked } >
-            <span>menu</span><i className="fa fa-angle-double-right"></i>
-          </span>):
-          (<span className="collapse-sidebar-option" onClick={ this.collapseSidebarOptionClicked } >
-            <i className="fa fa-angle-double-left"></i><span>menu</span>
-          </span>)
-        }
-        <UserOptionsComponent viewScreenshot={ this.state.viewScreenshot } />
+        <UserOptionsComponent 
+          viewScreenshot={ this.state.viewScreenshot } 
+          sidebarCollapsed={ this.state.sidebarCollapsed } 
+          sidebarTab={this.state.sidebarTab} />
         <div className="home-content">
           <span className="logo"><img src={"<%= url('img/logo/logo.png') %>"} alt="Browserpipe logo small"/></span>
           <div className="home-input">
@@ -77,11 +67,13 @@ var HomeComponent = React.createClass({
 
 module.exports.render = function (
     sidebarCollapsed,
+    sidebarTab,
     viewScreenshot
   ) {
   return React.renderComponent(
     <HomeComponent
       sidebarCollapsed={sidebarCollapsed}
+      sidebarTab={sidebarTab}
       viewScreenshot={viewScreenshot} />,
     document.getElementById('home-section')
   );

@@ -191,9 +191,16 @@ a {
       width: 100%;
 
       .bottom-text {
-        font-size: 10px;
+        font-weight: bold;
+        text-decoration: underline;
+        font-size: 12px;
         margin: 6px 12px 0 42px;
         text-align: right;
+
+        &:hover {
+          cursor: pointer;
+          color: #777;
+        }
       }
     }
     .sidebar-content {
@@ -368,7 +375,6 @@ a {
       position: absolute;
       right: 0;
       top: 3px;
-      z-index: 100;
 
       i {
         padding: 3px 5px;
@@ -399,7 +405,7 @@ a {
     }
     .tab-content {
       height: 115px;
-      width: 260px;
+      width: 245px;
       overflow: hidden;
       position: relative;
 
@@ -418,6 +424,7 @@ a {
     .tab-footer {
       height: 25px;
       color: #333;
+      position: relative;
 
       .tab-favicon {
         float: left;
@@ -487,12 +494,12 @@ a {
 
     .logo {
       margin: 3px 6px;
+      font-size: 13px;
+      font-weight: bold;
+      margin-right: 6px;
 
       &:hover {
         cursor: pointer;
-      }
-      img {
-        width: 21px;
       }
     }
     .extend-sidebar-option, .collapse-sidebar-option {
@@ -500,12 +507,9 @@ a {
       &:hover {
         cursor: pointer;
       }
-      span {
+      u {
         font-size: 13px;
         font-weight: bold;
-        margin-right: 6px;
-      }
-      i {
         margin-right: 6px;
       }
     }
@@ -583,12 +587,9 @@ a {
       &:hover {
         cursor: pointer;
       }
-      span {
+      u {
         font-size: 13px;
         font-weight: bold;
-        margin-left: 6px;
-      }
-      i {
         margin-left: 6px;
       }
     }
@@ -636,10 +637,10 @@ a {
                 margin: 0;
                 padding: 0;
                 float: left;
-                max-width: 217px;
+                max-width: 202px;
               }
               .remove-option {
-                float: left;
+                float: right;
                 position: relative;
                 top: auto;
                 right: auto;

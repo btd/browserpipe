@@ -15,18 +15,13 @@ var TabHeaderComponent = React.createClass({
       return {
         selectedItem: this.props.selectedItem,
         sidebarCollapsed: this.props.sidebarCollapsed,
+        sidebarTab: this.props.sidebarTab,
         viewScreenshot: this.props.viewScreenshot,
         url: this.props.url
       };
   },
   logoClicked: function() {
     page('/');
-  },
-  extendSidebarOptionClicked: function(e) {
-    _state.sidebarCollapsed = false;
-  },
-  collapseSidebarOptionClicked: function(e) {
-    _state.sidebarCollapsed = true;
   },
   updateInputUrl: function(e) {
     this.setState({ url: e.target.value });
@@ -66,16 +61,6 @@ var TabHeaderComponent = React.createClass({
   renderDate: function(date) {
     var d = new Date(date);
     return d.toLocaleDateString() + ' ' + d.toLocaleTimeString();
-  },
-  renderToggleSidebar: function() {
-    if(this.state.sidebarCollapsed)
-      return <span className="extend-sidebar-option" onClick={ this.extendSidebarOptionClicked } >
-               <span>menu</span><i className="fa fa-angle-double-right"></i>
-             </span>
-      else
-        return <span className="collapse-sidebar-option" onClick={ this.collapseSidebarOptionClicked } >
-                 <i className="fa fa-angle-double-left"></i><span>menu</span>
-               </span>
   },
   renderTabInput: function() {
     return <div className="new-tab-input">
@@ -125,11 +110,15 @@ var TabHeaderComponent = React.createClass({
   render: function() {
     return (
       <div>
-        <span className="logo" onClick={ this.logoClicked }><img src={"<%= url('img/logo/logo-small.png') %>"} alt="Browserpipe logo small"/></span>
-        { this.renderToggleSidebar() }
+        <span className="logo" onClick={ this.logoClicked }>
+          <i className="fa fa-angle-double-left"></i><span> home</span>
+        </span>
         { this.renderTabInput() }
         { this.renderLabels() }
-        <UserOptionsComponent viewScreenshot={ this.state.viewScreenshot } />
+        <UserOptionsComponent 
+          viewScreenshot={ this.state.viewScreenshot } 
+          sidebarCollapsed={ this.state.sidebarCollapsed } 
+          sidebarTab={this.state.sidebarTab} />
       </div>
     );
   },
@@ -145,6 +134,7 @@ var TabHeaderComponent = React.createClass({
 module.exports.render = function (
     selectedItem,
     sidebarCollapsed,
+    sidebarTab,
     viewScreenshot,
     url
   ) {
@@ -152,7 +142,8 @@ module.exports.render = function (
     <TabHeaderComponent
       selectedItem={selectedItem}
       sidebarCollapsed={sidebarCollapsed}
-      viewScreenshot={viewScreenshot} 
+      sidebarTab={sidebarTab}
+      viewScreenshot={viewScreenshot}
       url={url} />,
     document.getElementById('tab-header')
   );
