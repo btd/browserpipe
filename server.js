@@ -1,5 +1,6 @@
-var app = require('./app/server');
+require('newrelic');
 
+var app = require('./app/server');
 
 var port = process.env.PORT || 4000;
 
