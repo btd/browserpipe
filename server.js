@@ -1,7 +1,4 @@
-var config = require('./config');
-if(config.env != 'development') {
-  require('newrelic');
-}
+require('newrelic');
 
 var app = require('./app/server');
 

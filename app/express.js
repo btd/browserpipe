@@ -14,6 +14,8 @@ var expressValidator = require('express-validator');
 
 var manifest = require('../manifest');
 
+var newrelic = require('newrelic');
+
 // App settings and middleware
 module.exports = function(app, passport) {
 
@@ -29,10 +31,11 @@ module.exports = function(app, passport) {
   app.set('view engine', 'jade');
   app.set('view options', {'layout': false});
 
-  // dynamic helpers
+  // dynamic helpers - but they can be not a dynamic
   app.use(function(req, res, next) {
     res.locals.appName = 'Browserpipe';
     res.locals.title = 'Your browser everywhere';
+    res.locals.newrelic = newrelic;
 
     res.locals.asset_url = manifest('./dist/manifest.json', '/public').url;//TODO improve this thing
 
