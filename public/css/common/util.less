@@ -5,7 +5,7 @@ ul, ol {
 }
 
 //Common
-.small-font {           
+.small-font {
     font-size: 13px;
 }
 
@@ -35,7 +35,7 @@ ul, ol {
 }
 
 
-i.save-icon, i.cancel-icon {      
+i.save-icon, i.cancel-icon {
   font-size: 13px;
 }
 
@@ -49,7 +49,7 @@ i.save-icon, i.cancel-icon {
     color: black;
     position: fixed;
     z-index: -3000;
-    background-color: @orange1;
+    background-color: @orange;
     .opacity(80);
     font-size: 12px;
     font-weight: bold;
@@ -64,13 +64,13 @@ i.save-icon, i.cancel-icon {
 .flatten() {
   border: none;
   box-shadow: none;
-  .border-radius(0);      
+  .border-radius(0);
 }
-.tobutton(@color, @hoverColor) {    
+.tobutton(@color, @hoverColor) {
     color: @white;
     padding: 6px 12px;
     background-color: @color;
-    text-shadow: none;    
+    text-shadow: none;
     background-image: none;
 
     &:hover{
@@ -79,15 +79,15 @@ i.save-icon, i.cancel-icon {
     }
 }
 .easeout-width() {
-  -moz-transition:width 0.2s ease-out; 
+  -moz-transition:width 0.2s ease-out;
   -webkit-transition:width 0.2s ease-out;
   -o-transition:width 0.2s ease-out;
   -ms-transition:width 0.2s ease-out;
   transition:width 0.2s ease-out;
 }
 .easein-background() {
-  -webkit-transition:background-color 0.2s ease-in;  
-  -moz-transition:background 0.2s ease-in;  
-  -o-transition:background 0.2s ease-in;  
-  transition:background 0.2s ease-in;  
+  -webkit-transition:background-color 0.2s ease-in;
+  -moz-transition:background 0.2s ease-in;
+  -o-transition:background 0.2s ease-in;
+  transition:background 0.2s ease-in;
 }

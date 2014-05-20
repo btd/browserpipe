@@ -1,6 +1,5 @@
 // Core variables and mixins
 // Rules import
-@import "common/colors.less";
 @import "common/util.less";
 @import "messenger/messenger.less";
 
@@ -16,28 +15,39 @@ html,body {
 }
 
 body {
-  color: #666;
-  background-color: #fff;
+  color: @grey;
+  background-color: @white;
 }
 
 .messenger {
 
   .alert-info {
-    background-color: #f89406;
-    border-color: #ff6600;
-    color: #fff;
+    background-color: @orange;
+    border-color: @orange;
+    color: @white;
   }
   .messenger-message {
     .messenger-actions {
       a {
-        color: #fff;
+        color: @white;
       }
     }
   }
 }
 
 .label-warning {
-  background-color: #ff6d16;
+  background-color: @orange;
+}
+
+.orange-btn {
+  border: 0;
+  color: #fff;
+  background: @orange;
+  padding: 4px 6px;
+
+  &:hover {
+    background: darken(@orange, 5%);
+  }
 }
 
 .loader {
@@ -125,6 +135,10 @@ a {
   }
 }
 
+.modal {
+  .border-radius(0);
+}
+
 .modal-bookmarklet-content{
   .bookmarklet {
     margin-top: 27px;
@@ -161,6 +175,11 @@ a {
       z-index: 100;
       position: relative;
 
+      .close-sidebar {
+        position: absolute;
+        top: 6px;
+        right: 12px;
+      }
       .nav-tabs {
         margin: 3px 0  0 0;
 
@@ -172,8 +191,6 @@ a {
             padding: 1px 12px;
           }
           &.recent {
-            float: right;
-
             a {
               margin-right: 0;
               border-right: none;
@@ -575,6 +592,11 @@ a {
 #home-section {
   overflow: auto;
 
+  .open-sidebar {
+    position: absolute;
+    top: 3px;
+    left: 12px;
+  }
   .home-inner {
     position: relative;
     display: table;
@@ -600,8 +622,17 @@ a {
       padding: 12px;
 
       .home-input {
+        display: inline-block;
+        position: relative;
         margin-top: 24px;
 
+        .search-tips {
+          display: block;
+          text-align: left;
+          font-size: 12px;
+          text-decoration: underline;
+          width: 60px;
+        }
         #url-input {
           width: 570px;
           height: 33px;

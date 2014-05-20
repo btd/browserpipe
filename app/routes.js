@@ -28,6 +28,7 @@ module.exports = function (app, passport) {
   //Modal routes
   var modal = require('./controllers/modal');
   app.get('/modal/bookmarklet', auth.send401IfNotAuthenticated, modal.bookmarklet);
+  app.get('/modal/searchtips', auth.send401IfNotAuthenticated, modal.searchtips);
 
   //Invitation routes
   var invitation = require('./controllers/invitation');

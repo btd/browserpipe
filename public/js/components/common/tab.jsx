@@ -25,7 +25,7 @@ var TabComponent = React.createClass({
     if(this.props.viewScreenshot)
       return <div className="tab-content">
                { this.props.tab.screenshot?
-                 <img className="tab-screenshot" alt="Screenshot" src={ this.props.tab.screenshot } style={ this.props.tab.screenshot? this.getScreenshotTopAndLeft() : {top: '30px', left: '72px'} } /> : null
+                 <img className="tab-screenshot" alt="Screenshot" src={ this.props.tab.screenshot } style={ this.props.tab.screenshot? this.getScreenshotTopAndLeft() : {top: '30px', left: '72px'} } draggable="false" /> : null
                }
              </div>;
   },
@@ -43,11 +43,11 @@ var TabComponent = React.createClass({
   },
   render: function() {
     return (
-      <div data-br-id={'tab_' + this.props.tab._id} ref="tab" className={"tab" + (this.isSelected()? " selected": "") } title={ this.props.tab.title } onClick={ this.tabClicked } >
+      <div data-br-id={'tab_' + this.props.tab._id} ref="tab" className={"tab" + (this.isSelected()? " selected": "") } title={ this.props.tab.title } onClick={ this.tabClicked } draggable="true" >
         { this.renderScreenshot() }
         { this.props.tab.favicon || this.props.tab.title?
             (<div className="tab-footer">
-              <img className="tab-favicon" src={this.props.tab.favicon} />
+              <img className="tab-favicon" src={this.props.tab.favicon} draggable="false" />
               <span className="tab-title" >{ this.props.tab.title }</span>
               { !this.props.removeTab? null:
                 (!this.props.showDropdown? (

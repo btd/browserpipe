@@ -1,5 +1,9 @@
 var config = require('../../config');
 
+//Search tips
+exports.searchtips = function (req, res, next) {
+  res.render('modals/searchtips');
+}
 //Bookmarklet
 exports.bookmarklet = function (req, res, next) {
   res.render('modals/bookmarklet', {//TODO we should either read it from somewhere and cache, or compile

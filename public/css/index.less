@@ -1,5 +1,3 @@
-@import "common/colors.less";
-@import 'bootstrap.less';
 @import 'base.less';
 @import 'index.responsive.less';
 
@@ -7,8 +5,7 @@
 
 body {
   position: relative;
-  color: @grey1;
-  background-color: #fff;
+  background-color: @white;
 }
 
 .container-fluid {
@@ -51,23 +48,23 @@ header{
           float: left;
 
          a {
-           color: #777;
+           color: @grey;
            display: block;
            padding: 10px 20px;
            text-decoration: none;
 
            .fa-twitter {
-             color: #ff6d16;
+             color: @orange;
              text-decoration: none;
            }
          }
 
          a:hover:hover {
-           color: darken(@grey1, 5%);
+           color: darken(@grey, 5%);
            cursor: pointer;
 
            .fa-twitter {
-             color: darken(@orange1, 5%);
+             color: darken(@orange, 5%);
            }
          }
        }
@@ -108,10 +105,10 @@ header{
   color: #3c4446;
 
   a {
-    color: @orange1;
+    color: @orange;
 
     &:hover{
-      color: darken(@orange1, 5%);
+      color: darken(@orange, 5%);
     }
   }
   &.last {
@@ -229,11 +226,11 @@ header{
     }
 
     a {
-      color: @orange1;
+      color: @orange;
       text-decoration: none;
 
       &:hover{
-        color: darken(@orange1, 5%);
+        color: darken(@orange, 10%);
         text-decoration: none;
       }
     }
