@@ -8,6 +8,7 @@ var _state = require('../state'),
     page = require('page'),
     browser = require('../browser/main'),
     UserOptionsComponent = require('./common/useroptions'),
+    AdvanceSearchModalComponent = require('./modal/advancesearch'),
     PendingComponent = require('./home/pending');
 
 var HomeComponent = React.createClass({
@@ -20,6 +21,10 @@ var HomeComponent = React.createClass({
   },
   openSidebar: function(e) {
     _state.sidebarCollapsed = false;
+  },
+  advanceSearchClicked: function(e) {
+    e.preventDefault();
+    AdvanceSearchModalComponent.render();
   },
   ifEnterNavigate: function(e) {
     if(e.keyCode === 13) this.navigateEnteredURL();
@@ -55,7 +60,7 @@ var HomeComponent = React.createClass({
             <span className="home-input">
               <input type="text" placeholder="Search or add an URL" id="url-input" ref="urlInput" onKeyPress={this.ifEnterNavigate} />
               <input type="button" id="url-btn" value="Go"  onClick={this.navigateEnteredURL} />
-              <a className="search-tips" data-toggle="modal" href="/modal/searchtips" data-target="#modal-searchtips">search tips</a>
+              <a className="advance-search" href="#" onClick={this.advanceSearchClicked} >advance search</a>
             </span>
           </div>
           <div className="bookmarklet-note">

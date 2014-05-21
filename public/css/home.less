@@ -137,6 +137,14 @@ a {
 
 .modal {
   .border-radius(0);
+
+  .modal-close-btn {
+    color: #777;
+    font-size: 13px;
+    vertical-align: bottom;
+    margin-right: 12px;
+    text-decoration: underline;
+  }
 }
 
 .modal-bookmarklet-content{
@@ -157,6 +165,17 @@ a {
   }
 }
 
+
+#advance-search-modal {
+  label {
+    font-weight: bold;
+  }
+  input[type=text] {
+    width: 100%;
+    height: auto;
+    .border-radius(0);        
+  }  
+}
 
 #sidebar-section {
   float: left;
@@ -626,12 +645,12 @@ a {
         position: relative;
         margin-top: 24px;
 
-        .search-tips {
+        .advance-search {
           display: block;
           text-align: left;
           font-size: 12px;
           text-decoration: underline;
-          width: 60px;
+          width: 90px;
         }
         #url-input {
           width: 570px;

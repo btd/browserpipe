@@ -5,7 +5,7 @@
 var _state = require('../../state'),
     util = require('../../util'),
     React = require('react'),
-    Tab= require('../common/tab');
+    Tab= require('../common/tab'),
     ArchiveComponent = require('../sidebar/archive'); //TODO: we can move this to common folder
 
 var SelectFolderModalComponent = React.createClass({
