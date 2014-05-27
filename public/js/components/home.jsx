@@ -30,12 +30,12 @@ var HomeComponent = React.createClass({
           sidebarTab={this.state.sidebarTab} />
         <div className="home-content">
           <span className="logo"><img src={"<%= url('img/logo/logo.png') %>"} alt="Browserpipe logo small"/></span>
+          <SearchBox />
           <div className="bookmarklet-note">
             <span>or install our </span>
             <a data-toggle="modal" href="/modal/bookmarklet" data-target="#modal-bookmarklet">bookmarklet</a>
             <span> to add tabs directly from your browser</span>
           </div>
-          <SearchBox />
           <PendingComponent
             viewScreenshot={ this.state.viewScreenshot } />
         </div>
