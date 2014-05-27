@@ -12,11 +12,12 @@ exports.open = function(url) {
     ('/html-item/' + _state.selectedItem._id + '?url=' + encodeURIComponent(url) + '&width=' + $(window).width() + '&height=' + $(window).height());
   if($iframe[0].src !== url) {
     $iframe.hide();
+    var $contents = $($iframe.contents());
+    $contents.find('body').html('');
+    $iframe.show();
     $iframe[0].src = url;
     $iframe.off();
     $iframe.load(function() {
-      $iframe.show();
-      var $contents = $($iframe.contents());
       var $body = $contents.find('body');
       $contents.scroll(function() {//TODO use lodash.debounce
         var scrollX = $contents.scrollLeft();

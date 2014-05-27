@@ -38,7 +38,7 @@ var SidebarComponent = React.createClass({
   },
   render: function() {
     return (
-      <div className={"sidebar" + (this.state.sidebarCollapsed? ' hide' : '')}>
+      <div ref="sidebar" className="sidebar hide" >
         <TopBarComponent
           selectedTab={ this.state.sidebarTab } />
         <div className="sidebar-content">
@@ -48,6 +48,19 @@ var SidebarComponent = React.createClass({
           selectedFolder={ this.state.selectedFolder } />
       </div>
     );
+  },
+  slideSidebar: function() {
+    var $sidebar = $(this.refs.sidebar.getDOMNode());
+    var visible = $sidebar.is(":visible");
+    if((this.state.sidebarCollapsed && visible)
+      || (!this.state.sidebarCollapsed && !visible))
+      $sidebar.animate({width:'toggle'}, 300);;
+  },
+  componentDidMount: function() {
+      this.slideSidebar();
+  },
+  componentDidUpdate: function() {
+      this.slideSidebar();
   }
 });
 

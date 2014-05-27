@@ -1,5 +1,3 @@
-@import "common/colors.less";
-@import 'bootstrap.less';
 @import 'base.less';
 @import 'index.responsive.less';
 
@@ -7,8 +5,7 @@
 
 body {
   position: relative;
-  color: @grey1;
-  background-color: #fff;
+  background-color: @white;
 }
 
 .container-fluid {
@@ -51,23 +48,23 @@ header{
           float: left;
 
          a {
-           color: #777;
+           color: @grey;
            display: block;
            padding: 10px 20px;
            text-decoration: none;
 
            .fa-twitter {
-             color: #ff6d16;
+             color: @orange;
              text-decoration: none;
            }
          }
 
-         a:hover:hover {
-           color: darken(@grey1, 5%);
+         a:hover {
+           color: darken(@grey, 5%);
            cursor: pointer;
 
            .fa-twitter {
-             color: darken(@orange1, 5%);
+             color: darken(@orange, 5%);
            }
          }
        }
@@ -75,6 +72,43 @@ header{
     }
   }
 }
+
+.info-page {
+  text-align: left;
+
+  .info-sidebar {
+
+    h4 {
+      color: @grey1;
+    }
+    li {
+      &.active {
+        a {
+          color: @white;
+          background-color: @orange;
+
+          &:hover {
+           background-color: darken(@orange, 5%);
+          }
+        }
+      }
+      a {
+        font-weight: bold;
+        color: @grey;
+        text-shadow: none;
+
+        &:hover {
+         color: @white;
+         background-color: darken(@orange, 5%);
+        }
+      }
+    }
+  }
+
+  .info-content {
+  }
+}
+
 
 #index-center {
   margin-left: 0;
@@ -108,14 +142,11 @@ header{
   color: #3c4446;
 
   a {
-    color: @orange1;
+    color: @orange;
 
     &:hover{
-      color: darken(@orange1, 5%);
+      color: darken(@orange, 5%);
     }
-  }
-  &.last {
-    margin-bottom: 100px;
   }
   h2 {
   opacity: 0.95;
@@ -209,8 +240,7 @@ header{
 }
 
 .row-footer {
-  position: absolute;
-  bottom: 0px;
+  margin-top: 60px;
 
   footer {
     padding: 10px 0 10px 0;
@@ -229,11 +259,11 @@ header{
     }
 
     a {
-      color: @orange1;
+      color: @orange;
       text-decoration: none;
 
       &:hover{
-        color: darken(@orange1, 5%);
+        color: darken(@orange, 10%);
         text-decoration: none;
       }
     }

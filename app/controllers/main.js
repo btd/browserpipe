@@ -15,9 +15,33 @@ exports.home = function (req, res, next) {
             })
         }, next)
     } else
-        res.render('main/index')
+        res.render('main/index', { user: req.user})
 }
 
+//FAQ
+exports.faq = function (req, res, next) {
+  return res.render('main/faq', { option: 'faq', user: req.user })
+}
+
+//Help
+exports.help = function (req, res, next) {
+  return res.render('main/help', { option: 'help', user: req.user })
+}
+
+//About
+exports.about = function (req, res, next) {
+  return res.render('main/about', { option: 'about', user: req.user })
+}
+
+//Privacy
+exports.privacy = function (req, res, next) {
+  return res.render('main/privacy', { option: 'privacy', user: req.user })
+}
+
+//Help
+exports.terms = function (req, res, next) {
+  return res.render('main/terms', { option: 'terms', user: req.user })
+}
 
 //Bookmarklet
 exports.bookmarkletArchive = function (req, res, next) {

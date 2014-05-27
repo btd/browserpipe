@@ -82,7 +82,7 @@ var UserOptionsComponent = React.createClass({
             { this.renderCloseSidebarOption() }
             <li className="divider"></li>
             <li >
-              <a data-toggle="modal" href="/modal/bookmarklet" data-target="#modal">
+              <a data-toggle="modal" href="/modal/bookmarklet" data-target="#modal-bookmarklet">
                 <span>Bookmarklets</span>
               </a>
             </li>
@@ -93,13 +93,8 @@ var UserOptionsComponent = React.createClass({
                 <span>View screenshots</span>
               </label>
             </li>
-            <li className="disabled">
-              <a draggable="false"  tabIndex="-1" href="#">
-                <span>Settings</span>
-              </a>
-            </li>
-            <li className="disabled">
-              <a draggable="false"  tabIndex="-1" href="#">
+            <li>
+              <a draggable="false" target="_blank" tabIndex="-1" href="/help">
                 <span>Help</span>
               </a>
             </li>

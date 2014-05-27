@@ -1,6 +1,5 @@
 // Core variables and mixins
 // Rules import
-@import "common/colors.less";
 @import "common/util.less";
 @import "messenger/messenger.less";
 
@@ -16,28 +15,39 @@ html,body {
 }
 
 body {
-  color: #666;
-  background-color: #fff;
+  color: @grey;
+  background-color: @white;
 }
 
 .messenger {
 
   .alert-info {
-    background-color: #f89406;
-    border-color: #ff6600;
-    color: #fff;
+    background-color: @orange;
+    border-color: @orange;
+    color: @white;
   }
   .messenger-message {
     .messenger-actions {
       a {
-        color: #fff;
+        color: @white;
       }
     }
   }
 }
 
 .label-warning {
-  background-color: #ff6d16;
+  background-color: @orange;
+}
+
+.orange-btn {
+  border: 0;
+  color: #fff;
+  background: @orange;
+  padding: 4px 6px;
+
+  &:hover {
+    background: darken(@orange, 5%);
+  }
 }
 
 .loader {
@@ -125,6 +135,18 @@ a {
   }
 }
 
+.modal {
+  .border-radius(0);
+
+  .modal-close-btn {
+    color: #777;
+    font-size: 13px;
+    vertical-align: bottom;
+    margin-right: 12px;
+    text-decoration: underline;
+  }
+}
+
 .modal-bookmarklet-content{
   .bookmarklet {
     margin-top: 27px;
@@ -144,6 +166,17 @@ a {
 }
 
 
+#advance-search-modal {
+  label {
+    font-weight: bold;
+  }
+  input[type=text] {
+    width: 100%;
+    height: auto;
+    .border-radius(0);        
+  }  
+}
+
 #sidebar-section {
   float: left;
 
@@ -161,6 +194,11 @@ a {
       z-index: 100;
       position: relative;
 
+      .close-sidebar {
+        position: absolute;
+        top: 6px;
+        right: 12px;
+      }
       .nav-tabs {
         margin: 3px 0  0 0;
 
@@ -172,8 +210,6 @@ a {
             padding: 1px 12px;
           }
           &.recent {
-            float: right;
-
             a {
               margin-right: 0;
               border-right: none;
@@ -273,175 +309,162 @@ a {
       border-color: #333;
     }
   }
-  .folder, .tab {
-    width: 100%;
-    margin-top: 6px;
-    position: relative;
-    margin-left: auto;
-  }
-  .folder {
-    height: 27px;
-    border: 1px solid #ff6d16;
-    background-color: #ff6d16;
-    color: #fff;
-    -webkit-border-radius: 2px;
-    -moz-border-radius: 2px;
-    -ms-border-radius: 2px;
-    -o-border-radius: 2px;
-    border-radius: 2px;
+}
+.folder, .tab {
+  width: 100%;
+  margin-top: 6px;
+  position: relative;
+  margin-left: auto;
+}
+.folder {
+  height: 27px;
+  border: 1px solid #ff6d16;
+  background-color: #ff6d16;
+  color: #fff;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  -ms-border-radius: 2px;
+  -o-border-radius: 2px;
+  border-radius: 2px;
 
-    &:hover {
-      cursor: pointer;
+  &:hover {
+    cursor: pointer;
 
-      .folder-options {
+    .folder-options {
 
-        &:hover {
-          .dropdown-toggle {
-            i {
-              color: #cecece;
-            }
+      &:hover {
+        .dropdown-toggle {
+          i {
+            color: #cecece;
           }
         }
       }
     }
-    &.folder-up {
-      text-align: center;
-    }
-    .folder-options {
-      float: right;
-      margin: 3px 6px 0 0;
+  }
+  &.folder-up {
+    text-align: center;
+  }
+  .folder-options {
+    float: right;
+    margin: 3px 6px 0 0;
 
-      .dropdown-toggle {
-        i {
-          color: #fff;
-        }
-      }
-      .dropdown {
-
-        .dropdown-menu {
-          right: 0;
-          left: auto;
-        }
+    .dropdown-toggle {
+      i {
+        color: #fff;
       }
     }
-    .folder-title {
-      line-height: 14px;
-      width: 230px;
-      height: 27px;
-      font-size: 14px;
-      padding: 6px 3px 0;
+    .dropdown {
+
+      .dropdown-menu {
+        right: 0;
+        left: auto;
+      }
+    }
+  }
+  .folder-title {
+    line-height: 14px;
+    width: 230px;
+    height: 27px;
+    font-size: 14px;
+    padding: 6px 3px 0;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    float: left;
+    margin: 0 -30px 0 3px;
+    padding: 6px 30px 0 0;
+  }
+
+  .title-editor {
+
+    input {
+      margin: 4px 0 0 3px;
+      float: left;
+      width: 150px;
+      display: block;
+    }
+    .btn {
+      float: left;
+
+      &.edit-title-save, &.edit-title-cancel {
+        margin: 3px 0 0 6px;
+        height: 20px;
+        line-height: 10px;
+      }
+    }
+  }
+}
+
+.tab {
+  border: 2px solid #ddd;
+
+  &:hover {
+    cursor: pointer;
+  }
+  &.selected {
+    border: 2px solid #666;
+  }
+  .tab-label {
+    margin: 2px 3px 0 0;
+  }
+  .tab-options {
+    position: absolute;
+    right: 0;
+    top: 3px;
+
+    i {
+      padding: 3px 5px;
+      color: #ccc;
+    }
+    .dropdown {
+      .dropdown-menu {
+        right: 0;
+        left: auto;
+      }
+    }
+    &:hover {
+      i {
+        color: #666;
+      }
+    }
+  }
+  .tab-content {
+    height: 115px;
+    width: 245px;
+    overflow: hidden;
+    position: relative;
+
+    .tab-screenshot {
+      max-width: none;
+      position: absolute;
+    }
+  }
+  .tab-loader {
+    text-align: center;
+
+    img {
+      width: 20px;
+    }
+  }
+  .tab-footer {
+    height: 25px;
+    color: #333;
+    position: relative;
+
+    .tab-favicon {
+      float: left;
+      margin: 3px;
+    }
+    .tab-title {
+      font-size: 12px;
+      width: 100%;
       text-overflow: ellipsis;
       overflow: hidden;
       white-space: nowrap;
-      float: left;
-      margin: 0 -30px 0 3px;
-      padding: 6px 30px 0 0;
+      display: inline-block;
+      margin: 0 -17px 0 -30px;
+      padding: 0 17px 0 30px;
     }
-
-    .title-editor {
-
-      input {
-        margin: 4px 0 0 3px;
-        float: left;
-        width: 150px;
-        display: block;
-      }
-      .btn {
-        float: left;
-
-        &.edit-title-save, &.edit-title-cancel {
-          margin: 3px 0 0 6px;
-          height: 20px;
-          line-height: 10px;
-        }
-      }
-    }
-
-  }
-
-  .tab {
-    border: 2px solid #ddd;
-
-    &:hover {
-      cursor: pointer;
-    }
-    &.selected {
-      border: 2px solid #666;
-    }
-    .tab-label {
-      margin: 2px 3px 0 0;
-    }
-    .remove-option, .tab-options {
-      position: absolute;
-      right: 0;
-      top: 3px;
-
-      i {
-        padding: 3px 5px;
-        color: #ccc;
-      }
-    }
-    .remove-option {
-      i {
-        &:hover {
-          background-color: #ff6d16;
-          color: #fff;
-          .border-radius(12px);
-        }
-      }
-    }
-    .tab-options {
-      .dropdown {
-        .dropdown-menu {
-          right: 0;
-          left: auto;
-        }
-      }
-      &:hover {
-        i {
-          color: #666;
-        }
-      }
-    }
-    .tab-content {
-      height: 115px;
-      width: 245px;
-      overflow: hidden;
-      position: relative;
-
-      .tab-screenshot {
-        max-width: none;
-        position: absolute;
-      }
-    }
-    .tab-loader {
-      text-align: center;
-
-      img {
-        width: 20px;
-      }
-    }
-    .tab-footer {
-      height: 25px;
-      color: #333;
-      position: relative;
-
-      .tab-favicon {
-        float: left;
-        margin: 3px;
-      }
-      .tab-title {
-        font-size: 12px;
-        width: 100%;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
-        display: inline-block;
-        margin: 0 -17px 0 -30px;
-        padding: 0 17px 0 30px;
-      }
-    }
-
   }
 }
 
@@ -492,11 +515,27 @@ a {
     background-color: #eee;
     border-bottom: 1px solid #ddd;
 
-    .logo {
-      margin: 3px 6px;
+    .open-sidebar {
+      float: left;
+      margin: 0 12px;
+    }
+    .tab {
+      float: left;
+      width: auto;
+      border: none;
+      margin: 0;
+
+      .tab-title {
+        max-width: 202px;
+        width: auto;
+      }
+    }
+    .go-home {
+      float: right;
+      margin: 3px 42px 0 0;
       font-size: 13px;
       font-weight: bold;
-      margin-right: 6px;
+      text-decoration: underline;
 
       &:hover {
         cursor: pointer;
@@ -575,6 +614,11 @@ a {
 #home-section {
   overflow: auto;
 
+  .open-sidebar {
+    position: absolute;
+    top: 3px;
+    left: 12px;
+  }
   .home-inner {
     position: relative;
     display: table;
@@ -600,8 +644,17 @@ a {
       padding: 12px;
 
       .home-input {
+        display: inline-block;
+        position: relative;
         margin-top: 24px;
 
+        .advance-search {
+          display: block;
+          text-align: left;
+          font-size: 12px;
+          text-decoration: underline;
+          width: 90px;
+        }
         #url-input {
           width: 570px;
           height: 33px;
@@ -638,12 +691,7 @@ a {
                 padding: 0;
                 float: left;
                 max-width: 202px;
-              }
-              .remove-option {
-                float: right;
-                position: relative;
-                top: auto;
-                right: auto;
+                margin: 3px 23px 0 0;
               }
             }
           }

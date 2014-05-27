@@ -5,7 +5,7 @@
 var _state = require('../../state'),
     util = require('../../util'),
     React = require('react'),
-    Tab= require('../common/tab');
+    Tab= require('../common/tab'),
     ArchiveComponent = require('../sidebar/archive'); //TODO: we can move this to common folder
 
 var SelectFolderModalComponent = React.createClass({
@@ -52,7 +52,7 @@ var SelectFolderModalComponent = React.createClass({
               <Tab
                 tab={ this.state.selectedItem }
                 selectedItem={ this.state.selectedItem }
-                showDropdown={ false }
+                hideDropdown={ true }
                 viewScreenshot={ false } />
               <h4 className="modal-title" id="myModalLabel">
                 { this.getLabelByItemStatus("Select folder to restore", "Select folder to archive", "Select folder to move") }

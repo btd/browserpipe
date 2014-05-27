@@ -6,8 +6,9 @@ var _state = require('../state'),
     util = require('../util'),
     React = require('react'),
     page = require('page'),
-    browser = require('../browser/main'),
-    UserOptionsComponent = require('./common/useroptions'),
+    UserOptions = require('./common/useroptions'),
+    SidebarOption = require('./common/sidebaroption'),
+    SearchBox = require('./home/searchbox'),
     PendingComponent = require('./home/pending');
 
 var HomeComponent = React.createClass({
@@ -18,38 +19,23 @@ var HomeComponent = React.createClass({
         viewScreenshot: this.props.viewScreenshot
       };
   },
-  ifEnterNavigate: function(e) {
-    if(e.keyCode === 13) this.navigateEnteredURL();
-  },
-  navigateEnteredURL: function() {
-    var url = this.refs.urlInput.getDOMNode().value.trim();
-    var parentId = _state.pending._id;
-    browser.createAndOpen(
-      parentId,
-      url,
-      function(item) {
-        $('#url-input').val('');
-      }
-    );
-  },
   render: function() {
     return (
       <div className="home-inner" >
-        <UserOptionsComponent 
-          viewScreenshot={ this.state.viewScreenshot } 
-          sidebarCollapsed={ this.state.sidebarCollapsed } 
+        <SidebarOption
+          sidebarCollapsed={ this.state.sidebarCollapsed } />
+        <UserOptions
+          viewScreenshot={ this.state.viewScreenshot }
+          sidebarCollapsed={ this.state.sidebarCollapsed }
           sidebarTab={this.state.sidebarTab} />
         <div className="home-content">
           <span className="logo"><img src={"<%= url('img/logo/logo.png') %>"} alt="Browserpipe logo small"/></span>
-          <div className="home-input">
-            <input type="text" placeholder="Search or add an URL" id="url-input" ref="urlInput" onKeyPress={this.ifEnterNavigate} />
-            <input type="button" id="url-btn" value="Go"  onClick={this.navigateEnteredURL} />
-          </div>
           <div className="bookmarklet-note">
             <span>or install our </span>
-            <a data-toggle="modal" href="/modal/bookmarklet" data-target="#modal">bookmarklet</a>
+            <a data-toggle="modal" href="/modal/bookmarklet" data-target="#modal-bookmarklet">bookmarklet</a>
             <span> to add tabs directly from your browser</span>
           </div>
+          <SearchBox />
           <PendingComponent
             viewScreenshot={ this.state.viewScreenshot } />
         </div>

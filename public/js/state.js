@@ -40,7 +40,7 @@ var proto = {
 
         //Todo: save this options in user
         this.sidebarCollapsed = true;
-        this.viewScreenshot = false;
+        this.viewScreenshot = true;
     },
 
     //////////////////////////////////////////ITEMS//////////////////////////////////////

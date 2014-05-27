@@ -5,6 +5,7 @@
 var _state = require('../../state'),
     React = require('react'),
     $ = require('jquery'),
+    page = require('page'),
     Folder = require('../common/folder'),
     Tab= require('../common/tab');
 
@@ -34,10 +35,11 @@ var ArchiveComponent = React.createClass({
       this.selectFolder(_state.getItemById(id));
   },
   removeTab: function(tab) {
+    var redirectHome = function() { page('/') };
     _state.serverUpdateItem({
       _id: tab._id,
       deleted: true
-    });
+    }, redirectHome);
   },
   renderBreadcrumb: function() {
     var breadcrumbItems = [];
@@ -78,7 +80,6 @@ var ArchiveComponent = React.createClass({
         tab={ tab }
         selectedItem={ self.props.selectedItem }
         removeTab= { self.removeTab }
-        showDropdown={ true }
         viewScreenshot={ self.props.viewScreenshot } />
     })
   },
@@ -88,7 +89,9 @@ var ArchiveComponent = React.createClass({
         <div className="items">
           { this.renderBreadcrumb() }
           <div className="clearfix">
-            <div className={"folder folder-up" + (this.props.selectedFolder._id === _state.archive._id?' hide':'')} title="Go one folder up" onClick={ this.folderUpClicked }>...</div>
+            <div className={"folder folder-up" + (this.props.selectedFolder._id === _state.archive._id?' hide':'')}
+                 title="Go one folder up"
+                 onClick={ this.folderUpClicked }>...</div>
             { this.renderFolders() }
             <div className="new-folder" title="Add new folder" onClick={ this.newFolderClicked }>Add folder</div>
           </div>

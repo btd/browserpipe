@@ -7,13 +7,10 @@ var _state = require('../../state'),
 
 var BottomSideBarComponent = React.createClass({
 
-  closeSidebarClicked: function(e) {
-    _state.sidebarCollapsed = true;
-  },
+  //TODO: this is not removed yet as I feel the bottom could be good to put some functionality, plus in the design it looks ok
   render: function() {
     return (
       <div className="bottom-sidebar">
-        <div className="bottom-text" onClick={ this.closeSidebarClicked } >close</div>
       </div>
     );
   }
