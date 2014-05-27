@@ -29,7 +29,7 @@ var BrowserComponent = React.createClass({
             tab={ tab }
             selectedItem={ self.props.selectedItem }
             removeTab= { self.removeTab }
-            showDropdown={ false }
+            showColorReminder= { true }
             viewScreenshot={ self.props.viewScreenshot } />
         </span>
       )

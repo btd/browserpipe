@@ -52,7 +52,7 @@ var SelectFolderModalComponent = React.createClass({
               <Tab
                 tab={ this.state.selectedItem }
                 selectedItem={ this.state.selectedItem }
-                showDropdown={ false }
+                hideDropdown={ true }
                 viewScreenshot={ false } />
               <h4 className="modal-title" id="myModalLabel">
                 { this.getLabelByItemStatus("Select folder to restore", "Select folder to archive", "Select folder to move") }

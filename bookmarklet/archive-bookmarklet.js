@@ -17,7 +17,7 @@ javascript:(function(e) {
           xhr.onreadystatechange=function() {
             if (success && xhr.readyState==4) success(JSON.parse(xhr.responseText)._id);
           }
-          xhr.send("url="+encode(e.location.href)+"&archiveParent="+encode(parent)+"&title="+encode(doc.title)+"&width="+encode(doc.documentElement.clientWidth)+"&height="+encode(doc.documentElement.clientHeight)+"&html="+encode(html)+"&charset="+encode(doc.characterSet)+"&v=1.1");
+          xhr.send("url="+encode(e.location.href)+"&parent="+encode(parent)+"&title="+encode(doc.title)+"&width="+encode(doc.documentElement.clientWidth)+"&height="+encode(doc.documentElement.clientHeight)+"&html="+encode(html)+"&charset="+encode(doc.characterSet)+"&v=1.1");
         }
         function setDivElement(element) {
           d.innerHTML = "<div style='position:absolute;margin:auto;top:0;right:0;bottom:0;text-align:center;width:100%;height:48px;z-index:-100;font-size: 24px;font-weight: bold;color: #ff6d16;'>" + element + "</div>";

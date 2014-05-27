@@ -6,9 +6,10 @@ var _state = require('../state'),
     util = require('../util'),
     React = require('react'),
     page = require('page'),
-    UserOptionsComponent = require('./common/useroptions'),
+    UserOptions = require('./common/useroptions'),
+    SidebarOption = require('./common/sidebaroption'),
     SelectFolderModalComponent = require('./modal/selectfolder'),
-    browser = require('../browser/main');
+    Tab = require('./common/tab');
 
 var TabHeaderComponent = React.createClass({
   getInitialState: function() {
@@ -23,31 +24,18 @@ var TabHeaderComponent = React.createClass({
   logoClicked: function() {
     page('/');
   },
-  updateInputUrl: function(e) {
-    this.setState({ url: e.target.value });
-  },
-  ifEnterNavigate: function(e) {
-    if(e.keyCode === 13) this.navigateEnteredURL(e);
-  },
-  navigateEnteredURL: function(e) {
-    var url = e.target.value.trim();
-    var parentId = _state.pending._id;
-    browser.createAndOpen(
-      parentId,
-      url
-    );
-  },
   archiveTab: function() {
     SelectFolderModalComponent.render(this.state.selectedItem);
   },
   deleteOrRemoveTab: function() {
+    var redirectHome = function() { page('/') };
     if(this.state.selectedItem.deleted)
-      _state.serverDeleteItem(this.state.selectedItem); //We fully delete the item
+      _state.serverDeleteItem(this.state.selectedItem, redirectHome); //We fully delete the item
     else
       _state.serverUpdateItem({
         _id: this.state.selectedItem._id,
         deleted: true
-      });
+      }, redirectHome);
   },
   showItemInArchiveTab: function() {
     _state.selectedFolder = _state.getItemById(this.state.selectedItem.parent);
@@ -62,21 +50,34 @@ var TabHeaderComponent = React.createClass({
     var d = new Date(date);
     return d.toLocaleDateString() + ' ' + d.toLocaleTimeString();
   },
-  renderTabInput: function() {
-    return <div className="new-tab-input">
-      <input type="text" placeholder="Enter an URL" id="small-url-input" value={this.state.url} onChange={this.updateInputUrl} onKeyPress={this.ifEnterNavigate} />
-      <input type="button" id="small-url-btn" value="Go"  onClick={this.navigateEnteredURL} />
-    </div>
+  renderTab: function() {
+    return <Tab
+           tab={ this.state.selectedItem }
+           selectedItem={ this.state.selectedItem }
+           hideDropdown={ true }
+           viewScreenshot={ false } />
   },
   renderLabels: function() {
     return <span className="labels">
-      <span className="message">Snapshot of <a target="_blank" href={this.state.selectedItem.url} title={this.state.selectedItem.url}>page</a>{" from " + this.renderDate(this.state.selectedItem.createdAt) + "  "}</span>
+      <span className="message">
+        Snapshot of
+        <a target="_blank"
+           href={this.state.selectedItem.url}
+           title={this.state.selectedItem.url}>
+          page
+        </a>
+        {" from " + this.renderDate(this.state.selectedItem.createdAt) + "  "}
+      </span>
       <span className={"label" + (this.isInArchive()?' hide':'')} title="click to select folder">
         <a href="#" onClick={ this.archiveTab }>
         { this.state.selectedItem.deleted? "click to restore" : "click to archive" }
         </a>
       </span>
-      <span className={"label label-warning" + (this.isInArchive()?'':' hide')} onClick={ this.showItemInArchiveTab } title={"click to open archived folder"}>view folder</span>
+      <span className={"label label-warning" + (this.isInArchive()?'':' hide')}
+            onClick={ this.showItemInArchiveTab }
+            title={"click to open archived folder"}>
+            view folder
+      </span>
      { this.renderTabOptions() }
     </span>
   },
@@ -110,15 +111,15 @@ var TabHeaderComponent = React.createClass({
   render: function() {
     return (
       <div>
-        <span className="logo" onClick={ this.logoClicked }>
-          <i className="fa fa-angle-double-left"></i><span> home</span>
-        </span>
-        { this.renderTabInput() }
+        <SidebarOption
+          sidebarCollapsed={ this.state.sidebarCollapsed } />
+        { this.renderTab() }
         { this.renderLabels() }
-        <UserOptionsComponent 
-          viewScreenshot={ this.state.viewScreenshot } 
-          sidebarCollapsed={ this.state.sidebarCollapsed } 
+        <UserOptions
+          viewScreenshot={ this.state.viewScreenshot }
+          sidebarCollapsed={ this.state.sidebarCollapsed }
           sidebarTab={this.state.sidebarTab} />
+        <span className="go-home" onClick={ this.logoClicked }>back home</span>
       </div>
     );
   },

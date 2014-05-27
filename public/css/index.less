@@ -59,7 +59,7 @@ header{
            }
          }
 
-         a:hover:hover {
+         a:hover {
            color: darken(@grey, 5%);
            cursor: pointer;
 
@@ -72,6 +72,43 @@ header{
     }
   }
 }
+
+.info-page {
+  text-align: left;
+
+  .info-sidebar {
+
+    h4 {
+      color: @grey1;
+    }
+    li {
+      &.active {
+        a {
+          color: @white;
+          background-color: @orange;
+
+          &:hover {
+           background-color: darken(@orange, 5%);
+          }
+        }
+      }
+      a {
+        font-weight: bold;
+        color: @grey;
+        text-shadow: none;
+
+        &:hover {
+         color: @white;
+         background-color: darken(@orange, 5%);
+        }
+      }
+    }
+  }
+
+  .info-content {
+  }
+}
+
 
 #index-center {
   margin-left: 0;
@@ -110,9 +147,6 @@ header{
     &:hover{
       color: darken(@orange, 5%);
     }
-  }
-  &.last {
-    margin-bottom: 100px;
   }
   h2 {
   opacity: 0.95;
@@ -206,8 +240,7 @@ header{
 }
 
 .row-footer {
-  position: absolute;
-  bottom: 0px;
+  margin-top: 60px;
 
   footer {
     padding: 10px 0 10px 0;

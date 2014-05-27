@@ -1,0 +1,28 @@
+extends ../layouts/index
+
+block content
+  .info-page
+    .row-fluid
+      .span3
+        include ../includes/infosidebar
+      .span9
+        .info-content
+          h3 Help
+          br
+          h4#search-tips Search
+          p Here are some tips that will improve your search
+          p
+            b site="reddit.com"  site="washingtonpost" site="http://www.youtube.com" 
+            i : search by site URL
+          p
+            b ref="google"  ref="news.ycombinator.com"
+            i : search by the page that opened it
+          p
+            b folder="Books" folder="Blogs/New Techonology/Mobile" 
+            i : search on a specific folder
+          p
+            b :current 
+            i : search in the current selected folder
+          p
+            b :trash 
+            i : search in the trash

@@ -7,6 +7,11 @@ module.exports = function (app, passport) {
 
   //General routes
   app.get('/', main.home);
+  app.get('/faq', main.faq);
+  app.get('/help', main.help);
+  app.get('/about', main.about);
+  app.get('/privacy', main.privacy);
+  app.get('/terms', main.terms);
 
   //User routes
   var users = require('./controllers/user')  ;
