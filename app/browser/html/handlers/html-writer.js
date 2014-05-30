@@ -146,6 +146,9 @@ HtmlWriteHandler.prototype.onOpenTag = function(name, attributes) {
     attributes.href = this.url;
     this.stylesheetsAttributes.push(attributes);
   } else {
+    if(name == 'a' && !attributes.target) {
+      attributes.target = '_blank';
+    }
     this.add(util.openTag(name, attributes, false));
     //TODO check what if inside attribute will be quote? Probably will be need to unescape and escape eveything
 

@@ -10,5 +10,16 @@ module.exports = function(Schema) {
         resolve([product, numberAffected]);
       })
     })
+  });
+
+  Schema.method('removeWithPromise', function() {
+    var that = this;
+    return new Promise(function (resolve, reject) {
+      that.remove(function (err, product) {
+        if (err) return reject(err);
+
+        resolve(product);
+      })
+    })
   })
 };

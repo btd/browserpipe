@@ -1,7 +1,8 @@
 // this one used to show some text as is
 
 function tpl(url) {
-  return '<!doctype html>' +
+  return (
+    '<!doctype html>' +
     '<html>' +
     '<head>' +
     '<title>Image</title>' +
@@ -11,15 +12,15 @@ function tpl(url) {
     '</style>' +
     '</head>' +
     '<body>' +
-    '<img class="decoded" src="'+url +'">' +
+    '<img class="decoded" src="' + url + '">' +
     '</body>' +
-    '</html>'
+    '</html>');
 }
 
-module.exports = function(url) {
+module.exports = function (url) {
   return tpl(fixedEncodeURI(url));
 }
 
-function fixedEncodeURI (str) {
+function fixedEncodeURI(str) {
   return encodeURI(str).replace(/%5B/g, '[').replace(/%5D/g, ']');
 }

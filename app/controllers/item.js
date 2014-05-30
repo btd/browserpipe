@@ -7,6 +7,8 @@ var _ = require('lodash'),
 
   Promise = require('bluebird');
 
+var file = require('../../util/file');
+
 var userUpdate = require('./user_update');
 
 //Add item
@@ -78,12 +80,18 @@ exports.search = function(req, res) {
 
 //Remove item
 exports.delete = function(req, res) {
-  //TODO: fully delete item from db
-  /*var item = req.currentItem;
-  return item.deleteWithPromise()
-    .then(function() { if(item.parent) removeItemToParent(item, item.parent, req, res) })
+  var item = req.currentItem;
+  return item.removeWithPromise()
+    .then(function() { if(item.parent) removeItemFromParent(item, item.parent, req, res) })
     .then(userUpdate.deleteItem.bind(null, req.user._id, item))
-    .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res));*/
+    .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
+    .then(function() {
+      if(req.path && item.files.length > 0) {
+        return Promise.all(item.files.map(function(f) {
+          return file.remove(f.name);
+        }))
+      }
+    })
 }
 
 //Find item by id

@@ -1,6 +1,7 @@
 var file = require('../../util/file');
 
 var url = require('url');
+var path = require('path');
 
 var reEscapedHtml = /&(?:amp|lt|gt|quot|#39);/g,
   reUnescapedHtml = /[&<>"']/g;
@@ -231,3 +232,17 @@ function UnsupportedContentTypeError(contentType) {
 }
 
 UnsupportedContentTypeError.prototype = Object.create(Error.prototype);
+
+
+exports.fileName = function(_url) {
+  var parsed = url.parse(_url);
+  if(parsed.pathname) {
+    return path.basename(parsed.pathname);
+  } else {
+    return ''
+  }
+}
+
+exports.googleFavicon = function(_url) {
+  return '//www.google.com/s2/favicons?domain=' + encodeURIComponent(_url);
+}
