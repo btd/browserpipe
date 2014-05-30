@@ -1,0 +1,18 @@
+.modal-header
+  button(type="button", class="close", data-dismiss="modal", aria-hidden="true") &times;
+  h4(class="modal-title") Bookmarklets
+.modal-body.modal-bookmarklet-content
+  p
+    b Bookmarklets are useful to quickly save the current tab to Browserpipe.
+  p Installing our bookmarklets is very easy, just select which one you want and drag and drop the orange dashed box to the bookmarks toolbar of your browser. To use it, click the generated link in the bookmarks toolbar. You can install all of them if you want.
+  .bookmarklet
+    a.bookmarklet-link(href='javascript:<%= archiveCode %>') ✚ Archive Browserpipe
+    it allows to select the folder to archive the tab
+  .bookmarklet
+    a.bookmarklet-link(href='javascript:<%= laterCode %>') ✚ Later Browserpipe
+    it saves the the tab for later in Browserpipe
+  .bookmarklet
+    a.bookmarklet-link(href='javascript:<%= openCode %>') ✚ Open Browserpipe
+    it saves and open the tab in Browserpipe
+.modal-footer
+  button(type="button", class="orange-btn", data-dismiss="modal") Close

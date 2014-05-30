@@ -3,11 +3,11 @@ var Promise = require('bluebird');
 var path = require('path'),
   crypto = require('crypto');
 
-var writeFile = Promise.promisify(require('fs').writeFile);
+var writeFile = Promise.promisify(require('graceful-fs').writeFile);
 var mkdirp = Promise.promisify(require('mkdirp'));
 var rm = Promise.promisify(require('rimraf'));
 
-var stat = Promise.promisify(require('fs').stat);
+var stat = Promise.promisify(require('graceful-fs').stat);
 
 var config = require('../config');
 

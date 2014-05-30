@@ -39,7 +39,8 @@
     "body-parser": "^1.2.0",
     "cookie-parser": "^1.1.0",
     "morgan": "^1.0.1",
-    "newrelic": "^1.5.5"
+    "newrelic": "^1.5.5",
+    "graceful-fs": "^2.0.3"
   },
   "devDependencies": {
     "mocha": "latest",
@@ -66,6 +67,7 @@
     "through2": "^0.4.1",
     "run-sequence": "^0.3.6",
     "gulp-csso": "^0.2.7",
-    "serve-static": "^1.1.0"
+    "serve-static": "^1.1.0",
+    "lodash.template": "^2.4.1"
   }
 }
