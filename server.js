@@ -1,5 +1,7 @@
 require('newrelic');
 
+var heapdump = require('heapdump');
+
 var app = require('./app/server');
 
 var port = process.env.PORT || 4000;
