@@ -1,17 +1,8 @@
 extends ../layouts/home
 
 block body
-  span#sidebar-section
-  #home-section
-    .home-inner
-      .home-content
-        img(src=asset_url("img/loader.gif"), alt="Loading")
-  #tab-section
-    #tab-header
-    iframe(src='about:blank', class="tab-content")
-    .loader
-      .loader-inner
-        img(src=asset_url("img/loader.gif"), alt="Loading")
+  #home
+    img.absolute-center(src=asset_url("img/loader.gif"), alt="Loading")
   #hiddenEventDiv
   #select-folder-modal-section
   #advance-search-modal-section

@@ -164,7 +164,7 @@ HtmlWriteHandler.prototype.onText = function(textObj) {
   if(this.removeExtraWhiteSpace) {
     this.add(textObj.text.replace(/\s+/g, ' '));
   } else if(this.inStyle) {
-    this.stylesheetsContent.push(Promise.cast({
+    this.stylesheetsContent.push(Promise.resolve({
       content: textObj.text,
       contentType: contentType.CSS,
       href: this.url
@@ -188,7 +188,7 @@ HtmlWriteHandler.prototype.onCloseTag = function(name) {
      */
     this.resetChunk();
 
-    var cssMarker = Promise.cast('');
+    var cssMarker = Promise.resolve('');
 
     this.cssMarkerIndex = this.chunks.length;
 

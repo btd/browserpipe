@@ -66,7 +66,7 @@ var generateScreenshot = function(html, browser, callback) {
                               });
                             }//XXX
 
-                            return Promise.all([file.size(fullPath), file.size(screenshotSmallPath)])
+                            return Promise.join(file.size(fullPath), file.size(screenshotSmallPath))
                               .spread(function(fullSize, smallSize) {
                                 browser.files.push({ name: name, size: fullSize });
                                 browser.files.push({ name: screenshotSmall, size: smallSize });

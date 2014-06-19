@@ -15,7 +15,7 @@ var common = {
       width: 1280,
       height: 1024
     },
-    thumbnailWidth: 260
+    thumbnailWidth: 300
   },
   'socket-io': {
     userUpdateRedisKeyPrefix: 'user_update:',

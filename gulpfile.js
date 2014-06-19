@@ -29,7 +29,7 @@ var manifest = require('./manifest')(manifestSettings.manifestPath, '/public');
 var config = require('./config');
 
 gulp.task('styles', function () {
-  return gulp.src(['public/css/app.less', 'public/css/index.less'])
+  return gulp.src(['public/css/home.less', 'public/css/index.less'])
     .pipe($.less({
       paths: [ path.join(__dirname, 'public', 'css') ]
     }))
@@ -76,21 +76,15 @@ gulp.task('script-main', function () {
   var bundleStream = browserify({
     entries: './public/js/main.js',
     extensions: ['.jsx'],
-    fullPaths: false,
-    builtins: false
+    fullPaths: false
   })
     .transform('reactify')
     .require('./node_modules/react/addons.js', { expose: 'react' })
+    .require('./node_modules/es6-promise/dist/commonjs/main.js', { expose: 'promise' })
     .require('./public/bower_components/page.js/index.js', { expose: 'page' })
     .require('./public/bower_components/jquery/dist/jquery.js', { expose: 'jquery' })
-    .require('./public/bower_components/bootstrap/js/dropdown.js', { expose: 'bootstrap-dropdown' })
-    .require('./public/bower_components/bootstrap/js/modal.js', { expose: 'bootstrap-modal' })
-    .require('./public/bower_components/messenger/build/js/messenger.js', { expose: 'messenger' })
-    .require('./public/bower_components/moco/index.js', { expose: 'moco' })
-    .require('./public/bower_components/emitter/index.js', { expose: 'emitter' })
     .require('./public/bower_components/socket.io-client/dist/socket.io.js', { expose: 'socket.io-client'})
-    .require('./public/bower_components/bytes/index.js', { expose: 'bytes'})
-    .ignore('emitter-component')
+    .external('emitter')
     .bundle({
       insertGlobals: false,
       detectGlobals: false,

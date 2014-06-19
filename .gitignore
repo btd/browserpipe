@@ -43,3 +43,4 @@ compiled-assets
 /results/*
 public/storage
 dist
+*.heapsnapshot

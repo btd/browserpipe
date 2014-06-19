@@ -7,14 +7,14 @@ var loadServerEvents = function() {
     require('../events/item')(socket);
 };
 
-module.exports.initialize = function(){
+exports.initialize = function(){
     //Saves reference to the socket
     var url = location.protocol+'//'+location.host;
     socket = io.connect(url);
     loadServerEvents();
 }
 
-module.exports.send = function(key, data){
+exports.send = function(key, data){
     socket.emit(key, data);
 }
 

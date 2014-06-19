@@ -1,7 +1,7 @@
 extends auth
 
 block auth
-    form#login(action="/users/session", method="post")
+    form#login(action="/authenticate", method="post")
         .control-group
             .controls
                 input#email(type='text', name="email", placeholder='Email')

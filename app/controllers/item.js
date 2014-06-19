@@ -7,70 +7,55 @@ var _ = require('lodash'),
 
   Promise = require('bluebird');
 
+var navigate = require('../browser/main').navigate;
+
 var file = require('../../util/file');
 
 var userUpdate = require('./user_update');
 
 //Add item
-exports.addItem = function(req, res) {
-  req.check('type').isInt();
+exports.addItem = function (req, res) {
+  req.check('url').notEmpty();
 
   var errs = req.validationErrors();
-  if(errs) return errors.sendBadRequest(res);
+  if (errs) return errors.sendBadRequest(res);
 
-  var parent = req.currentItem;
-  var item = new Item(_.pick(req.body, 'type', 'title', 'url'));
-  item.parent = parent._id;
+  var item = new Item(_.pick(req.body, 'title', 'url'));
   item.user = req.user._id;
-  parent.items.push(item._id);
 
-  parent.saveWithPromise()
-    .then(function() {
-      item.saveWithPromise()
-        .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
-        .then(userUpdate.createItem.bind(null, req.user._id, item))
-        .then(userUpdate.updateItem.bind(null, req.user._id, parent));
+  return item.saveWithPromise()
+    .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
+    .then(userUpdate.createItem.bind(null, req.user._id, item))
+    .then(function () {
+      if (item.url) {
+        return navigate({
+          url: item.url,
+          item: item,
+          languages: req.user.langs
+        });
+      }
     });
 }
 
-//Move item
-exports.moveItem = function(req, res) {
-  req.check('parent').notEmpty();
-
-  var errs = req.validationErrors();
-  if(errs) return errors.sendBadRequest(res);
-
-  var item = req.currentItem;
-  if(item.deleted) //We also restore items by moving it to a folder from trash
-    item.deleted = false;
-  var oldParent = item.parent;
-  item.parent = req.body.parent;
-  return item.saveWithPromise()
-    .then(function() { if(oldParent) removeItemFromParent(item, oldParent, req, res) })
-    .then(function() { appendItemToParent(item, item.parent, req, res) })
-    .then(userUpdate.updateItem.bind(null, req.user._id, item))
-    .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res));
-}
 
 //Update item
-exports.update = function(req, res) {
+exports.update = function (req, res) {
   var item = req.currentItem;
 
-  _.merge(item, _.pick(req.body, 'parent', 'title', 'items', 'scrollX', 'scrollY', 'deleted'));
+  _.merge(item, _.pick(req.body, 'title', 'scrollX', 'scrollY', 'deleted'));
 
   return item.saveWithPromise()
-    .then(function() { if(req.body.deleted) removeItemFromParent(item, item.parent, req, res); })
     .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
     .then(userUpdate.updateItem.bind(null, req.user._id, item))
 }
 
 //Search item
-exports.search = function(req, res) {
-  Item.textSearch(req.query, function(err, output) {
+exports.search = function (req, res) {
+  Item.textSearch(req.query, function (err, output) {
 
-    if(err) return errors.sendInternalServer(res);
+    if (err) return errors.sendInternalServer(res);
 
-    var ids = output.results.map(function(result) {
+    var ids = output.results.map(function (result) {
       return result.obj._id;
     })
 
@@ -79,15 +64,17 @@ exports.search = function(req, res) {
 }
 
 //Remove item
-exports.delete = function(req, res) {
+exports.delete = function (req, res) {
   var item = req.currentItem;
   return item.removeWithPromise()
-    .then(function() { if(item.parent) removeItemFromParent(item, item.parent, req, res) })
+    .then(function () {
+      if (item.parent) removeItemFromParent(item, item.parent, req, res)
+    })
     .then(userUpdate.deleteItem.bind(null, req.user._id, item))
     .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
-    .then(function() {
-      if(req.path && item.files.length > 0) {
-        return Promise.all(item.files.map(function(f) {
+    .then(function () {
+      if (req.path && item.files.length > 0) {
+        return Promise.all(item.files.map(function (f) {
           return file.remove(f.name);
         }))
       }
@@ -95,8 +82,8 @@ exports.delete = function(req, res) {
 }
 
 //Find item by id
-exports.item = function(req, res, next, id) {
-  if(req.isAuthenticated()) {
+exports.item = function (req, res, next, id) {
+  if (req.isAuthenticated()) {
     return Item.by({ _id: id, user: req.user })
       .then(function (item) {
         if (!item) return errors.sendNotFound(res);
@@ -109,30 +96,27 @@ exports.item = function(req, res, next, id) {
   }
 }
 
-exports.query = function(req, res, next, query) {
+exports.query = function (req, res, next, query) {
   req.query = query;
   next();
-}
+};
 
-var appendItemToParent = function(item, parentId, req, res) {
-  return Item.byId({ _id: parentId })
-    .then(function(parent) {
-      if(parent.items.indexOf(item._id) === -1) {
-        parent.items.push(item._id);
-        return parent.saveWithPromise()
-          .then(userUpdate.updateItem.bind(null, req.user._id, parent));
-      }
-    })
-}
+exports.get = function (req, res, next) {
+  var mongoSearch = { user: req.user._id, deleted: false };
 
-var removeItemFromParent = function(item, parentId, req, res) {
-  return Item.byId({ _id: parentId })
-    .then(function(parent) {
-      if(parent.items.indexOf(item._id) > -1) {
-        parent.items.remove(item._id);
-        return parent.saveWithPromise()
-          .then(userUpdate.updateItem.bind(null, req.user._id, parent));
-      }
-    })
-}
+  if (req.query.with) {
+    var w = req.query.with;
+    mongoSearch.tags = mongoSearch.tags || {};
+    mongoSearch.tags.$all = Array.isArray(w) ? w: [w] ;
+  }
 
+  if(req.query.without) {
+    var without = req.query.without;
+    mongoSearch.tags = mongoSearch.tags || {};
+    mongoSearch.tags.$nin = Array.isArray(without) ? without: [without] ;
+  }
+
+  return Item.all(mongoSearch).then(function (items) {
+    res.json(items);
+  })
+};
