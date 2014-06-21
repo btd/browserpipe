@@ -102,8 +102,7 @@ var proto = {
     var _item = this.getItemById(item._id);
     if(!_item) {
       item = new Item(item);
-      item.sync.persisted = true;
-      item.sync.dirty = false;
+      item.setSynced();
 
       this.items.push(item);
       return item;
@@ -116,8 +115,7 @@ var proto = {
     var item = this.getItemById(itemUpdate._id);
     if (item) {
       item.set(itemUpdate);
-      item.sync.persisted = true;
-      item.sync.dirty = false;
+      item.setSynced();
     }
   },
 

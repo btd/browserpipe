@@ -19,12 +19,13 @@ var newrelic = require('newrelic');
 // App settings and middleware
 module.exports = function(app, passport) {
 
+
   app.use('/public/storage', serveStatic(__dirname + '/../public/storage'));
   app.use('/public', serveStatic(__dirname + '/../dist'));
 
   //We update the limits of the size we accept
   app.use(bodyParser.json({ limit: '30mb' }));
-  app.use(bodyParser.urlencoded({ limit: '30mb' }));
+  app.use(bodyParser.urlencoded({extended: true, limit: '30mb' }));
 
   // set views path, template engine and default layout
   app.set('views', __dirname + '/views');

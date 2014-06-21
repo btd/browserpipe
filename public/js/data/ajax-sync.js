@@ -1,5 +1,7 @@
 var send = require('../send');
 
+var util = require('moco/lib/util');
+
 var encode = encodeURIComponent;
 
 function queryString(query) {
@@ -109,6 +111,13 @@ module.exports = function (baseUrl, urlOverrides) {
         return this.sync.dirty;
       };
 
+      Model.prototype.setSynced = function() {
+        this.sync.persisted = false;
+        this.sync.dirty = true;
+        this.sync.delta = {};
+        this.sync.changes = {};
+      };
+
       Model.on('initialize', function (model) {
         Object.defineProperty(model, 'sync', {
           value: {
@@ -122,7 +131,11 @@ module.exports = function (baseUrl, urlOverrides) {
 
         model.on('change', function (path, value, prevValue) {
           if (path in Model.attributes) {
-            doChange(this, path, value, prevValue);
+            if(util.isCollectionAttribute(Model.attributes[path])) {
+              doChange(this, path, value, prevValue, true);
+            } else {
+              doChange(this, path, value, prevValue);
+            }
           }
         });
       });

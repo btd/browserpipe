@@ -14,35 +14,25 @@ head
     link(type="text/css", rel="stylesheet", href=asset_url('css/index.css'))
 
 body
-    .container-fluid
-      .row-fluid
-        .span12
-          .row-fluid
-            header.span12
-              .outer.inner
-                .inner
-                  h1#logo.pull-left
-                    a(href="/")
-                      img(src=asset_url("img/logo/logo.png"), alt="Browserpipe logo")
-                  ul.navbar.topbar
-                    li
-                      a(href="/") Home
-                    if !user
-                      li
-                        a(href="/login") Login
-                    li
-                      a.icon(href="http://twitter.com/browserpipe", target="_blank")
-                        i.fa.fa-twitter
-            #index-center.span12
-              .inner
-                  block content
-      block center
-      .row-fluid
-      .row-fluid.row-footer
-        .span12
-          footer
+    .container
+        header.row.navbar.navbar-static-top
+            .container
+                .navbar-header
+                    a.navbar-brand(href="/")
+                        img(src=asset_url("img/logo/logo.png"), alt="Browserpipe logo")
+
+                nav.collapse.navbar-collapse
+                    ul.nav.navbar-nav.navbar-right
+                        li
+                            a(href="/login") Login
+                        li
+                            a(href="http://twitter.com/browserpipe", target="_blank")
+                                i.fa.fa-twitter
+
+        block content
+        footer
             p(class="footer-big")
               | Feel free to&nbsp;
               a(href="mailto:info@browserpipe.com", target="_blank") contact us
             p(class="footer-small") Browserpipe.com ©2014
-    block footer
+            block footer

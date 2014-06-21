@@ -18,14 +18,14 @@ var Item = model()
   .attr('windowWidth') // integer;
   .attr('windowHeight') // integer;
   .attr('storageUrl')
-  .attr('updatedAt', { set: d.Date })
-  .attr('createdAt', { set: d.Date })
+  .attr('updatedAt', { type: d.Date })
+  .attr('createdAt', { type: d.Date })
   .attr('waitingUpdate', { default: false })
   .attr('size', { get: function() {
     return this.files.reduce(function(acc, f) { return acc + f.size }, 0);
   }})
   .attr('files', { default: [] })
-  .attr('tags', { default: [] })
+  .attr('tags', { type: collection(), default: [] })
   .attr('deleted', { default: false })
   .use(model.nestedObjects)
   .use(ajaxSync.model);

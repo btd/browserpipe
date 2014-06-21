@@ -85,7 +85,7 @@ var Search = React.createClass({
         <form id="search" className="col-md-6 col-lg-6 col-md-offset-3 col-lg-offset-3" onSubmit={ this.onSearchSubmit }>
             <div className="form-group">
                 <div className="input-group">
-                  <input ref="inputSearch" placeholder="Search or add an URL" autoFocus="" onKeyUp={this.trySuggest} className="form-control" type="text"/>
+                  <input ref="inputSearch" placeholder="Search or add an URL" autoFocus="autofocus" onKeyUp={this.trySuggest} className="form-control" type="text"/>
                   <span className="input-group-btn">
                     <button className="btn btn-default" type="submit">Go!</button>
                   </span>

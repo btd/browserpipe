@@ -7,3 +7,11 @@
   }
 }
 
+@font-size-xs:     ceil((@font-size-base * 0.7)); // ~6px
+@input-height-xs:  22px;
+@border-radius-xs: 2px;
+
+.input-xs {
+  .input-size(@input-height-xs; @padding-xs-vertical; @padding-xs-horizontal; @font-size-xs; @line-height-small; @border-radius-xs);
+}
+

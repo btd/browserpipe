@@ -42,7 +42,7 @@
     "newrelic": "^1.7.2",
     "graceful-fs": "^3.0.2",
     "strftime": "^0.8.0",
-    "moco": "^1.0.2",
+    "moco": "^1.0.3",
     "bytes": "^1.0.0",
     "timeago": "^0.1.0",
     "es6-promise": "^1.0.0"

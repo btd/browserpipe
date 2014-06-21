@@ -42,7 +42,9 @@ exports.addItem = function (req, res) {
 exports.update = function (req, res) {
   var item = req.currentItem;
 
-  _.merge(item, _.pick(req.body, 'title', 'scrollX', 'scrollY', 'deleted'));
+  _.assign(item, _.pick(req.body, 'title', 'scrollX', 'scrollY', 'deleted', 'tags'));
+
+  if(req.body.tags) item.markModified('tags');
 
   return item.saveWithPromise()
     .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
