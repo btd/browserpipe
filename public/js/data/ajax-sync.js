@@ -112,8 +112,8 @@ module.exports = function (baseUrl, urlOverrides) {
       };
 
       Model.prototype.setSynced = function() {
-        this.sync.persisted = false;
-        this.sync.dirty = true;
+        this.sync.persisted = true;
+        this.sync.dirty = false;
         this.sync.delta = {};
         this.sync.changes = {};
       };
