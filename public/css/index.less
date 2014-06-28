@@ -4,6 +4,14 @@
 
 @navbar-bottom-border-width: 2px;
 
+html, body {
+  height: 100%;
+}
+
+body {
+  position: relative;
+}
+
 header.navbar {
   border-bottom: @navbar-bottom-border-width solid @orange;
 
@@ -22,6 +30,7 @@ header.navbar {
 .reasons {
   h3 {
     margin-bottom: 40px;
+    text-transform: uppercase;
   }
 
   b {
@@ -34,4 +43,13 @@ header.navbar {
     color: @white;
     background-color: @orange;
   }
+}
+
+footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+
+  text-align: center;
 }

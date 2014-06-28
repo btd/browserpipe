@@ -1,12 +1,10 @@
 block body
-    h2= title
-
     .row
-        .span12
+        .col-lg-4.col-lg-offset-4
+            h2= title
+
             if (typeof errors !== 'undefined')
-
                 each error in errors
-
                     .alert.alert-error #{error.msg}
 
             block auth
