@@ -14,6 +14,7 @@ var Promise = require('bluebird');
 
 var readFile = Promise.promisify(fs.readFile);
 var writeFile = Promise.promisify(fs.writeFile);
+var readdir = Promise.promisify(fs.readdir);
 
 var rev = require('./gulp-rev');
 
@@ -73,32 +74,37 @@ gulp.task('fonts', function () {
 
 gulp.task('script-main', function () {
 
-  var bundleStream = browserify({
-    entries: './public/js/main.js',
-    extensions: ['.jsx'],
-    fullPaths: false
-  })
-    .transform('reactify')
-    .require('./node_modules/react/addons.js', { expose: 'react' })
-    .require('./node_modules/es6-promise/dist/commonjs/main.js', { expose: 'promise' })
-    .require('./public/bower_components/page.js/index.js', { expose: 'page' })
-    .require('./public/bower_components/jquery/dist/jquery.js', { expose: 'jquery' })
-    .require('./public/bower_components/socket.io-client/dist/socket.io.js', { expose: 'socket.io-client'})
-    .external('emitter')
-    .bundle({
-      insertGlobals: false,
-      detectGlobals: false,
-      debug: !minify
-    });
+  return readBookmarklets().then(function (bookmarklets) {
+    var t = _.defaults({}, { bookmarklet:  bookmarklets}, manifest);
 
-  return bundleStream
-    .pipe(source('./public/js/main.js'))
-    .pipe($.ejs(manifest, { ext: '.js' }))
-    .pipe(minify ? $.uglify() : gutil.noop())
-    .pipe(rev())
-    .pipe(gulp.dest('dist/js'))
-    .pipe(rev.manifest(manifestSettings))
-    .pipe(gulp.dest('dist'));
+    var bundleStream = browserify({
+      entries: './public/js/main.js',
+      extensions: ['.jsx'],
+      fullPaths: false
+    })
+      .transform('reactify')
+      .require('./node_modules/react/addons.js', { expose: 'react' })
+      .require('./node_modules/es6-promise/dist/commonjs/main.js', { expose: 'promise' })
+      .require('./public/bower_components/page.js/index.js', { expose: 'page' })
+      .require('./public/bower_components/jquery/dist/jquery.js', { expose: 'jquery' })
+      .require('./public/bower_components/socket.io-client/dist/socket.io.js', { expose: 'socket.io-client'})
+      .external('emitter')
+      .bundle({
+        insertGlobals: false,
+        detectGlobals: false,
+        debug: !minify
+      });
+
+    return bundleStream
+      .pipe(source('./public/js/main.js'))
+      .pipe($.ejs(t, { ext: '.js' }))
+      .on('error', gutil.log)
+      .pipe(minify ? $.uglify() : gutil.noop())
+      .pipe(rev())
+      .pipe(gulp.dest('dist/js'))
+      .pipe(rev.manifest(manifestSettings))
+      .pipe(gulp.dest('dist'));
+  })
 });
 
 gulp.task('script-index', function () {
@@ -126,7 +132,7 @@ gulp.task('script-index', function () {
 });
 
 gulp.task('clean', function () {
-  return gulp.src('dist', { read: false }).pipe($.clean());
+  return gulp.src('dist', { read: false }).pipe($.rimraf());
 });
 
 gulp.task('build', function (callback) {
@@ -150,24 +156,29 @@ gulp.task('watch', function () {
 
 
 gulp.task('compile-bookmarklets', function () {
-  return gulp.src('./bookmarklet/**/*.ejs')
+  readBookmarklets();
+  return gulp.src('./bookmarklet/**/_*.js')
+    .pipe($.rename(function(path) {
+      path.basename = path.basename.substr(1);
+    }))
     .pipe($.ejs(_.merge({ config: config }, manifest), { ext: '.js' }))
     .pipe($.uglify())
     .pipe(gulp.dest('./bookmarklet/'));
 });
 
-gulp.task('compile-modal-bookmarklets', function () {
-  return Promise.all([
-    readFile('./bookmarklet/archive-bookmarklet.js', { encoding: 'utf8' }),
-    readFile('./bookmarklet/open-bookmarklet.js', { encoding: 'utf8' }),
-    readFile('./bookmarklet/later-bookmarklet.js', { encoding: 'utf8' }),
-    readFile('./app/views/modals/bookmarklet.jade.ejs', { encoding: 'utf8' })
-  ]).spread(function (archive, open, later, template) {
-    var templateFile = _.template(template, { archiveCode: archive, openCode: open, laterCode: later });
-    return writeFile('./app/views/modals/bookmarklet.jade', templateFile);
+function readBookmarklets() {
+  return readdir('./bookmarklet/').then(function (files) {
+    return files.filter(function (file) {
+      return file.substr(file.length - 3) == '.js'
+    })
+  }).then(function (files) {
+    return Promise.all(files.map(function (file) {
+      return Promise.join(Promise.resolve(file), readFile('./bookmarklet/' + file, { encoding: 'utf8' }));
+    }))
+  }).then(function (files) {
+    return files.reduce(function (acc, file) {
+      acc[file[0].substr(0, file[0].length - 3)] = file[1];
+      return acc;
+    }, {});
   })
-});
-
-gulp.task('bookmarklets', function(callback) {
-  runSequence('compile-bookmarklets', 'compile-modal-bookmarklets', callback);
-})
+}

@@ -13,6 +13,10 @@ var Home = React.createClass({
         state.mixins.editorModeForceUpdate
     ],
 
+    showBookmarklets: function() {
+        state.showBookmarkletModal = true;
+    },
+
     render: function() {
         return (
             <div id="content" className={ state.editorMode ? "editing" : "" }>
@@ -21,7 +25,7 @@ var Home = React.createClass({
                     <Search/>
                 </div>
                 <p className="text-centered">
-                    or install our <a href="javascript:void(0)">bookmarklet</a> to add tabs directly from your browser
+                    or install our <a href="javascript:void(0)" onClick={this.showBookmarklets}>bookmarklets</a> to add tabs directly from your browser
                 </p>
                 <div className="row">
                     <div className="items col-lg-12">

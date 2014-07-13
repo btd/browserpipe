@@ -1,0 +1,1 @@
+window.location='<%= config.appUrl %>/add?next=back&url='+encodeURIComponent(location.href)+'&title='+encodeURIComponent(document.title);

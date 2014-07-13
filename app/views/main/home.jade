@@ -3,13 +3,5 @@ extends ../layouts/home
 block body
   #home
     img.absolute-center(src=asset_url("img/loader.gif"), alt="Loading")
-  #hiddenEventDiv
-  #select-folder-modal-section
-  #advance-search-modal-section
-  #modal-bookmarklet(class="modal fade",style="display: none;")
-    .modal-dialog
-      .modal-content
-  #modal-searchtips(class="modal fade",style="display: none;")
-    .modal-dialog
-      .modal-content
+  #bookmarklet-modal
   include ../includes/home-footer

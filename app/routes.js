@@ -28,11 +28,6 @@ module.exports = function (app, passport) {
   //Home routes
   app.get('/item/:id1', auth.ensureLoggedIn('/login'), main.home);
 
-  //Modal routes
-  var modal = require('./controllers/modal');
-  app.get('/modal/bookmarklet', auth.send401IfNotAuthenticated, modal.bookmarklet);
-  app.get('/modal/searchtips', auth.send401IfNotAuthenticated, modal.searchtips);
-
   //Invitation routes
   var invitation = require('./controllers/invitation');
   app.get('/invitation/signup/:invitationId', invitation.accepted, users.signup);
@@ -61,15 +56,10 @@ module.exports = function (app, passport) {
 
   app.param('query', item.query);
 
-  //HTML for item
-  var browser = require('./browser/main');
-  app.get('/html-item/:itemId', auth.send401IfNotAuthenticated, browser.htmlItem);
-
   //Bookmarlet routes
-  app.post('/bookmarklet/add', cors.allowAllAccess, auth.send401IfNotAuthenticated, browser.htmlBookmarklet);
-  app.get('/bookmarklet/archive', auth.ensureLoggedIn('/login'), main.bookmarkletArchive);
-  app.get('/bookmarklet/open', auth.ensureLoggedIn('/login'), main.bookmarkletOpen);
-
+  var bookmarklets = require('./controllers/bookmarklet');
+  app.get('/add', auth.ensureLoggedIn('/login'), bookmarklets.addUrl);
+  app.post('/add', auth.send401IfNotAuthenticated, cors.allowAllAccess, bookmarklets.addPage);
 };
 
 

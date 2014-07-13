@@ -15,6 +15,7 @@ var State1 = model()
   .attr('showScreenshots', { default: false })
   .attr('isLoadingItems', { default: false })
   .attr('editorMode', { default: false })
+  .attr('showBookmarkletModal', { default: false })
   .attr('config')
   .use(model.nestedObjects)
   .use(function (State) {

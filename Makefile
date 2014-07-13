@@ -1,6 +1,6 @@
 MOCHA_OPTS= ./test
 REPORTER = spec
-JS= app models util logger.js config.js public/js
+JS= app models util logger.js config.js public/js bookmarklet
 
 clean:
 	@rm -fr ./cache

@@ -27,6 +27,9 @@ var React = require('react');
 var Home = require('./component/main');
 React.renderComponent(Home(), document.getElementById('home'));
 
+var BookmarkletModal = require('./component/bookmarklet-modal');
+React.renderComponent(BookmarkletModal(), document.getElementById('bookmarklet-modal'));
+
 var item = require('./data/item'), Item = item.Item, Items = item.Items;
 
 state.on('change:search', function (search) {
@@ -44,6 +47,9 @@ state.on('change:search', function (search) {
   } else {
     Items.where(search).then(function (items) {
       state.items = items;
+      state.items.forEach(function(item) {
+        item.setSynced();
+      })
     });
   }
 });
