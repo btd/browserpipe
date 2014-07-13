@@ -53,7 +53,9 @@ module.exports = function(app, passport) {
   // save session in mongodb collection sessions
   app.use(session({
     secret: config.cookieSecret,
-    store: new RedisStore(config.redis)
+    store: new RedisStore(config.redis),
+    resave: true,
+    saveUninitialized: true
   }));
 
   // use passport session
