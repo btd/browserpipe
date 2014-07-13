@@ -84,7 +84,7 @@ var UrlItem = React.createClass({
                     {item.favicon && <img src={item.favicon} className="icon"/>}
                     <div className="title">{item.title}</div>
                 </div>
-                { state.editorMode && <a href="javascript:vold(0)" className="close" onClick={item.markDeleted.bind(item)}>&times;</a> }
+                { state.editorMode && <a href="javascript:void(0)" className="close" onClick={item.markDeleted.bind(item)}>&times;</a> }
                 { item.tags.length > 0 || state.editorMode ? this.tags() : null }
                 { state.showScreenshots && item.screenshot && <img src={item.screenshot}/> }
             </div>

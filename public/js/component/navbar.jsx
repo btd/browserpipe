@@ -48,7 +48,7 @@ var NavBar = React.createClass({
                 <li className="item-time">
                     <a href="javascript:void(0)" title={item.createdAt.toLocaleString()}>
                         <i className="glyphicon glyphicon-time" />
-                        <span>{timeago(item.createdAt)}</span>
+                        <time dateTime={item.createdAt.toISOString()}>{timeago(item.createdAt)}</time>
                     </a>
                 </li>
             )

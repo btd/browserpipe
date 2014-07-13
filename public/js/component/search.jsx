@@ -215,7 +215,7 @@ var Search = React.createClass({
                 </div>
                 }
 
-                <p className="help-block"><a className="advance-search" href="#">advance search</a></p>
+                <p className="help-block"><a className="advance-search" href="#">advanced search</a></p>
             </div>
         </form>
         )
