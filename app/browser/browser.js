@@ -260,9 +260,9 @@ Browser.prototype._loadUrlOnly = function (url) {
 Browser.prototype.generateScreenshot = function (html) {
   var that = this;
   return new Promise(function (resolve/*, reject*/) {
-    screenshot.generateScreenshot(html, that, function (screenshotData) {
-      resolve(screenshotData.screenshotSmall || screenshot.noScreenshotUrl);
-    })
+    //screenshot.generateScreenshot(html, that, function (screenshotData) {
+      resolve(/*screenshotData.screenshotSmall || */screenshot.noScreenshotUrl);
+    //})
   })
 }
 
