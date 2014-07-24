@@ -52,7 +52,8 @@ module.exports = function(app, passport) {
 
   // save session in mongodb collection sessions
   app.use(session({
-    secret: config.cookieSecret,
+    name: config.session.cookie.name,
+    secret: config.session.cookie.secret,
     store: new RedisStore(config.redis),
     resave: true,
     saveUninitialized: true
@@ -65,7 +66,7 @@ module.exports = function(app, passport) {
   // flash messages
   app.use(require('connect-flash')());
 
-  app.use(morgan({ format: 'short', stream: {
+  app.use(morgan('short', { stream: {
     write: function(msg) {
       logger.info(msg.substr(0, msg.length - 1));
     }
@@ -77,11 +78,7 @@ module.exports = function(app, passport) {
   var server = http.createServer(app);
 
   // Configure socket.io
-  var sio = require('./socket.io');
-
-  //Initialize socket io
-  sio.init(server);
-
+  require('./socket.io')(server);
   // Bootstrap routes
   require('./routes')(app, passport);
 

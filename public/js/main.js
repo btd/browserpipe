@@ -13,6 +13,7 @@ if (!Promise.spread) {
 
 //add some globals, need to remove them later
 process = { env: { NODE_ENV: 'browser' } };
+global = window;
 
 $ = jQuery = require('jquery');
 

@@ -80,20 +80,17 @@ gulp.task('script-main', function () {
     var bundleStream = browserify({
       entries: './public/js/main.js',
       extensions: ['.jsx'],
-      fullPaths: false
+      fullPaths: false,
+      insertGlobals: false,
+      detectGlobals: false,
+      debug: !minify
     })
       .transform('reactify')
       .require('./node_modules/react/addons.js', { expose: 'react' })
       .require('./node_modules/es6-promise/dist/commonjs/main.js', { expose: 'promise' })
       .require('./public/bower_components/page.js/index.js', { expose: 'page' })
       .require('./public/bower_components/jquery/dist/jquery.js', { expose: 'jquery' })
-      .require('./public/bower_components/socket.io-client/dist/socket.io.js', { expose: 'socket.io-client'})
-      .external('emitter')
-      .bundle({
-        insertGlobals: false,
-        detectGlobals: false,
-        debug: !minify
-      });
+      .bundle();
 
     return bundleStream
       .pipe(source('./public/js/main.js'))
@@ -112,14 +109,13 @@ gulp.task('script-index', function () {
   var bundleStream = browserify({
     entries: './public/js/index.js',
     fullPaths: false,
-    builtins: false
+    builtins: false,
+    insertGlobals: false,
+    detectGlobals: false,
+    debug: !minify
   })
     .require('./public/bower_components/jquery/dist/jquery.js', { expose: 'jquery' })
-    .bundle({
-      insertGlobals: false,
-      detectGlobals: false,
-      debug: !minify
-    });
+    .bundle();
 
   return bundleStream
     .pipe(source('./public/js/index.js'))

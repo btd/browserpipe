@@ -3,7 +3,12 @@ var environment = process.env.NODE_ENV || 'development';
 var _ = require('lodash');
 
 var common = {
-  cookieSecret: 'd5bSD5N0dl3Vs1SwXw6pMkxS',
+  session: {
+    cookie: {
+      name: 'bp.sid',
+      secret: 'd5bSD5N0dl3Vs1SwXw6pMkxS'
+    }
+  },
   storage: {
     path: './public/storage',
     url: '/public/storage',
