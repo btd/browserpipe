@@ -1,24 +1,215 @@
 // Core variables and mixins
 // Rules import
-@import "common/util.less";
-@import "messenger/messenger.less";
+@import "bootstrap.less";
+@import "colors.less";
+@import "util.less";
 
-* {
-  font-family: "Lucida Grande", "Lucida Unicode MS", sans-serif;
+//@import "messenger/messenger.less";
+
+html, body {
+  height: 100%;
 }
 
-html,body {
-  height:100%;
-  margin:0;
-  padding:0;
-  overflow:hidden;
+a:focus, a:active,
+button::-moz-focus-inner,
+input[type="reset"]::-moz-focus-inner,
+input[type="button"]::-moz-focus-inner,
+input[type="submit"]::-moz-focus-inner,
+select::-moz-focus-inner,
+input[type="file"] > input[type="button"]::-moz-focus-inner {
+  border: 0;
+  outline: 0;
+}
+
+#home, #home-inner {
+  height: 100%;
+}
+
+#home-inner {
+  position: relative;
+
+  &.with-item {
+    overflow-y: hidden;
+  }
 }
 
 body {
-  color: @grey;
-  background-color: @white;
+  //color: @grey;
 }
 
+@navbar-bottom-border-width: 5px;
+
+#top {
+  position: absolute;
+
+  top: 0;
+
+  left: 15px;
+  right: 15px;
+
+  margin-bottom: 0;
+
+  &.navbar-for-item {
+    border-bottom: @navbar-bottom-border-width solid @orange;
+    background-color: @navbar-default-bg;
+
+    .active a {
+      background-color: darken(#EEE, 10%);
+    }
+  }
+
+  .nav a * {
+    color: @gray;
+  }
+
+  .item-name a, .item-time a {
+    cursor: default;
+  }
+
+  a {
+
+    i:first-child, img:first-child {
+      margin-right: 5px;
+    }
+  }
+
+  .nav-user {
+    .dropdown-header {
+      font-size: @font-size-base;
+    }
+
+    .username * {
+      font-weight: bold;
+    }
+  }
+}
+
+.text-centered {
+  text-align: center;
+}
+
+#search {
+  button {
+    background-color: @orange;
+    color: @white;
+    border: 1px solid @orange; //it is a bit more simple
+  }
+}
+
+#home {
+  a {
+    color: @orange;
+  }
+
+  .item {
+    position: relative;
+
+    border: 1px solid #ccc;
+    border-radius: 2px;
+
+    padding: 3px;
+
+    width: 300px;
+
+    .name {
+      cursor: pointer;
+
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+
+      width: 275px;
+    }
+
+    .icon {
+      display: inline;
+      margin-right: 3px;
+    }
+
+    .title {
+      display: inline;
+    }
+
+    .close {
+      position: absolute;
+      right: 4px;
+      top: 1px;
+
+      float: none;
+
+      display: block;
+      color: @gray;
+    }
+  }
+
+  .items {
+    .item {
+      display: inline-block;
+      margin-right: 10px;
+      margin-bottom: 10px;
+
+      text-align: left;
+
+      vertical-align: top;
+    }
+
+    .tags {
+      a {
+
+        color: @gray;
+        text-decoration: none;
+      }
+      .tag {
+        font-size: 11px;
+
+        background-color: @gray;
+        color: @white;
+
+        border-radius: 2px;
+        padding: 0 3px;
+
+        margin-right: 3px;
+
+        a {
+          color: @white;
+        }
+      }
+    }
+
+    text-align: center;
+  }
+}
+
+#logo {
+  width: 210px;
+
+  img {
+    width: 210px;
+    height: 25px;
+  }
+}
+
+#content {
+  height: 100%;
+
+  padding-top: @navbar-height + @navbar-bottom-border-width;
+
+  iframe {
+    width: 100%;
+    border: none;
+    height: 100%;
+  }
+
+  .dropdown.suggestions {
+    li.active a {
+      background-color: lighten(@orange, 20%);
+    }
+
+    li a { color: @gray; }
+  }
+}
+
+/*
 .messenger {
 
   .alert-info {
@@ -729,3 +920,4 @@ a {
     }
   }
 }
+*/

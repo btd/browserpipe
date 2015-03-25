@@ -2,7 +2,7 @@ var Base = require('./base');
 
 var util = require('../../util');
 
-var tags = { 
+var tags = {
   a: [ 'href' ],
   img: [ 'src', 'longdesc', 'usemap' ],
   input: [ 'src', 'formaction', 'usemap' ],
@@ -36,7 +36,15 @@ AbsUrlHandler.prototype.processTag = function(replaceAttributes, attributes) {
   var that = this;
 
   function replaceUrl(url) {
-    return that.replaceUrl(url);
+    if(url[0] == '#') return url;
+
+    var newUrl = that.replaceUrl(url);
+    if(newUrl.indexOf(that.url) == 0) {
+      var rest = newUrl.substr(that.url.length);
+      if(rest[0] == '#') return rest;
+    }
+
+    return newUrl;
   }
 
   replaceAttributes.forEach(function(attr) {
@@ -54,6 +62,7 @@ AbsUrlHandler.prototype.replaceUrl = function(_url) {
 AbsUrlHandler.prototype.onOpenTag = function(name, attributes, next) {
   var replaceAttributes = tags[name];
   var that = this;
+
   function replaceUrl(url) {
     return that.replaceUrl(url);
   }
@@ -66,9 +75,6 @@ AbsUrlHandler.prototype.onOpenTag = function(name, attributes, next) {
   }
   next();
 };
-
-
-
 
 
 module.exports = AbsUrlHandler;

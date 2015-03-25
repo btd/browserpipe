@@ -19,12 +19,13 @@ var newrelic = require('newrelic');
 // App settings and middleware
 module.exports = function(app, passport) {
 
+
   app.use('/public/storage', serveStatic(__dirname + '/../public/storage'));
   app.use('/public', serveStatic(__dirname + '/../dist'));
 
   //We update the limits of the size we accept
   app.use(bodyParser.json({ limit: '30mb' }));
-  app.use(bodyParser.urlencoded({ limit: '30mb' }));
+  app.use(bodyParser.urlencoded({extended: true, limit: '30mb' }));
 
   // set views path, template engine and default layout
   app.set('views', __dirname + '/views');
@@ -51,8 +52,11 @@ module.exports = function(app, passport) {
 
   // save session in mongodb collection sessions
   app.use(session({
-    secret: config.cookieSecret,
-    store: new RedisStore(config.redis)
+    name: config.session.cookie.name,
+    secret: config.session.cookie.secret,
+    store: new RedisStore(config.redis),
+    resave: true,
+    saveUninitialized: true
   }));
 
   // use passport session
@@ -62,7 +66,7 @@ module.exports = function(app, passport) {
   // flash messages
   app.use(require('connect-flash')());
 
-  app.use(morgan({ format: 'short', stream: {
+  app.use(morgan('short', { stream: {
     write: function(msg) {
       logger.info(msg.substr(0, msg.length - 1));
     }
@@ -74,11 +78,7 @@ module.exports = function(app, passport) {
   var server = http.createServer(app);
 
   // Configure socket.io
-  var sio = require('./socket.io');
-
-  //Initialize socket io
-  sio.init(server);
-
+  require('./socket.io')(server);
   // Bootstrap routes
   require('./routes')(app, passport);
 

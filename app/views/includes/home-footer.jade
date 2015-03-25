@@ -1,10 +1,6 @@
 //Application scripts
 script.
-    var initialOptions = {
-        user: !{ JSON.stringify(user).replace(/\//g, '\\/') },
-        items: !{ JSON.stringify(items).replace(/\//g, '\\/') },
-        config: !{ JSON.stringify(config).replace(/\//g, '\\/') }
-    };
+    var initialOptions = !{ JSON.stringify(initialOptions).replace(/\//g, '\\/') };
 
 script.
   // Include the UserVoice JavaScript SDK (only needed once on a page)

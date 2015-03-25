@@ -20,8 +20,6 @@ var HtmlWriteHandler = function() {
   this.stylesheetsContent = [];
   this.stylesheetsAttributes = [];
 
-  //before doctype we can remove whitespace
-  this.removeExtraWhiteSpace = true;
 
   Base.apply(this, arguments);
 };
@@ -92,8 +90,8 @@ function isStylesheet(name, attributes) {
     attributes.href &&
     util.isHttpURI(attributes.href) &&
     (attributes.rel && attributes.rel.toLowerCase() == 'stylesheet')/* &&
-    (attributes.type && attributes.type.toLowerCase().indexOf('text/css') >= 0)*/; 
-    //TODO when download css we need to check content-type by idea
+   (attributes.type && attributes.type.toLowerCase().indexOf('text/css') >= 0)*/;
+  //TODO when download css we need to check content-type by idea
 }
 
 // check if this is image that we can download
@@ -122,10 +120,6 @@ HtmlWriteHandler.prototype.onOpenTag = function(name, attributes) {
   this.addDoctype();
   var that = this;
 
-  if(name == 'body' || name == 'script' || name == 'style') {
-    this.removeExtraWhiteSpace = false;
-  }
-
   if(isStylesheet(name, attributes)) {
     this.stylesheetsContent.push(this.browser._loadUrlOnly(entities.decodeHTML(attributes.href)));
     this.stylesheetsAttributes.push(attributes);
@@ -142,13 +136,21 @@ HtmlWriteHandler.prototype.onOpenTag = function(name, attributes) {
     //we just skip page included <meta> for setting charset
   } else if(isStyle(name)) {
     this.inStyle = true;
-    
+    this.wasStyle = false; //ugly hack for https://github.com/fb55/htmlparser2/issues/88
+
     attributes.href = this.url;
     this.stylesheetsAttributes.push(attributes);
   } else {
-    if(name == 'a' && !attributes.target) {
+    if(name == 'a' && !attributes.target && attributes.href && attributes.href[0] != '#') {
       attributes.target = '_blank';
     }
+
+    //for pages that does  not contain <head>
+    //to insert right before body
+    if(name == 'body' && this.cssMarkerIndex == null) {
+      this.makeCssMarker();
+    }
+
     this.add(util.openTag(name, attributes, false));
     //TODO check what if inside attribute will be quote? Probably will be need to unescape and escape eveything
 
@@ -161,17 +163,34 @@ HtmlWriteHandler.prototype.onOpenTag = function(name, attributes) {
 
 
 HtmlWriteHandler.prototype.onText = function(textObj) {
-  if(this.removeExtraWhiteSpace) {
-    this.add(textObj.text.replace(/\s+/g, ' '));
-  } else if(this.inStyle) {
-    this.stylesheetsContent.push(Promise.cast({
-      content: textObj.text,
-      contentType: contentType.CSS,
-      href: this.url
-    }));
+  if(this.inStyle) {
+    if(!this.wasStyle) {
+      this.stylesheetsContent.push(Promise.resolve({
+        content: textObj.text,
+        contentType: contentType.CSS,
+        href: this.url
+      }));
+    } else {
+      var lastStyle = this.stylesheetsContent[this.stylesheetsContent.length - 1];
+      this.stylesheetsContent[this.stylesheetsContent.length - 1] = lastStyle.then(function(data) {
+        data.content += textObj.text;
+        return data;
+      })
+    }
+    this.wasStyle = true;
   } else {
     this.add(textObj.text);
   }
+};
+
+HtmlWriteHandler.prototype.makeCssMarker = function() {
+  this.resetChunk();
+
+  var cssMarker = Promise.resolve('');
+
+  this.cssMarkerIndex = this.chunks.length;
+
+  this.chunks.push(cssMarker);
 };
 
 
@@ -186,23 +205,13 @@ HtmlWriteHandler.prototype.onCloseTag = function(name) {
      </head>
      <body>
      */
-    this.resetChunk();
-
-    var cssMarker = Promise.cast('');
-
-    this.cssMarkerIndex = this.chunks.length;
-
-    this.chunks.push(cssMarker);
+    this.makeCssMarker();
   }
 
   if(util.voidElements[name]) {
     //do nothing as it is html5
-  } else {
+  } else if(!isStyle(name)) {
     this.add('</' + name + '>');
-  }
-
-  if(name == 'script' || name == 'style' || name == 'body') {
-    this.removeExtraWhiteSpace = true;
   }
 
   if(isStyle(name)) {

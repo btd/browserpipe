@@ -1,15 +1,12 @@
 extends auth
 
 block auth
-    form#login(action="/users/session", method="post")
-        .control-group
-            .controls
-                input#email(type='text', name="email", placeholder='Email')
+    form#login(action="/authenticate", method="post")
+        .form-group
+            input#email.form-control(type='text', name="email", placeholder='Email')
 
-        .control-group
-            .controls
-                input#password(type='password', name="password", placeholder='Password')
+        .form-group
+            input#password.form-control(type='password', name="password", placeholder='Password')
 
-        .control-group
-            .controls
-                button.btn.btn-warning.btn-big(type='submit') Login               
+        .form-group
+            button.btn.btn-warning.btn-block.btn-lg(type='submit') Login

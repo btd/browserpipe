@@ -1,0 +1,1 @@
+window.location='http://localhost:4000/add?next=back&url='+encodeURIComponent(location.href)+'&title='+encodeURIComponent(document.title);

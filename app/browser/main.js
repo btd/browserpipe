@@ -15,44 +15,62 @@ var contentType = require('../../util/content-type');
 var screenshot = require('./screenshot/screenshot');
 
 
-
-
-function navigate(res, opts) {
+function navigate(opts, res) {
   var browser = new Browser(opts.languages);
   var item = opts.item;
   return browser._loadUrl(opts.url, true)
-    .then(function(data) {
-      logger.debug('Load data from url %s', opts.url);
-      res.send(data.content);
+    .then(function (data) {
+      logger.debug('Load data from url %s %s', data.href, data.contentType);
+      res && res.send(data.content);
 
-      var ext = contentType.chooseExtension(opts.url, data.contentType.type);
-      return Promise.all([browser.saveData(data.content, ext), browser.generateScreenshot(data.content)])
-        .spread(function(path, screenshotUrl) {
-          item.title = data.title;
-          item.url = data.href;
-          item.favicon = data.favicon;
-          item.screenshot = screenshotUrl;
-          item.path = path;
-          item.statusCode = 200;
-          item.files = browser.files;
+      item.title = data.title;
+      item.url = data.href;
+      item.favicon = data.favicon;
+      item.statusCode = 200;
+      item.files = browser.files;
 
-          return item.saveWithPromise()
+      return item.saveWithPromise()
+        .then(function () {
+          userUpdate.updateItem(item.user, item);
+
+          var ext = contentType.chooseExtension(opts.url, data.contentType.type);
+          var savePromise = browser.saveData(data.content, ext)
+            .then(function (path) {
+              item.path = path;
+              item.files = browser.files;
+              return item.saveWithPromise()
+            }).then(function () {
+              userUpdate.updateItem(item.user, item);
+            });
+
+          var generateScreenshotPromise = browser.generateScreenshot(data.content)
+            .then(function (screenshotUrl) {
+              item.screenshot = screenshotUrl;
+              item.files = browser.files;
+              return item.saveWithPromise()
+            }).then(function () {
+              userUpdate.updateItem(item.user, item);
+            });
+
+          return Promise.join(savePromise, generateScreenshotPromise)
         })
     })
-    .catch(StatusCode4XXError, function(e) {
+    .catch(StatusCode4XXError, function (e) {
       manageItemCodeError(res, opts, e.statusCode);
     })
-    .error(function(e) {
+    .error(function (e) {
       logger.debug('Error loading url %s:', opts.url, e);
       manageItemCodeError(res, opts, 500);
     })
 }
 
-var StatusCode4XXError = function(e) {
+exports.navigate = navigate;
+
+var StatusCode4XXError = function (e) {
   return e.statusCode >= 400 && e.statusCode < 500;
 };
 
-var manageItemCodeError = function(res, opts, code) {
+var manageItemCodeError = function (res, opts, code) {
   sendItemCodeErrorResponse(res, code);
   var item = opts.item;
 
@@ -62,15 +80,15 @@ var manageItemCodeError = function(res, opts, code) {
   item.statusCode = code;
 
   return item.saveWithPromise()
-    .then(function() {
+    .then(function () {
       userUpdate.updateItem(item.user, item);
     });
 }
 
-var sendItemCodeErrorResponse = function(res, code) {
+var sendItemCodeErrorResponse = function (res, code) {
   //TODO: use templates
   var html = '';
-  switch(code) {
+  switch (code) {
     case 400:
       html = '<center><h2>Invalid request</h2></center>';
       break;
@@ -86,42 +104,42 @@ var sendItemCodeErrorResponse = function(res, code) {
     default:
       html = '<center><h2>Sorry, there was a problem displaying the page</h2></center>';
   }
-  res.status(code).send(html);
+  res && res.status(code).send(html);
 }
 
-exports.htmlItem = function(req, res) {
+exports.htmlItem = function (req, res) {
   var item = req.currentItem;
   var user = req.user;
 
   item.windowWidth = req.query.width;
   item.windowHeight = req.query.height;
 
-  if(item.url) {
+  if (item.url) {
     logger.debug('Browser open %s for %s', item._id, item.url);
-    if(item.statusCode && item.statusCode !== 200) {
+    if (item.statusCode && item.statusCode !== 200) {
       sendItemCodeErrorResponse(res, item.statusCode);
-    } else if(item.path) {
+    } else if (item.path) {
       return res.redirect(file.url(item.path));
     } else {
-      return navigate(res, {
+      return navigate({
         url: item.url,
         item: item,
         languages: user.langs
-      })
+      }, res)
         .then(userUpdate.updateItem.bind(null, req.user._id, item));
     }
   }
-  else if(req.query.url)
-    return navigate(res, {
+  else if (req.query.url)
+    return navigate({
       url: req.query.url,
       item: item,
       languages: user.langs
-    }).then(userUpdate.updateItem.bind(null, req.user._id, item));
+    }, res).then(userUpdate.updateItem.bind(null, req.user._id, item));
   else return errors.sendBadRequest(res);
 }
 
 
-exports.htmlBookmarklet = function(req, res) {
+exports.htmlBookmarklet = function (req, res) {
 
   res.setHeader("Access-Control-Allow-Origin", req.get('origin'));
   res.setHeader("Access-Control-Allow-Credentials", true);
@@ -135,7 +153,7 @@ exports.htmlBookmarklet = function(req, res) {
 
   var user = req.user;
   var url = req.body.url;
-  var parentId = req.body.parent? req.body.parent: user.pending;
+  var parentId = req.body.parent ? req.body.parent : user.pending;
   var html = req.body.html;
   //var charset = req.body.charset;
   var width = req.body.width;
@@ -157,23 +175,23 @@ exports.htmlBookmarklet = function(req, res) {
 
   return item.saveWithPromise()
     .then(responses.sendModelId(res, item._id), errors.ifErrorSendBadRequest(res))
-    .then(function() {
+    .then(function () {
       return Item.byId({ _id: item.parent })
-        .then(function(parent) {
+        .then(function (parent) {
           parent.items.push(item._id);
           parent.markModified('items');
           return parent.saveWithPromise()
             .then(userUpdate.updateItem.bind(null, req.user._id, parent));
         })
     })
-    .then(function() {
+    .then(function () {
       return browser.processHtml(url, html, ct)
-        .then(function(data) {
+        .then(function (data) {
           logger.debug('Load data from bookmarklet url %s', url);
 
           var ext = contentType.chooseExtension(url, ct.type);
-          return Promise.all([browser.saveData(data.content, ext), browser.generateScreenshot(data.content)])
-            .spread(function(path, screenshotUrl) {
+          return Promise.join(browser.saveData(data.content, ext), browser.generateScreenshot(data.content))
+            .spread(function (path, screenshotUrl) {
               item.title = data.title;
               item.url = url;
               item.favicon = data.favicon;
@@ -186,7 +204,7 @@ exports.htmlBookmarklet = function(req, res) {
             })
             .then(userUpdate.updateItem.bind(null, req.user._id, item))
         })
-        .error(function(e) {
+        .error(function (e) {
           logger.debug('Error processing bookmarklet for url %s:', url, e);
           errors.sendBadRequest(res);
         })

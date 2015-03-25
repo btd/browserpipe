@@ -56,18 +56,11 @@ exports.create = function (req, res, next) {
                 res.redirect('back');
             } else {
                 var user = new User(_.pick(req.body, 'email', 'name', 'password'));
-                //user.provider = 'local'; //for passport
-                user.email = email;
                 if(req.headers['accept-language']) {
                   user.langs = req.headers['accept-language'];
                 }
 
-                var archive = Item.newContainer({ title: 'Archive', user: user });
-                var pending = Item.newContainer({ title: 'Pending', user: user });
-                user.pending = pending;
-                user.archive = archive;
-
-                return Promise.all([user.saveWithPromise(), pending.saveWithPromise(), archive.saveWithPromise()])
+                return user.saveWithPromise()
                   .then(function () {
                     req.login(user, function (err) {
                         if (err) return next(err);
@@ -76,16 +69,4 @@ exports.create = function (req, res, next) {
                   }, next);
             }
         }, next);
-}
-
-
-//Find user by id
-exports.user = function (req, res, next, id) {
-    return User.byId(id)
-        .then(function(user) {
-            if (!user) return res.status(404).render('404');
-
-            req.profile = user;
-            next()
-        }, next);
-}
+};

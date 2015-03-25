@@ -1,21 +1,25 @@
 var Item = require('../../models/item');
 var config = require('../../config');
 
+var Promise = require('bluebird');
+
 //Home
 exports.home = function (req, res, next) {
-    if (req.isAuthenticated()) {
-        return Item.all({ user: req.user._id }).then(function(items) {
-            res.render('main/home', {
-                user: req.user,
-                items: items,
-                config: {
-                    appUrl: config.appUrl,
-                    userLimit: config.userLimit
-                }
-            })
-        }, next)
-    } else
-        res.render('main/index', { user: req.user})
+  if (req.isAuthenticated()) {
+    return Promise.join(Item.allTags(), Item.all({ user: req.user._id, deleted: false }))
+      .spread(function (tags, items) {
+        res.render('main/home', { initialOptions: {
+          user: req.user,
+          items: items,
+          tags: tags,
+          config: {
+            appUrl: config.appUrl,
+            userLimit: config.userLimit
+          }
+        }})
+      }, next)
+  } else
+    res.render('main/index', { user: req.user})
 }
 
 //FAQ
@@ -45,15 +49,15 @@ exports.terms = function (req, res, next) {
 
 //Bookmarklet
 exports.bookmarkletArchive = function (req, res, next) {
-  return Item.all({ user: req.user._id, deleted: false }).then(function(items) {
-      res.render('main/bookmarklet_archive', {
-          user: req.user,
-          items: items,
-          config: {
-              appUrl: config.appUrl,
-              userLimit: config.userLimit //we can set it per use there
-          }
-      })
+  return Item.all({ user: req.user._id, deleted: false }).then(function (items) {
+    res.render('main/bookmarklet_archive', {
+      user: req.user,
+      items: items,
+      config: {
+        appUrl: config.appUrl,
+        userLimit: config.userLimit //we can set it per use there
+      }
+    })
   }, next)
 }
 

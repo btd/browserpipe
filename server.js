@@ -1,6 +1,6 @@
 require('newrelic');
 
-var heapdump = require('heapdump');
+//var heapdump = require('heapdump');
 
 var app = require('./app/server');
 

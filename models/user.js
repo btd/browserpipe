@@ -27,8 +27,7 @@ var UserSchema = new Schema({
    */
   langs: { type: String, default: 'en-US,en;q=0.5' },
 
-  pending: { type: Schema.ObjectId, ref: 'Item' },
-  archive: { type: Schema.ObjectId, ref: 'Item' }
+  items: [{ type: Schema.ObjectId, ref: 'Item' }]
 });
 
 UserSchema.plugin(require('../util/mongoose-timestamp'));

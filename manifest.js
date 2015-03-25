@@ -23,7 +23,8 @@ function loadManifest(manifestPath, prependUrl) {
   return {
     url: function (origUrl) {
       var parsedUrl = url.parse(origUrl);
-      return prependUrl + '/' + (manifest[parsedUrl.pathname] || '404?url=' + encodeURIComponent(origUrl));
+      parsedUrl.pathname = prependUrl + '/' + (manifest[parsedUrl.pathname] || '404');
+      return url.format(parsedUrl);
     }
   }
 }

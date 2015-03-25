@@ -98,7 +98,7 @@ Browser.prototype.determineContentType = function (response, _body) {
     });
   }
 
-  return Promise.cast(ct);
+  return Promise.resolve(ct);
 }
 
 Browser.prototype.ungzipBody = function (response, body) {
@@ -106,7 +106,7 @@ Browser.prototype.ungzipBody = function (response, body) {
     logger.debug('%s url gzipped', response.request.href);
     return gunzip(body);
   } else {
-    return Promise.cast(body);
+    return Promise.resolve(body);
   }
 }
 
@@ -131,7 +131,7 @@ Browser.prototype.processUrl = function (url, isMainUrl) {
 
       // first try to get content-type and charset from Content-Type header
       return that.ungzipBody(response, _body).then(function (_body) {
-        return [that.determineContentType(response, _body), response.request.href, _body];
+        return Promise.join(that.determineContentType(response, _body), response.request.href, _body);
       })
     } else {
       throw new util.StatusCodeError(response.statusCode);
@@ -172,19 +172,23 @@ Browser.prototype.processUrl = function (url, isMainUrl) {
 
 Browser.prototype.processHtml = function (baseUrl, htmlText, ct) {
   var that = this;
-  return new Promise(function (resolve, reject) {
+  return (new Promise(function (resolve, reject) {
     that.htmlProcessor.process(baseUrl, htmlText, function (err, data) {
       if (err) return reject({ msg: err });
 
       data.href = baseUrl;
       data.contentType = ct;
 
-      return data.contentPromise.then(function (html) {
-        data.content = html;
-        return resolve(data);
-      });
+      resolve(data);
     });
-  });
+  }))
+    .then(function (data) {
+      return data.contentPromise
+        .then(function (html) {
+          data.content = html;
+          return data;
+        });
+    });
 };
 
 var InvalidUrlError = function (urls) {
@@ -256,9 +260,9 @@ Browser.prototype._loadUrlOnly = function (url) {
 Browser.prototype.generateScreenshot = function (html) {
   var that = this;
   return new Promise(function (resolve/*, reject*/) {
-    screenshot.generateScreenshot(html, that, function (screenshotData) {
-      resolve(screenshotData.screenshotSmall || screenshot.noScreenshotUrl);
-    })
+    //screenshot.generateScreenshot(html, that, function (screenshotData) {
+      resolve(/*screenshotData.screenshotSmall || */screenshot.noScreenshotUrl);
+    //})
   })
 }
 

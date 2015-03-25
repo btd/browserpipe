@@ -7,7 +7,7 @@ module.exports = function(Schema) {
       that.save(function (err, product, numberAffected) {
         if (err) return reject(err);
 
-        resolve([product, numberAffected]);
+        resolve(product);
       })
     })
   });

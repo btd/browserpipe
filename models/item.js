@@ -3,36 +3,25 @@
 var mongoose = require('mongoose'),
   Schema = mongoose.Schema;
 
+var Promise = require('bluebird');
+
 var Item;
 
 var FileSchema = new Schema({
   name: String,
   size: Number
-})
+});
 
 //There are to types of items: folder-item and note-item
 var ItemSchema = new Schema({
-  // sub items - for folder like behaviour
-  items: [
-    { type: Schema.ObjectId, ref: 'Item' }
-  ],
-
-  //parent
-  parent: { type: Schema.ObjectId, ref: 'Item' }, //parent item
-
-  // pin
-  pinned: { type: Boolean, default: false }, //This means that is pinned in the browser
-
   // owner
   user: { type: Schema.ObjectId, ref: 'User' },
 
-  // type of item // 0 - bookmark, 1 - note, 2 - container
-  type: { type: Number, required: true }, //0: bookmark, 1: note
+  deleted: { type: Boolean, default: false },
 
-  // when type 0
-  favicon: { type: String, trim: true },
-  screenshot: { type: String, trim: true },
-  url: { type: String, trim: true },
+  favicon: { type: String, trim: true }, // url to favicon
+  screenshot: { type: String, trim: true }, //url to screenshot
+  url: { type: String, trim: true }, // url itself
 
   // not used now
   windowWidth: { type: Number }, //Width of client window
@@ -45,8 +34,7 @@ var ItemSchema = new Schema({
   scrollX: { type: Number },
   scrollY: { type: Number },
 
-  // trash
-  deleted: { type: Boolean, default: false },
+  tags: [ { type: String, trim: true } ],
 
   statusCode: { type: Number }, //http response code
 
@@ -62,17 +50,6 @@ ItemSchema.plugin(require('../util/mongoose-timestamp'));
 ItemSchema.plugin(require('../util/mongoose-query'));
 ItemSchema.plugin(require('../util/mongoose-patch'));
 
-['Bookmark', 'Note', 'Container'].forEach(function(elem, index) {
-  ItemSchema.methods['is' + elem] = function() {
-    return this.type === index;
-  };
-
-  ItemSchema.statics['new' + elem] = function(obj) {
-    obj.type = index;
-    return new Item(obj);
-  };
-});
-
 var file = require('../util/file');
 
 ItemSchema.virtual('storageUrl').get(function() {
@@ -85,9 +62,14 @@ f it is object with name and size properties
 ItemSchema.methods.addFile = function(f) {
   this.files.push(f);
   return this;
-}
+};
 
-//TODO: for security reasons we should not use byId in the server but byIdAndUserId
-// grep by Item.byId
+ItemSchema.statics.allTags = function() {
+  return Promise.resolve(Item.aggregate()
+    .project({ tags: 1, _id: 0 })
+    .unwind('tags')
+    .group({ _id: '$tags' })
+    .exec());
+};
 
 module.exports = Item = mongoose.model('Item', ItemSchema);
